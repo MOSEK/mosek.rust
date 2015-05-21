@@ -1,0 +1,15 @@
+[package]
+
+name    = "mosek"
+version = "0.0.1"
+authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
+
+
+build = "build.rs"
+
+[dependencies]
+libc = "*"
+
+[[bin]]
+name = "mosek"
+
