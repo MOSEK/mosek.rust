@@ -5,7 +5,7 @@ use libc::c_char;
 #[link(name = "mosek64")]
 extern
 {
-    fn MSK_getversion(major : * mut i32, 
+    fn MSK_getversion(major : * mut i32,
                       minor : * mut i32,
                       build : * mut i32,
                       rev   : * mut i32) -> i32;
@@ -15,19 +15,34 @@ extern
     fn MSK_maketask(env : * const u8, maxnumcon : i32, maxnumvar : i32, task : * mut * const u8) -> i32;
     fn MSK_deletetask(task : * mut * const u8) -> i32;
 
-    fn MSK_readdata(task : * const u8,    filename : * const c_char) -> i32;
-    fn MSK_writedata(task : * const u8,   filename : * const c_char) -> i32;
-    fn MSK_putarow(task  : * const u8,    i : libc::int32_t, nzi : libc::int32_t, subi : * const libc::int32_t, vali : * const f64) -> i32;
-    fn MSK_getarow(task  : * const u8,    i : libc::int32_t, nzi : * mut libc::int32_t, subi : * mut libc::int32_t, vali : * mut f64) -> i32;
-    fn MSK_getarownumnz(task  : * const u8,    i : libc::int32_t, nzi : * mut libc::int32_t) -> i32;
-    fn MSK_optimizetrm(task : * const u8, trmcode  : * mut i32) -> i32;
+    fn MSK_readdata      (task : * const u8, filename : * const c_char) -> i32;
+    fn MSK_writedata     (task : * const u8, filename : * const c_char) -> i32;
+    fn MSK_putarow       (task : * const u8, i : libc::int32_t, nzi : libc::int32_t, subi : * const libc::int32_t, vali : * const f64) -> i32;
+    fn MSK_getarow       (task : * const u8, i : libc::int32_t, nzi : * mut libc::int32_t, subi : * mut libc::int32_t, vali : * mut f64) -> i32;
+    fn MSK_getarownumnz  (task : * const u8, i : libc::int32_t, nzi : * mut libc::int32_t) -> i32;
+    fn MSK_optimizetrm   (task : * const u8, trmcode  : * mut i32) -> i32;
+    fn MSK_gettasknamelen(task : * const u8, len    : & mut libc::int32_t) -> i32;
+    fn MSK_gettaskname   (task : * const u8, maxlen :       libc::int32_t, taskname : * mut u8) -> i32;
 }
 
-struct Env
+macro_rules! callMSK
+{
+    ( $n:ident, $( $a : expr ),* ) => {
+        {
+            let res = unsafe { $n ( $( $a,)* ) };
+            if 0 != res
+            {
+                panic!(format!("Fail in call: {}",stringify!($n)));
+            }
+        }
+    }
+}
+
+pub struct Env
 {
     env : * const u8,
 }
-struct Task
+pub struct Task
 {
     task : * const u8,
 }
@@ -101,8 +116,8 @@ impl Task
         let mut nzi = self.getarownumnz(i);
         let mincap = nzi as usize;
 
-        if (subi.capacity() < mincap) { let subilen = subi.len(); subi.reserve(mincap - subilen); }
-        if (vali.capacity() < mincap) { let valilen = vali.len(); vali.reserve(mincap - valilen); }
+        if subi.capacity() < mincap { let subilen = subi.len(); subi.reserve(mincap - subilen); }
+        if vali.capacity() < mincap { let valilen = vali.len(); vali.reserve(mincap - valilen); }
 
         if 0 != (unsafe { MSK_getarow(self.task, i, & mut nzi, subi.as_mut_ptr(), vali.as_mut_ptr()) })
         {
@@ -120,23 +135,33 @@ impl Task
 
     fn putarow(&self, i:i32, subi : & Vec<i32>, vali : & Vec<f64>)
     {
-        if (subi.len() != vali.len()) { panic!("Failed: MSK_getarow. Mismatching array lengths"); }
-
-        if 0 != (unsafe { MSK_putarow(self.task, i, subi.len() as i32, subi.as_ptr(), vali.as_ptr()) })
-        {
-            panic!("Failed: MSK_getarow");
-        }
+        if subi.len() != vali.len() { panic!("Failed: MSK_getarow. Mismatching array lengths"); };
+        callMSK!(MSK_putarow,self.task, i, subi.len() as i32, subi.as_ptr(), vali.as_ptr());
     }
 
     fn optimize(&self) -> i32
     {
         let mut res = 0;
-        if 0 != unsafe { MSK_optimizetrm(self.task, & mut res) }
-        {
-            panic!("Failed: MSK_optimizetrm");
-        }
-
+        callMSK!(MSK_optimizetrm,self.task, & mut res);
         return res;
+    }
+
+
+    fn gettasknamelen(&self) -> i32
+    {
+        let mut len : i32 = 0;
+        callMSK!(MSK_gettasknamelen,self.task,& mut len);
+        len
+    }
+
+    fn gettaskname(&self) -> String
+    {
+        let len = self.gettasknamelen();
+        let mut taskname_bytes = Vec::with_capacity(len as usize + 1);
+        callMSK!(MSK_gettaskname,self.task,len+1,taskname_bytes.as_mut_ptr());
+        unsafe { taskname_bytes.set_len(len as usize) };
+
+        String::from_utf8_lossy(& taskname_bytes[..]).into_owned()
     }
 }
 
@@ -174,14 +199,3 @@ fn getversion() -> (i32,i32,i32,i32)
 }
 
 
-
-fn main() {
-    let (major,minor,build,revision) = getversion();
-    println!("MOSEK version {}.{}.{}.{}", major,minor,build,revision);
-
-    let env = Env::new();
-    let task = env.newtask();
-    task.readdata("/home/ulfw/mosekprj/git/dev/tests/opf/25fv47.opf");
-    task.optimize();
-    task.writedata("25fv47.task");
-}

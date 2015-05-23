@@ -1,6 +1,6 @@
 [package]
 
-name    = "mosek"
+name    = "mosekrs"
 version = "0.0.1"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 
@@ -10,6 +10,6 @@ build = "build.rs"
 [dependencies]
 libc = "*"
 
-[[bin]]
+[lib]
 name = "mosek"
 
