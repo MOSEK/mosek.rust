@@ -1818,7 +1818,7 @@ pub struct Task
 
 impl Env
 {
-    fn new() -> Env
+    pub fn new() -> Env
     {
         let mut env : * const u8 = std::ptr::null();
         let res = unsafe { MSK_makeenv(& mut env, std::ptr::null()) };
@@ -1827,7 +1827,7 @@ impl Env
         return Env { ptr : env };
     }
 
-    fn newMemDebug(dbgfile : &str) -> Env
+    pub fn new_mem_debug(dbgfile : &str) -> Env
     {
         let mut env : * const u8 = std::ptr::null();
         let res = unsafe { MSK_makeenv(& mut env, CString::new(dbgfile).unwrap().as_ptr()) };
@@ -1836,7 +1836,7 @@ impl Env
         return Env { ptr : env };
     }
 
-    fn newtask(&self) -> Task
+    pub fn task(&self) -> Task
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) }
@@ -1847,9 +1847,20 @@ impl Env
         return Task { ptr : task };
     }
 
+    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Task
+    {
+        let mut task : * const u8 = std::ptr::null();
+        if 0 != unsafe { MSK_maketask(self.ptr, numcon,numvar, & mut task) }
+        {
+            panic!("Failed: MSK_maketask");
+        }
+
+        return Task { ptr : task };
+    }
+
     
     // axpy
-    pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : & Vec<f64>,y_ : & mut Vec<f64>)
+    pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : & [f64],y_ : & mut [f64])
     {
       if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'axpy'") }
       if y_.len() != ((n_) as usize) { panic!("Argument 'y_' is too short in call to 'axpy'") }
@@ -1869,7 +1880,7 @@ impl Env
     }
     
     // dot
-    pub fn dot(&self,n_ : i32,x_ : & Vec<f64>,y_ : & Vec<f64>) -> f64
+    pub fn dot(&self,n_ : i32,x_ : & [f64],y_ : & [f64]) -> f64
     {
       if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'dot'") }
       if y_.len() != ((n_) as usize) { panic!("Argument 'y_' is too short in call to 'dot'") }
@@ -1885,7 +1896,7 @@ impl Env
     }
     
     // gemm
-    pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & Vec<f64>,b_ : & Vec<f64>,beta_ : f64,c_ : & mut Vec<f64>)
+    pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],b_ : & [f64],beta_ : f64,c_ : & mut [f64])
     {
       if a_.len() != ((m_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'gemm'") }
       if b_.len() != ((k_ * n_) as usize) { panic!("Argument 'b_' is too short in call to 'gemm'") }
@@ -1894,7 +1905,7 @@ impl Env
     }
     
     // gemv
-    pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & Vec<f64>,x_ : & Vec<f64>,beta_ : f64,y_ : & mut Vec<f64>)
+    pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64])
     {
       if a_.len() != ((n_ * m_) as usize) { panic!("Argument 'a_' is too short in call to 'gemv'") }
       let tmp_var_3__ = 
@@ -1921,7 +1932,7 @@ impl Env
     }
     
     // potrf
-    pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : & mut Vec<f64>)
+    pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'potrf'") }
       callMSK!(MSK_potrf,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr());
@@ -1934,7 +1945,7 @@ impl Env
     }
     
     // putlicensecode
-    pub fn put_license_code(&self,code_ : & Vec<i32>)
+    pub fn put_license_code(&self,code_ : & [i32])
     {
       if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { panic!("Argument 'code_' is too short in call to 'put_license_code'") }
       callMSK!(MSK_putlicensecode,self.ptr,code_.as_ptr());
@@ -1959,25 +1970,23 @@ impl Env
     }
     
     // syeig
-    pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : & Vec<f64>,w_ : & mut Vec<f64>)
+    pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : & [f64],w_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syeig'") }
-      if w_.capacity() < ((n_) as usize) { let _resv = (n_) as usize - w_.len(); w_.reserve(_resv) } 
+      if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syeig'") }
       callMSK!(MSK_syeig,self.ptr,uplo_,n_ as libc::int32_t,a_.as_ptr(),w_.as_mut_ptr());
-      unsafe { w_.set_len((n_) as usize) };
     }
     
     // syevd
-    pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : & mut Vec<f64>,w_ : & mut Vec<f64>)
+    pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64],w_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syevd'") }
-      if w_.capacity() < ((n_) as usize) { let _resv = (n_) as usize - w_.len(); w_.reserve(_resv) } 
+      if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syevd'") }
       callMSK!(MSK_syevd,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr(),w_.as_mut_ptr());
-      unsafe { w_.set_len((n_) as usize) };
     }
     
     // syrk
-    pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & Vec<f64>,beta_ : f64,c_ : & mut Vec<f64>)
+    pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],beta_ : f64,c_ : & mut [f64])
     {
       if a_.len() != ((n_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'syrk'") }
       if c_.len() != ((n_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'syrk'") }
@@ -2008,14 +2017,14 @@ impl Task
     }
     
     // appendbarvars
-    pub fn append_barvars(&self,dim_ : & Vec<i32>)
+    pub fn append_barvars(&self,dim_ : & [i32])
     {
       let mut num_ = dim_.len();
       callMSK!(MSK_appendbarvars,self.ptr,num_ as libc::int32_t,dim_.as_ptr());
     }
     
     // appendcone
-    pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & Vec<i32>)
+    pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & [i32])
     {
       let mut nummem_ = submem_.len();
       callMSK!(MSK_appendcone,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
@@ -2028,7 +2037,7 @@ impl Task
     }
     
     // appendconesseq
-    pub fn append_cones_seq(&self,ct_ : & Vec<i32>,conepar_ : & Vec<f64>,nummem_ : & Vec<i32>,j_ : i32)
+    pub fn append_cones_seq(&self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32)
     {
       let mut num_ = ct_.len();
       if conepar_.len() > num_ { num_ = conepar_.len() };
@@ -2043,7 +2052,7 @@ impl Task
     }
     
     // appendsparsesymmat
-    pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & Vec<i32>,subj_ : & Vec<i32>,valij_ : & Vec<f64>) -> i64
+    pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> i64
     {
       let mut nz_ = subi_.len();
       if subj_.len() > nz_ { nz_ = subj_.len() };
@@ -2117,31 +2126,25 @@ impl Task
     }
     
     // dualsensitivity
-    pub fn dual_sensitivity(&self,subj_ : & Vec<i32>,leftpricej_ : & mut Vec<f64>,rightpricej_ : & mut Vec<f64>,leftrangej_ : & mut Vec<f64>,rightrangej_ : & mut Vec<f64>)
+    pub fn dual_sensitivity(&self,subj_ : & [i32],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
     {
       let mut numj_ = subj_.len();
-      if leftpricej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - leftpricej_.len(); leftpricej_.reserve(_resv) } 
-      if rightpricej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - rightpricej_.len(); rightpricej_.reserve(_resv) } 
-      if leftrangej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - leftrangej_.len(); leftrangej_.reserve(_resv) } 
-      if rightrangej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - rightrangej_.len(); rightrangej_.reserve(_resv) } 
+      if leftpricej_.len() != ((numj_) as usize) { panic!("Argument 'leftpricej_' is too short in call to 'dual_sensitivity'") }
+      if rightpricej_.len() != ((numj_) as usize) { panic!("Argument 'rightpricej_' is too short in call to 'dual_sensitivity'") }
+      if leftrangej_.len() != ((numj_) as usize) { panic!("Argument 'leftrangej_' is too short in call to 'dual_sensitivity'") }
+      if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'dual_sensitivity'") }
       callMSK!(MSK_dualsensitivity,self.ptr,numj_ as libc::int32_t,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
-      unsafe { leftpricej_.set_len((numj_) as usize) };
-      unsafe { rightpricej_.set_len((numj_) as usize) };
-      unsafe { leftrangej_.set_len((numj_) as usize) };
-      unsafe { rightrangej_.set_len((numj_) as usize) };
     }
     
     // getacol
-    pub fn get_a_col(&self,j_ : i32,subj_ : & mut Vec<i32>,valj_ : & mut Vec<f64>) -> i32
+    pub fn get_a_col(&self,j_ : i32,subj_ : & mut [i32],valj_ : & mut [f64]) -> i32
     {
       let mut _ref_nzj_ : libc::int32_t = 0 as libc::int32_t;
       let tmp_var_1__ = self.get_a_col_num_nz(j_);
-      if subj_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - subj_.len(); subj_.reserve(_resv) } 
+      if subj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'subj_' is too short in call to 'get_a_col'") }
       let tmp_var_4__ = self.get_a_col_num_nz(j_);
-      if valj_.capacity() < ((tmp_var_4__) as usize) { let _resv = (tmp_var_4__) as usize - valj_.len(); valj_.reserve(_resv) } 
+      if valj_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'valj_' is too short in call to 'get_a_col'") }
       callMSK!(MSK_getacol,self.ptr,j_ as libc::int32_t,& mut _ref_nzj_,subj_.as_mut_ptr(),valj_.as_mut_ptr());
-      unsafe { subj_.set_len((tmp_var_1__) as usize) };
-      unsafe { valj_.set_len((tmp_var_4__) as usize) };
       _ref_nzj_ as i32
     }
     
@@ -2170,16 +2173,14 @@ impl Task
     }
     
     // getarow
-    pub fn get_a_row(&self,i_ : i32,subi_ : & mut Vec<i32>,vali_ : & mut Vec<f64>) -> i32
+    pub fn get_a_row(&self,i_ : i32,subi_ : & mut [i32],vali_ : & mut [f64]) -> i32
     {
       let mut _ref_nzi_ : libc::int32_t = 0 as libc::int32_t;
       let tmp_var_1__ = self.get_a_row_num_nz(i_);
-      if subi_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - subi_.len(); subi_.reserve(_resv) } 
+      if subi_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'subi_' is too short in call to 'get_a_row'") }
       let tmp_var_4__ = self.get_a_row_num_nz(i_);
-      if vali_.capacity() < ((tmp_var_4__) as usize) { let _resv = (tmp_var_4__) as usize - vali_.len(); vali_.reserve(_resv) } 
+      if vali_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'vali_' is too short in call to 'get_a_row'") }
       callMSK!(MSK_getarow,self.ptr,i_ as libc::int32_t,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr());
-      unsafe { subi_.set_len((tmp_var_1__) as usize) };
-      unsafe { vali_.set_len((tmp_var_4__) as usize) };
       _ref_nzi_ as i32
     }
     
@@ -2200,38 +2201,31 @@ impl Task
     }
     
     // getbarablocktriplet
-    pub fn get_bara_block_triplet(&self,subi_ : & mut Vec<i32>,subj_ : & mut Vec<i32>,subk_ : & mut Vec<i32>,subl_ : & mut Vec<i32>,valijkl_ : & mut Vec<f64>) -> i64
+    pub fn get_bara_block_triplet(&self,subi_ : & mut [i32],subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
     {
       let tmp_var_1__ = self.get_num_bara_block_triplets();
       let maxnum_ = tmp_var_1__;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if subi_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subi_.len(); subi_.reserve(_resv) } 
-      if subj_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subj_.len(); subj_.reserve(_resv) } 
-      if subk_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subk_.len(); subk_.reserve(_resv) } 
-      if subl_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subl_.len(); subl_.reserve(_resv) } 
-      if valijkl_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - valijkl_.len(); valijkl_.reserve(_resv) } 
+      if subi_.len() != ((maxnum_) as usize) { panic!("Argument 'subi_' is too short in call to 'get_bara_block_triplet'") }
+      if subj_.len() != ((maxnum_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_bara_block_triplet'") }
+      if subk_.len() != ((maxnum_) as usize) { panic!("Argument 'subk_' is too short in call to 'get_bara_block_triplet'") }
+      if subl_.len() != ((maxnum_) as usize) { panic!("Argument 'subl_' is too short in call to 'get_bara_block_triplet'") }
+      if valijkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'get_bara_block_triplet'") }
       callMSK!(MSK_getbarablocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
-      unsafe { subi_.set_len((maxnum_) as usize) };
-      unsafe { subj_.set_len((maxnum_) as usize) };
-      unsafe { subk_.set_len((maxnum_) as usize) };
-      unsafe { subl_.set_len((maxnum_) as usize) };
-      unsafe { valijkl_.set_len((maxnum_) as usize) };
       _ref_num_ as i64
     }
     
     // getbaraidx
-    pub fn get_bara_idx(&self,idx_ : i64,sub_ : & mut Vec<i64>,weights_ : & mut Vec<f64>) -> (i32,i32,i64)
+    pub fn get_bara_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i32,i64)
     {
       let tmp_var_1__ = self.get_bara_idx_info(idx_);
       let maxnum_ = tmp_var_1__;
       let mut _ref_i_ : libc::int32_t = 0 as libc::int32_t;
       let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if sub_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - sub_.len(); sub_.reserve(_resv) } 
-      if weights_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - weights_.len(); weights_.reserve(_resv) } 
+      if sub_.len() != ((maxnum_) as usize) { panic!("Argument 'sub_' is too short in call to 'get_bara_idx'") }
+      if weights_.len() != ((maxnum_) as usize) { panic!("Argument 'weights_' is too short in call to 'get_bara_idx'") }
       callMSK!(MSK_getbaraidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
-      unsafe { sub_.set_len((maxnum_) as usize) };
-      unsafe { weights_.set_len((maxnum_) as usize) };
       return (_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64)
     }
     
@@ -2253,47 +2247,40 @@ impl Task
     }
     
     // getbarasparsity
-    pub fn get_bara_sparsity(&self,idxij_ : & mut Vec<i64>) -> i64
+    pub fn get_bara_sparsity(&self,idxij_ : & mut [i64]) -> i64
     {
       let tmp_var_1__ = self.get_num_bara_nz();
       let maxnumnz_ = tmp_var_1__;
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      if idxij_.capacity() < ((maxnumnz_) as usize) { let _resv = (maxnumnz_) as usize - idxij_.len(); idxij_.reserve(_resv) } 
+      if idxij_.len() != ((maxnumnz_) as usize) { panic!("Argument 'idxij_' is too short in call to 'get_bara_sparsity'") }
       callMSK!(MSK_getbarasparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxij_.as_mut_ptr());
-      unsafe { idxij_.set_len((maxnumnz_) as usize) };
       _ref_numnz_ as i64
     }
     
     // getbarcblocktriplet
-    pub fn get_barc_block_triplet(&self,subj_ : & mut Vec<i32>,subk_ : & mut Vec<i32>,subl_ : & mut Vec<i32>,valijkl_ : & mut Vec<f64>) -> i64
+    pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
     {
       let tmp_var_1__ = self.get_num_barc_block_triplets();
       let maxnum_ = tmp_var_1__;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if subj_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subj_.len(); subj_.reserve(_resv) } 
-      if subk_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subk_.len(); subk_.reserve(_resv) } 
-      if subl_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - subl_.len(); subl_.reserve(_resv) } 
-      if valijkl_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - valijkl_.len(); valijkl_.reserve(_resv) } 
+      if subj_.len() != ((maxnum_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_barc_block_triplet'") }
+      if subk_.len() != ((maxnum_) as usize) { panic!("Argument 'subk_' is too short in call to 'get_barc_block_triplet'") }
+      if subl_.len() != ((maxnum_) as usize) { panic!("Argument 'subl_' is too short in call to 'get_barc_block_triplet'") }
+      if valijkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'get_barc_block_triplet'") }
       callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
-      unsafe { subj_.set_len((maxnum_) as usize) };
-      unsafe { subk_.set_len((maxnum_) as usize) };
-      unsafe { subl_.set_len((maxnum_) as usize) };
-      unsafe { valijkl_.set_len((maxnum_) as usize) };
       _ref_num_ as i64
     }
     
     // getbarcidx
-    pub fn get_barc_idx(&self,idx_ : i64,sub_ : & mut Vec<i64>,weights_ : & mut Vec<f64>) -> (i32,i64)
+    pub fn get_barc_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i64)
     {
       let tmp_var_1__ = self.get_barc_idx_info(idx_);
       let maxnum_ = tmp_var_1__;
       let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if sub_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - sub_.len(); sub_.reserve(_resv) } 
-      if weights_.capacity() < ((maxnum_) as usize) { let _resv = (maxnum_) as usize - weights_.len(); weights_.reserve(_resv) } 
+      if sub_.len() != ((maxnum_) as usize) { panic!("Argument 'sub_' is too short in call to 'get_barc_idx'") }
+      if weights_.len() != ((maxnum_) as usize) { panic!("Argument 'weights_' is too short in call to 'get_barc_idx'") }
       callMSK!(MSK_getbarcidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
-      unsafe { sub_.set_len((maxnum_) as usize) };
-      unsafe { weights_.set_len((maxnum_) as usize) };
       return (_ref_j_ as i32,_ref_num_ as i64)
     }
     
@@ -2314,24 +2301,22 @@ impl Task
     }
     
     // getbarcsparsity
-    pub fn get_barc_sparsity(&self,idxj_ : & mut Vec<i64>) -> i64
+    pub fn get_barc_sparsity(&self,idxj_ : & mut [i64]) -> i64
     {
       let tmp_var_1__ = self.get_num_barc_nz();
       let maxnumnz_ = tmp_var_1__;
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      if idxj_.capacity() < ((maxnumnz_) as usize) { let _resv = (maxnumnz_) as usize - idxj_.len(); idxj_.reserve(_resv) } 
+      if idxj_.len() != ((maxnumnz_) as usize) { panic!("Argument 'idxj_' is too short in call to 'get_barc_sparsity'") }
       callMSK!(MSK_getbarcsparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxj_.as_mut_ptr());
-      unsafe { idxj_.set_len((maxnumnz_) as usize) };
       _ref_numnz_ as i64
     }
     
     // getbarsj
-    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & mut Vec<f64>)
+    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barsj_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - barsj_.len(); barsj_.reserve(_resv) } 
+      if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'get_bars_j'") }
       callMSK!(MSK_getbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_mut_ptr());
-      unsafe { barsj_.set_len((tmp_var_1__) as usize) };
     }
     
     // getbarvarname
@@ -2363,12 +2348,11 @@ impl Task
     }
     
     // getbarxj
-    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & mut Vec<f64>)
+    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barxj_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - barxj_.len(); barxj_.reserve(_resv) } 
+      if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'get_barx_j'") }
       callMSK!(MSK_getbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_mut_ptr());
-      unsafe { barxj_.set_len((tmp_var_1__) as usize) };
     }
     
     // getbound
@@ -2382,24 +2366,20 @@ impl Task
     }
     
     // getboundslice
-    pub fn get_bound_slice(&self,accmode_ : i32,first_ : i32,last_ : i32,bk_ : & mut Vec<i32>,bl_ : & mut Vec<f64>,bu_ : & mut Vec<f64>)
+    pub fn get_bound_slice(&self,accmode_ : i32,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
-      if bk_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bk_.len(); bk_.reserve(_resv) } 
-      if bl_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bl_.len(); bl_.reserve(_resv) } 
-      if bu_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bu_.len(); bu_.reserve(_resv) } 
+      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_bound_slice'") }
+      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_bound_slice'") }
+      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_bound_slice'") }
       callMSK!(MSK_getboundslice,self.ptr,accmode_,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
-      unsafe { bk_.set_len((last_ - first_) as usize) };
-      unsafe { bl_.set_len((last_ - first_) as usize) };
-      unsafe { bu_.set_len((last_ - first_) as usize) };
     }
     
     // getc
-    pub fn get_c(&self,c_ : & mut Vec<f64>)
+    pub fn get_c(&self,c_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
-      if c_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - c_.len(); c_.reserve(_resv) } 
+      if c_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'c_' is too short in call to 'get_c'") }
       callMSK!(MSK_getc,self.ptr,c_.as_mut_ptr());
-      unsafe { c_.set_len((tmp_var_1__) as usize) };
     }
     
     // getcfix
@@ -2429,27 +2409,23 @@ impl Task
     }
     
     // getconboundslice
-    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut Vec<i32>,bl_ : & mut Vec<f64>,bu_ : & mut Vec<f64>)
+    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
-      if bk_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bk_.len(); bk_.reserve(_resv) } 
-      if bl_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bl_.len(); bl_.reserve(_resv) } 
-      if bu_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bu_.len(); bu_.reserve(_resv) } 
+      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_con_bound_slice'") }
+      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_con_bound_slice'") }
+      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_con_bound_slice'") }
       callMSK!(MSK_getconboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
-      unsafe { bk_.set_len((last_ - first_) as usize) };
-      unsafe { bl_.set_len((last_ - first_) as usize) };
-      unsafe { bu_.set_len((last_ - first_) as usize) };
     }
     
     // getcone
-    pub fn get_cone(&self,k_ : i32,submem_ : & mut Vec<i32>) -> (i32,f64,i32)
+    pub fn get_cone(&self,k_ : i32,submem_ : & mut [i32]) -> (i32,f64,i32)
     {
       let mut _ref_ct_ : i32 = 0 as i32;
       let mut _ref_conepar_ : f64 = 0 as f64;
       let mut _ref_nummem_ : libc::int32_t = 0 as libc::int32_t;
       let tmp_var_1__ = self.get_cone_info(k_).2;
-      if submem_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - submem_.len(); submem_.reserve(_resv) } 
+      if submem_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'submem_' is too short in call to 'get_cone'") }
       callMSK!(MSK_getcone,self.ptr,k_ as libc::int32_t,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_,submem_.as_mut_ptr());
-      unsafe { submem_.set_len((tmp_var_1__) as usize) };
       return (_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32)
     }
     
@@ -2520,11 +2496,10 @@ impl Task
     }
     
     // getcslice
-    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : & mut Vec<f64>)
+    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : & mut [f64])
     {
-      if c_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - c_.len(); c_.reserve(_resv) } 
+      if c_.len() != ((last_ - first_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_slice'") }
       callMSK!(MSK_getcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,c_.as_mut_ptr());
-      unsafe { c_.set_len((last_ - first_) as usize) };
     }
     
     // getdimbarvarj
@@ -2560,39 +2535,35 @@ impl Task
     }
     
     // getdviolbarvar
-    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_barvar'") }
       callMSK!(MSK_getdviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getdviolcon
-    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_con'") }
       callMSK!(MSK_getdviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getdviolcones
-    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_cones'") }
       callMSK!(MSK_getdviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getdviolvar
-    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_var'") }
       callMSK!(MSK_getdviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getinfindex
@@ -2604,11 +2575,10 @@ impl Task
     }
     
     // getinfmax
-    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : & mut Vec<i32>)
+    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : & mut [i32])
     {
-      if infmax_.capacity() < ((MSK_MAX_STR_LEN) as usize) { let _resv = (MSK_MAX_STR_LEN) as usize - infmax_.len(); infmax_.reserve(_resv) } 
+      if infmax_.len() != ((MSK_MAX_STR_LEN) as usize) { panic!("Argument 'infmax_' is too short in call to 'get_inf_max'") }
       callMSK!(MSK_getinfmax,self.ptr,inftype_,infmax_.as_mut_ptr());
-      unsafe { infmax_.set_len((MSK_MAX_STR_LEN) as usize) };
     }
     
     // getinfname
@@ -2906,39 +2876,35 @@ impl Task
     }
     
     // getpviolbarvar
-    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_barvar'") }
       callMSK!(MSK_getpviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getpviolcon
-    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_con'") }
       callMSK!(MSK_getpviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getpviolcones
-    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_cones'") }
       callMSK!(MSK_getpviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getpviolvar
-    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : & Vec<i32>,viol_ : & mut Vec<f64>)
+    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
-      if viol_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - viol_.len(); viol_.reserve(_resv) } 
+      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_var'") }
       callMSK!(MSK_getpviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
-      unsafe { viol_.set_len((num_) as usize) };
     }
     
     // getqobjij
@@ -2950,96 +2916,85 @@ impl Task
     }
     
     // getreducedcosts
-    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : & mut Vec<f64>)
+    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : & mut [f64])
     {
-      if redcosts_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - redcosts_.len(); redcosts_.reserve(_resv) } 
+      if redcosts_.len() != ((last_ - first_) as usize) { panic!("Argument 'redcosts_' is too short in call to 'get_reduced_costs'") }
       callMSK!(MSK_getreducedcosts,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,redcosts_.as_mut_ptr());
-      unsafe { redcosts_.set_len((last_ - first_) as usize) };
     }
     
     // getskc
-    pub fn get_skc(&self,whichsol_ : i32,skc_ : & mut Vec<i32>)
+    pub fn get_skc(&self,whichsol_ : i32,skc_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_con();
-      if skc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - skc_.len(); skc_.reserve(_resv) } 
+      if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc'") }
       callMSK!(MSK_getskc,self.ptr,whichsol_,skc_.as_mut_ptr());
-      unsafe { skc_.set_len((tmp_var_1__) as usize) };
     }
     
     // getskcslice
-    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & mut Vec<i32>)
+    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & mut [i32])
     {
-      if skc_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - skc_.len(); skc_.reserve(_resv) } 
+      if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc_slice'") }
       callMSK!(MSK_getskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_mut_ptr());
-      unsafe { skc_.set_len((last_ - first_) as usize) };
     }
     
     // getskx
-    pub fn get_skx(&self,whichsol_ : i32,skx_ : & mut Vec<i32>)
+    pub fn get_skx(&self,whichsol_ : i32,skx_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_var();
-      if skx_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - skx_.len(); skx_.reserve(_resv) } 
+      if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx'") }
       callMSK!(MSK_getskx,self.ptr,whichsol_,skx_.as_mut_ptr());
-      unsafe { skx_.set_len((tmp_var_1__) as usize) };
     }
     
     // getskxslice
-    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & mut Vec<i32>)
+    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & mut [i32])
     {
-      if skx_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - skx_.len(); skx_.reserve(_resv) } 
+      if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx_slice'") }
       callMSK!(MSK_getskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_mut_ptr());
-      unsafe { skx_.set_len((last_ - first_) as usize) };
     }
     
     // getslc
-    pub fn get_slc(&self,whichsol_ : i32,slc_ : & mut Vec<f64>)
+    pub fn get_slc(&self,whichsol_ : i32,slc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
-      if slc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - slc_.len(); slc_.reserve(_resv) } 
+      if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc'") }
       callMSK!(MSK_getslc,self.ptr,whichsol_,slc_.as_mut_ptr());
-      unsafe { slc_.set_len((tmp_var_1__) as usize) };
     }
     
     // getslcslice
-    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & mut Vec<f64>)
+    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & mut [f64])
     {
-      if slc_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - slc_.len(); slc_.reserve(_resv) } 
+      if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc_slice'") }
       callMSK!(MSK_getslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_mut_ptr());
-      unsafe { slc_.set_len((last_ - first_) as usize) };
     }
     
     // getslx
-    pub fn get_slx(&self,whichsol_ : i32,slx_ : & mut Vec<f64>)
+    pub fn get_slx(&self,whichsol_ : i32,slx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
-      if slx_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - slx_.len(); slx_.reserve(_resv) } 
+      if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx'") }
       callMSK!(MSK_getslx,self.ptr,whichsol_,slx_.as_mut_ptr());
-      unsafe { slx_.set_len((tmp_var_1__) as usize) };
     }
     
     // getslxslice
-    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & mut Vec<f64>)
+    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & mut [f64])
     {
-      if slx_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - slx_.len(); slx_.reserve(_resv) } 
+      if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx_slice'") }
       callMSK!(MSK_getslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_mut_ptr());
-      unsafe { slx_.set_len((last_ - first_) as usize) };
     }
     
     // getsnx
-    pub fn get_snx(&self,whichsol_ : i32,snx_ : & mut Vec<f64>)
+    pub fn get_snx(&self,whichsol_ : i32,snx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
-      if snx_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - snx_.len(); snx_.reserve(_resv) } 
+      if snx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx'") }
       callMSK!(MSK_getsnx,self.ptr,whichsol_,snx_.as_mut_ptr());
-      unsafe { snx_.set_len((tmp_var_1__) as usize) };
     }
     
     // getsnxslice
-    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & mut Vec<f64>)
+    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & mut [f64])
     {
-      if snx_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - snx_.len(); snx_.reserve(_resv) } 
+      if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx_slice'") }
       callMSK!(MSK_getsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_mut_ptr());
-      unsafe { snx_.set_len((last_ - first_) as usize) };
     }
     
     // getsolsta
@@ -3051,44 +3006,33 @@ impl Task
     }
     
     // getsolution
-    pub fn get_solution(&self,whichsol_ : i32,skc_ : & mut Vec<i32>,skx_ : & mut Vec<i32>,skn_ : & mut Vec<i32>,xc_ : & mut Vec<f64>,xx_ : & mut Vec<f64>,y_ : & mut Vec<f64>,slc_ : & mut Vec<f64>,suc_ : & mut Vec<f64>,slx_ : & mut Vec<f64>,sux_ : & mut Vec<f64>,snx_ : & mut Vec<f64>) -> (i32,i32)
+    pub fn get_solution(&self,whichsol_ : i32,skc_ : & mut [i32],skx_ : & mut [i32],skn_ : & mut [i32],xc_ : & mut [f64],xx_ : & mut [f64],y_ : & mut [f64],slc_ : & mut [f64],suc_ : & mut [f64],slx_ : & mut [f64],sux_ : & mut [f64],snx_ : & mut [f64]) -> (i32,i32)
     {
       let mut _ref_prosta_ : i32 = 0 as i32;
       let mut _ref_solsta_ : i32 = 0 as i32;
       let tmp_var_1__ = self.get_num_con();
-      if skc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - skc_.len(); skc_.reserve(_resv) } 
+      if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'get_solution'") }
       let tmp_var_3__ = self.get_num_var();
-      if skx_.capacity() < ((tmp_var_3__) as usize) { let _resv = (tmp_var_3__) as usize - skx_.len(); skx_.reserve(_resv) } 
+      if skx_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'skx_' is too short in call to 'get_solution'") }
       let tmp_var_5__ = self.get_num_cone();
-      if skn_.capacity() < ((tmp_var_5__) as usize) { let _resv = (tmp_var_5__) as usize - skn_.len(); skn_.reserve(_resv) } 
+      if skn_.len() != ((tmp_var_5__) as usize) { panic!("Argument 'skn_' is too short in call to 'get_solution'") }
       let tmp_var_7__ = self.get_num_con();
-      if xc_.capacity() < ((tmp_var_7__) as usize) { let _resv = (tmp_var_7__) as usize - xc_.len(); xc_.reserve(_resv) } 
+      if xc_.len() != ((tmp_var_7__) as usize) { panic!("Argument 'xc_' is too short in call to 'get_solution'") }
       let tmp_var_9__ = self.get_num_var();
-      if xx_.capacity() < ((tmp_var_9__) as usize) { let _resv = (tmp_var_9__) as usize - xx_.len(); xx_.reserve(_resv) } 
+      if xx_.len() != ((tmp_var_9__) as usize) { panic!("Argument 'xx_' is too short in call to 'get_solution'") }
       let tmp_var_11__ = self.get_num_con();
-      if y_.capacity() < ((tmp_var_11__) as usize) { let _resv = (tmp_var_11__) as usize - y_.len(); y_.reserve(_resv) } 
+      if y_.len() != ((tmp_var_11__) as usize) { panic!("Argument 'y_' is too short in call to 'get_solution'") }
       let tmp_var_13__ = self.get_num_con();
-      if slc_.capacity() < ((tmp_var_13__) as usize) { let _resv = (tmp_var_13__) as usize - slc_.len(); slc_.reserve(_resv) } 
+      if slc_.len() != ((tmp_var_13__) as usize) { panic!("Argument 'slc_' is too short in call to 'get_solution'") }
       let tmp_var_15__ = self.get_num_con();
-      if suc_.capacity() < ((tmp_var_15__) as usize) { let _resv = (tmp_var_15__) as usize - suc_.len(); suc_.reserve(_resv) } 
+      if suc_.len() != ((tmp_var_15__) as usize) { panic!("Argument 'suc_' is too short in call to 'get_solution'") }
       let tmp_var_17__ = self.get_num_var();
-      if slx_.capacity() < ((tmp_var_17__) as usize) { let _resv = (tmp_var_17__) as usize - slx_.len(); slx_.reserve(_resv) } 
+      if slx_.len() != ((tmp_var_17__) as usize) { panic!("Argument 'slx_' is too short in call to 'get_solution'") }
       let tmp_var_19__ = self.get_num_var();
-      if sux_.capacity() < ((tmp_var_19__) as usize) { let _resv = (tmp_var_19__) as usize - sux_.len(); sux_.reserve(_resv) } 
+      if sux_.len() != ((tmp_var_19__) as usize) { panic!("Argument 'sux_' is too short in call to 'get_solution'") }
       let tmp_var_21__ = self.get_num_cone();
-      if snx_.capacity() < ((tmp_var_21__) as usize) { let _resv = (tmp_var_21__) as usize - snx_.len(); snx_.reserve(_resv) } 
+      if snx_.len() != ((tmp_var_21__) as usize) { panic!("Argument 'snx_' is too short in call to 'get_solution'") }
       callMSK!(MSK_getsolution,self.ptr,whichsol_,& mut _ref_prosta_,& mut _ref_solsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr());
-      unsafe { skc_.set_len((tmp_var_1__) as usize) };
-      unsafe { skx_.set_len((tmp_var_3__) as usize) };
-      unsafe { skn_.set_len((tmp_var_5__) as usize) };
-      unsafe { xc_.set_len((tmp_var_7__) as usize) };
-      unsafe { xx_.set_len((tmp_var_9__) as usize) };
-      unsafe { y_.set_len((tmp_var_11__) as usize) };
-      unsafe { slc_.set_len((tmp_var_13__) as usize) };
-      unsafe { suc_.set_len((tmp_var_15__) as usize) };
-      unsafe { slx_.set_len((tmp_var_17__) as usize) };
-      unsafe { sux_.set_len((tmp_var_19__) as usize) };
-      unsafe { snx_.set_len((tmp_var_21__) as usize) };
       return (_ref_prosta_ as i32,_ref_solsta_ as i32)
     }
     
@@ -3123,25 +3067,21 @@ impl Task
     }
     
     // getsolutionslice
-    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : & mut Vec<f64>)
+    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : & mut [f64])
     {
-      if values_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - values_.len(); values_.reserve(_resv) } 
+      if values_.len() != ((last_ - first_) as usize) { panic!("Argument 'values_' is too short in call to 'get_solution_slice'") }
       callMSK!(MSK_getsolutionslice,self.ptr,whichsol_,solitem_,first_ as libc::int32_t,last_ as libc::int32_t,values_.as_mut_ptr());
-      unsafe { values_.set_len((last_ - first_) as usize) };
     }
     
     // getsparsesymmat
-    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : & mut Vec<i32>,subj_ : & mut Vec<i32>,valij_ : & mut Vec<f64>)
+    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : & mut [i32],subj_ : & mut [i32],valij_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_sym_mat_info(idx_).1;
       let maxlen_ = tmp_var_1__;
-      if subi_.capacity() < ((maxlen_) as usize) { let _resv = (maxlen_) as usize - subi_.len(); subi_.reserve(_resv) } 
-      if subj_.capacity() < ((maxlen_) as usize) { let _resv = (maxlen_) as usize - subj_.len(); subj_.reserve(_resv) } 
-      if valij_.capacity() < ((maxlen_) as usize) { let _resv = (maxlen_) as usize - valij_.len(); valij_.reserve(_resv) } 
+      if subi_.len() != ((maxlen_) as usize) { panic!("Argument 'subi_' is too short in call to 'get_sparse_sym_mat'") }
+      if subj_.len() != ((maxlen_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_sparse_sym_mat'") }
+      if valij_.len() != ((maxlen_) as usize) { panic!("Argument 'valij_' is too short in call to 'get_sparse_sym_mat'") }
       callMSK!(MSK_getsparsesymmat,self.ptr,idx_ as libc::int64_t,maxlen_ as libc::int64_t,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr());
-      unsafe { subi_.set_len((maxlen_) as usize) };
-      unsafe { subj_.set_len((maxlen_) as usize) };
-      unsafe { valij_.set_len((maxlen_) as usize) };
     }
     
     // getstrparam
@@ -3165,37 +3105,33 @@ impl Task
     }
     
     // getsuc
-    pub fn get_suc(&self,whichsol_ : i32,suc_ : & mut Vec<f64>)
+    pub fn get_suc(&self,whichsol_ : i32,suc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
-      if suc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - suc_.len(); suc_.reserve(_resv) } 
+      if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc'") }
       callMSK!(MSK_getsuc,self.ptr,whichsol_,suc_.as_mut_ptr());
-      unsafe { suc_.set_len((tmp_var_1__) as usize) };
     }
     
     // getsucslice
-    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & mut Vec<f64>)
+    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & mut [f64])
     {
-      if suc_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - suc_.len(); suc_.reserve(_resv) } 
+      if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc_slice'") }
       callMSK!(MSK_getsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_mut_ptr());
-      unsafe { suc_.set_len((last_ - first_) as usize) };
     }
     
     // getsux
-    pub fn get_sux(&self,whichsol_ : i32,sux_ : & mut Vec<f64>)
+    pub fn get_sux(&self,whichsol_ : i32,sux_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
-      if sux_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - sux_.len(); sux_.reserve(_resv) } 
+      if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux'") }
       callMSK!(MSK_getsux,self.ptr,whichsol_,sux_.as_mut_ptr());
-      unsafe { sux_.set_len((tmp_var_1__) as usize) };
     }
     
     // getsuxslice
-    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & mut Vec<f64>)
+    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & mut [f64])
     {
-      if sux_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - sux_.len(); sux_.reserve(_resv) } 
+      if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux_slice'") }
       callMSK!(MSK_getsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_mut_ptr());
-      unsafe { sux_.set_len((last_ - first_) as usize) };
     }
     
     // getsymmatinfo
@@ -3238,15 +3174,12 @@ impl Task
     }
     
     // getvarboundslice
-    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut Vec<i32>,bl_ : & mut Vec<f64>,bu_ : & mut Vec<f64>)
+    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
-      if bk_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bk_.len(); bk_.reserve(_resv) } 
-      if bl_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bl_.len(); bl_.reserve(_resv) } 
-      if bu_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - bu_.len(); bu_.reserve(_resv) } 
+      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_var_bound_slice'") }
+      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_var_bound_slice'") }
+      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_var_bound_slice'") }
       callMSK!(MSK_getvarboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
-      unsafe { bk_.set_len((last_ - first_) as usize) };
-      unsafe { bl_.set_len((last_ - first_) as usize) };
-      unsafe { bu_.set_len((last_ - first_) as usize) };
     }
     
     // getvarbranchdir
@@ -3311,76 +3244,68 @@ impl Task
     }
     
     // getvartypelist
-    pub fn get_var_type_list(&self,subj_ : & Vec<i32>,vartype_ : & mut Vec<i32>)
+    pub fn get_var_type_list(&self,subj_ : & [i32],vartype_ : & mut [i32])
     {
       let mut num_ = subj_.len();
-      if vartype_.capacity() < ((num_) as usize) { let _resv = (num_) as usize - vartype_.len(); vartype_.reserve(_resv) } 
+      if vartype_.len() != ((num_) as usize) { panic!("Argument 'vartype_' is too short in call to 'get_var_type_list'") }
       callMSK!(MSK_getvartypelist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),vartype_.as_mut_ptr());
-      unsafe { vartype_.set_len((num_) as usize) };
     }
     
     // getxc
-    pub fn get_xc(&self,whichsol_ : i32,xc_ : & mut Vec<f64>)
+    pub fn get_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
-      if xc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - xc_.len(); xc_.reserve(_resv) } 
+      if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc'") }
       callMSK!(MSK_getxc,self.ptr,whichsol_,xc_.as_mut_ptr());
-      unsafe { xc_.set_len((tmp_var_1__) as usize) };
     }
     
     // getxcslice
-    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & mut Vec<f64>)
+    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & mut [f64])
     {
-      if xc_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - xc_.len(); xc_.reserve(_resv) } 
+      if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc_slice'") }
       callMSK!(MSK_getxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_mut_ptr());
-      unsafe { xc_.set_len((last_ - first_) as usize) };
     }
     
     // getxx
-    pub fn get_xx(&self,whichsol_ : i32,xx_ : & mut Vec<f64>)
+    pub fn get_xx(&self,whichsol_ : i32,xx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
-      if xx_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - xx_.len(); xx_.reserve(_resv) } 
+      if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx'") }
       callMSK!(MSK_getxx,self.ptr,whichsol_,xx_.as_mut_ptr());
-      unsafe { xx_.set_len((tmp_var_1__) as usize) };
     }
     
     // getxxslice
-    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & mut Vec<f64>)
+    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & mut [f64])
     {
-      if xx_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - xx_.len(); xx_.reserve(_resv) } 
+      if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx_slice'") }
       callMSK!(MSK_getxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_mut_ptr());
-      unsafe { xx_.set_len((last_ - first_) as usize) };
     }
     
     // gety
-    pub fn get_y(&self,whichsol_ : i32,y_ : & mut Vec<f64>)
+    pub fn get_y(&self,whichsol_ : i32,y_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
-      if y_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - y_.len(); y_.reserve(_resv) } 
+      if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'get_y'") }
       callMSK!(MSK_gety,self.ptr,whichsol_,y_.as_mut_ptr());
-      unsafe { y_.set_len((tmp_var_1__) as usize) };
     }
     
     // getyslice
-    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & mut Vec<f64>)
+    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & mut [f64])
     {
-      if y_.capacity() < ((last_ - first_) as usize) { let _resv = (last_ - first_) as usize - y_.len(); y_.reserve(_resv) } 
+      if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'get_y_slice'") }
       callMSK!(MSK_getyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_mut_ptr());
-      unsafe { y_.set_len((last_ - first_) as usize) };
     }
     
     // initbasissolve
-    pub fn init_basis_solve(&self,basis_ : & mut Vec<i32>)
+    pub fn init_basis_solve(&self,basis_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_con();
-      if basis_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - basis_.len(); basis_.reserve(_resv) } 
+      if basis_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'basis_' is too short in call to 'init_basis_solve'") }
       callMSK!(MSK_initbasissolve,self.ptr,basis_.as_mut_ptr());
-      unsafe { basis_.set_len((tmp_var_1__) as usize) };
     }
     
     // inputdata64
-    pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & Vec<f64>,cfix_ : f64,aptrb_ : & Vec<i64>,aptre_ : & Vec<i64>,asub_ : & Vec<i32>,aval_ : & Vec<f64>,bkc_ : & Vec<i32>,blc_ : & Vec<f64>,buc_ : & Vec<f64>,bkx_ : & Vec<i32>,blx_ : & Vec<f64>,bux_ : & Vec<f64>)
+    pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
     {
       let mut numcon_ = buc_.len();
       if blc_.len() > numcon_ { numcon_ = blc_.len() };
@@ -3445,7 +3370,7 @@ impl Task
     }
     
     // primalrepair
-    pub fn primal_repair(&self,wlc_ : & Vec<f64>,wuc_ : & Vec<f64>,wlx_ : & Vec<f64>,wux_ : & Vec<f64>)
+    pub fn primal_repair(&self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
       if wlc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'wlc_' is too short in call to 'primal_repair'") }
@@ -3459,29 +3384,21 @@ impl Task
     }
     
     // primalsensitivity
-    pub fn primal_sensitivity(&self,subi_ : & Vec<i32>,marki_ : & Vec<i32>,subj_ : & Vec<i32>,markj_ : & Vec<i32>,leftpricei_ : & mut Vec<f64>,rightpricei_ : & mut Vec<f64>,leftrangei_ : & mut Vec<f64>,rightrangei_ : & mut Vec<f64>,leftpricej_ : & mut Vec<f64>,rightpricej_ : & mut Vec<f64>,leftrangej_ : & mut Vec<f64>,rightrangej_ : & mut Vec<f64>)
+    pub fn primal_sensitivity(&self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
     {
       let mut numi_ = subi_.len();
       if marki_.len() > numi_ { numi_ = marki_.len() };
       let mut numj_ = subj_.len();
       if markj_.len() > numj_ { numj_ = markj_.len() };
-      if leftpricei_.capacity() < ((numi_) as usize) { let _resv = (numi_) as usize - leftpricei_.len(); leftpricei_.reserve(_resv) } 
-      if rightpricei_.capacity() < ((numi_) as usize) { let _resv = (numi_) as usize - rightpricei_.len(); rightpricei_.reserve(_resv) } 
-      if leftrangei_.capacity() < ((numi_) as usize) { let _resv = (numi_) as usize - leftrangei_.len(); leftrangei_.reserve(_resv) } 
-      if rightrangei_.capacity() < ((numi_) as usize) { let _resv = (numi_) as usize - rightrangei_.len(); rightrangei_.reserve(_resv) } 
-      if leftpricej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - leftpricej_.len(); leftpricej_.reserve(_resv) } 
-      if rightpricej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - rightpricej_.len(); rightpricej_.reserve(_resv) } 
-      if leftrangej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - leftrangej_.len(); leftrangej_.reserve(_resv) } 
-      if rightrangej_.capacity() < ((numj_) as usize) { let _resv = (numj_) as usize - rightrangej_.len(); rightrangej_.reserve(_resv) } 
+      if leftpricei_.len() != ((numi_) as usize) { panic!("Argument 'leftpricei_' is too short in call to 'primal_sensitivity'") }
+      if rightpricei_.len() != ((numi_) as usize) { panic!("Argument 'rightpricei_' is too short in call to 'primal_sensitivity'") }
+      if leftrangei_.len() != ((numi_) as usize) { panic!("Argument 'leftrangei_' is too short in call to 'primal_sensitivity'") }
+      if rightrangei_.len() != ((numi_) as usize) { panic!("Argument 'rightrangei_' is too short in call to 'primal_sensitivity'") }
+      if leftpricej_.len() != ((numj_) as usize) { panic!("Argument 'leftpricej_' is too short in call to 'primal_sensitivity'") }
+      if rightpricej_.len() != ((numj_) as usize) { panic!("Argument 'rightpricej_' is too short in call to 'primal_sensitivity'") }
+      if leftrangej_.len() != ((numj_) as usize) { panic!("Argument 'leftrangej_' is too short in call to 'primal_sensitivity'") }
+      if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'primal_sensitivity'") }
       callMSK!(MSK_primalsensitivity,self.ptr,numi_ as libc::int32_t,subi_.as_ptr(),marki_.as_ptr(),numj_ as libc::int32_t,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
-      unsafe { leftpricei_.set_len((numi_) as usize) };
-      unsafe { rightpricei_.set_len((numi_) as usize) };
-      unsafe { leftrangei_.set_len((numi_) as usize) };
-      unsafe { rightrangei_.set_len((numi_) as usize) };
-      unsafe { leftpricej_.set_len((numj_) as usize) };
-      unsafe { rightpricej_.set_len((numj_) as usize) };
-      unsafe { leftrangej_.set_len((numj_) as usize) };
-      unsafe { rightrangej_.set_len((numj_) as usize) };
     }
     
     // probtypetostr
@@ -3503,7 +3420,7 @@ impl Task
     }
     
     // putacol
-    pub fn put_a_col(&self,j_ : i32,subj_ : & Vec<i32>,valj_ : & Vec<f64>)
+    pub fn put_a_col(&self,j_ : i32,subj_ : & [i32],valj_ : & [f64])
     {
       let mut nzj_ = subj_.len();
       if valj_.len() > nzj_ { nzj_ = valj_.len() };
@@ -3511,7 +3428,7 @@ impl Task
     }
     
     // putacollist
-    pub fn put_a_col_list(&self,sub_ : & Vec<i32>,ptrb_ : & Vec<i32>,ptre_ : & Vec<i32>,asub_ : & Vec<i32>,aval_ : & Vec<f64>)
+    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i32],ptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
@@ -3520,7 +3437,7 @@ impl Task
     }
     
     // putacolslice64
-    pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & Vec<i64>,ptre_ : & Vec<i64>,asub_ : & Vec<i32>,aval_ : & Vec<f64>)
+    pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
       if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_col_slice'") }
       if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_col_slice'") }
@@ -3534,7 +3451,7 @@ impl Task
     }
     
     // putaijlist64
-    pub fn put_aij_list(&self,subi_ : & Vec<i32>,subj_ : & Vec<i32>,valij_ : & Vec<f64>)
+    pub fn put_aij_list(&self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64])
     {
       let mut num_ = subi_.len();
       if subj_.len() > num_ { num_ = subj_.len() };
@@ -3543,7 +3460,7 @@ impl Task
     }
     
     // putarow
-    pub fn put_a_row(&self,i_ : i32,subi_ : & Vec<i32>,vali_ : & Vec<f64>)
+    pub fn put_a_row(&self,i_ : i32,subi_ : & [i32],vali_ : & [f64])
     {
       let mut nzi_ = subi_.len();
       if vali_.len() > nzi_ { nzi_ = vali_.len() };
@@ -3551,7 +3468,7 @@ impl Task
     }
     
     // putarowlist
-    pub fn put_a_row_list(&self,sub_ : & Vec<i32>,aptrb_ : & Vec<i32>,aptre_ : & Vec<i32>,asub_ : & Vec<i32>,aval_ : & Vec<f64>)
+    pub fn put_a_row_list(&self,sub_ : & [i32],aptrb_ : & [i32],aptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
       if aptrb_.len() > num_ { num_ = aptrb_.len() };
@@ -3560,7 +3477,7 @@ impl Task
     }
     
     // putarowslice64
-    pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & Vec<i64>,ptre_ : & Vec<i64>,asub_ : & Vec<i32>,aval_ : & Vec<f64>)
+    pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
       if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_row_slice'") }
       if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_row_slice'") }
@@ -3568,7 +3485,7 @@ impl Task
     }
     
     // putbarablocktriplet
-    pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & Vec<i32>,subj_ : & Vec<i32>,subk_ : & Vec<i32>,subl_ : & Vec<i32>,valijkl_ : & Vec<f64>)
+    pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64])
     {
       if subi_.len() != ((num_) as usize) { panic!("Argument 'subi_' is too short in call to 'put_bara_block_triplet'") }
       if subj_.len() != ((num_) as usize) { panic!("Argument 'subj_' is too short in call to 'put_bara_block_triplet'") }
@@ -3579,7 +3496,7 @@ impl Task
     }
     
     // putbaraij
-    pub fn put_bar_aij(&self,i_ : i32,j_ : i32,sub_ : & Vec<i64>,weights_ : & Vec<f64>)
+    pub fn put_bar_aij(&self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64])
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
@@ -3587,7 +3504,7 @@ impl Task
     }
     
     // putbarcblocktriplet
-    pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & Vec<i32>,subk_ : & Vec<i32>,subl_ : & Vec<i32>,valjkl_ : & Vec<f64>)
+    pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64])
     {
       if subj_.len() != ((num_) as usize) { panic!("Argument 'subj_' is too short in call to 'put_barc_block_triplet'") }
       if subk_.len() != ((num_) as usize) { panic!("Argument 'subk_' is too short in call to 'put_barc_block_triplet'") }
@@ -3597,7 +3514,7 @@ impl Task
     }
     
     // putbarcj
-    pub fn put_barc_j(&self,j_ : i32,sub_ : & Vec<i64>,weights_ : & Vec<f64>)
+    pub fn put_barc_j(&self,j_ : i32,sub_ : & [i64],weights_ : & [f64])
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
@@ -3605,7 +3522,7 @@ impl Task
     }
     
     // putbarsj
-    pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & Vec<f64>)
+    pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
       if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'put_bars_j'") }
@@ -3619,7 +3536,7 @@ impl Task
     }
     
     // putbarxj
-    pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & Vec<f64>)
+    pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
       if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'put_barx_j'") }
@@ -3633,7 +3550,7 @@ impl Task
     }
     
     // putboundlist
-    pub fn put_bound_list(&self,accmode_ : i32,sub_ : & Vec<i32>,bk_ : & Vec<i32>,bl_ : & Vec<f64>,bu_ : & Vec<f64>)
+    pub fn put_bound_list(&self,accmode_ : i32,sub_ : & [i32],bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       let mut num_ = sub_.len();
       if bk_.len() > num_ { num_ = bk_.len() };
@@ -3643,7 +3560,7 @@ impl Task
     }
     
     // putboundslice
-    pub fn put_bound_slice(&self,con_ : i32,first_ : i32,last_ : i32,bk_ : & Vec<i32>,bl_ : & Vec<f64>,bu_ : & Vec<f64>)
+    pub fn put_bound_slice(&self,con_ : i32,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_bound_slice'") }
       if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'put_bound_slice'") }
@@ -3664,7 +3581,7 @@ impl Task
     }
     
     // putclist
-    pub fn put_c_list(&self,subj_ : & Vec<i32>,val_ : & Vec<f64>)
+    pub fn put_c_list(&self,subj_ : & [i32],val_ : & [f64])
     {
       let mut num_ = subj_.len();
       if val_.len() > num_ { num_ = val_.len() };
@@ -3678,7 +3595,7 @@ impl Task
     }
     
     // putconboundlist
-    pub fn put_con_bound_list(&self,sub_ : & Vec<i32>,bkc_ : & Vec<i32>,blc_ : & Vec<f64>,buc_ : & Vec<f64>)
+    pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64])
     {
       let mut num_ = sub_.len();
       if bkc_.len() > num_ { num_ = bkc_.len() };
@@ -3688,7 +3605,7 @@ impl Task
     }
     
     // putconboundslice
-    pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & Vec<i32>,bl_ : & Vec<f64>,bu_ : & Vec<f64>)
+    pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_con_bound_slice'") }
       if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'put_con_bound_slice'") }
@@ -3697,7 +3614,7 @@ impl Task
     }
     
     // putcone
-    pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & Vec<i32>)
+    pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32])
     {
       let mut nummem_ = submem_.len();
       callMSK!(MSK_putcone,self.ptr,k_ as libc::int32_t,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
@@ -3716,7 +3633,7 @@ impl Task
     }
     
     // putcslice
-    pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & Vec<f64>)
+    pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & [f64])
     {
       if slice_.len() != ((last_ - first_) as usize) { panic!("Argument 'slice_' is too short in call to 'put_c_slice'") }
       callMSK!(MSK_putcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,slice_.as_ptr());
@@ -3807,7 +3724,7 @@ impl Task
     }
     
     // putqcon
-    pub fn put_q_con(&self,qcsubk_ : & Vec<i32>,qcsubi_ : & Vec<i32>,qcsubj_ : & Vec<i32>,qcval_ : & Vec<f64>)
+    pub fn put_q_con(&self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
@@ -3816,7 +3733,7 @@ impl Task
     }
     
     // putqconk
-    pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & Vec<i32>,qcsubj_ : & Vec<i32>,qcval_ : & Vec<f64>)
+    pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
@@ -3825,7 +3742,7 @@ impl Task
     }
     
     // putqobj
-    pub fn put_q_obj(&self,qosubi_ : & Vec<i32>,qosubj_ : & Vec<i32>,qoval_ : & Vec<f64>)
+    pub fn put_q_obj(&self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64])
     {
       let mut numqonz_ = qosubi_.len();
       if qosubj_.len() > numqonz_ { numqonz_ = qosubj_.len() };
@@ -3840,7 +3757,7 @@ impl Task
     }
     
     // putskc
-    pub fn put_skc(&self,whichsol_ : i32,skc_ : & Vec<i32>)
+    pub fn put_skc(&self,whichsol_ : i32,skc_ : & [i32])
     {
       let tmp_var_1__ = self.get_num_con();
       if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc'") }
@@ -3848,14 +3765,14 @@ impl Task
     }
     
     // putskcslice
-    pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & Vec<i32>)
+    pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32])
     {
       if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc_slice'") }
       callMSK!(MSK_putskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_ptr());
     }
     
     // putskx
-    pub fn put_skx(&self,whichsol_ : i32,skx_ : & Vec<i32>)
+    pub fn put_skx(&self,whichsol_ : i32,skx_ : & [i32])
     {
       let tmp_var_1__ = self.get_num_var();
       if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx'") }
@@ -3863,14 +3780,14 @@ impl Task
     }
     
     // putskxslice
-    pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & Vec<i32>)
+    pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32])
     {
       if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx_slice'") }
       callMSK!(MSK_putskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_ptr());
     }
     
     // putslc
-    pub fn put_slc(&self,whichsol_ : i32,slc_ : & Vec<f64>)
+    pub fn put_slc(&self,whichsol_ : i32,slc_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
       if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc'") }
@@ -3878,14 +3795,14 @@ impl Task
     }
     
     // putslcslice
-    pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & Vec<f64>)
+    pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64])
     {
       if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc_slice'") }
       callMSK!(MSK_putslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_ptr());
     }
     
     // putslx
-    pub fn put_slx(&self,whichsol_ : i32,slx_ : & Vec<f64>)
+    pub fn put_slx(&self,whichsol_ : i32,slx_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
       if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx'") }
@@ -3893,14 +3810,14 @@ impl Task
     }
     
     // putslxslice
-    pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & Vec<f64>)
+    pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64])
     {
       if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx_slice'") }
       callMSK!(MSK_putslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_ptr());
     }
     
     // putsnx
-    pub fn put_snx(&self,whichsol_ : i32,sux_ : & Vec<f64>)
+    pub fn put_snx(&self,whichsol_ : i32,sux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
       if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_snx'") }
@@ -3908,14 +3825,14 @@ impl Task
     }
     
     // putsnxslice
-    pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & Vec<f64>)
+    pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64])
     {
       if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'put_snx_slice'") }
       callMSK!(MSK_putsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_ptr());
     }
     
     // putsolution
-    pub fn put_solution(&self,whichsol_ : i32,skc_ : & Vec<i32>,skx_ : & Vec<i32>,skn_ : & Vec<i32>,xc_ : & Vec<f64>,xx_ : & Vec<f64>,y_ : & Vec<f64>,slc_ : & Vec<f64>,suc_ : & Vec<f64>,slx_ : & Vec<f64>,sux_ : & Vec<f64>,snx_ : & Vec<f64>)
+    pub fn put_solution(&self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64])
     {
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
     }
@@ -3939,7 +3856,7 @@ impl Task
     }
     
     // putsuc
-    pub fn put_suc(&self,whichsol_ : i32,suc_ : & Vec<f64>)
+    pub fn put_suc(&self,whichsol_ : i32,suc_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
       if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc'") }
@@ -3947,14 +3864,14 @@ impl Task
     }
     
     // putsucslice
-    pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & Vec<f64>)
+    pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64])
     {
       if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc_slice'") }
       callMSK!(MSK_putsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_ptr());
     }
     
     // putsux
-    pub fn put_sux(&self,whichsol_ : i32,sux_ : & Vec<f64>)
+    pub fn put_sux(&self,whichsol_ : i32,sux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
       if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux'") }
@@ -3962,7 +3879,7 @@ impl Task
     }
     
     // putsuxslice
-    pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & Vec<f64>)
+    pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64])
     {
       if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux_slice'") }
       callMSK!(MSK_putsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_ptr());
@@ -3981,7 +3898,7 @@ impl Task
     }
     
     // putvarboundlist
-    pub fn put_var_bound_list(&self,sub_ : & Vec<i32>,bkx_ : & Vec<i32>,blx_ : & Vec<f64>,bux_ : & Vec<f64>)
+    pub fn put_var_bound_list(&self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
     {
       let mut num_ = sub_.len();
       if bkx_.len() > num_ { num_ = bkx_.len() };
@@ -3991,7 +3908,7 @@ impl Task
     }
     
     // putvarboundslice
-    pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & Vec<i32>,bl_ : & Vec<f64>,bu_ : & Vec<f64>)
+    pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_var_bound_slice'") }
       if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'put_var_bound_slice'") }
@@ -4018,7 +3935,7 @@ impl Task
     }
     
     // putvartypelist
-    pub fn put_var_type_list(&self,subj_ : & Vec<i32>,vartype_ : & Vec<i32>)
+    pub fn put_var_type_list(&self,subj_ : & [i32],vartype_ : & [i32])
     {
       let mut num_ = subj_.len();
       if vartype_.len() > num_ { num_ = vartype_.len() };
@@ -4026,23 +3943,22 @@ impl Task
     }
     
     // putxc
-    pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut Vec<f64>)
+    pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
-      if xc_.capacity() < ((tmp_var_1__) as usize) { let _resv = (tmp_var_1__) as usize - xc_.len(); xc_.reserve(_resv) } 
+      if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc'") }
       callMSK!(MSK_putxc,self.ptr,whichsol_,xc_.as_mut_ptr());
-      unsafe { xc_.set_len((tmp_var_1__) as usize) };
     }
     
     // putxcslice
-    pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & Vec<f64>)
+    pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64])
     {
       if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc_slice'") }
       callMSK!(MSK_putxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_ptr());
     }
     
     // putxx
-    pub fn put_xx(&self,whichsol_ : i32,xx_ : & Vec<f64>)
+    pub fn put_xx(&self,whichsol_ : i32,xx_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
       if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx'") }
@@ -4050,14 +3966,14 @@ impl Task
     }
     
     // putxxslice
-    pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & Vec<f64>)
+    pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64])
     {
       if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx_slice'") }
       callMSK!(MSK_putxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_ptr());
     }
     
     // puty
-    pub fn put_y(&self,whichsol_ : i32,y_ : & Vec<f64>)
+    pub fn put_y(&self,whichsol_ : i32,y_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
       if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'put_y'") }
@@ -4065,7 +3981,7 @@ impl Task
     }
     
     // putyslice
-    pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & Vec<f64>)
+    pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64])
     {
       if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'put_y_slice'") }
       callMSK!(MSK_putyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_ptr());
@@ -4114,28 +4030,28 @@ impl Task
     }
     
     // removebarvars
-    pub fn remove_barvars(&self,subset_ : & Vec<i32>)
+    pub fn remove_barvars(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removebarvars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
     
     // removecones
-    pub fn remove_cones(&self,subset_ : & Vec<i32>)
+    pub fn remove_cones(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removecones,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
     
     // removecons
-    pub fn remove_cons(&self,subset_ : & Vec<i32>)
+    pub fn remove_cons(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removecons,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
     
     // removevars
-    pub fn remove_vars(&self,subset_ : & Vec<i32>)
+    pub fn remove_vars(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removevars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
@@ -4192,7 +4108,7 @@ impl Task
     }
     
     // solvewithbasis
-    pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut Vec<i32>,val_ : & mut Vec<f64>) -> i32
+    pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> i32
     {
       let mut _ref_numnz_ = numnz_;
       let tmp_var_1__ = self.get_num_con();
