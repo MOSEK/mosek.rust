@@ -102,9 +102,9 @@ fn main()
     {
         mosek::MSK_SOL_STA_OPTIMAL | mosek::MSK_SOL_STA_NEAR_OPTIMAL =>
         {
-            let mut xx = Vec::new();
+            let mut xx = vec![0.0,0.0,0.0,0.0];
             task.get_xx(mosek::MSK_SOL_BAS,    /* Request the basic solution. */
-                        & mut xx);
+                        & mut xx[..]);
             println!("Optimal primal solution");
             for j in 0..numvar as usize
             {
@@ -134,4 +134,3 @@ fn main()
         }
     }
 }
-/*TAG:end-mainexample*/
