@@ -12,8 +12,6 @@ const inf : f64 = 0.0;
 
 const NUMCON : usize = 1;   /* Number of constraints.             */
 const NUMVAR : usize = 3;   /* Number of variables.               */
-const NUMANZ : usize = 3;   /* Number of non-zeros in A.           */
-const NUMQNZ : usize = 4;   /* Number of non-zeros in Q.           */
 
 fn main()
 {
@@ -46,7 +44,7 @@ fn main()
     /* Create the mosek environment. */
     let env = mosek::Env::new();
     /* Create the optimization task. */
-    let task = env.task();
+    let task = env.task::<()>();
 
     //r = MSK_linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 

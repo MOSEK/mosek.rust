@@ -1,5 +1,7 @@
 extern crate libc;
 use std::ffi::CString;
+use std::ffi::CStr;
+use libc::c_void;
 
 #[link(name = "mosek64")]
 extern
@@ -9,6 +11,14 @@ extern
     fn MSK_maketask(env : * const u8, maxnumcon : i32, maxnumvar : i32, task : * mut * const u8) -> u32;
     fn MSK_deletetask(task : * mut * const u8) -> i32;
 
+    fn MSK_linkfunctotaskstream(task        : * const u8,
+                                whichstream : i32,
+                                handle      : * const c_void,
+                                func        : extern fn (handle : * const c_void, msg : * const libc::c_char)) -> i32;
+
+    fn MSK_putcallbackfunc(task        : * const u8,
+                           func        : extern fn (task : * const c_void, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
+                           handle      : * const c_void) -> i32;
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
@@ -1811,9 +1821,13 @@ pub struct Env
     ptr : * const u8,
 }
 
-pub struct Task
+pub type CallbackType<H> = fn(&H,i32,&[f64],&[i32],&[i64]) -> bool;
+
+pub struct Task<H>
 {
-    ptr : * const u8,
+    ptr       : * const u8,
+    streamcb  : [ Option<(H,fn(&H,&String))>; 4 ],
+    valuecb   : Option<(H,CallbackType<H>)>,
 }
 
 impl Env
@@ -1836,7 +1850,7 @@ impl Env
         return Env { ptr : env };
     }
 
-    pub fn task(&self) -> Task
+    pub fn task<H>(&self) -> Task<H>
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) }
@@ -1844,10 +1858,12 @@ impl Env
             panic!("Failed: MSK_maketask");
         }
 
-        return Task { ptr : task };
+        return Task { ptr      : task,
+                      streamcb : [None,None,None,None], 
+                      valuecb  : None,};
     }
 
-    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Task
+    pub fn task_with_capacity<H>(&self, numcon : i32, numvar : i32) -> Task<H>
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, numcon,numvar, & mut task) }
@@ -1855,11 +1871,17 @@ impl Env
             panic!("Failed: MSK_maketask");
         }
 
-        return Task { ptr : task };
+        return Task { ptr      : task,
+                      streamcb : [None,None,None,None],
+                      valuecb  : None, };
     }
 
     
     // axpy
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : & [f64],y_ : & mut [f64])
     {
       if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'axpy'") }
@@ -1868,18 +1890,30 @@ impl Env
     }
     
     // checkinlicense
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn check_in_license(&self,feature_ : i32)
     {
       callMSK!(MSK_checkinlicense,self.ptr,feature_);
     }
     
     // checkoutlicense
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn checkout_license(&self,feature_ : i32)
     {
       callMSK!(MSK_checkoutlicense,self.ptr,feature_);
     }
     
     // dot
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn dot(&self,n_ : i32,x_ : & [f64],y_ : & [f64]) -> f64
     {
       if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'dot'") }
@@ -1890,12 +1924,20 @@ impl Env
     }
     
     // echointro
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn echo_intro(&self,longver_ : i32)
     {
       callMSK!(MSK_echointro,self.ptr,longver_ as libc::int32_t);
     }
     
     // gemm
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],b_ : & [f64],beta_ : f64,c_ : & mut [f64])
     {
       if a_.len() != ((m_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'gemm'") }
@@ -1905,6 +1947,10 @@ impl Env
     }
     
     // gemv
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64])
     {
       if a_.len() != ((n_ * m_) as usize) { panic!("Argument 'a_' is too short in call to 'gemv'") }
@@ -1926,12 +1972,20 @@ impl Env
     }
     
     // linkfiletoenvstream
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn linkfiletostream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
     {
       callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
     }
     
     // potrf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'potrf'") }
@@ -1939,12 +1993,20 @@ impl Env
     }
     
     // putkeepdlls
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_keep_dlls(&self,keepdlls_ : i32)
     {
       callMSK!(MSK_putkeepdlls,self.ptr,keepdlls_ as libc::int32_t);
     }
     
     // putlicensecode
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_license_code(&self,code_ : & [i32])
     {
       if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { panic!("Argument 'code_' is too short in call to 'put_license_code'") }
@@ -1952,24 +2014,40 @@ impl Env
     }
     
     // putlicensedebug
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_license_debug(&self,licdebug_ : i32)
     {
       callMSK!(MSK_putlicensedebug,self.ptr,licdebug_ as libc::int32_t);
     }
     
     // putlicensepath
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_license_path(&self,licensepath_ : &str)
     {
       callMSK!(MSK_putlicensepath,self.ptr,CString::new(licensepath_).unwrap().as_ptr());
     }
     
     // putlicensewait
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_license_wait(&self,licwait_ : i32)
     {
       callMSK!(MSK_putlicensewait,self.ptr,licwait_ as libc::int32_t);
     }
     
     // syeig
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : & [f64],w_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syeig'") }
@@ -1978,6 +2056,10 @@ impl Env
     }
     
     // syevd
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64],w_ : & mut [f64])
     {
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syevd'") }
@@ -1986,6 +2068,10 @@ impl Env
     }
     
     // syrk
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],beta_ : f64,c_ : & mut [f64])
     {
       if a_.len() != ((n_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'syrk'") }
@@ -1995,28 +2081,98 @@ impl Env
 
 }
 
-impl Task
+
+
+
+extern fn stream_callback_proxy<H>(handle : * const libc::c_void, msg : * const libc::c_char)
 {
+    let h = handle as * const (H,fn(&H,&String));
+    unsafe
+    {
+        let cstr = CStr::from_ptr(msg);
+        let cstr_bytes = cstr.to_bytes();
+        let s = String::from_utf8_lossy(cstr_bytes).into_owned();
+        (*h).1(&(*h).0,&s);
+    }
+}
+
+
+extern fn callback_proxy<H>(_       : * const c_void,
+                            handle  : * const libc::c_void,
+                            caller  : i32,
+                            douinf  : * const f64,
+                            intinf  : * const i32,
+                            lintinf : * const i64 ) -> i32
+{
+    let h = handle as * const (H,CallbackType<H>);
+    unsafe
+    {
+        let r = (*h).1(&(*h).0,
+                       caller,
+                       & std::slice::from_raw_parts(douinf, MSK_DINF_END as usize),
+                       & std::slice::from_raw_parts(intinf, MSK_IINF_END as usize),
+                       & std::slice::from_raw_parts(lintinf, MSK_LIINF_END as usize));
+        return if r { 0 } else { 1 }
+    }
+}
+
+impl<H> Task<H>
+{
+    // NOTE on callback with handles: 
+    //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
+    pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&H,&String), handle : H)
+    {
+        if whichstream >= 0 && whichstream < 4 // 
+        {
+            self.streamcb[whichstream as usize] = Some((handle,func));
+            let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
+            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy::<H>);
+        }
+    }
+
+    pub fn put_callback(& mut self,func : CallbackType<H>, handle : H)
+    {
+        self.valuecb = Some((handle,func));
+        let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
+        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy::<H>, hnd);
+    }
+
     
     // analyzenames
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn analyze_names(&self,whichstream_ : i32,nametype_ : i32)
     {
       callMSK!(MSK_analyzenames,self.ptr,whichstream_,nametype_);
     }
     
     // analyzeproblem
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn analyze_problem(&self,whichstream_ : i32)
     {
       callMSK!(MSK_analyzeproblem,self.ptr,whichstream_);
     }
     
     // analyzesolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn analyze_solution(&self,whichstream_ : i32,whichsol_ : i32)
     {
       callMSK!(MSK_analyzesolution,self.ptr,whichstream_,whichsol_);
     }
     
     // appendbarvars
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_barvars(&self,dim_ : & [i32])
     {
       let mut num_ = dim_.len();
@@ -2024,6 +2180,10 @@ impl Task
     }
     
     // appendcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & [i32])
     {
       let mut nummem_ = submem_.len();
@@ -2031,12 +2191,20 @@ impl Task
     }
     
     // appendconeseq
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_cone_seq(&self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32)
     {
       callMSK!(MSK_appendconeseq,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,j_ as libc::int32_t);
     }
     
     // appendconesseq
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_cones_seq(&self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32)
     {
       let mut num_ = ct_.len();
@@ -2046,12 +2214,20 @@ impl Task
     }
     
     // appendcons
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_cons(&self,num_ : i32)
     {
       callMSK!(MSK_appendcons,self.ptr,num_ as libc::int32_t);
     }
     
     // appendsparsesymmat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> i64
     {
       let mut nz_ = subi_.len();
@@ -2063,18 +2239,30 @@ impl Task
     }
     
     // appendstat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_stat(&self)
     {
       callMSK!(MSK_appendstat,self.ptr);
     }
     
     // appendvars
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn append_vars(&self,num_ : i32)
     {
       callMSK!(MSK_appendvars,self.ptr,num_ as libc::int32_t);
     }
     
     // basiscond
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn basis_cond(&self) -> (f64,f64)
     {
       let mut _ref_nrmbasis_ : f64 = 0 as f64;
@@ -2084,48 +2272,80 @@ impl Task
     }
     
     // checkconvexity
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn check_convexity(&self)
     {
       callMSK!(MSK_checkconvexity,self.ptr);
     }
     
     // checkmemtask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn check_mem(&self,file_ : &str,line_ : i32)
     {
       callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
     }
     
     // chgbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn chg_bound(&self,accmode_ : i32,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
     {
       callMSK!(MSK_chgbound,self.ptr,accmode_,i_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
     }
     
     // chgconbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn chg_con_bound(&self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
     {
       callMSK!(MSK_chgconbound,self.ptr,i_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
     }
     
     // chgvarbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn chg_var_bound(&self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
     {
       callMSK!(MSK_chgvarbound,self.ptr,j_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
     }
     
     // commitchanges
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn commit_changes(&self)
     {
       callMSK!(MSK_commitchanges,self.ptr);
     }
     
     // deletesolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn delete_solution(&self,whichsol_ : i32)
     {
       callMSK!(MSK_deletesolution,self.ptr,whichsol_);
     }
     
     // dualsensitivity
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn dual_sensitivity(&self,subj_ : & [i32],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
     {
       let mut numj_ = subj_.len();
@@ -2137,6 +2357,10 @@ impl Task
     }
     
     // getacol
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_col(&self,j_ : i32,subj_ : & mut [i32],valj_ : & mut [f64]) -> i32
     {
       let mut _ref_nzj_ : libc::int32_t = 0 as libc::int32_t;
@@ -2149,6 +2373,10 @@ impl Task
     }
     
     // getacolnumnz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_col_num_nz(&self,i_ : i32) -> i32
     {
       let mut _ref_nzj_ : libc::int32_t = 0 as libc::int32_t;
@@ -2157,6 +2385,10 @@ impl Task
     }
     
     // getaij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_aij(&self,i_ : i32,j_ : i32) -> f64
     {
       let mut _ref_aij_ : f64 = 0 as f64;
@@ -2165,6 +2397,10 @@ impl Task
     }
     
     // getapiecenumnz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_piece_num_nz(&self,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32) -> i32
     {
       let mut _ref_numnz_ : libc::int32_t = 0 as libc::int32_t;
@@ -2173,6 +2409,10 @@ impl Task
     }
     
     // getarow
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_row(&self,i_ : i32,subi_ : & mut [i32],vali_ : & mut [f64]) -> i32
     {
       let mut _ref_nzi_ : libc::int32_t = 0 as libc::int32_t;
@@ -2185,6 +2425,10 @@ impl Task
     }
     
     // getarownumnz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_row_num_nz(&self,i_ : i32) -> i32
     {
       let mut _ref_nzi_ : libc::int32_t = 0 as libc::int32_t;
@@ -2193,6 +2437,10 @@ impl Task
     }
     
     // getaslicenumnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_a_slice_num_nz(&self,accmode_ : i32,first_ : i32,last_ : i32) -> i64
     {
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2201,6 +2449,10 @@ impl Task
     }
     
     // getbarablocktriplet
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bara_block_triplet(&self,subi_ : & mut [i32],subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
     {
       let tmp_var_1__ = self.get_num_bara_block_triplets();
@@ -2216,6 +2468,10 @@ impl Task
     }
     
     // getbaraidx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bara_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i32,i64)
     {
       let tmp_var_1__ = self.get_bara_idx_info(idx_);
@@ -2230,6 +2486,10 @@ impl Task
     }
     
     // getbaraidxij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bara_idx_i_j(&self,idx_ : i64) -> (i32,i32)
     {
       let mut _ref_i_ : libc::int32_t = 0 as libc::int32_t;
@@ -2239,6 +2499,10 @@ impl Task
     }
     
     // getbaraidxinfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bara_idx_info(&self,idx_ : i64) -> i64
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
@@ -2247,6 +2511,10 @@ impl Task
     }
     
     // getbarasparsity
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bara_sparsity(&self,idxij_ : & mut [i64]) -> i64
     {
       let tmp_var_1__ = self.get_num_bara_nz();
@@ -2258,6 +2526,10 @@ impl Task
     }
     
     // getbarcblocktriplet
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
     {
       let tmp_var_1__ = self.get_num_barc_block_triplets();
@@ -2272,6 +2544,10 @@ impl Task
     }
     
     // getbarcidx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barc_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i64)
     {
       let tmp_var_1__ = self.get_barc_idx_info(idx_);
@@ -2285,6 +2561,10 @@ impl Task
     }
     
     // getbarcidxinfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barc_idx_info(&self,idx_ : i64) -> i64
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
@@ -2293,6 +2573,10 @@ impl Task
     }
     
     // getbarcidxj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barc_idx_j(&self,idx_ : i64) -> i32
     {
       let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
@@ -2301,6 +2585,10 @@ impl Task
     }
     
     // getbarcsparsity
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barc_sparsity(&self,idxj_ : & mut [i64]) -> i64
     {
       let tmp_var_1__ = self.get_num_barc_nz();
@@ -2312,6 +2600,10 @@ impl Task
     }
     
     // getbarsj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
@@ -2320,6 +2612,10 @@ impl Task
     }
     
     // getbarvarname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barvar_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_barvar_name_len(i_);
@@ -2331,6 +2627,10 @@ impl Task
     }
     
     // getbarvarnameindex
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barvar_name_index(&self,somename_ : &str) -> (i32,i32)
     {
       let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
@@ -2340,6 +2640,10 @@ impl Task
     }
     
     // getbarvarnamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barvar_name_len(&self,i_ : i32) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -2348,6 +2652,10 @@ impl Task
     }
     
     // getbarxj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
@@ -2356,6 +2664,10 @@ impl Task
     }
     
     // getbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bound(&self,accmode_ : i32,i_ : i32) -> (i32,f64,f64)
     {
       let mut _ref_bk_ : i32 = 0 as i32;
@@ -2366,6 +2678,10 @@ impl Task
     }
     
     // getboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_bound_slice(&self,accmode_ : i32,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_bound_slice'") }
@@ -2375,6 +2691,10 @@ impl Task
     }
     
     // getc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_c(&self,c_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -2383,6 +2703,10 @@ impl Task
     }
     
     // getcfix
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cfix(&self) -> f64
     {
       let mut _ref_cfix_ : f64 = 0 as f64;
@@ -2391,6 +2715,10 @@ impl Task
     }
     
     // getcj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_c_j(&self,j_ : i32) -> f64
     {
       let mut _ref_cj_ : f64 = 0 as f64;
@@ -2399,6 +2727,10 @@ impl Task
     }
     
     // getconbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_con_bound(&self,i_ : i32) -> (i32,f64,f64)
     {
       let mut _ref_bk_ : i32 = 0 as i32;
@@ -2409,6 +2741,10 @@ impl Task
     }
     
     // getconboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_con_bound_slice'") }
@@ -2418,6 +2754,10 @@ impl Task
     }
     
     // getcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cone(&self,k_ : i32,submem_ : & mut [i32]) -> (i32,f64,i32)
     {
       let mut _ref_ct_ : i32 = 0 as i32;
@@ -2430,6 +2770,10 @@ impl Task
     }
     
     // getconeinfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cone_info(&self,k_ : i32) -> (i32,f64,i32)
     {
       let mut _ref_ct_ : i32 = 0 as i32;
@@ -2440,6 +2784,10 @@ impl Task
     }
     
     // getconename
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cone_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_cone_name_len(i_);
@@ -2451,6 +2799,10 @@ impl Task
     }
     
     // getconenameindex
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cone_name_index(&self,somename_ : &str) -> (i32,i32)
     {
       let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
@@ -2460,6 +2812,10 @@ impl Task
     }
     
     // getconenamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_cone_name_len(&self,i_ : i32) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -2468,6 +2824,10 @@ impl Task
     }
     
     // getconname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_con_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_con_name_len(i_);
@@ -2479,6 +2839,10 @@ impl Task
     }
     
     // getconnameindex
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_con_name_index(&self,somename_ : &str) -> (i32,i32)
     {
       let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
@@ -2488,6 +2852,10 @@ impl Task
     }
     
     // getconnamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_con_name_len(&self,i_ : i32) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -2496,6 +2864,10 @@ impl Task
     }
     
     // getcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : & mut [f64])
     {
       if c_.len() != ((last_ - first_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_slice'") }
@@ -2503,6 +2875,10 @@ impl Task
     }
     
     // getdimbarvarj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dim_barvar_j(&self,j_ : i32) -> i32
     {
       let mut _ref_dimbarvarj_ : libc::int32_t = 0 as libc::int32_t;
@@ -2511,6 +2887,10 @@ impl Task
     }
     
     // getdouinf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dou_inf(&self,whichdinf_ : i32) -> f64
     {
       let mut _ref_dvalue_ : f64 = 0 as f64;
@@ -2519,6 +2899,10 @@ impl Task
     }
     
     // getdouparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dou_param(&self,param_ : i32) -> f64
     {
       let mut _ref_parvalue_ : f64 = 0 as f64;
@@ -2527,6 +2911,10 @@ impl Task
     }
     
     // getdualobj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dual_obj(&self,whichsol_ : i32) -> f64
     {
       let mut _ref_dualobj_ : f64 = 0 as f64;
@@ -2535,6 +2923,10 @@ impl Task
     }
     
     // getdviolbarvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2543,6 +2935,10 @@ impl Task
     }
     
     // getdviolcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2551,6 +2947,10 @@ impl Task
     }
     
     // getdviolcones
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2559,6 +2959,10 @@ impl Task
     }
     
     // getdviolvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2567,6 +2971,10 @@ impl Task
     }
     
     // getinfindex
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str) -> i32
     {
       let mut _ref_infindex_ : libc::int32_t = 0 as libc::int32_t;
@@ -2575,6 +2983,10 @@ impl Task
     }
     
     // getinfmax
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_inf_max(&self,inftype_ : i32,infmax_ : & mut [i32])
     {
       if infmax_.len() != ((MSK_MAX_STR_LEN) as usize) { panic!("Argument 'infmax_' is too short in call to 'get_inf_max'") }
@@ -2582,6 +2994,10 @@ impl Task
     }
     
     // getinfname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_inf_name(&self,inftype_ : i32,whichinf_ : i32) -> String
     {
       let mut _infname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -2591,6 +3007,10 @@ impl Task
     }
     
     // getintinf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_int_inf(&self,whichiinf_ : i32) -> i32
     {
       let mut _ref_ivalue_ : libc::int32_t = 0 as libc::int32_t;
@@ -2599,6 +3019,10 @@ impl Task
     }
     
     // getintparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_int_param(&self,param_ : i32) -> i32
     {
       let mut _ref_parvalue_ : libc::int32_t = 0 as libc::int32_t;
@@ -2607,6 +3031,10 @@ impl Task
     }
     
     // getlenbarvarj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_len_barvar_j(&self,j_ : i32) -> i64
     {
       let mut _ref_lenbarvarj_ : libc::int64_t = 0 as libc::int64_t;
@@ -2615,6 +3043,10 @@ impl Task
     }
     
     // getlintinf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_lint_inf(&self,whichliinf_ : i32) -> i64
     {
       let mut _ref_ivalue_ : libc::int64_t = 0 as libc::int64_t;
@@ -2623,6 +3055,10 @@ impl Task
     }
     
     // getmaxnumanz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_a_nz(&self) -> i64
     {
       let mut _ref_maxnumanz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2631,6 +3067,10 @@ impl Task
     }
     
     // getmaxnumbarvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_barvar(&self) -> i32
     {
       let mut _ref_maxnumbarvar_ : libc::int32_t = 0 as libc::int32_t;
@@ -2639,6 +3079,10 @@ impl Task
     }
     
     // getmaxnumcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_con(&self) -> i32
     {
       let mut _ref_maxnumcon_ : libc::int32_t = 0 as libc::int32_t;
@@ -2647,6 +3091,10 @@ impl Task
     }
     
     // getmaxnumcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_cone(&self) -> i32
     {
       let mut _ref_maxnumcone_ : libc::int32_t = 0 as libc::int32_t;
@@ -2655,6 +3103,10 @@ impl Task
     }
     
     // getmaxnumqnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_q_nz(&self) -> i64
     {
       let mut _ref_maxnumqnz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2663,6 +3115,10 @@ impl Task
     }
     
     // getmaxnumvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_max_num_var(&self) -> i32
     {
       let mut _ref_maxnumvar_ : libc::int32_t = 0 as libc::int32_t;
@@ -2671,6 +3127,10 @@ impl Task
     }
     
     // getmemusagetask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_mem_usage(&self) -> (i64,i64)
     {
       let mut _ref_meminuse_ : libc::int64_t = 0 as libc::int64_t;
@@ -2680,6 +3140,10 @@ impl Task
     }
     
     // getnumanz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_a_nz(&self) -> i32
     {
       let mut _ref_numanz_ : libc::int32_t = 0 as libc::int32_t;
@@ -2688,6 +3152,10 @@ impl Task
     }
     
     // getnumanz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_a_nz_64(&self) -> i64
     {
       let mut _ref_numanz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2696,6 +3164,10 @@ impl Task
     }
     
     // getnumbarablocktriplets
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_bara_block_triplets(&self) -> i64
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
@@ -2704,6 +3176,10 @@ impl Task
     }
     
     // getnumbaranz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_bara_nz(&self) -> i64
     {
       let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2712,6 +3188,10 @@ impl Task
     }
     
     // getnumbarcblocktriplets
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_barc_block_triplets(&self) -> i64
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
@@ -2720,6 +3200,10 @@ impl Task
     }
     
     // getnumbarcnz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_barc_nz(&self) -> i64
     {
       let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2728,6 +3212,10 @@ impl Task
     }
     
     // getnumbarvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_barvar(&self) -> i32
     {
       let mut _ref_numbarvar_ : libc::int32_t = 0 as libc::int32_t;
@@ -2736,6 +3224,10 @@ impl Task
     }
     
     // getnumcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_con(&self) -> i32
     {
       let mut _ref_numcon_ : libc::int32_t = 0 as libc::int32_t;
@@ -2744,6 +3236,10 @@ impl Task
     }
     
     // getnumcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_cone(&self) -> i32
     {
       let mut _ref_numcone_ : libc::int32_t = 0 as libc::int32_t;
@@ -2752,6 +3248,10 @@ impl Task
     }
     
     // getnumconemem
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_cone_mem(&self,k_ : i32) -> i32
     {
       let mut _ref_nummem_ : libc::int32_t = 0 as libc::int32_t;
@@ -2760,6 +3260,10 @@ impl Task
     }
     
     // getnumintvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_int_var(&self) -> i32
     {
       let mut _ref_numintvar_ : libc::int32_t = 0 as libc::int32_t;
@@ -2768,6 +3272,10 @@ impl Task
     }
     
     // getnumparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_param(&self,partype_ : i32) -> i32
     {
       let mut _ref_numparam_ : libc::int32_t = 0 as libc::int32_t;
@@ -2776,6 +3284,10 @@ impl Task
     }
     
     // getnumqconknz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_q_con_k_nz(&self,k_ : i32) -> i64
     {
       let mut _ref_numqcnz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2784,6 +3296,10 @@ impl Task
     }
     
     // getnumqobjnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_q_obj_nz(&self) -> i64
     {
       let mut _ref_numqonz_ : libc::int64_t = 0 as libc::int64_t;
@@ -2792,6 +3308,10 @@ impl Task
     }
     
     // getnumsymmat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_sym_mat(&self) -> i64
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
@@ -2800,6 +3320,10 @@ impl Task
     }
     
     // getnumvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_num_var(&self) -> i32
     {
       let mut _ref_numvar_ : libc::int32_t = 0 as libc::int32_t;
@@ -2808,6 +3332,10 @@ impl Task
     }
     
     // getobjname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_obj_name(&self) -> String
     {
       let tmp_var_3__ = self.get_obj_name_len();
@@ -2819,6 +3347,10 @@ impl Task
     }
     
     // getobjnamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_obj_name_len(&self) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -2827,6 +3359,10 @@ impl Task
     }
     
     // getobjsense
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_obj_sense(&self) -> i32
     {
       let mut _ref_sense_ : i32 = 0 as i32;
@@ -2835,6 +3371,10 @@ impl Task
     }
     
     // getparammax
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_param_max(&self,partype_ : i32) -> i32
     {
       let mut _ref_parammax_ : libc::int32_t = 0 as libc::int32_t;
@@ -2843,6 +3383,10 @@ impl Task
     }
     
     // getparamname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_param_name(&self,partype_ : i32,param_ : i32) -> String
     {
       let mut _parname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -2852,6 +3396,10 @@ impl Task
     }
     
     // getprimalobj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_primal_obj(&self,whichsol_ : i32) -> f64
     {
       let mut _ref_primalobj_ : f64 = 0 as f64;
@@ -2860,6 +3408,10 @@ impl Task
     }
     
     // getprobtype
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_prob_type(&self) -> i32
     {
       let mut _ref_probtype_ : i32 = 0 as i32;
@@ -2868,6 +3420,10 @@ impl Task
     }
     
     // getprosta
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_pro_sta(&self,whichsol_ : i32) -> i32
     {
       let mut _ref_prosta_ : i32 = 0 as i32;
@@ -2876,6 +3432,10 @@ impl Task
     }
     
     // getpviolbarvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2884,6 +3444,10 @@ impl Task
     }
     
     // getpviolcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2892,6 +3456,10 @@ impl Task
     }
     
     // getpviolcones
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2900,6 +3468,10 @@ impl Task
     }
     
     // getpviolvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
     {
       let mut num_ = sub_.len();
@@ -2908,6 +3480,10 @@ impl Task
     }
     
     // getqobjij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_q_obj_i_j(&self,i_ : i32,j_ : i32) -> f64
     {
       let mut _ref_qoij_ : f64 = 0 as f64;
@@ -2916,6 +3492,10 @@ impl Task
     }
     
     // getreducedcosts
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : & mut [f64])
     {
       if redcosts_.len() != ((last_ - first_) as usize) { panic!("Argument 'redcosts_' is too short in call to 'get_reduced_costs'") }
@@ -2923,6 +3503,10 @@ impl Task
     }
     
     // getskc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_skc(&self,whichsol_ : i32,skc_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -2931,6 +3515,10 @@ impl Task
     }
     
     // getskcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & mut [i32])
     {
       if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc_slice'") }
@@ -2938,6 +3526,10 @@ impl Task
     }
     
     // getskx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_skx(&self,whichsol_ : i32,skx_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -2946,6 +3538,10 @@ impl Task
     }
     
     // getskxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & mut [i32])
     {
       if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx_slice'") }
@@ -2953,6 +3549,10 @@ impl Task
     }
     
     // getslc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_slc(&self,whichsol_ : i32,slc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -2961,6 +3561,10 @@ impl Task
     }
     
     // getslcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & mut [f64])
     {
       if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc_slice'") }
@@ -2968,6 +3572,10 @@ impl Task
     }
     
     // getslx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_slx(&self,whichsol_ : i32,slx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -2976,6 +3584,10 @@ impl Task
     }
     
     // getslxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & mut [f64])
     {
       if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx_slice'") }
@@ -2983,6 +3595,10 @@ impl Task
     }
     
     // getsnx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_snx(&self,whichsol_ : i32,snx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -2991,6 +3607,10 @@ impl Task
     }
     
     // getsnxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & mut [f64])
     {
       if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx_slice'") }
@@ -2998,6 +3618,10 @@ impl Task
     }
     
     // getsolsta
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_sol_sta(&self,whichsol_ : i32) -> i32
     {
       let mut _ref_solsta_ : i32 = 0 as i32;
@@ -3006,6 +3630,10 @@ impl Task
     }
     
     // getsolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_solution(&self,whichsol_ : i32,skc_ : & mut [i32],skx_ : & mut [i32],skn_ : & mut [i32],xc_ : & mut [f64],xx_ : & mut [f64],y_ : & mut [f64],slc_ : & mut [f64],suc_ : & mut [f64],slx_ : & mut [f64],sux_ : & mut [f64],snx_ : & mut [f64]) -> (i32,i32)
     {
       let mut _ref_prosta_ : i32 = 0 as i32;
@@ -3037,6 +3665,10 @@ impl Task
     }
     
     // getsolutioni
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_solution_i(&self,accmode_ : i32,i_ : i32,whichsol_ : i32) -> (i32,f64,f64,f64,f64)
     {
       let mut _ref_sk_ : i32 = 0 as i32;
@@ -3049,6 +3681,10 @@ impl Task
     }
     
     // getsolutioninfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_solution_info(&self,whichsol_ : i32) -> (f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64)
     {
       let mut _ref_pobj_ : f64 = 0 as f64;
@@ -3067,6 +3703,10 @@ impl Task
     }
     
     // getsolutionslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : & mut [f64])
     {
       if values_.len() != ((last_ - first_) as usize) { panic!("Argument 'values_' is too short in call to 'get_solution_slice'") }
@@ -3074,6 +3714,10 @@ impl Task
     }
     
     // getsparsesymmat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : & mut [i32],subj_ : & mut [i32],valij_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_sym_mat_info(idx_).1;
@@ -3085,6 +3729,10 @@ impl Task
     }
     
     // getstrparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_str_param(&self,param_ : i32) -> (i32,String)
     {
       let tmp_var_3__ = self.get_str_param_len(param_);
@@ -3097,6 +3745,10 @@ impl Task
     }
     
     // getstrparamlen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_str_param_len(&self,param_ : i32) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -3105,6 +3757,10 @@ impl Task
     }
     
     // getsuc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_suc(&self,whichsol_ : i32,suc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3113,6 +3769,10 @@ impl Task
     }
     
     // getsucslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & mut [f64])
     {
       if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc_slice'") }
@@ -3120,6 +3780,10 @@ impl Task
     }
     
     // getsux
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_sux(&self,whichsol_ : i32,sux_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3128,6 +3792,10 @@ impl Task
     }
     
     // getsuxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & mut [f64])
     {
       if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux_slice'") }
@@ -3135,6 +3803,10 @@ impl Task
     }
     
     // getsymmatinfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_sym_mat_info(&self,idx_ : i64) -> (i32,i64,i32)
     {
       let mut _ref_dim_ : libc::int32_t = 0 as libc::int32_t;
@@ -3145,6 +3817,10 @@ impl Task
     }
     
     // gettaskname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_task_name(&self) -> String
     {
       let tmp_var_3__ = self.get_task_name_len();
@@ -3156,6 +3832,10 @@ impl Task
     }
     
     // gettasknamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_task_name_len(&self) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -3164,6 +3844,10 @@ impl Task
     }
     
     // getvarbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_bound(&self,i_ : i32) -> (i32,f64,f64)
     {
       let mut _ref_bk_ : i32 = 0 as i32;
@@ -3174,6 +3858,10 @@ impl Task
     }
     
     // getvarboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_var_bound_slice'") }
@@ -3183,6 +3871,10 @@ impl Task
     }
     
     // getvarbranchdir
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_branch_dir(&self,j_ : i32) -> i32
     {
       let mut _ref_direction_ : i32 = 0 as i32;
@@ -3191,6 +3883,10 @@ impl Task
     }
     
     // getvarbranchorder
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_branch_order(&self,j_ : i32) -> (i32,i32)
     {
       let mut _ref_priority_ : libc::int32_t = 0 as libc::int32_t;
@@ -3200,6 +3896,10 @@ impl Task
     }
     
     // getvarbranchpri
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_branch_pri(&self,j_ : i32) -> i32
     {
       let mut _ref_priority_ : libc::int32_t = 0 as libc::int32_t;
@@ -3208,6 +3908,10 @@ impl Task
     }
     
     // getvarname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_name(&self,j_ : i32) -> String
     {
       let tmp_var_3__ = self.get_var_name_len(j_);
@@ -3219,6 +3923,10 @@ impl Task
     }
     
     // getvarnameindex
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_name_index(&self,somename_ : &str) -> (i32,i32)
     {
       let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
@@ -3228,6 +3936,10 @@ impl Task
     }
     
     // getvarnamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_name_len(&self,i_ : i32) -> i32
     {
       let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
@@ -3236,6 +3948,10 @@ impl Task
     }
     
     // getvartype
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_type(&self,j_ : i32) -> i32
     {
       let mut _ref_vartype_ : i32 = 0 as i32;
@@ -3244,6 +3960,10 @@ impl Task
     }
     
     // getvartypelist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_var_type_list(&self,subj_ : & [i32],vartype_ : & mut [i32])
     {
       let mut num_ = subj_.len();
@@ -3252,6 +3972,10 @@ impl Task
     }
     
     // getxc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3260,6 +3984,10 @@ impl Task
     }
     
     // getxcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & mut [f64])
     {
       if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc_slice'") }
@@ -3267,6 +3995,10 @@ impl Task
     }
     
     // getxx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_xx(&self,whichsol_ : i32,xx_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3275,6 +4007,10 @@ impl Task
     }
     
     // getxxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & mut [f64])
     {
       if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx_slice'") }
@@ -3282,6 +4018,10 @@ impl Task
     }
     
     // gety
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_y(&self,whichsol_ : i32,y_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3290,6 +4030,10 @@ impl Task
     }
     
     // getyslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & mut [f64])
     {
       if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'get_y_slice'") }
@@ -3297,6 +4041,10 @@ impl Task
     }
     
     // initbasissolve
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn init_basis_solve(&self,basis_ : & mut [i32])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3305,6 +4053,10 @@ impl Task
     }
     
     // inputdata64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
     {
       let mut numcon_ = buc_.len();
@@ -3320,6 +4072,10 @@ impl Task
     }
     
     // isdouparname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn is_dou_par_name(&self,parname_ : &str) -> i32
     {
       let mut _ref_param_ : i32 = 0 as i32;
@@ -3328,6 +4084,10 @@ impl Task
     }
     
     // isintparname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn is_int_par_name(&self,parname_ : &str) -> i32
     {
       let mut _ref_param_ : i32 = 0 as i32;
@@ -3336,6 +4096,10 @@ impl Task
     }
     
     // isstrparname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn is_str_par_name(&self,parname_ : &str) -> i32
     {
       let mut _ref_param_ : i32 = 0 as i32;
@@ -3344,24 +4108,40 @@ impl Task
     }
     
     // linkfiletotaskstream
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn link_file_to_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
     {
       callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
     }
     
     // onesolutionsummary
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32)
     {
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
     }
     
     // optimizersummary
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn optimizer_summary(&self,whichstream_ : i32)
     {
       callMSK!(MSK_optimizersummary,self.ptr,whichstream_);
     }
     
     // optimizetrm
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn optimize(&self) -> i32
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
@@ -3370,6 +4150,10 @@ impl Task
     }
     
     // primalrepair
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn primal_repair(&self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3384,6 +4168,10 @@ impl Task
     }
     
     // primalsensitivity
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn primal_sensitivity(&self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
     {
       let mut numi_ = subi_.len();
@@ -3402,6 +4190,10 @@ impl Task
     }
     
     // probtypetostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn prob_type_to_str(&self,probtype_ : i32) -> String
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -3411,6 +4203,10 @@ impl Task
     }
     
     // prostatostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn pro_sta_to_str(&self,prosta_ : i32) -> String
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -3420,6 +4216,10 @@ impl Task
     }
     
     // putacol
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_col(&self,j_ : i32,subj_ : & [i32],valj_ : & [f64])
     {
       let mut nzj_ = subj_.len();
@@ -3428,6 +4228,10 @@ impl Task
     }
     
     // putacollist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i32],ptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3437,6 +4241,10 @@ impl Task
     }
     
     // putacolslice64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
       if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_col_slice'") }
@@ -3445,12 +4253,20 @@ impl Task
     }
     
     // putaij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_aij(&self,i_ : i32,j_ : i32,aij_ : f64)
     {
       callMSK!(MSK_putaij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,aij_ as f64);
     }
     
     // putaijlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_aij_list(&self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64])
     {
       let mut num_ = subi_.len();
@@ -3460,6 +4276,10 @@ impl Task
     }
     
     // putarow
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_row(&self,i_ : i32,subi_ : & [i32],vali_ : & [f64])
     {
       let mut nzi_ = subi_.len();
@@ -3468,6 +4288,10 @@ impl Task
     }
     
     // putarowlist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_row_list(&self,sub_ : & [i32],aptrb_ : & [i32],aptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3477,6 +4301,10 @@ impl Task
     }
     
     // putarowslice64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
       if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_row_slice'") }
@@ -3485,6 +4313,10 @@ impl Task
     }
     
     // putbarablocktriplet
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64])
     {
       if subi_.len() != ((num_) as usize) { panic!("Argument 'subi_' is too short in call to 'put_bara_block_triplet'") }
@@ -3496,6 +4328,10 @@ impl Task
     }
     
     // putbaraij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bar_aij(&self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3504,6 +4340,10 @@ impl Task
     }
     
     // putbarcblocktriplet
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64])
     {
       if subj_.len() != ((num_) as usize) { panic!("Argument 'subj_' is too short in call to 'put_barc_block_triplet'") }
@@ -3514,6 +4354,10 @@ impl Task
     }
     
     // putbarcj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_barc_j(&self,j_ : i32,sub_ : & [i64],weights_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3522,6 +4366,10 @@ impl Task
     }
     
     // putbarsj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
@@ -3530,12 +4378,20 @@ impl Task
     }
     
     // putbarvarname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_barvar_name(&self,j_ : i32,name_ : &str)
     {
       callMSK!(MSK_putbarvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
     
     // putbarxj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & [f64])
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_);
@@ -3544,12 +4400,20 @@ impl Task
     }
     
     // putbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bound(&self,accmode_ : i32,i_ : i32,bk_ : i32,bl_ : f64,bu_ : f64)
     {
       callMSK!(MSK_putbound,self.ptr,accmode_,i_ as libc::int32_t,bk_,bl_ as f64,bu_ as f64);
     }
     
     // putboundlist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bound_list(&self,accmode_ : i32,sub_ : & [i32],bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3560,6 +4424,10 @@ impl Task
     }
     
     // putboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_bound_slice(&self,con_ : i32,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_bound_slice'") }
@@ -3569,18 +4437,30 @@ impl Task
     }
     
     // putcfix
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_cfix(&self,cfix_ : f64)
     {
       callMSK!(MSK_putcfix,self.ptr,cfix_ as f64);
     }
     
     // putcj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_c_j(&self,j_ : i32,cj_ : f64)
     {
       callMSK!(MSK_putcj,self.ptr,j_ as libc::int32_t,cj_ as f64);
     }
     
     // putclist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_c_list(&self,subj_ : & [i32],val_ : & [f64])
     {
       let mut num_ = subj_.len();
@@ -3589,12 +4469,20 @@ impl Task
     }
     
     // putconbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_con_bound(&self,i_ : i32,bk_ : i32,bl_ : f64,bu_ : f64)
     {
       callMSK!(MSK_putconbound,self.ptr,i_ as libc::int32_t,bk_,bl_ as f64,bu_ as f64);
     }
     
     // putconboundlist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3605,6 +4493,10 @@ impl Task
     }
     
     // putconboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_con_bound_slice'") }
@@ -3614,6 +4506,10 @@ impl Task
     }
     
     // putcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32])
     {
       let mut nummem_ = submem_.len();
@@ -3621,18 +4517,30 @@ impl Task
     }
     
     // putconename
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_cone_name(&self,j_ : i32,name_ : &str)
     {
       callMSK!(MSK_putconename,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
     
     // putconname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_con_name(&self,i_ : i32,name_ : &str)
     {
       callMSK!(MSK_putconname,self.ptr,i_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
     
     // putcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & [f64])
     {
       if slice_.len() != ((last_ - first_) as usize) { panic!("Argument 'slice_' is too short in call to 'put_c_slice'") }
@@ -3640,90 +4548,150 @@ impl Task
     }
     
     // putdouparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_dou_param(&self,param_ : i32,parvalue_ : f64)
     {
       callMSK!(MSK_putdouparam,self.ptr,param_,parvalue_ as f64);
     }
     
     // putintparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_int_param(&self,param_ : i32,parvalue_ : i32)
     {
       callMSK!(MSK_putintparam,self.ptr,param_,parvalue_ as libc::int32_t);
     }
     
     // putmaxnumanz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_a_nz(&self,maxnumanz_ : i64)
     {
       callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as libc::int64_t);
     }
     
     // putmaxnumbarvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_barvar(&self,maxnumbarvar_ : i32)
     {
       callMSK!(MSK_putmaxnumbarvar,self.ptr,maxnumbarvar_ as libc::int32_t);
     }
     
     // putmaxnumcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_con(&self,maxnumcon_ : i32)
     {
       callMSK!(MSK_putmaxnumcon,self.ptr,maxnumcon_ as libc::int32_t);
     }
     
     // putmaxnumcone
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_cone(&self,maxnumcone_ : i32)
     {
       callMSK!(MSK_putmaxnumcone,self.ptr,maxnumcone_ as libc::int32_t);
     }
     
     // putmaxnumqnz
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_q_nz(&self,maxnumqnz_ : i64)
     {
       callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as libc::int64_t);
     }
     
     // putmaxnumvar
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_max_num_var(&self,maxnumvar_ : i32)
     {
       callMSK!(MSK_putmaxnumvar,self.ptr,maxnumvar_ as libc::int32_t);
     }
     
     // putnadouparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_na_dou_param(&self,paramname_ : &str,parvalue_ : f64)
     {
       callMSK!(MSK_putnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as f64);
     }
     
     // putnaintparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_na_int_param(&self,paramname_ : &str,parvalue_ : i32)
     {
       callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as libc::int32_t);
     }
     
     // putnastrparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_na_str_param(&self,paramname_ : &str,parvalue_ : &str)
     {
       callMSK!(MSK_putnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
     }
     
     // putobjname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_obj_name(&self,objname_ : &str)
     {
       callMSK!(MSK_putobjname,self.ptr,CString::new(objname_).unwrap().as_ptr());
     }
     
     // putobjsense
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_obj_sense(&self,sense_ : i32)
     {
       callMSK!(MSK_putobjsense,self.ptr,sense_);
     }
     
     // putparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_param(&self,parname_ : &str,parvalue_ : &str)
     {
       callMSK!(MSK_putparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
     }
     
     // putqcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_q_con(&self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
     {
       let mut numqcnz_ = qcsubi_.len();
@@ -3733,6 +4701,10 @@ impl Task
     }
     
     // putqconk
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
     {
       let mut numqcnz_ = qcsubi_.len();
@@ -3742,6 +4714,10 @@ impl Task
     }
     
     // putqobj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_q_obj(&self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64])
     {
       let mut numqonz_ = qosubi_.len();
@@ -3751,12 +4727,20 @@ impl Task
     }
     
     // putqobjij
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : f64)
     {
       callMSK!(MSK_putqobjij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,qoij_ as f64);
     }
     
     // putskc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_skc(&self,whichsol_ : i32,skc_ : & [i32])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3765,6 +4749,10 @@ impl Task
     }
     
     // putskcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32])
     {
       if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc_slice'") }
@@ -3772,6 +4760,10 @@ impl Task
     }
     
     // putskx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_skx(&self,whichsol_ : i32,skx_ : & [i32])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3780,6 +4772,10 @@ impl Task
     }
     
     // putskxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32])
     {
       if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx_slice'") }
@@ -3787,6 +4783,10 @@ impl Task
     }
     
     // putslc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_slc(&self,whichsol_ : i32,slc_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3795,6 +4795,10 @@ impl Task
     }
     
     // putslcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64])
     {
       if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc_slice'") }
@@ -3802,6 +4806,10 @@ impl Task
     }
     
     // putslx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_slx(&self,whichsol_ : i32,slx_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3810,6 +4818,10 @@ impl Task
     }
     
     // putslxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64])
     {
       if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx_slice'") }
@@ -3817,6 +4829,10 @@ impl Task
     }
     
     // putsnx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_snx(&self,whichsol_ : i32,sux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3825,6 +4841,10 @@ impl Task
     }
     
     // putsnxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64])
     {
       if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'put_snx_slice'") }
@@ -3832,30 +4852,50 @@ impl Task
     }
     
     // putsolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_solution(&self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64])
     {
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
     }
     
     // putsolutioni
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_solution_i(&self,accmode_ : i32,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64)
     {
       callMSK!(MSK_putsolutioni,self.ptr,accmode_,i_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
     }
     
     // putsolutionyi
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_solution_y_i(&self,i_ : i32,whichsol_ : i32,y_ : f64)
     {
       callMSK!(MSK_putsolutionyi,self.ptr,i_ as libc::int32_t,whichsol_,y_ as f64);
     }
     
     // putstrparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_str_param(&self,param_ : i32,parvalue_ : &str)
     {
       callMSK!(MSK_putstrparam,self.ptr,param_,CString::new(parvalue_).unwrap().as_ptr());
     }
     
     // putsuc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_suc(&self,whichsol_ : i32,suc_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3864,6 +4904,10 @@ impl Task
     }
     
     // putsucslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64])
     {
       if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc_slice'") }
@@ -3871,6 +4915,10 @@ impl Task
     }
     
     // putsux
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_sux(&self,whichsol_ : i32,sux_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3879,6 +4927,10 @@ impl Task
     }
     
     // putsuxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64])
     {
       if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux_slice'") }
@@ -3886,18 +4938,30 @@ impl Task
     }
     
     // puttaskname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_task_name(&self,taskname_ : &str)
     {
       callMSK!(MSK_puttaskname,self.ptr,CString::new(taskname_).unwrap().as_ptr());
     }
     
     // putvarbound
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_bound(&self,j_ : i32,bk_ : i32,bl_ : f64,bu_ : f64)
     {
       callMSK!(MSK_putvarbound,self.ptr,j_ as libc::int32_t,bk_,bl_ as f64,bu_ as f64);
     }
     
     // putvarboundlist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_bound_list(&self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
     {
       let mut num_ = sub_.len();
@@ -3908,6 +4972,10 @@ impl Task
     }
     
     // putvarboundslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_var_bound_slice'") }
@@ -3917,24 +4985,40 @@ impl Task
     }
     
     // putvarbranchorder
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_branch_order(&self,j_ : i32,priority_ : i32,direction_ : i32)
     {
       callMSK!(MSK_putvarbranchorder,self.ptr,j_ as libc::int32_t,priority_ as libc::int32_t,direction_);
     }
     
     // putvarname
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_name(&self,j_ : i32,name_ : &str)
     {
       callMSK!(MSK_putvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
     
     // putvartype
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_type(&self,j_ : i32,vartype_ : i32)
     {
       callMSK!(MSK_putvartype,self.ptr,j_ as libc::int32_t,vartype_);
     }
     
     // putvartypelist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_var_type_list(&self,subj_ : & [i32],vartype_ : & [i32])
     {
       let mut num_ = subj_.len();
@@ -3943,6 +5027,10 @@ impl Task
     }
     
     // putxc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3951,6 +5039,10 @@ impl Task
     }
     
     // putxcslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64])
     {
       if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc_slice'") }
@@ -3958,6 +5050,10 @@ impl Task
     }
     
     // putxx
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_xx(&self,whichsol_ : i32,xx_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_var();
@@ -3966,6 +5062,10 @@ impl Task
     }
     
     // putxxslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64])
     {
       if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx_slice'") }
@@ -3973,6 +5073,10 @@ impl Task
     }
     
     // puty
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_y(&self,whichsol_ : i32,y_ : & [f64])
     {
       let tmp_var_1__ = self.get_num_con();
@@ -3981,6 +5085,10 @@ impl Task
     }
     
     // putyslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64])
     {
       if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'put_y_slice'") }
@@ -3988,48 +5096,80 @@ impl Task
     }
     
     // readbranchpriorities
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_branch_priorities(&self,filename_ : &str)
     {
       callMSK!(MSK_readbranchpriorities,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // readdataautoformat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_data(&self,filename_ : &str)
     {
       callMSK!(MSK_readdataautoformat,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // readdataformat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32)
     {
       callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
     }
     
     // readparamfile
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_param_file(&self,filename_ : &str)
     {
       callMSK!(MSK_readparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // readsolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_solution(&self,whichsol_ : i32,filename_ : &str)
     {
       callMSK!(MSK_readsolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
     }
     
     // readsummary
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_summary(&self,whichstream_ : i32)
     {
       callMSK!(MSK_readsummary,self.ptr,whichstream_);
     }
     
     // readtask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn read_task(&self,filename_ : &str)
     {
       callMSK!(MSK_readtask,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // removebarvars
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn remove_barvars(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
@@ -4037,6 +5177,10 @@ impl Task
     }
     
     // removecones
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn remove_cones(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
@@ -4044,6 +5188,10 @@ impl Task
     }
     
     // removecons
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn remove_cons(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
@@ -4051,6 +5199,10 @@ impl Task
     }
     
     // removevars
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn remove_vars(&self,subset_ : & [i32])
     {
       let mut num_ = subset_.len();
@@ -4058,24 +5210,40 @@ impl Task
     }
     
     // resizetask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn resize_task(&self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64)
     {
       callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as libc::int32_t,maxnumvar_ as libc::int32_t,maxnumcone_ as libc::int32_t,maxnumanz_ as libc::int64_t,maxnumqnz_ as libc::int64_t);
     }
     
     // sensitivityreport
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn sensitivity_report(&self,whichstream_ : i32)
     {
       callMSK!(MSK_sensitivityreport,self.ptr,whichstream_);
     }
     
     // setdefaults
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn set_defaults(&self)
     {
       callMSK!(MSK_setdefaults,self.ptr);
     }
     
     // sktostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn sk_to_str(&self,sk_ : i32) -> String
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -4085,6 +5253,10 @@ impl Task
     }
     
     // solstatostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn sol_sta_to_str(&self,solsta_ : i32) -> String
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -4094,6 +5266,10 @@ impl Task
     }
     
     // solutiondef
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn solution_def(&self,whichsol_ : i32) -> bool
     {
       let mut _ref_isdef_ : libc::int32_t = 0 as libc::int32_t;
@@ -4102,12 +5278,20 @@ impl Task
     }
     
     // solutionsummary
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn solution_summary(&self,whichstream_ : i32)
     {
       callMSK!(MSK_solutionsummary,self.ptr,whichstream_);
     }
     
     // solvewithbasis
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> i32
     {
       let mut _ref_numnz_ = numnz_;
@@ -4120,18 +5304,30 @@ impl Task
     }
     
     // startstat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn start_stat(&self)
     {
       callMSK!(MSK_startstat,self.ptr);
     }
     
     // stopstat
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn stop_stat(&self)
     {
       callMSK!(MSK_stopstat,self.ptr);
     }
     
     // strtoconetype
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn str_to_cone_type(&self,str_ : &str) -> i32
     {
       let mut _ref_conetype_ : i32 = 0 as i32;
@@ -4140,6 +5336,10 @@ impl Task
     }
     
     // strtosk
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn str_to_sk(&self,str_ : &str) -> i32
     {
       let mut _ref_sk_ : libc::int32_t = 0 as libc::int32_t;
@@ -4148,48 +5348,75 @@ impl Task
     }
     
     // toconic
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn toconic(&self)
     {
       callMSK!(MSK_toconic,self.ptr);
     }
     
     // updatesolutioninfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn update_solution_info(&self,whichsol_ : i32)
     {
       callMSK!(MSK_updatesolutioninfo,self.ptr,whichsol_);
     }
     
     // writebranchpriorities
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn write_branch_priorities(&self,filename_ : &str)
     {
       callMSK!(MSK_writebranchpriorities,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // writedata
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn write_data(&self,filename_ : &str)
     {
       callMSK!(MSK_writedata,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // writeparamfile
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn write_param_file(&self,filename_ : &str)
     {
       callMSK!(MSK_writeparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
     
     // writesolution
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn write_solution(&self,whichsol_ : i32,filename_ : &str)
     {
       callMSK!(MSK_writesolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
     }
     
     // writetask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
     pub fn write_task(&self,filename_ : &str)
     {
       callMSK!(MSK_writetask,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
 }
-
 
 impl Drop for Env
 {
@@ -4200,7 +5427,7 @@ impl Drop for Env
     }
 }
 
-impl Drop for Task
+impl<H> Drop for Task<H>
 {
     fn drop( & mut self)
     {
@@ -4212,6 +5439,10 @@ impl Drop for Task
 
 
 // getcodedesc
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
 pub fn get_code_desc(code_ : i32) -> (String,String)
 {
   let mut _symname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
@@ -4223,6 +5454,10 @@ pub fn get_code_desc(code_ : i32) -> (String,String)
 }
 
 // getversion
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
 pub fn get_version() -> (i32,i32,i32,i32)
 {
   let mut _ref_major_ : libc::int32_t = 0 as libc::int32_t;
@@ -4234,6 +5469,10 @@ pub fn get_version() -> (i32,i32,i32,i32)
 }
 
 // licensecleanup
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
 pub fn licensecleanup()
 {
   callMSK!(MSK_licensecleanup);

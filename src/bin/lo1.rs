@@ -11,6 +11,17 @@ extern crate mosek;
 
 const inf : f64 = 0.0;
 
+fn stream_func(handle : &(), msg : &String)
+{
+    print!("{}",msg);
+}
+
+fn callback_func(_ : &(), caller : i32, dinf : &[f64], iinf : &[i32], liinf : &[i64]) -> bool
+{
+    println!("caller = {}",caller);
+    true
+}
+
 fn main()
 {
     let numvar = 4;
@@ -43,7 +54,10 @@ fn main()
     /* Create the mosek environment. */
     let env = mosek::Env::new();
     /* Create the optimization task. */
-    let task = env.task();
+    let mut task = env.task::<()>();
+
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func, ());
+    task.put_callback(callback_func,());
 
     /* Directs the log task stream to the 'printstr' function. */
     //task.linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
@@ -55,7 +69,6 @@ fn main()
     /* Append 'numvar' variables.
      * The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar as i32);
-
 
     for j in 0..numvar
     {
