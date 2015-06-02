@@ -328,6 +328,7 @@ Note that the result is stored overwriting :math:`y`.
 Directs all output from a stream to a file.
 
 ..index:: new
+
 ``new()``
 ---------
 
@@ -576,6 +577,7 @@ Note that the results overwrite the matrix :math:`C`.
 
 
 .. index:: task
+
 ``task()``
 ----------
 
@@ -674,8 +676,8 @@ possibly dual) objective value and the solution status.
 
 Following parameters can be used to configure the printed statistics:
 
-* :ref:`iparam_ana_sol_basis: enables or disables printing of statistics specific to the basis solution (condition number, number of basic variables etc_)_ Default is on_
-* :coderef:`iparam.ana_sol_print_violated` enables or disables listing names of all constraints (both primal and dual) which are violated by the solution. Default is off.
+* :ref:`iparam_ana_sol_basis` enables or disables printing of statistics specific to the basis solution (condition number, number of basic variables etc.). Default is on.
+* :ref:`iparam_ana_sol_print_violated` enables or disables listing names of all constraints (both primal and dual) which are violated by the solution. Default is off.
 * :ref:`dparam_ana_sol_infeas_tol` is the tolerance defining when a constraint is considered violated. If a constraint is violated more than this, it will be listed in the summary.
 
 
@@ -5571,7 +5573,7 @@ Modifies a slice in the linear term :math:`c` in the objective using the princip
     ``handle``
         The handle object.
     ``caller``
-        An integer indicating where the callback was called from. 
+        An integer indicating where the callback was called from (see :ref:`calbackcode`). 
     ``douinf``
         Information values
     ``intinf``
@@ -6654,6 +6656,7 @@ Sets the callback function and handle for the given stream in the
 ``Task``. Note that ownership of the handle is passed to the ``Task``.
 
 ``whichstream``
+    Which stream to link to (see :ref:`streamtype`).
 ``func``
     A printer function. This takes the object specified in ``handle``
     and a string. 
