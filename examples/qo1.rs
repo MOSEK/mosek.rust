@@ -13,6 +13,11 @@ const inf : f64 = 0.0;
 const NUMCON : usize = 1;   /* Number of constraints.             */
 const NUMVAR : usize = 3;   /* Number of variables.               */
 
+fn stream_func(handle : &(), msg : &String)
+{
+    print!("{}",msg);
+}
+
 fn main()
 {
     let c = vec![ 0.0,-1.0,0.0 ];
@@ -44,7 +49,9 @@ fn main()
     /* Create the mosek environment. */
     let env = mosek::Env::new();
     /* Create the optimization task. */
-    let task = env.task::<()>();
+    let mut task = env.task::<()>();
+
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func, ());
 
     //r = MSK_linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
