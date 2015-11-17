@@ -9,7 +9,7 @@
 
 extern crate mosek;
 
-const inf : f64 = 0.0;
+const INF : f64 = 0.0;
 
 fn stream_func(handle : &(), msg : &String)
 {
@@ -44,12 +44,12 @@ fn main()
 
     /* Bounds on constraints. */
     let bkc = vec![ mosek::MSK_BK_FX, mosek::MSK_BK_LO, mosek::MSK_BK_UP ];
-    let blc = vec![ 30.0,      15.0,      -inf      ];
-    let buc = vec![ 30.0,      inf,       25.0      ];
+    let blc = vec![ 30.0,      15.0,      -INF      ];
+    let buc = vec![ 30.0,      INF,       25.0      ];
     /* Bounds on variables. */
     let bkx = vec![ mosek::MSK_BK_LO, mosek::MSK_BK_RA, mosek::MSK_BK_LO, mosek::MSK_BK_LO ];
     let blx = vec![ 0.0,       0.0,       0.0,       0.0       ];
-    let bux = vec![ inf,      10.0,       inf,       inf       ];
+    let bux = vec![ INF,      10.0,       INF,       INF       ];
 
     /* Create the mosek environment. */
     let env = mosek::Env::new();

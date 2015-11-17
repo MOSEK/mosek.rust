@@ -7,7 +7,7 @@
 
 extern crate mosek;
 
-const inf : f64 = 0.0;
+const INF : f64 = 0.0;
 
 fn stream_func(handle : &(), msg : &String)
 {
@@ -31,8 +31,8 @@ fn main()
                     mosek::MSK_BK_FR,
                     mosek::MSK_BK_FR,
                     mosek::MSK_BK_FR];
-    let blx = vec![ 0.0, 0.0, 0.0, -inf, -inf, -inf ];
-    let bux = vec![ inf, inf, inf,  inf,  inf,  inf ];
+    let blx = vec![ 0.0, 0.0, 0.0, -INF, -INF, -INF ];
+    let bux = vec![ INF, INF, INF,  INF,  INF,  INF ];
     let c   = vec![ 0.0, 0.0, 0.0,  1.0,  1.0,  1.0 ];
 
     let aptrb = vec![0, 1, 2, 3, 3, 3];

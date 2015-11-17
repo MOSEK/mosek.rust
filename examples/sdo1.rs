@@ -13,7 +13,7 @@
 
 extern crate mosek;
 
-const inf : f64 = 0.0;
+const INF : f64 = 0.0;
 
 fn stream_func(handle : &(), msg : &String)
 {
@@ -80,8 +80,8 @@ fn main()
     {
         task.put_var_bound(j as i32,
                            mosek::MSK_BK_FR,
-                           -inf,
-                           inf);
+                           -INF,
+                           INF);
     }
 
     /* Set the linear term barc_j in the objective.*/

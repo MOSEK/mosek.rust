@@ -7,7 +7,7 @@
 
 extern crate mosek;
 
-const inf : f64 = 0.0;
+const INF : f64 = 0.0;
 
 
 const NUMCON : usize = 1;   /* Number of constraints.             */
@@ -24,7 +24,7 @@ fn main()
 
     let bkc = vec![ mosek::MSK_BK_LO ];
     let blc = vec![ 1.0 ];
-    let buc = vec![ inf ];
+    let buc = vec![ INF ];
 
     let bkx = vec![ mosek::MSK_BK_LO,
                     mosek::MSK_BK_LO,
@@ -32,9 +32,9 @@ fn main()
     let blx = vec![ 0.0,
                     0.0,
                     0.0 ];
-    let bux = vec![ inf,
-                    inf,
-                    inf ];
+    let bux = vec![ INF,
+                    INF,
+                    INF ];
 
     let aptrb = vec![ 0,   1,   2 ];
     let aptre = vec![ 1,   2,   3 ];
