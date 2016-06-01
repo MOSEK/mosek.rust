@@ -119,7 +119,7 @@ fn main()
                                    & bara_j[..3],
                                    & bara_v[..3]);
 
-    task.put_bar_aij(0, 0, &[a_symmat_idx1][..], &[falpha][..]);
+    task.put_bara_ij(0, 0, &[a_symmat_idx1][..], &[falpha][..]);
 
     /* Add the second row of barA */
     let a_symmat_idx2 =
@@ -127,7 +127,7 @@ fn main()
                                    & bara_i[3..9],
                                    & bara_j[3..9],
                                    & bara_v[3..9]);
-    task.put_bar_aij(1, 0, &[a_symmat_idx2][..], &[falpha][..]);
+    task.put_bara_ij(1, 0, &[a_symmat_idx2][..], &[falpha][..]);
 
     let trmcode = task.optimize();
 
