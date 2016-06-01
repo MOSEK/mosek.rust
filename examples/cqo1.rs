@@ -126,7 +126,7 @@ fn main()
         mosek::MSK_SOL_STA_DUAL_INFEAS_CER       |
         mosek::MSK_SOL_STA_PRIM_INFEAS_CER       |
         mosek::MSK_SOL_STA_NEAR_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_NEAR_PRIM_INFEAS_CER => 
+        mosek::MSK_SOL_STA_NEAR_PRIM_INFEAS_CER =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }

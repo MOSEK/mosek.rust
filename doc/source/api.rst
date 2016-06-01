@@ -17,14 +17,14 @@ Module level functions
     pub fn get_code_desc ( code : i32 ) -> (String,String)
 
 ``code``
-    A valid |mosek| response code. 
+    A valid response code.
 *Returns:* ``(symname,str)``
     ``symname : String``
-        Symbolic name corresponding to ``code``. 
+        Symbolic name corresponding to the code.
     ``str : String``
         Obtains a short description of a response code.
 
-Obtains a short description of the meaning of the response code given by ``code``.  
+Obtains a short description of a response code.
 
 .. index:: get_version
 
@@ -47,7 +47,7 @@ Obtains a short description of the meaning of the response code given by ``code`
     ``revision : i32``
         Revision number.
 
-Obtains |mosek| version information. 
+Obtains |mosek| version information.
 
 .. index:: licensecleanup
 
@@ -61,11 +61,7 @@ Obtains |mosek| version information.
     pub fn licensecleanup (  )
 
 
-
-Stops all threads and delete all handles used by the license system. If this
-function is called, it must be called as the last |mosek| API call. No other
-|mosek| API calls are valid after this.
-
+Stops all threads and delete all handles used by the license system.
 Env methods
 ===========
 
@@ -87,13 +83,27 @@ Env methods
 ``n``
     Length of the vectors.
 ``alpha``
-    The scalar that multiplies :math:`x`.  
+    The scalar that multiplies x.
 ``x``
-    The  vector.
+    The :math:`x` vector.
 ``y``
-    The  vector.
+    The :math:`y` vector.
 
-Adds :math:`\alpha x` to :math:`y`. 
+Adds alpha times x to y.
+
+.. index:: check_in_all
+
+.. _optimizer_env_checkinall:
+
+``check_in_all()``
+------------------
+
+.. code-block:: rust
+
+    pub fn check_in_all ( &self )
+
+
+Check in all unsued license features to the license token server.
 
 .. index:: check_in_license
 
@@ -109,18 +119,7 @@ Adds :math:`\alpha x` to :math:`y`.
 ``feature``
     Feature to check in to the license system.
 
-
-Check in a license feature to the license server. By default all licenses
-consumed by functions using a single environment is kept checked out for the
-lifetime of the |mosek| environment. This function checks in a given license
-feature to the license server immediately.
-
-If the given license feature is not checked out or is in use by a call to
-:ref:`fusion_optimizetrm` calling this function has no effect.
-
-Please note that returning a license to the license server incurs a small
-overhead, so frequent calls to this function should be avoided.
-
+Check in a license feature from the license server ahead of time.
 
 .. index:: checkout_license
 
@@ -136,18 +135,7 @@ overhead, so frequent calls to this function should be avoided.
 ``feature``
     Feature to check out from the license system.
 
-
-Check out a license feature from the license server. Normally the required
-license features will be automatically checked out the first time it is needed
-by the function :ref:`fusion_optimizetrm`. This function can be used to check out one
-or more features ahead of time.
-
-The license will remain checked out until the environment is deleted or the function
-:ref:`fusion_checkinlicense` is called.
-
-If a given feature is already checked out when this function is called, only
-one feature will be checked out from the license server.
-
+Check out a license feature from the license server ahead of time.
 
 .. index:: dot
 
@@ -166,20 +154,14 @@ one feature will be checked out from the license server.
 ``n``
     Length of the vectors.
 ``x``
-    The :math:`x` vector. 
+    The x vector.
 ``y``
-    The :math:`y` vector.
+    The y vector.
 *Returns:* ``xty``
     ``xty : f64``
-        The result of the inner product between :math:`x` and :math:`y`.
+        The result of the inner product.
 
-
-Computes the inner product of two vectors :math:`x,y` of lenght :math:`n\geq 0`, i.e
-
-.. math:: x\cdot y= \sum_{i=1}^n x_i y_i.
-
-Note that if :math:`n=0`, then the results of the operation is 0.
-
+Computes the inner product of two vectors.
 
 .. index:: echo_intro
 
@@ -219,39 +201,27 @@ Prints an intro to message stream.
                   c      : & mut [f64] )
 
 ``transa``
-    Indicates whether the matrix :math:`A` must be transposed. 
+    Indicates whether the matrix A must be transposed.
 ``transb``
-    Indicates whether the matrix :math:`B` must be transposed. 
+    Indicates whether the matrix B must be transposed.
 ``m``
-    Indicates the number of rows of matrices :math:`A` and :math:`C`. 
+    Indicates the number of rows of matrices A and C.
 ``n``
-    Indicates the number of columns of matrices :math:`B` and :math:`C`.
+    Indicates the number of columns of matrices B and C.
 ``k``
-    Specifies the number of columns of the matrix :math:`A` and the number of rows of the matrix :math:`B`.
+    Specifies the number of columns of the matrix A and the number of rows of the matrix B.
 ``alpha``
     A scalar value multipling the result of the matrix multiplication.
 ``a``
     The pointer to the array storing matrix A in a column-major format.
 ``b``
-    Indicates the number of rows of matrix :math:`B` and columns of matrix :math:`A`.
+    Indicates the number of rows of matrix B and columns of matrix A.
 ``beta``
-    A scalar value that multiplies :math:`C`.
+    A scalar value that multiplies C.
 ``c``
-    The pointer to the array storing matrix :math:`C` in a column-major format.
+    The pointer to the array storing matrix C in a column-major format.
 
-
-Performs a matrix multiplication plus addition of dense matrices. Given
-:math:`A`, :math:`B` and :math:`C` of compatible dimensions, this function
-computes 
-
-.. math:: C:= \alpha op(A)op(B) + \beta C
-
-where :math:`\alpha,\beta` are two scalar values. The function :math:`op(X)`
-return :math:`X` if transX is YES, or :math:`X^T` if set to NO. Dimensions of
-:math:`A,b` must therefore match those of :math:`C`.
-
-The result of this operation is stored in :math:`C`.                  
-
+Performs a dense matrix multiplication.
 
 .. index:: gemv
 
@@ -275,34 +245,21 @@ The result of this operation is stored in :math:`C`.
 ``transa``
     Indicates whether the matrix A must be transposed.
 ``m``
-    Specifies the number of rows of the matrix :math:`A`.  
+    Specifies the number of rows of the matrix A.
 ``n``
-    Specifies the number of columns of the matrix :math:`A`.  
+    Specifies the number of columns of the matrix A.
 ``alpha``
-    A scalar value multipling the matrix :math:`A`.
+    A scalar value multipling the matrix A.
 ``a``
-    A pointer to the array storing matrix :math:`A` in a column-major format.
+    A pointer to the array storing matrix A in a column-major format.
 ``x``
-    A pointer to the array storing the vector :math:`x`.
+    A pointer to the array storing the vector x.
 ``beta``
-    A scalar value multipling the vector :math:`y`.
+    A scalar value multipling thevector y.
 ``y``
-    A pointer to the array storing the vector :math:`y`.
+    A pointer to the array storing the vector y.
 
-
-Computes the multiplication of a scaled dense matrix times a dense vector product, plus a scaled dense vector. In formula
-
-.. math:: y = \alpha A x + \beta y,
-
-or if trans is set to transpose.yes
-
-.. math:: y = \alpha A^T x + \beta y,
-
-where :math:`\alpha,\beta` are scalar values. :math:`A` is an :math:`n\times m`
-matrix, :math:`x\in \mathbb{R}^{m}` and :math:`y\in \mathbb{R}^n`.
-
-Note that the result is stored overwriting :math:`y`.
-
+Computes dense matrix times a dense vector product.
 
 .. index:: linkfiletostream
 
@@ -321,13 +278,13 @@ Note that the result is stored overwriting :math:`y`.
 ``whichstream``
     
 ``filename``
-    Sends all output from the stream defined by ``whichstream`` to the file given by ``filename``.  
+    Name of the file to write stream data to.
 ``append``
     If this argument is non-zero, the output is appended to the file.
 
 Directs all output from a stream to a file.
 
-..index:: new
+.. index:: new
 
 ``new()``
 ---------
@@ -371,22 +328,6 @@ Directs all output from a stream to a file.
 
 Computes a Cholesky factorization a dense matrix.
 
-.. index:: put_keep_dlls
-
-.. _optimizer_env_putkeepdlls:
-
-``put_keep_dlls()``
--------------------
-
-.. code-block:: rust
-
-    pub fn put_keep_dlls ( &self,keepdlls : i32 )
-
-``keepdlls``
-    Controls whether explicitly loaded DLLs should be kept.
-
-Controls whether explicitly loaded DLLs should be kept.
-
 .. index:: put_license_code
 
 .. _optimizer_env_putlicensecode:
@@ -415,9 +356,9 @@ The purpose of this function is to input a runtime license code.
     pub fn put_license_debug ( &self,licdebug : i32 )
 
 ``licdebug``
-    If this argument is non-zero, then |mosek| will print debug info regarding the license checkout.  
+    Enable output of license check-out debug information.
 
-If ``licdebug`` is  non-zero, then |mosek| will print debug info regarding the license checkout.  
+Enables debug information for the license system.
 
 .. index:: put_license_path
 
@@ -447,15 +388,9 @@ Set the path to the license file.
     pub fn put_license_wait ( &self,licwait : i32 )
 
 ``licwait``
-    
-    If this argument is non-zero, then |mosek| will wait for a license if no license
-    is available. Moreover, ``licwait-1`` is the number of milliseconds to wait between each check for an available license.
-    
+    Enable waiting for a license.
 
-
-If ``licwait`` is non-zero, then |mosek| will wait for a license if no license
-is available. Moreover, ``licwait-1`` is the number of milliseconds to wait between each check for an available license.
-
+Control whether mosek should wait for an available license if no license is available.
 
 .. index:: syeig
 
@@ -481,7 +416,7 @@ is available. Moreover, ``licwait-1`` is the number of milliseconds to wait betw
 ``w``
     Array of minimum dimension n where eigenvalues will be stored.
 
-Computes all eigenvalues of a real symmetric matrix :math:`A`. Eigenvalues are stored in the :math:`w` array.  
+Computes all eigenvalues of a symmetric dense matrix.
 
 .. index:: syevd
 
@@ -507,19 +442,7 @@ Computes all eigenvalues of a real symmetric matrix :math:`A`. Eigenvalues are s
 ``w``
     An array where eigenvalues will be stored. Its lenght must be at least the dimension of the input matrix.
 
-
-Computes all the eigenvalues and eigenvectors a real symmetric matrix. 
-
-Given the input matrix :math:`A\in \mathbb{R}^{n\times n}`, this function returns a
-vector :math:`w\in \mathbb{R}^n`  containing the eigenvalues of :math:`A` and the
-corresponding eigenvectors, stored in :math:`A` as well.
-
-Therefore, this function compute the eigenvalue decomposition of :math:`A` as 
-
-.. math:: A= U V U^T,
-
-where :math:`V=diag(w)` and :math:`U` contains the eigen-vectors of :math:`A`.
-
+Computes all the eigenvalue and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 
 .. index:: syrk
 
@@ -541,40 +464,23 @@ where :math:`V=diag(w)` and :math:`U` contains the eigen-vectors of :math:`A`.
                   c     : & mut [f64] )
 
 ``uplo``
-    Indicates whether the upper or lower triangular part of :math:`C` is stored.
+    Indicates whether the upper or lower triangular part of C is stored.
 ``trans``
-    Indicates whether the matrix :math:`A` must be transposed. 
+    Indicates whether the matrix A must be transposed.
 ``n``
-    Specifies the order of :math:`C`.
+    Specifies the order of C.
 ``k``
-    Indicates the number of rows or columns of :math:`A`, and its rank.
+    Indicates the number of rows or columns of A, and its rank.
 ``alpha``
     A scalar value multipling the result of the matrix multiplication.
 ``a``
-    The pointer to the array storing matrix :math:`A` in a column-major format.
+    The pointer to the array storing matrix A in a column-major format.
 ``beta``
-    A scalar value that multiplies :math:`C`.
+    A scalar value that multiplies C.
 ``c``
-    The pointer to the array storing matrix :math:`C` in a column-major format.
+    The pointer to the array storing matrix C in a column-major format.
 
-
-Performs a symmetric rank-:math:`k` update for a symmetric matrix. 
-
-Given a symmetric matrix :math:`C\in \mathbb{R}^{n\times n}`, two scalars
-:math:`\alpha,\beta` and a matrix :math:`A` of rank :math:`k\leq n`, it
-computes either 
-
-.. math:: C= \alpha A A^T + \beta C,
-
-or 
-
-.. math:: C= \alpha A^T A + \beta C.
-
-In the first case :math:`A\in \mathbb{R}^{k\times n}`, in the second :math:`A\in
-\mathbb{R}^{n\times k}`.
-
-Note that the results overwrite the matrix :math:`C`.
-
+Performs a rank-k update of a symmetric matrix.
 
 .. index:: task
 
@@ -666,21 +572,7 @@ Analyze the data of a task.
 ``whichsol``
     
 
-
-Print information related to the quality of the solution and
-other solution statistics.
-
-By default this function prints information about the
-largest infeasibilites in the solution, the primal (and
-possibly dual) objective value and the solution status.
-
-Following parameters can be used to configure the printed statistics:
-
-* :ref:`iparam_ana_sol_basis` enables or disables printing of statistics specific to the basis solution (condition number, number of basic variables etc.). Default is on.
-* :ref:`iparam_ana_sol_print_violated` enables or disables listing names of all constraints (both primal and dual) which are violated by the solution. Default is off.
-* :ref:`dparam_ana_sol_infeas_tol` is the tolerance defining when a constraint is considered violated. If a constraint is violated more than this, it will be listed in the summary.
-
-
+Print information related to the quality of the solution.
 
 .. index:: append_barvars
 
@@ -696,9 +588,7 @@ Following parameters can be used to configure the printed statistics:
 ``dim``
     Dimension of symmetric matrix variables to be added.
 
-
-Appends a positive semidefinite matrix variable of dimension ``dim`` to the problem.
-
+Appends a semidefinite  variable of dimension dim to the problem.
 
 .. index:: append_cone
 
@@ -721,36 +611,7 @@ Appends a positive semidefinite matrix variable of dimension ``dim`` to the prob
 ``submem``
     
 
-
-Appends a new conic constraint to the problem. Hence, add a constraint
-
-.. math:: \hat{x} \in \mathcal{C}
-
-to the problem where :math:`\mathcal{C}` is a convex cone. :math:`\hat{x}` is a
-subset of the variables which will be specified by the argument
-``submem``.
-
-Depending on the value of ``ct`` this function appends a normal (:ref:`fusion_`ctQuad`) or rotated quadratic cone (:ref:`fusion_ctRquad`).
-
-Define 
-
-.. math:: \hat{x} = x_{\mathtt{submem}[0]},\ldots,x_{\mathtt{submem}[\mathtt{nummem}-1]}.
-
-Depending on the value of ``ct`` this function appends one of the constraints:
-
-* Quadratic cone (:ref:`fusion_ctQuad`) : 
-
-  .. math:: \hat{x}_0 \geq \sqrt{\sum_{i=1}^{i<\mathtt{nummem}} \hat{x}_i^2}
-
-* Rotated quadratic cone (:ref:`fusion_ctRquad`) : 
-
-  .. math:: 2 \hat{x}_0 \hat{x}_1 \geq \sum_{i=2}^{i<\mathtt{nummem}} \hat{x}^2_i, \quad \hat{x}_{0}, \hat{x}_1 \geq 0
-
-Please note that the sets of variables appearing in different conic constraints must be disjoint.
-
-For an explained code example see Section :ref:`shared-conic-opt`.
-
-
+Appends a new cone constraint to the problem.
 
 .. index:: append_cone_seq
 
@@ -776,9 +637,7 @@ For an explained code example see Section :ref:`shared-conic-opt`.
 ``j``
     Index of the first variable in the conic constraint.
 
-
-Appends a new conic constraint to the problem. The function assumes the members of cone are sequential where the first member has index ``j`` and the last ``j+nummem-1``.
-
+Appends a new conic constraint to the problem.
 
 .. index:: append_cones_seq
 
@@ -804,14 +663,7 @@ Appends a new conic constraint to the problem. The function assumes the members 
 ``j``
     Index of the first variable in the first cone to be appended.
 
-
-Appends a number conic constraints to the problem. The :math:`k`\ th
-cone is assumed to be of dimension ``nummem[k]``. Moreover, is assumed
-that the first variable of the first cone has index :math:`j` and the
-index of the variable in each cone are sequential. Finally, it assumed
-in the second cone is the last index of first cone plus one and so
-forth.
-
+Appends a multiple conic constraints to the problem.
 
 .. index:: append_cons
 
@@ -827,9 +679,7 @@ forth.
 ``num``
     Number of constraints which should be appended.
 
-
-Appends a number of constraints to the model. Appended constraints will be declared free. Please note that |mosek| will automatically expand the problem dimension to accommodate the additional constraints.
-
+Appends a number of constraints to the optimization task.
 
 .. index:: append_sparse_sym_mat
 
@@ -856,38 +706,9 @@ Appends a number of constraints to the model. Appended constraints will be decla
     Values of each triplet.
 *Returns:* ``idx``
     ``idx : i64``
-        Each matrix that is appended to :math:`E` is assigned a unique index i.e. ``idx`` that can be used for later reference. 
+        Unique index assigned to inputted matrix.
 
-
-|mosek| maintains a storage of symmetric data matrixes that is used to build
-the :math:`\bar{c}` and :math:`\bar{A}`. The storage can be thought of as a vector of
-symmetric matrixes denoted :math:`E`. Hence, :math:`E_i` is a symmetric matrix of certain
-dimension.
-
-This function appends a general sparse symmetric matrix on triplet form to the
-vector :math:`E` of symmetric matrixes.  The vectors ``subi``, ``subj``, and
-``valij`` contains the row subscripts, column subscripts and values of each
-element in the symmetric matrix to be appended.  Since the matrix that is
-appended is symmetric then only the lower triangular part should be specified.
-Moreover, duplicates are not allowed.
-
-Observe the function reports the index (position) of the appended matrix in
-:math:`E`. This index should be used for later references to the appended matrix.
-
-
-.. index:: append_stat
-
-.. _optimizer_task_appendstat:
-
-``append_stat()``
------------------
-
-.. code-block:: rust
-
-    pub fn append_stat ( &self )
-
-
-Appends a record the statistics file.
+Appends a general sparse symmetric matrix to the vector E of symmetric matrixes.
 
 .. index:: append_vars
 
@@ -903,9 +724,7 @@ Appends a record the statistics file.
 ``num``
     Number of variables which should be appended.
 
-
-Appends a number of variables to the model. Appended variables will be fixed at zero. Please note that |mosek| will automatically expand the problem dimension to accommodate the additional variables.
-
+Appends a number of variables to the optimization task.
 
 .. index:: basis_cond
 
@@ -924,21 +743,7 @@ Appends a number of variables to the model. Appended variables will be fixed at 
     ``nrminvbasis : f64``
         An estimate for the 1 norm of the inverse of the basis.
 
-
-If a basic solution is available and it defines a nonsingular basis, then
-this function computes the 1-norm estimate of the basis matrix and an 1-norm estimate
-for the inverse of the basis matrix. The 1-norm estimates are computed using the method
-outlined in :cite:`stewart:98:a`, pp. 388-391.
-
-By definition the 1-norm condition number of a matrix :math:`B` is defined as
-
-.. math:: \mathcal{K}_1(B) := \|B\|_1 \|B^{-1}|.
-
-Moreover, the larger the condition number is the harder it is to solve
-linear equation systems involving :math:`B`.  Given estimates for
-:math:`\|B\|_1` and :math:`\|B^{-1}\|_1` it is also possible to
-estimate :math:`\kappa_1(B)`.
-
+Computes conditioning information for the basis matrix.
 
 .. index:: check_convexity
 
@@ -952,12 +757,7 @@ estimate :math:`\kappa_1(B)`.
     pub fn check_convexity ( &self )
 
 
-
-This function checks if a quadratic optimization problem is convex.  The amount
-of checking is controlled by :ref:`iparam_check_convexity`.
-
-The function reports an error if the problem is not convex.
-
+Checks if a quadratic optimization problem is convex.
 
 .. index:: check_mem
 
@@ -1007,39 +807,7 @@ Checks the memory allocated by the task.
 ``value``
     New value for the bound.
 
-
-Changes a bound for one constraint or variable. If ``accmode`` equals :ref:`fusion_accCon`, a constraint bound is changed, otherwise a variable
-bound is changed.
-
-If ``lower`` is non-zero, then the lower bound is changed as follows:
-
-.. math::
-
-    \mbox{new lower bound} =
-        \left\{
-            \begin{array}{ll}
-                - \infty,     & \mathtt{finite}=0, \\
-                \mathtt{value} & \mbox{otherwise}. 
-            \end{array}
-        \right.
-
-
-Otherwise if ``lower`` is zero, then
-
-.. math:: 
-
-    \mbox{new upper bound} = 
-        \left\{ 
-            \begin{array}{ll}
-                \infty,     & \mathtt{finite}=0, \\
-                \mathtt{value} & \mbox{otherwise}. 
-            \end{array}
-        \right.
-
-
-Please note that this function automatically updates the bound key for  bound, in particular, if the lower and upper bounds are identical, the  bound key is changed to ``fixed``.
-
-
+Changes the bounds for one constraint or variable.
 
 .. index:: chg_con_bound
 
@@ -1059,45 +827,13 @@ Please note that this function automatically updates the bound key for  bound, i
 ``i``
     Index of the constraint for which the bounds should be changed.
 ``lower``
-    If non-zero, then the lower bound is changed, otherwise
-                                the upper bound is changed.
+    If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
 ``finite``
-    If non-zero, then ``value` is assumed to be finite.  
+    If non-zero, then the given value is assumed to be finite.
 ``value``
     New value for the bound.
 
-
-Changes a bound for one constraint.
-
-If ``lower`` is non-zero, then the lower bound is changed as follows:
-
-.. math::
-
-    \mbox{new lower bound} =
-      \left\{
-        \begin{array}{ll}
-          - \infty,       & \mathtt{finite}=0, \\
-          \mathtt{value}  & \mbox{otherwise}. 
-        \end{array}
-      \right.
-
-Otherwise if ``lower`` is zero, then
-
-.. math::
-
-    \mbox{new upper bound} = 
-      \left\{
-        \begin{array}{ll}
-          \infty,        & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
-
-
-Please note that this function automatically updates the bound key for
-bound, in particular, if the lower and upper bounds are identical, the
-bound key is changed to ``fixed``.
-
+Changes the bounds for one constraint.
 
 .. index:: chg_var_bound
 
@@ -1120,41 +856,11 @@ bound key is changed to ``fixed``.
     If non-zero, then the lower bound is changed, otherwise
                                 the upper bound is changed.
 ``finite``
-    If non-zero, then ``value`` is assumed to be finite.  
+    If non-zero, then the given value is assumed to be finite.
 ``value``
     New value for the bound.
 
-
-Changes a bound for on variable.
-
-If ``lower`` is non-zero, then the lower bound is changed as follows:
-
-.. math::
-
-    \mbox{new lower bound} =
-      \left\{
-        \begin{array}{ll}
-          - \infty,     & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
-
-Otherwise if ``lower`` is zero, then
-
-.. math::
-
-    \mbox{new upper bound} = 
-      \left\{
-        \begin{array}{ll}
-          \infty,     & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
-
-Please note that this function automatically updates the bound key for bound,
-in particular, if the lower and upper bounds are identical, the bound key is
-changed to ``fixed``.
-
+Changes the bounds for one variable.
 
 .. index:: commit_changes
 
@@ -1205,41 +911,15 @@ Undefine a solution and frees the memory it uses.
 ``subj``
     Index of objective coefficients to analyze.
 ``leftpricej``
-    
-    :math:`\mathtt{leftpricej}[j]` is the left shadow price for the
-    coefficients with index :math:`\mathtt{subj[j]}`.
-    
+    Left shadow prices for requested coefficients.
 ``rightpricej``
-    
-    :math:`\mathtt{rightpricej}[j]` is the right shadow price for the
-    coefficients with index :math:`\mathtt{subj[j]}`.
-    
+    Right shadow prices for requested coefficients.
 ``leftrangej``
-    
-    :math:`\mathtt{leftrangej}[j]` is the left range :math:`\beta_1` for the
-    coefficient with index :math:`\mathtt{subj[j]}`.
-    
+    Left range for requested coefficients.
 ``rightrangej``
-    
-    :math:`\mathtt{rightrangej}[j]` is the right range :math:`\beta_2` for the
-    coefficient with index :math:`\mathtt{subj[j]}`.
-    
+    Right range for requested coefficients.
 
-
-Calculates sensitivity information for objective
-coefficients. The indexes of the coefficients to analyze are
-
-.. math:: \{\mathtt{subj}[i] | i \in 0,\ldots,\mathtt{numj}-1\}
-
-The results are returned so that e.g :math:`\mathtt{leftprice}[j]` is the left
-shadow price of the objective coefficient with index :math:`\mathtt{subj}[j]`.
-
-The type of sensitivity analysis to perform (basis or optimal partition) is
-controlled by the parameter :ref:`iparam_sensitivity_ype`.
-
-For an example, please see Section :ref:`shared-sensitivity-apiex`.
-
-
+Performs sensitivity analysis on objective coefficients.
 
 .. index:: get_a_col
 
@@ -1265,7 +945,7 @@ For an example, please see Section :ref:`shared-sensitivity-apiex`.
     ``nzj : i32``
         Number of non-zeros in the column obtained.
 
-Obtains one row of :math:`A` in a sparse format.  
+Obtains one column of the linear constraint matrix.
 
 .. index:: get_a_col_num_nz
 
@@ -1282,9 +962,9 @@ Obtains one row of :math:`A` in a sparse format.
     Index of the column.
 *Returns:* ``nzj``
     ``nzj : i32``
-        Number of non-zeros in the :math:`j`\ th row or column of :math:`A`.  
+        Number of non-zeros in the j'th row or column of (A).
 
-Obtains the number of non-zero elements in one column of :math:`A`.  
+Obtains the number of non-zero elements in one column of the linear constraint matrix
 
 .. index:: get_a_piece_num_nz
 
@@ -1311,18 +991,9 @@ Obtains the number of non-zero elements in one column of :math:`A`.
     Index of the last column plus one in the rectangular piece.
 *Returns:* ``numnz``
     ``numnz : i32``
-        Number of non-zero :math:`A` elements in the rectangular piece.  
+        Number of non-zero elements in the rectangular piece of the linear constraint matrix.
 
-
-Obtains the number non-zeros in a rectangular piece of :math:`A`, i.e. the number
-
-.. math:: \left| (i,j): ~ a_{i,j} \neq 0,~ \mathtt{firsti} \leq i \leq \mathtt{lasti}-1, ~\mathtt{firstj} \leq j \leq \mathtt{lastj}-1\} \right|
-
-where :math:`|\mathcal{I}|` means the number of elements in the set :math:`\mathcal{I}`.
-
-This function is not an efficient way to obtain the number of non-zeros in one
-row or column. In that case use the function :ref:`optimizer_task_getarownumnz` or :ref:`optimizer_task_getacolnumnz`.
-
+Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
 
 .. index:: get_a_row
 
@@ -1348,7 +1019,7 @@ row or column. In that case use the function :ref:`optimizer_task_getarownumnz` 
     ``nzi : i32``
         Number of non-zeros in the row obtained.
 
-Obtains one row of :math:`A` in a sparse format.  
+Obtains one row of the linear constraint matrix.
 
 .. index:: get_a_row_num_nz
 
@@ -1365,9 +1036,9 @@ Obtains one row of :math:`A` in a sparse format.
     Index of the row or column.
 *Returns:* ``nzi``
     ``nzi : i32``
-        Number of non-zeros in the $i$th row of :math:`A`.  
+        Number of non-zeros in the i'th row of `A`.
 
-Obtains the number of non-zero elements in one row of :math:`A`.  
+Obtains the number of non-zero elements in one row of the linear constraint matrix
 
 .. index:: get_a_slice_num_nz
 
@@ -1388,12 +1059,12 @@ Obtains the number of non-zero elements in one row of :math:`A`.
 ``first``
     Index of the first row or column in the sequence.
 ``last``
-    Index of the last row or column **plus one** in the sequence.  
+    Index of the last row or column plus one in the sequence.
 *Returns:* ``numnz``
     ``numnz : i64``
         Number of non-zeros in the slice.
 
-Obtains the number of non-zeros in a slice of rows or columns of :math:`A`.  
+Obtains the number of non-zeros in a slice of rows or columns of the coefficient matrix.
 
 .. index:: get_aij
 
@@ -1414,7 +1085,7 @@ Obtains the number of non-zeros in a slice of rows or columns of :math:`A`.
     Column index of the coefficient to be returned.
 *Returns:* ``aij``
     ``aij : f64``
-        The required coefficient :math:`a_{i,j}`. 
+        Returns the requested coefficient.
 
 Obtains a single coefficient in linear constraint matrix.
 
@@ -1448,7 +1119,7 @@ Obtains a single coefficient in linear constraint matrix.
     ``num : i64``
         Number of elements in the block triplet form.
 
-Obtains :math:`\bar{A}` in block triplet form.  
+Obtains barA in block triplet form.
 
 .. index:: get_bara_idx
 
@@ -1472,24 +1143,13 @@ Obtains :math:`\bar{A}` in block triplet form.
     The weights associated with each term in the weighted sum.
 *Returns:* ``(i,j,num)``
     ``i : i32``
-        Row index of the element at position ``idx``.  
+        Row index of the element at position idx.
     ``j : i32``
-        Column index of the element at position ``idx``.  
+        Column index of the element at position idx.
     ``num : i64``
         Number of terms in weighted sum that forms the element.
 
-
-Obtains information about an element in :math:`\bar{A}`. Since :math:`\bar{A}`
-is a sparse matrix of symmetric matrixes then only the nonzero elements in
-:math:`\bar{A}` are stored in order to save space. Now :math:`\bar{A}` is
-stored vectorized form i.e. as one long vector.  This function makes it
-possible to obtain information such as the row index and the column index of a
-particular element of the vectorized form of :math:`\bar{A}`.
-
-Please observe if one element of :math:`\bar{A}` is inputted multiple times
-then it may be stored several times in vectorized form. In that case the
-element with the highest index is the one that is used.
-
+Obtains information about an element barA.
 
 .. index:: get_bara_idx_i_j
 
@@ -1506,22 +1166,11 @@ element with the highest index is the one that is used.
     Position of the element in the vectorized form.
 *Returns:* ``(i,j)``
     ``i : i32``
-        Row index of the element at position ``idx``.  
+        Row index of the element at position idx.
     ``j : i32``
-        Column index of the element at position ``idx``.  
+        Column index of the element at position idx.
 
-
-Obtains information about an element in :math:`\bar{A}`. Since :math:`\bar{A}`
-is a sparse matrix of symmetric matrixes only the nonzero elements in
-:math:`\bar{A}` are stored in order to save space. Now :math:`\bar{A}` is
-stored vectorized form i.e. as one long vector.  This function makes it
-possible to obtain information such as the row index and the column index of a
-particular element of the vectorized form of :math:`\bar{A}`.
-
-Please note that if one element of :math:`\bar{A}` is inputted multiple times
-then it may be stored several times in vectorized form. In that case the
-element with the highest index is the one that is used.
-
+Obtains information about an element barA.
 
 .. index:: get_bara_idx_info
 
@@ -1538,14 +1187,9 @@ element with the highest index is the one that is used.
     The internal position of the element that should be obtained information for.
 *Returns:* ``num``
     ``num : i64``
-        Number of terms in the weighted sum that forms the specified element in :math:`\bar{A}`.  
+        Number of terms in the weighted sum that forms the specified element in barA.
 
-
-Each nonzero element in :math:`\bar{A}_{ij}` is formed as a weighted sum of
-symmetric matrices. Using this function the number terms in the weighted sum
-can be obtained. See description of :ref:`optimizer_task_appendsparsesymmat` for details
-about the weighted sum.  
-
+Obtains the number terms in the weighted sum that forms a particular element in barA.
 
 .. index:: get_bara_sparsity
 
@@ -1559,23 +1203,12 @@ about the weighted sum.
     pub fn get_bara_sparsity ( &self,idxij : & mut [i64] ) -> i64
 
 ``idxij``
-    
-    Position of each nonzero element in the vectorized form of :math:`\bar{A}_{ij}`.
-    Hence, ``idxij[k]`` is the vector position of the element in row
-    ``subi[k]`` and column ``subj[k]`` of :math:`\bar{A}_{ij}`.
-    
+    Position of each nonzero element in the vector representation of barA.
 *Returns:* ``numnz``
     ``numnz : i64``
-        Number of nonzero elements in :math:`\bar{A}`. 
+        Number of nonzero elements in barA.
 
-
-The matrix :math:`\bar{A}` is assumed to be a sparse matrix of symmetric matrices.
-This implies that many of elements in :math:`\bar{A}` is likely to be zero matrixes.
-Therefore, in order to save space only nonzero elements in :math:`\bar{A}` are stored
-on vectorized form. This function is used to obtain the sparsity pattern of
-:math:`\bar{A}` and the position of each nonzero element in the vectorized form of
-:math:`\bar{A}`.
-
+Obtains the sparsity pattern of the barA matrix.
 
 .. index:: get_barc_block_triplet
 
@@ -1604,7 +1237,7 @@ on vectorized form. This function is used to obtain the sparsity pattern of
     ``num : i64``
         Number of elements in the block triplet form.
 
-Obtains :math:`\bar{C}` in block triplet form.  
+Obtains barc in block triplet form.
 
 .. index:: get_barc_idx
 
@@ -1628,11 +1261,11 @@ Obtains :math:`\bar{C}` in block triplet form.
     Weights of terms in the weighted sum.
 *Returns:* ``(j,num)``
     ``j : i32``
-        Row index in :math:`\bar{c}`.  
+        Row index in barc.
     ``num : i64``
         Number of terms in the weighted sum.
 
-Obtains information about an element in :math:`\bar{c}`.  
+Obtains information about an element in barc.
 
 .. index:: get_barc_idx_info
 
@@ -1651,7 +1284,7 @@ Obtains information about an element in :math:`\bar{c}`.
     ``num : i64``
         Number of terms that appears in weighted that forms the requested element.
 
-Obtains information about the :math:`\bar{c}_{ij}`.  
+Obtains information about an element in barc.
 
 .. index:: get_barc_idx_j
 
@@ -1668,9 +1301,9 @@ Obtains information about the :math:`\bar{c}_{ij}`.
     Index of the element that should be obtained information about.
 *Returns:* ``j``
     ``j : i32``
-        Row index in :math:`\bar{c}`.  
+        Row index in barc.
 
-Obtains the row index of an element in :math:`\bar{c}`.  
+Obtains the row index of an element in barc.
 
 .. index:: get_barc_sparsity
 
@@ -1684,19 +1317,12 @@ Obtains the row index of an element in :math:`\bar{c}`.
     pub fn get_barc_sparsity ( &self,idxj  : & mut [i64] ) -> i64
 
 ``idxj``
-    Internal positions of the nonzeros elements in :math:`\bar{c}`.  
+    Internal positions of the nonzeros elements in barc.
 *Returns:* ``numnz``
     ``numnz : i64``
-        Number of nonzero elements in :math:`\bar{C}`. 
+        Number of nonzero elements in barc.
 
-
-Internally only the nonzero elements of :math:`\bar{c}` is stored 
-
-in a vector. This function returns which elements :math:`\bar{c}` that are
-nonzero (in ``subj``) and their internal position (in ``idx``). Using the
-position detailed information about each nonzero :math:`\bar{C}_j` can be
-obtained using :ref:`optimizer_task_getbarcidxinfo` and :ref:`optimizer_task_getbarcidx`.
-
+Get the positions of the nonzero elements in barc.
 
 .. index:: get_bars_j
 
@@ -1719,7 +1345,7 @@ obtained using :ref:`optimizer_task_getbarcidxinfo` and :ref:`optimizer_task_get
 ``barsj``
     Value of the j'th variable of barx.
 
-Obtains the dual solution for a semidefinite variable. Only the lower triangle part of :math:`\bar{s}_j` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.  
+Obtains the dual solution for a semidefinite variable.
 
 .. index:: get_barvar_name
 
@@ -1755,9 +1381,9 @@ Obtains a name of a semidefinite variable.
     The requested name is copied to this buffer.
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if the name ``somename`` is assigned to a semidefinite variable. 
+        Is non-zero if name somename is assigned to a semidefinite variable.
     ``index : i32``
-        If the name ``somename`` is assigned to a semidefinite variable, then ``index`` is the name of the constraint.  
+        If the name somename is assigned to a semidefinite variable, then index is the name of the constraint.
 
 Obtains the index of name of semidefinite variable.
 
@@ -1799,9 +1425,9 @@ Obtains the length of a name of a semidefinite variable.
 ``j``
     Index of the semidefinite variable.
 ``barxj``
-    Value of :math:`\bar{X}_j`. 
+    Value of the j'th variable of barx.
 
-Obtains the primal solution for a semidefinite variable. Only the lower triangle part of :math:`\bar{x}_j` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.  
+Obtains the primal solution for a semidefinite variable.
 
 .. index:: get_bound
 
@@ -1876,7 +1502,7 @@ Obtains bounds information for a sequence of variables or constraints.
 ``c``
     
 
-Obtains all objective coefficients :math:`c`. 
+Obtains all objective coefficients.
 
 .. index:: get_c_j
 
@@ -1890,12 +1516,12 @@ Obtains all objective coefficients :math:`c`.
     pub fn get_c_j ( &self,j     : i32 ) -> f64
 
 ``j``
-    Index of the variable for which :math:`c` coefficient should be obtained.  
+    Index of the variable for which c coefficient should be obtained.
 *Returns:* ``cj``
     ``cj : f64``
-        The value of :math:`c_j`. 
+        The c coefficient value.
 
-Obtains one coefficient of :math:`c`.  
+Obtains one coefficient of c.
 
 .. index:: get_c_slice
 
@@ -1918,7 +1544,7 @@ Obtains one coefficient of :math:`c`.
 ``c``
     
 
-Obtains a sequence of elements in :math:`c`. 
+Obtains a sequence of coefficients from the objective.
 
 .. index:: get_cfix
 
@@ -2023,9 +1649,9 @@ Obtains a name of a constraint.
     The name which should be checked.
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if the name ``somename`` is assigned to a constraint. 
+        Is non-zero if name somename is assigned to a constraint.
     ``index : i32``
-        If the name ``somename`` is assigned to a constraint, then ``index`` is the name of the constraint.  
+        If the name somename is assigned to a constraint, then index is the name of the constraint.
 
 Checks whether the name somename has been assigned  to any constraint.
 
@@ -2132,11 +1758,11 @@ Obtains a name of a cone.
     The name which should be checked.
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if the name ``somename`` is assigned to a cone. 
+        Is non-zero if name somename is assigned to a cone.
     ``index : i32``
-        If the name ``somename`` is assigned to a cone, then ``index`` is the name of the cone.  
+        If the name somename is assigned to a cone, then index is the name of the cone.
 
-Checks whether the name ``somename`` has been assigned  to any cone. If it has been assigned to cone, then index of the cone is reported.  
+Checks whether the name somename has been assigned  to any cone.
 
 .. index:: get_cone_name_len
 
@@ -2233,6 +1859,37 @@ Obtains a double parameter.
 
 Computes the dual objective value associated with the solution.
 
+.. index:: get_dual_solution_norms
+
+.. _optimizer_task_getdualsolutionnorms:
+
+``get_dual_solution_norms()``
+-----------------------------
+
+.. code-block:: rust
+
+    pub fn get_dual_solution_norms ( &self,whichsol : i32 ) -> (f64,f64,f64,f64,f64,f64,f64)
+
+``whichsol``
+    
+*Returns:* ``(nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)``
+    ``nrmy : f64``
+        The norm of the y vector.
+    ``nrmslc : f64``
+        The norm of the slc vector.
+    ``nrmsuc : f64``
+        The norm of the suc vector.
+    ``nrmslx : f64``
+        The norm of the slx vector.
+    ``nrmsux : f64``
+        The norm of the sux vector.
+    ``nrmsnx : f64``
+        The norm of the snx vector.
+    ``nrmbars : f64``
+        The norm of the bars vector.
+
+Compute norms of the primal solution.
+
 .. index:: get_dviol_barvar
 
 .. _optimizer_task_getdviolbarvar:
@@ -2250,20 +1907,11 @@ Computes the dual objective value associated with the solution.
 ``whichsol``
     
 ``sub``
-    An array of indexes of :math:`\bar{X}` variables. 
+    An array of indexes of barx variables.
 ``viol``
-    ``viol[k]`` is violation of the solution for the constraint :math:`\bar{S}_{\mathtt{sub}[k]} \in \symmat`. 
+    List of violations corresponding to sub.
 
-
-Let :math:`(\bar{S}_j)^*` be the value of variable :math:`\bar{S}_j` for the
-specified solution.  Then the dual violation of the solution associated with
-variable :math:`\bar{S}_j` is given by
-
-.. math:: \max(-\lambda_{\min}(\bar{S}_j),0.0).
-
-Both when the solution is a certificate of primal infeasibility or when it is
-dual feasibleness solution the violation should be small.
-
+Computes the violation of dual solution for a set of barx variables.
 
 .. index:: get_dviol_con
 
@@ -2284,28 +1932,9 @@ dual feasibleness solution the violation should be small.
 ``sub``
     An array of indexes of constraints.
 ``viol``
-    ``viol[k]`` is the violation of dual solution associated with the constraint ``sub[k]``.
+    List of violations corresponding to sub.
 
-
-The violation of the dual solution associated with the :math:`i`'th constraint
-is computed as follows
-
-.. math:: \max( \rho( (s_l^c)_i^*,(b_l^c)_i ), \rho( (s_u^c)_i^*, -(b_u^c)_i) , |-y_i+(s_l^c)_i^*-(s_u^c)_i^*| )
-
-where
-
-.. math::
-
-    \rho(x,l) =
-      \left\{
-        \begin{array}{ll}
-           -x,   & l > -\infty , \\
-           |x|, &  \mbox{otherwise}\\
-        \end{array}
-      \right.
- 
-Both when the solution is a certificate of primal infeasibility or it is a dual feasibleness solution the violation should be small.                 
-
+Computes the violation of a dual solution associated with a set of constraints.
 
 .. index:: get_dviol_cones
 
@@ -2324,27 +1953,11 @@ Both when the solution is a certificate of primal infeasibility or it is a dual 
 ``whichsol``
     
 ``sub``
-    An array of indexes of :math:`\bar{X}` variables. 
+    An array of indexes of barx variables.
 ``viol``
-    ``viol[k]`` violation of the solution associated with ``sub[k]``'th dual conic constraint. 
+    List of violations corresponding to sub.
 
-
-Let :math:`(s_n^x)^*` be the value of variable :math:`(s_n^x)` for the
-specified solution. For simplicity let us assume that :math:`s_n^x` is a member
-of quadratic cone, then the violation is computed as follows
-
-.. math::
-    
-    \left\{
-      \begin{array}{ll}
-        \max(0,\|(s_n^x\|_{2;n}^*-(s_n^x)_1^*) / \sqrt{2}, & (s_n^x)^* \geq -\|(s_n^x)_{2:n}^*\|, \\
-        \|(s_n^x)^*\|, & \mbox{otherwise.}
-      \end{array}
-    \right.
-
-Both when the solution is a certificate of primal infeasibility or when it is a
-dual feasibleness solution the violation should be small.
-
+Computes the violation of a solution for set of dual conic constraints.
 
 .. index:: get_dviol_var
 
@@ -2365,31 +1978,9 @@ dual feasibleness solution the violation should be small.
 ``sub``
     An array of indexes of x variables.
 ``viol``
-    ``viol[k]`` is the maximal violation of the solution for the constraints :math:`(s_l^x)_{\mathtt{sub}[k]}\geq 0` and :math:`(s_u^x)_{\mathtt{sub}[k]}\geq 0`. 
+    List of violations corresponding to sub.
 
-
-The violation of the dual solution associated with the :math:`j`'th variable is
-computed as follows
-
-.. math:: \max \left(\rho((s_l^x)_i^*,(b_l^x)_i),\rho((s_u^x)_i^*,-(b_u^x)_i),|\sum{j=|idxbeg|}^{|idxend:numcon|} a_{ij} y_i+(s_l^x)_i^*-(s_u^x)_i^* - \tau c_j| \right)
-
-where
-
-.. math::
-
-  \rho(x,l) =
-    \left\{
-      \begin{array}{ll}
-         -x,   & l > -\infty , \\
-         |x|, &  \mbox{otherwise}
-      \end{array}
-    \right.
-
-
-:math:`\tau=0` if the solution is certificate of dual infeasibility and
-:math:`\tau=1` otherwise. The formula for computing the violation is only shown
-for linear case but is generalized appropriately for the more general problems.
-
+Computes the violation of a dual solution associated with a set of x variables.
 
 .. index:: get_inf_index
 
@@ -2432,7 +2023,7 @@ Obtains the index of a named information item.
 ``infmax``
     
 
-Obtains the maximum index of an information of a given type ``inftype`` plus 1.  
+Obtains the maximum index of an information of a given type inftype plus 1.
 
 .. index:: get_inf_name
 
@@ -2512,7 +2103,7 @@ Obtains an integer parameter.
     ``lenbarvarj : i64``
         Number of scalar elements in the lower triangular part of the semidefinite variable.
 
-Obtains the length of the :math:`j`\ th semidefinite variable i.e. the number of elements in the triangular part. 
+Obtains the length if the j'th semidefinite variables.
 
 .. index:: get_lint_inf
 
@@ -2548,7 +2139,7 @@ Obtains an integer information item.
     ``maxnumanz : i64``
         
 
-Obtains number of preallocated non-zeros in $A$. When this number of non-zeros is reached |mosek| will automatically allocate more space for :math:`A`.  
+Obtains number of preallocated non-zeros in the linear constraint matrix.
 
 .. index:: get_max_num_barvar
 
@@ -2582,7 +2173,7 @@ Obtains the number of semidefinite variables.
     ``maxnumcon : i32``
         
 
-Obtains the number of preallocated constraints in the optimization task. When this number of constraints is reached |mosek| will automatically allocate more space for constraints.  
+Obtains the number of preallocated constraints in the optimization task.
 
 .. index:: get_max_num_cone
 
@@ -2599,11 +2190,7 @@ Obtains the number of preallocated constraints in the optimization task. When th
     ``maxnumcone : i32``
         
 
-
-Obtains the number of preallocated cones in the optimization task. When this
-number of cones is reached |mosek| will automatically allocate space for more
-cones.
-
+Obtains the number of preallocated cones in the optimization task.
 
 .. index:: get_max_num_q_nz
 
@@ -2620,11 +2207,7 @@ cones.
     ``maxnumqnz : i64``
         
 
-
-Obtains the number of preallocated non-zeros for :math:`Q` (both objective and
-constraints). When this number of non-zeros is reached |mosek| will
-automatically allocate more space for :math:`Q`.
-
+Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
 
 .. index:: get_max_num_var
 
@@ -2641,7 +2224,7 @@ automatically allocate more space for :math:`Q`.
     ``maxnumvar : i32``
         
 
-Obtains the number of preallocated variables in the optimization task. When this number of variables is reached |mosek| will automatically allocate more space for constraints.  
+Obtains the maximum number variables allowed.
 
 .. index:: get_mem_usage
 
@@ -2656,9 +2239,9 @@ Obtains the number of preallocated variables in the optimization task. When this
 
 *Returns:* ``(meminuse,maxmemuse)``
     ``meminuse : i64``
-        Amount of memory currently used by the ``task``.  
+        Amount of memory currently used by the task.
     ``maxmemuse : i64``
-        Maximum amount of memory used by the ``task`` until now.  
+        Maximum amount of memory used by the task until now.
 
 Obtains information about the amount of memory used by a task.
 
@@ -2677,7 +2260,7 @@ Obtains information about the amount of memory used by a task.
     ``numanz : i32``
         
 
-Obtains the number of non-zeros in :math:`A`. 
+Obtains the number of non-zeros in the coefficient matrix.
 
 .. index:: get_num_a_nz_64
 
@@ -2694,7 +2277,7 @@ Obtains the number of non-zeros in :math:`A`.
     ``numanz : i64``
         
 
-Obtains the number of non-zeros in :math:`A`. 
+Obtains the number of non-zeros in the coefficient matrix.
 
 .. index:: get_num_bara_block_triplets
 
@@ -2709,9 +2292,9 @@ Obtains the number of non-zeros in :math:`A`.
 
 *Returns:* ``num``
     ``num : i64``
-        Number elements in the block triplet form of :math:`\bar{A}.` 
+        Number elements in the block triplet form of bara.
 
-Obtains an upper bound on the number of elements in the block triplet form of :math:`\bar{A}`.  
+Obtains an upper bound on the number of scalar elements in the block triplet form of bara.
 
 .. index:: get_num_bara_nz
 
@@ -2726,9 +2309,9 @@ Obtains an upper bound on the number of elements in the block triplet form of :m
 
 *Returns:* ``nz``
     ``nz : i64``
-        The number of nonzero elements in :math:`\bar{A}` i.e. the number of :math:`\bar{a}_{ij}` elements that is nonzero.
+        The number of nonzero block elements in barA.
 
-Get the number of nonzero elements in :math:`\bar{A}`.  
+Get the number of nonzero elements in barA.
 
 .. index:: get_num_barc_block_triplets
 
@@ -2743,9 +2326,9 @@ Get the number of nonzero elements in :math:`\bar{A}`.
 
 *Returns:* ``num``
     ``num : i64``
-        An upper bound on the number elements in the block trip let form of :math:`\bar{c}.` 
+        An upper bound on the number elements in the block trip let form of barc.
 
-Obtains an upper bound on the number of elements in the block triplet form of :math:`\bar{C}`.  
+Obtains an upper bound on the number of elements in the block triplet form of barc.
 
 .. index:: get_num_barc_nz
 
@@ -2760,9 +2343,9 @@ Obtains an upper bound on the number of elements in the block triplet form of :m
 
 *Returns:* ``nz``
     ``nz : i64``
-        The number of nonzeros in :math:`\bar{c}` i.e. the number of elements :math:`\bar{c}_j` that is different from 0.
+        The number of nonzero elements in barc.
 
-Obtains the number of nonzero elements in :math:`\bar{c}`.  
+Obtains the number of nonzero elements in barc.
 
 .. index:: get_num_barvar
 
@@ -2866,7 +2449,7 @@ Obtains the number of integer-constrained variables.
     
 *Returns:* ``numparam``
     ``numparam : i32``
-        Identical to the number of parameters of the type ``partype``.  
+        Returns the number of parameters of the requested type.
 
 Obtains the number of parameters of a given type.
 
@@ -2921,7 +2504,7 @@ Obtains the number of non-zero quadratic terms in the objective.
     ``num : i64``
         Returns the number of symmetric sparse matrixes.
 
-Get the number of symmetric matrixes stored in the vector :math:`E`.  
+Get the number of symmetric matrixes stored.
 
 .. index:: get_num_var
 
@@ -3031,7 +2614,7 @@ Obtains the maximum index of a parameter of a given type plus 1.
     ``parname : String``
         
 
-Obtains the name for a parameter ``param`` of type ``partype``.  
+Obtains the name of a parameter.
 
 .. index:: get_primal_obj
 
@@ -3051,6 +2634,29 @@ Obtains the name for a parameter ``param`` of type ``partype``.
         
 
 Computes the primal objective value for the desired solution.
+
+.. index:: get_primal_solution_norms
+
+.. _optimizer_task_getprimalsolutionnorms:
+
+``get_primal_solution_norms()``
+-------------------------------
+
+.. code-block:: rust
+
+    pub fn get_primal_solution_norms ( &self,whichsol : i32 ) -> (f64,f64,f64)
+
+``whichsol``
+    
+*Returns:* ``(nrmxc,nrmxx,nrmbarx)``
+    ``nrmxc : f64``
+        The norm of xc vector.
+    ``nrmxx : f64``
+        The norm of xx vector.
+    ``nrmbarx : f64``
+        The norm of barx vector.
+
+Compute norms of the primal solution.
 
 .. index:: get_pro_sta
 
@@ -3105,17 +2711,11 @@ Obtains the problem type.
 ``whichsol``
     
 ``sub``
-    An array of indexes of :math:`\bar{X}` variables. 
+    An array of indexes of barx variables.
 ``viol``
-    ``viol[k]`` is how much the solution violate the constraint :math:`\bar{X}_{\mathtt{sub}[k]} \in \symmat^+`. 
+    List of violations corresponding to sub.
 
-
-Let :math:`(\bar{X}_j)^*` be the value of variable :math:`\bar{X}_j` for the
-specified solution.  Then the primal violation of the solution associated with
-variable :math:`\bar{X}_j` is given by
-
-.. math:: \max(-\lambda_{\min}(\bar{X}_j),0.0).
-
+Computes the violation of a primal solution for a list of barx variables.
 
 .. index:: get_pviol_con
 
@@ -3136,19 +2736,9 @@ variable :math:`\bar{X}_j` is given by
 ``sub``
     An array of indexes of constraints.
 ``viol``
-    ``viol[k]`` associated with the solution for the ``sub[k]``'th constraint. 
+    List of violations corresponding to sub.
 
-
-The primal violation of the solution associated of constraint is computed by
-
-.. math:: \max(l_i^c \tau - (x_i^c)^*),(x_i^c)^* \tau - u_i^c\tau,|\sum_{j=|idxbeg|}^{|idxend:numvar|} a_{ij} x_j^* - x_i^c|)
-
-where :math:`\tau` is defined as follows. If the solution is a certificate of
-dual infeasibility, then :math:`\tau=0` and otherwise :math:`\tau=1`. Both when
-the solution is a valid certificate of dual infeasibility or when it is primal
-feasibleness solution the violation should be small. The above is only shown
-for linear case but is appropriately generalized for the other cases.
-
+Computes the violation of a primal solution for a list of xc variables.
 
 .. index:: get_pviol_cones
 
@@ -3167,27 +2757,11 @@ for linear case but is appropriately generalized for the other cases.
 ``whichsol``
     
 ``sub``
-    An array of indexes of :math:`\bar{X}` variables. 
+    An array of indexes of barx variables.
 ``viol``
-    ``viol[k]`` violation of the solution associated with ``sub[k]``'th conic constraint. 
+    List of violations corresponding to sub.
 
-
-Let :math:`x^*` be the value of variable :math:`x` for the specified solution.
-For simplicity let us assume that :math:`x` is a member of quadratic cone, then
-the violation is computed as follows
-
-.. math::
-
-  \left\{
-    \begin{array}{ll}
-      \max(0,\|x_{2;n}\|-x_1) / \sqrt{2}, & x_1 \geq -\|x_{2:n}\|, \\
-      \|x\|, & \mbox{otherwise.}
-    \end{array}
-  \right.
-
-Both when the solution is a certificate of dual infeasibility or when it is a
-primal feasibleness solution the violation should be small.
-
+Computes the violation of a solution for set of conic constraints.
 
 .. index:: get_pviol_var
 
@@ -3206,22 +2780,11 @@ primal feasibleness solution the violation should be small.
 ``whichsol``
     
 ``sub``
-    An array of indexes of :math:`x` variables. 
+    An array of indexes of x variables.
 ``viol``
-    ``viol[k]`` is the violation associated the solution for variable :math:`x_j`.
+    List of violations corresponding to sub.
 
-
-Let :math:`x_j^*` be the value of variable :math:`x_j` for the specified
-solution.  Then the primal violation of the solution associated with variable
-:math:`x_j` is given by
-
-.. math:: \max(l_j^x \tau - x_j^*,x_j^* - u_j^x\tau).
-
-where :math:`\tau` is defined as follows. If the solution is a certificate of
-dual infeasibility, then :math:`\tau=0` and otherwise :math:`\tau=1`. Both when
-the solution is a valid certificate of dual infeasibility or when it is primal
-feasibleness solution the violation should be small.
-
+Computes the violation of a primal solution for a list of x variables.
 
 .. index:: get_q_obj_i_j
 
@@ -3244,7 +2807,7 @@ feasibleness solution the violation should be small.
     ``qoij : f64``
         The required coefficient.
 
-Obtains one coefficient :math:`q_{ij}^o` in the quadratic term of the objective.  
+Obtains one coefficient from the quadratic term of the objective
 
 .. index:: get_reduced_costs
 
@@ -3264,24 +2827,13 @@ Obtains one coefficient :math:`q_{ij}^o` in the quadratic term of the objective.
 ``whichsol``
     
 ``first``
-    See formula :eq:`ais-eq-redcost` for the definition. 
+    See the documentation for a full description.
 ``last``
-    See formula :eq:`ais-eq-redcost` for the definition.  
+    See the documentation for a full description.
 ``redcosts``
-    
-    The reduced costs in the required sequence of variables are stored sequentially
-    in ``redcosts`` starting at ``redcosts[|idxbeg|]``.
-    
+    Returns the requested reduced costs. See documentation for a full description.
 
-
-Computes the reduced costs for a sequence of variables and return them in the variable ``redcosts`` i.e.
-
-.. math::
-    :label: ais-eq-redcost
-
-    \mathtt{redcosts}[j-\mathtt{first}] = (s_l^x)_j-(s_u^x)_j, ~j=\mathtt{first},\ldots,|idxend:last|
-
-
+Obtains the difference of (slx-sux) for a sequence of variables.
 
 .. index:: get_skc
 
@@ -3391,9 +2943,9 @@ Obtains the status keys for the variables.
 ``whichsol``
     
 ``slc``
-    The :math:`s_l^c` vector. 
+    The slc vector.
 
-Obtains the :math:`s_l^c` vector for a solution.  
+Obtains the slc vector for a solution.
 
 .. index:: get_slc_slice
 
@@ -3419,7 +2971,7 @@ Obtains the :math:`s_l^c` vector for a solution.
 ``slc``
     
 
-Obtains a slice of the :math:`s_l^c` vector for a solution.  
+Obtains a slice of the slc vector for a solution.
 
 .. index:: get_slx
 
@@ -3437,9 +2989,9 @@ Obtains a slice of the :math:`s_l^c` vector for a solution.
 ``whichsol``
     
 ``slx``
-    The :math:`s_l^x` vector. 
+    The slx vector.
 
-Obtains the :math:`s_l^x` vector for a solution. 
+Obtains the slx vector for a solution.
 
 .. index:: get_slx_slice
 
@@ -3465,7 +3017,7 @@ Obtains the :math:`s_l^x` vector for a solution.
 ``slx``
     
 
-Obtains a slice of the :math:`s_l^x` vector for a solution.  
+Obtains a slice of the slx vector for a solution.
 
 .. index:: get_snx
 
@@ -3483,9 +3035,9 @@ Obtains a slice of the :math:`s_l^x` vector for a solution.
 ``whichsol``
     
 ``snx``
-    The :math:`s_n^x` vector. 
+    The snx vector.
 
-Obtains the :math:`s_n^x` vector for a solution.  
+Obtains the snx vector for a solution.
 
 .. index:: get_snx_slice
 
@@ -3511,7 +3063,7 @@ Obtains the :math:`s_n^x` vector for a solution.
 ``snx``
     
 
-Obtains a slice of the :math:`s_n^x` vector for a solution.  
+Obtains a slice of the snx vector for a solution.
 
 .. index:: get_sol_sta
 
@@ -3585,57 +3137,7 @@ Obtains the solution status.
     ``solsta : i32``
         
 
-
 Obtains the complete solution.
-
-Consider the case of linear programming. The primal problem is given by
-
-.. math::
-
-   \begin{array}{lccccl}
-     \mbox{minimize}              &      &      & c^T x+c^f &      &        \\
-     \mbox{subject to} &  l^c & \leq & A x       & \leq & u^c,     \\
-     &  l^x & \leq & x         & \leq & u^x.   \\
-   \end{array}
-
-
-and the corresponding dual problem is
-
-.. math::
-
-   \begin{array}{lccl}
-     \mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\
-     & + (l^x)^T s_l^x - (u^x)^T s_u^x + c^f &  \\
-     \mbox{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\
-     & -y    + s_l^c - s_u^c                 & = & 0, \\
-     & s_l^c,s_u^c,s_l^x,s_u^x \geq 0.       &   &    \\
-   \end{array}
-
-
-In this case the mapping between variables and arguments to the function is as
-follows:
-  
-* ``xx`` : Corresponds to variable :math:`x`.
-* ``y``  : Corresponds to variable :math:`y`.
-* ``slc``: Corresponds to variable :math:`s_l^c`.
-* ``suc``: Corresponds to variable :math:`s_u^c`.
-* ``slx``: Corresponds to variable :math:`s_l^x`.
-* ``sux``: Corresponds to variable :math:`s_u^x`.
-* ``xc`` : Corresponds to :math:`Ax`.
-
-The meaning of the values returned by this function depend on the *solution status* returned in the argument ``solsta``. The most important possible values  of ``solsta`` are:
-
-* :ref:`fusion_solStaOptimal` : An optimal solution satisfying the optimality criteria for continuous problems is returned.
-
-* :ref:`fusion_solStaIntegerOptimal` : An optimal solution satisfying the optimality criteria for integer problems is returned.
-
-* :ref:`fusion_solStaPrimFeas` : A solution satisfying the feasibility criteria.
-
-* :ref:`fusion_solStaPrimInfeasCer` : A primal certificate of infeasibility is returned.
-
-* :ref:`fusion_solStaDualInfeasCer` : A dual certificate of infeasibility is returned.
-
-
 
 .. index:: get_solution_i
 
@@ -3652,10 +3154,7 @@ The meaning of the values returned by this function depend on the *solution stat
                             whichsol : i32 )
 
 ``accmode``
-    
-    If set to :ref:`fusion_accCon` the solution information for a constraint
-    is retrieved. Otherwise for a variable.
-    
+    Defines whether solution information for a constraint or for a variable is retrieved.
 ``i``
     Index of the constraint or variable.
 ``whichsol``
@@ -3689,34 +3188,27 @@ Obtains the solution for a single constraint or variable.
     
 *Returns:* ``(pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)``
     ``pobj : f64``
-        The primal objective value as computed by :ref:`optimizer_task_getprimalobj`.  
+        The primal objective value.
     ``pviolcon : f64``
-        Maximal primal violation of the solution associated with the :math:`x^c` variables where the violations are computed by :ref:`optimizer_task_getpviolcon`.  
+        Maximal primal bound violation for a xc variable.
     ``pviolvar : f64``
-        Maximal primal violation of the solution for the :math:`x^x` variables where the violations are computed by :ref:`optimizer_task_getpviolvar`.  
+        Maximal primal bound violation for a xx variable.
     ``pviolbarvar : f64``
-        Maximal primal violation of solution for the :math:`\bar{X}` variables where the violations are computed by :ref:`optimizer_task_getpviolbarvar`.  
+        Maximal primal bound violation for a barx variable.
     ``pviolcone : f64``
-        Maximal primal violation of solution for the conic constraints where the violations are computed by :ref:`optimizer_task_getpviolcones`.  
+        Maximal primal violation of the solution with respect to the conic constraints.
     ``pviolitg : f64``
-        
-        Maximal violation in the integer constraints. The violation for an integer
-        constrained variable :math:`x_j` is given by
-        
-        .. math:: \min(x_j-\lfloor x_j \rfloor,\lceil x_j \rceil - x_j).
-        
-        This number is always zero for the interior-point and the basic solutions.
-        
+        Maximal violation in the integer constraints.
     ``dobj : f64``
-        Dual objective value as computed as computed by :ref:`optimizer_task_getdualobj`.  
+        Dual objective value.
     ``dviolcon : f64``
-        Maximal violation of the dual solution associated with the :math:`x^c` variable as computed by as computed by :ref:`optimizer_task_getdviolcon`.  
+        Maximal dual bound violation a xc variable.
     ``dviolvar : f64``
-        Maximal violation of the dual solution associated with the $x$ variable as computed by as computed by :ref:`optimizer_task_getdviolvar`.  
+        Maximal dual bound violation xx variable.
     ``dviolbarvar : f64``
-        Maximal violation of the dual solution associated with the :math:`\bar{s}` variable as computed by as computed by :ref:`optimizer_task_getdviolbarvar`.  
+        Maximal dual bound violation for a bars variable.
     ``dviolcone : f64``
-        Maximal violation of the dual solution associated with the dual conic constraints as computed by :ref:`optimizer_task_getdviolcones`.  
+        Maximum violation of the dual solution in the dual conic constraints .
 
 Obtains information about of a solution.
 
@@ -3743,75 +3235,11 @@ Obtains information about of a solution.
 ``first``
     Index of the first value in the slice.
 ``last``
-    
-    value of the last index+1 in the slice, e.g. if :math:`xx[5,\ldots,9]` is required
-    ``last`` should be :math:`10`.
-    
+    Value of the last index+1 in the slice.
 ``values``
-    
-    The values in the required sequence are stored sequentially
-    in ``values`` starting at ``values[|idxbeg|]``.
-    
-
+    The values of the requested solution elements.
 
 Obtains a slice of the solution.
-
-Consider the case of linear programming. The primal problem is given by
-
-.. math::
-
-  \begin{array}{lccccl}
-    \mbox{minimize}              &      &      & c^T x+c^f &      &        \\
-    \mbox{subject to} &  l^c & \leq & A x       & \leq & u^c,     \\
-    &  l^x & \leq & x         & \leq & u^x.   \\
-  \end{array}
-
-and the corresponding dual problem is
-
-.. math::
-  
-  \begin{array}{lccl}
-    \mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\
-    & + (l^x)^T s_l^x - (u^x)^T s_u^x + c^f &  \\
-    \mbox{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\
-    & -y    + s_l^c - s_u^c                 & = & 0, \\
-    & s_l^c,s_u^c,s_l^x,s_u^x \geq 0.       &   &    \\
-  \end{array}
-
-The ``solitem`` argument determines which part of the solution is returned:
-  
-* :ref:`fusion_solItemXx`  : The variable ``values`` return :math:`x`.
-* :ref:`fusion_solItemY`   : The variable ``values`` return :math:`y`.
-* :ref:`fusion_solItemSlc` : The variable ``values`` return :math:`s_l^c`.
-* :ref:`fusion_solItemSuc` : The variable ``values`` return :math:`s_u^c`.
-* :ref:`fusion_solItemSlx` : The variable ``values`` return :math:`s_l^x`.
-* :ref:`fusion_solItemSux` : The variable ``values`` return :math:`s_u^x`.
-
-A conic optimization problem has the same primal variables as in the linear case. Recall that the dual of a conic optimization problem is given by:
-
-.. math::
-  
-  \begin{array}{lccccc}
-    \mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &      &    \\
-    & +(l^x)^T s_l^x - (u^x)^T s_u^x + c^f  &      &    \\
-    \mbox{subject to} & A^T y + s_l^x - s_u^x + s_n^x         & =    & c, \\
-    & -y + s_l^c - s_u^c                    & =    & 0, \\
-    & s_l^c,s_u^c,s_l^x,s_u^x               & \geq & 0, \\
-    & s_n^x \in \mathcal{C}^*               &      &    \\
-  \end{array}
-
-This introduces one additional dual variable :math:`s_n^x`. This variable can be acceded by selecting ``solitem`` as :ref:`fusion_solItemSnx`.
-
-The meaning of the values returned by this function also depends on the *solution status* which can be obtained with :ref:`fusion_getsolsta`.
-Depending on the solution status ``value`` will be:
-    
-* :ref:`constant_solsta_sol_sta-optimal`  A part of the  optimal solution satisfying the optimality criteria for continuous problems.
-* :ref:`constant_solsta_sol_sta-IntegerOptimal`  A part of the  optimal solution satisfying the optimality criteria for integer problems.
-* :ref:`constant_solsta_sol_sta-PrimFeas`        A part of the solution satisfying the feasibility criteria.
-* :ref:`constant_solsta_sol_sta-PrimInfeasCer`   A part of the primal certificate of infeasibility.
-* :ref:`constant_solsta_sol_sta-sol-DualInfeasCer`   A part of the dual certificate of infeasibility.
-
-
 
 .. index:: get_sparse_sym_mat
 
@@ -3856,7 +3284,7 @@ Gets a single symmetric matrix from the matrix store.
     ``len : i32``
         The length of the parameter value.
     ``parvalue : String``
-        If this is not NULL, the parameter value is stored here.
+        If this is not |null|, the parameter value is stored here.
 
 Obtains the value of a string parameter.
 
@@ -3895,9 +3323,9 @@ Obtains the length of a string parameter.
 ``whichsol``
     
 ``suc``
-    The :math:`s_u^c` vector. 
+    The suc vector.
 
-Obtains the :math:`s_u^c` vector for a solution.  
+Obtains the suc vector for a solution.
 
 .. index:: get_suc_slice
 
@@ -3923,7 +3351,7 @@ Obtains the :math:`s_u^c` vector for a solution.
 ``suc``
     
 
-Obtains a slice of the :math:`s_u^c` vector for a solution.  
+Obtains a slice of the suc vector for a solution.
 
 .. index:: get_sux
 
@@ -3943,7 +3371,7 @@ Obtains a slice of the :math:`s_u^c` vector for a solution.
 ``sux``
     The sux vector.
 
-Obtains the :math:`s_u^x` vector for a solution.  
+Obtains the sux vector for a solution.
 
 .. index:: get_sux_slice
 
@@ -3969,7 +3397,7 @@ Obtains the :math:`s_u^x` vector for a solution.
 ``sux``
     
 
-Obtains a slice of the :math:`s_u^x` vector for a solution.  
+Obtains a slice of the sux vector for a solution.
 
 .. index:: get_sym_mat_info
 
@@ -3992,9 +3420,7 @@ Obtains a slice of the :math:`s_u^x` vector for a solution.
     ``type : i32``
         Returns the type of the requested matrix.
 
-
-|mosek| maintains a vector denoted by :math:`E` of symmetric data matrixes. This function makes it possible to obtain important information about an data matrix in :math:`E`.
-
+Obtains information of  a matrix from the symmetric matrix storage E.
 
 .. index:: get_task_name
 
@@ -4082,65 +3508,6 @@ Obtains bound information for one variable.
 
 Obtains bounds information for a slice of the variables.
 
-.. index:: get_var_branch_dir
-
-.. _optimizer_task_getvarbranchdir:
-
-``get_var_branch_dir()``
-------------------------
-
-.. code-block:: rust
-
-    pub fn get_var_branch_dir ( &self,j     : i32 ) -> i32
-
-``j``
-    Index of the variable.
-*Returns:* ``direction``
-    ``direction : i32``
-        The branching direction assigned to variable :math:`j`. 
-
-Obtains the branching direction for a given variable :math:`j`.
-
-.. index:: get_var_branch_order
-
-.. _optimizer_task_getvarbranchorder:
-
-``get_var_branch_order()``
---------------------------
-
-.. code-block:: rust
-
-    pub fn get_var_branch_order ( &self,j     : i32 ) -> (i32,i32)
-
-``j``
-    Index of the variable.
-*Returns:* ``(priority,direction)``
-    ``priority : i32``
-        The branching priority assigned to variable :math:`j`. 
-    ``direction : i32``
-        The preferred branching direction for the :math:`j`'th variable. 
-
-Obtains the branching priority and direction for a given variable :math:`j`.
-
-.. index:: get_var_branch_pri
-
-.. _optimizer_task_getvarbranchpri:
-
-``get_var_branch_pri()``
-------------------------
-
-.. code-block:: rust
-
-    pub fn get_var_branch_pri ( &self,j     : i32 ) -> i32
-
-``j``
-    Index of the variable.
-*Returns:* ``priority``
-    ``priority : i32``
-        The branching priority assigned to variable :math:`j`. 
-
-Obtains the branching priority for a given variable :math:`j`.
-
 .. index:: get_var_name
 
 .. _optimizer_task_getvarname:
@@ -4175,11 +3542,11 @@ Obtains a name of a variable.
     The name which should be checked.
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if the name ``somename`` is assigned to a variable. 
+        Is non-zero if name somename is assigned to a variable.
     ``index : i32``
-        If the name ``somename`` is assigned to a variable, then ``index`` is the name of the variable.  
+        If the name somename is assigned to a variable, then index is the name of the variable.
 
-Checks whether the name ``somename`` has been assigned  to any variable. If it has been assigned to variable, then index of the variable is reported.  
+Checks whether the name somename has been assigned  to any variable.
 
 .. index:: get_var_name_len
 
@@ -4215,7 +3582,7 @@ Obtains the length of a name of a variable variable.
     Index of the variable.
 *Returns:* ``vartype``
     ``vartype : i32``
-        Variable type of variable ``j``. 
+        Variable type of variable index j.
 
 Gets the variable type of one variable.
 
@@ -4235,13 +3602,9 @@ Gets the variable type of one variable.
 ``subj``
     A list of variable indexes.
 ``vartype``
-    The variables types corresponding to the variables specified by ``subj``.  
+    Returns the variables types corresponding the variable indexes requested.
 
-
-Obtains the variable type of one or more variables.
-
-Upon return ``vartype[k]`` is the variable type of variable ``subj[k]``.
-
+Obtains the variable type for one or more variables.
 
 .. index:: get_xc
 
@@ -4259,9 +3622,9 @@ Upon return ``vartype[k]`` is the variable type of variable ``subj[k]``.
 ``whichsol``
     
 ``xc``
-    The :math:`x^c` vector. 
+    The xc vector.
 
-Obtains the :math:`x^c` vector for a solution.  
+Obtains the xc vector for a solution.
 
 .. index:: get_xc_slice
 
@@ -4305,9 +3668,9 @@ Obtains a slice of the xc vector for a solution.
 ``whichsol``
     
 ``xx``
-    The :math:`x^x` vector. 
+    The xx vector.
 
-Obtains the :math:`x^x` vector for a solution.  
+Obtains the xx vector for a solution.
 
 .. index:: get_xx_slice
 
@@ -4333,7 +3696,7 @@ Obtains the :math:`x^x` vector for a solution.
 ``xx``
     
 
-Obtains a slice of the :math:`x^x` vector for a solution.  
+Obtains a slice of the xx vector for a solution.
 
 .. index:: get_y
 
@@ -4351,9 +3714,9 @@ Obtains a slice of the :math:`x^x` vector for a solution.
 ``whichsol``
     
 ``y``
-    The :math:`y` vector. 
+    The y vector.
 
-Obtains the :math:`y` vector for a solution.  
+Obtains the y vector for a solution.
 
 .. index:: get_y_slice
 
@@ -4379,7 +3742,7 @@ Obtains the :math:`y` vector for a solution.
 ``y``
     
 
-Obtains a slice of the :math:`y` vector for a solution.  
+Obtains a slice of the y vector for a solution.
 
 .. index:: init_basis_solve
 
@@ -4393,24 +3756,9 @@ Obtains a slice of the :math:`y` vector for a solution.
     pub fn init_basis_solve ( &self,basis : & mut [i32] )
 
 ``basis``
-    
     The array of basis indexes to use.
-    
-    The array is interpreted as follows: If :math:`\mathtt{basis}[i] \leq |idxend:numcon|`, then :math:`x_{\mathtt{basis}[i]}^c` is in the basis at position :math:`i`, otherwise :math:`x_{\mathtt{basis}[i]-\mathtt{numcon}}` is in the basis at position :math:`i`.
-    
-    
 
-
-Prepare a task for use with the :ref:`optimizer.task.solvewithbasis` function.
-
-This function should be called
-
-* immediately before the first call to :ref:`optimizer_task_solvewithbasis`, and
-* immediately before any subsequent call to :ref:`optimizer_task_solvewithbasis` if the task has been modified. 
-
-If the basis is singular i.e. not invertible, then the error :ref:`rescode_err-basis-singular` is reported.
-
-
+Prepare a task for basis solver.
 
 .. index:: input_data
 
@@ -4466,15 +3814,7 @@ If the basis is singular i.e. not invertible, then the error :ref:`rescode_err-b
 ``bux``
     
 
-
-Input the linear part of an optimization problem.
-
-
-The non-zeros of :math:`A` are inputted column-wise in the format described in Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-
-For an explained code example see Section :ref:`optimizer-apiintro-linear-optimization` and Section :ref:`optimizer-matrix-formats`.
-
-
+Input the linear part of an optimization task in one function call.
 
 .. index:: is_dou_par_name
 
@@ -4493,7 +3833,7 @@ For an explained code example see Section :ref:`optimizer-apiintro-linear-optimi
     ``param : i32``
         
 
-Checks whether ``parname`` is a valid double parameter name.  
+Checks a double parameter name.
 
 .. index:: is_int_par_name
 
@@ -4512,7 +3852,7 @@ Checks whether ``parname`` is a valid double parameter name.
     ``param : i32``
         
 
-Checks whether ``parname`` is a valid integer parameter name.  
+Checks an integer parameter name.
 
 .. index:: is_str_par_name
 
@@ -4531,7 +3871,7 @@ Checks whether ``parname`` is a valid integer parameter name.
     ``param : i32``
         
 
-Checks whether ``parname`` is a valid string parameter name.  
+Checks a string parameter name.
 
 .. index:: link_file_to_stream
 
@@ -4550,7 +3890,7 @@ Checks whether ``parname`` is a valid string parameter name.
 ``whichstream``
     
 ``filename``
-    The name of the file where text from the stream defined by ``whichstream`` is written.  
+    The name of the file where the stream is written.
 ``append``
     If this argument is 0 the output file will be overwritten, otherwise text is append to the output file.
 
@@ -4589,32 +3929,9 @@ Prints a short summary for the specified solution.
 
 *Returns:* ``trmcode``
     ``trmcode : i32``
-        Is either :ref:`fusion_resOk` or a termination response code.  
+        Is either OK or a termination response code.
 
-
-Calls the optimizer. Depending on the problem type and the selected optimizer
-this will call one of the optimizers in |mosek|. By default the interior point
-optimizer will be selected for continuous problems.  The optimizer may be
-selected manually by setting the parameter :ref:`iparam_optimizer`.
-
-.. ifconfig: msk_lang=='c'
-
-   This function is equivalent to :ref:`optimizer_task_optimize` except in the case where
-   :ref:`optimizer_task_optimize` would have returned a termination response code such as
-
-   * :ref:`rescode_trm_max_iterations` or
-   * :ref:`rescode_trm_stall`.
-
-   Response codes comes in three categories:
-
-   *  Errors: Indicate that an error has occurred during the optimization. E.g  that the optimizer has run out of memory (:ref:`fusion_resErrSpace`). 
-   *  Warnings: Less fatal than errors. E.g :ref:`fusion_resWrnLargeCj` indicating possibly problematic problem data
-   *  Termination codes: Relaying information about the conditions under which the optimizer terminated. E.g :ref:`fusion_resTrmMaxIterations` indicates that
-      the optimizer finished because it reached the maximum number of iterations specified by the user. 
-
-This function returns errors on the left hand side. Warnings are not returned and termination codes are returned in the separate argument ``trmcode``.
-
-
+Optimizes the problem.
 
 .. index:: optimizer_summary
 
@@ -4648,44 +3965,15 @@ Prints a short summary with optimizer statistics for last optimization.
                            wux_  : & [f64] )
 
 ``wlc``
-    
-    :math:`(w_l^c)_i` is the weight associated with relaxing the lower bound on
-    constraint :math:`i`. If the weight is negative, then the lower bound is not
-    relaxed. Moreover, if the argument is |null|, then all the weights are assumed
-    to be :math:`1`.
-    
+    Weights associated with relaxing lower bounds on the constraints.
 ``wuc``
-    
-    :math:`(w_u^c)_i` is the weight associated with relaxing the upper bound on
-    constraint :math:`i`. If the weight is negative, then the upper bound is not
-    relaxed. Moreover, if the argument is |null|, then all the weights are assumed
-    to be :math:`1`.
-    
+    Weights associated with relaxing the upper bound on the constraints.
 ``wlx``
-    
-    :math:`(w_l^x)_j` is the weight associated with relaxing the upper bound on constraint :math:`j`. If the weight is negative, then the lower bound is not relaxed. Moreover,
-    if the argument is |null|, then all the weights are assumed to be :math:`1`.
-    
+    Weights associated with relaxing the lower bounds of the variables.
 ``wux``
-    
-    :math:`(w_l^x)_i` is the weight associated with relaxing the upper bound on variable :math:`j`. If the weight is negative, then the upper bound is not relaxed. Moreover,
-    if the argument is |null|, then all the weights are assumed to be :math:`1`.
-    
+    Weights associated with relaxing the upper bounds of variables.
 
-
-The function repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables where the adjustment
-is computed as the minimal weighted sum relaxation to the bounds on the constraints and variables. Observe the function only repairs the problem but does not
-compute an optimal solution to the repaired problem. If an optimal solution is required the problem should be optimized after the repair.
-
-The function is applicable to linear and conic problems possibly having integer constrained variables.
-
-Observe that when computing the minimal weighted relaxation then the termination tolerance specified by the parameters of the task is employed. For instance
-the parameter :ref:`iparam_mio_mode` can be used make |mosek| ignore the integer constraints during the repair which usually leads to a much faster repair.
-However, the drawback is of course that the repaired problem may not have an integer feasible solution.
-
-Note the function modifies the bounds on the constraints and variables. If this is not a desired feature, then
-apply the function to a cloned task. 
-
+The function repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
 
 .. index:: primal_sensitivity
 
@@ -4713,123 +4001,29 @@ apply the function to a cloned task.
 ``subi``
     Indexes of bounds on constraints to analyze.
 ``marki``
-    
-    The value of ``marki[i]`` specifies for which bound (upper or lower) on
-    constraint ``subi[i]`` sensitivity analysis should be
-    performed.
-    
+    Mark which constraint bounds to analyze.
 ``subj``
     Indexes of bounds on variables to analyze.
 ``markj``
-    
-    The value of ``markj[j]`` specifies for which bound (upper or lower) on
-    variable ``subj[j]`` sensitivity analysis should be performed.  
-    
+    Mark which variable bounds to analyze.
 ``leftpricei``
-    
-    ``leftpricei[i]`` is the left shadow price for the upper/lower bound (indicated
-    by ``marki[i]``) of the constraint with index ``subi[i]``.
-    
+    Left shadow price for constraints.
 ``rightpricei``
-    
-    ``rightpricei[i]`` is the right shadow price for
-    the  upper/lower bound (indicated by ``marki[i]``)
-    of the constraint with index ``subi[i]``.
-    
+    Right shadow price for constraints.
 ``leftrangei``
-    
-    ``leftrangei[i]`` is the left range for the upper/lower bound (indicated by ``marki[i]``)
-    of the constraint with index ``subi[i]``.
-    
+    Left range for constraints.
 ``rightrangei``
-    
-    ``rightrangei[i]`` is the right range for the upper/lower bound (indicated by ``marki[i]``)
-    of the constraint with index ``subi[i]``.
-    
+    Right range for constraints.
 ``leftpricej``
-    
-    ``leftpricej[j]`` is the left shadow price for the upper/lower bound (indicated by ``marki[j]``) on variable  ``subj[j]``.
-    
+    Left price for variables.
 ``rightpricej``
-    
-    ``rightpricej[j]`` is the right shadow price for the upper/lower bound (indicated by ``marki[j]``)
-     on variable  ``subj[j]``.
-    
+    Right price for variables.
 ``leftrangej``
-    
-    ``leftrangej[j]`` is the left range for the upper/lower bound (indicated by ``marki[j]``)
-     on variable ``subj[j]``.
-    
+    Left range for variables.
 ``rightrangej``
-    
-    ``rightrangej[j]`` is the right range for the upper/lower bound (indicated by ``marki[j]``)
-    on variable ``subj[j]``.
-    
+    Right range for variables.
 
-
-Calculates sensitivity information for bounds on variables and constraints.
-
-For details on sensitivity analysis and the definitions of *shadow price* and
-*linearity interval* see Section :ref:`shared-sensitivity-analysis`.
-
-The constraints for which sensitivity analysis is performed are given by the
-data structures:
-
-
-#. ``subi`` Index of constraint to analyze.
-#. ``marki`` Indicate for which bound of constraint ``subi[i]`` sensitivity
-   analysis is performed.  If ``marki[i]`` = :ref:`fusion_markUp` the upper bound of
-   constraint ``subi[i]`` is analyzed, and if ``marki[i]`` = :ref:`fusion_markLo` the
-   lower bound is analyzed.  If ``subi[i]`` is an equality constraint, either
-   \mskitem{mark.lo} or :ref:`fusion_markUp` can be used to select the
-   constraint for sensitivity analysis.
-
-Consider the problem:
-
-.. math::
-
-    \begin{array}{lccl}
-    \mbox{minimize}   & x_1 + x_2 &  &\\
-    \mbox{subject to} -1 \leq & x_1 - x_2                  & \leq & 1, \\
-                      & x_1                       & = & 0, \\
-                      & x_1 \geq 0,x_2 \geq 0  & &
-    \end{array}
-
-Suppose that
-
-* ``numi = 1;``
-* ``subi = [0];``
-* ``marki`` = [:ref:`fusion_markUp`]
-
-then
-
-``leftpricei[0]``, ``rightpricei[0]``, ``leftrangei[0]`` and ``rightrangei[0]``
-will contain the sensitivity information for the upper bound on constraint $0$
-given by the expression:
-
-.. math:: x_1 - x_2 \leq  1
-
-Similarly, the variables for which to perform sensitivity analysis are given by
-the structures:
-  
-#. ``subj`` Index of variables to analyze.
-
-#. ``markj`` Indicate for which bound of variable ``subi[j]`` sensitivity
-   analysis is performed.  If ``markj[j]`` = :ref:`fusion_markUp` the upper bound of
-   constraint ``subi[j]`` is analyzed, and if ``markj[j]`` = :ref:`fusion_markLo` the
-   lower bound is analyzed.
-
-#. If ``subi[j]`` is an equality constraint, either :ref:`fusion_markLo` or
-   :ref:`fusion_markUp` can be used to select the constraint for sensitivity
-   analysis.
-
-
-For an example, please see Section :ref:`shared-sensitivity-apiex`.
-
-The type of sensitivity analysis to be performed (basis or optimal partition)
-is controlled by the parameter :ref:`iparam_sensitivity_type`.
-
-
+Perform sensitivity analysis on bounds.
 
 .. index:: pro_sta_to_str
 
@@ -4846,7 +4040,7 @@ is controlled by the parameter :ref:`iparam_sensitivity_type`.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the status key ``prosta``.  
+        String corresponding to the status key.
 
 Obtains a string containing the name of a problem status given.
 
@@ -4865,7 +4059,7 @@ Obtains a string containing the name of a problem status given.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the problem type key ``probtype``.  
+        String corresponding to the problem type key.
 
 Obtains a string containing the name of a problem type given.
 
@@ -4884,17 +4078,13 @@ Obtains a string containing the name of a problem type given.
                        valj_ : & [f64] )
 
 ``j``
-    Index of column in :math:`A`.   
+    Column index.
 ``subj``
-    Row indexes of non-zero values in column :math:`j` of :math:`A`. 
+    Row indexes of non-zero values in column.
 ``valj``
-    New non-zero values of column :math:`j` in :math:`A`. 
+    New non-zero values of column.
 
-
-Resets all the elements in column :math:`j` to zero and then do
-   
-.. math:: A_{\mathtt{subj}[k],\mathtt{j}} = \mathtt{valj}[k], \quad k=0,\ldots,\mathtt{nzj}-1. 
-
+Replaces all elements in one column of A.
 
 .. index:: put_a_col_list
 
@@ -4913,36 +4103,17 @@ Resets all the elements in column :math:`j` to zero and then do
                             aval_ : & [f64] )
 
 ``sub``
-    Indexes of columns that should be replaced. ``comp`` should not contain duplicate values.  
+    Indexes of columns that should be replaced.
 ``ptrb``
-    
-    Array of pointers to the first element in the columns stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the first element in the columns.
 ``ptre``
-    
-    Array of pointers to the last element plus one in the columns stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the last element plus one in the columns.
 ``asub``
-    ``comp`` contains the new variable indexes.  
+    Variable indexes.
 ``aval``
     
 
-
-Replaces all elements in a set of columns of :math:`A`. The elements are replaced as follows  
-
-.. math::
-
-    \begin{array}{rl}
-      \mathtt{for} & i=|idxbeg|,\ldots,|idxend:num|\\
-                  & a_{\mathtt{asub}[k],\mathtt{sub}[i]} = \mathtt{aval}[k],\quad k=\mathtt{aptrb}[i],\ldots,\mathtt{aptre}[i]-1. 
-    \end{array}
-
+Replaces all elements in several columns the linear constraint matrix by new values.
 
 .. index:: put_a_col_slice
 
@@ -4966,25 +4137,15 @@ Replaces all elements in a set of columns of :math:`A`. The elements are replace
 ``last``
     Last column plus one in the slice.
 ``ptrb``
-    
-    Array of pointers to the first element in the columns stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the first element in the columns.
 ``ptre``
-    
-    Array of pointers to the last element plus one in the columns stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the last element plus one in the columns.
 ``asub``
-    ``comp`` contains the new variable indexes.  
+    Variable indexes.
 ``aval``
     
 
-Replaces all elements in a set of columns of :math:`A`.  
+Replaces all elements in several columns the linear constraint matrix by new values.
 
 .. index:: put_a_row
 
@@ -5001,17 +4162,13 @@ Replaces all elements in a set of columns of :math:`A`.
                        vali_ : & [f64] )
 
 ``i``
-    Index of row in :math:`A`.   
+    row index.
 ``subi``
-    Row indexes of non-zero values in row :math:`i` of :math:`A`. 
+    Row indexes of non-zero values in row.
 ``vali``
-    New non-zero values of row :math:`i` in :math:`A`. 
+    New non-zero values of row.
 
-
-Resets all the elements in row :math:`i` to zero and then do
-
-.. math:: A_{\mathtt{i},\mathtt{subi}[k]} = \mathtt{vali}[k], \quad k=0,\ldots,\mathtt{nzi}-1. 
-
+Replaces all elements in one row of A.
 
 .. index:: put_a_row_list
 
@@ -5030,39 +4187,17 @@ Resets all the elements in row :math:`i` to zero and then do
                             aval_  : & [f64] )
 
 ``sub``
-    Indexes of rows or columns that should be replaced. ``comp`` should not contain duplicate values.  
+    Indexes of rows or columns that should be replaced.
 ``aptrb``
-    
-    array of pointers to the first element in the rows 
-    stored in ``comp`` and ``comp``. 
-    
-    for an explanation of the meaning of ``comp`` see section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the first element in the rows or columns.
 ``aptre``
-    
-    Array of pointers to the last element plus one in the rows
-    stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp``
-     see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the last element plus one in the rows or columns.
 ``asub``
-    ``comp`` contains the new variable indexes.  
+    Variable indexes.
 ``aval``
     
 
-
-Replaces all elements in a set of rows of :math:`A`. The elements are replaced as follows  
-
-.. math::
-
-    \begin{array}{rl}
-      \mathtt{for} & i=|idxbeg|,\ldots,|idxend:num| \\
-                   & a_{\mathtt{sub}[i],\mathtt{asub}[k]} = \mathtt{aval}[k],\quad k=\mathtt{aptrb}[i],\ldots,\mathtt{aptre}[i]-1. 
-    \end{array}
-
+Replaces all elements in several rows the linear constraint matrix by new values.
 
 .. index:: put_a_row_slice
 
@@ -5086,36 +4221,15 @@ Replaces all elements in a set of rows of :math:`A`. The elements are replaced a
 ``last``
     Last row plus one in the slice.
 ``ptrb``
-    
-    Array of pointers to the first element in the rows stored in ``comp`` and
-    ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the first element in the rows.
 ``ptre``
-    
-    Array of pointers to the last element plus one in the rows
-    stored in ``comp`` and ``comp``. 
-    
-    For an explanation of the meaning of ``comp`` see Section :ref:`optimizer-intro-cmo-rmo-matrix`.
-    
-    
+    Array of pointers to the last element plus one in the rows.
 ``asub``
-    ``comp`` contains the new variable indexes.  
+    Variable indexes.
 ``aval``
     
 
-
-Replaces all elements in a set of rows of :math:`A`. The elements is replaced as follows
-.. math::
-
-    \begin{array}{rl}
-      \mathtt{for} & i=\mathtt{first},\ldots,\mathtt{last}-1 \\
-                  & a_{\mathtt{sub}[i],\mathtt{asub}[k]} = \mathtt{aval}[k],\quad k=\mathtt{aptrb}[i],\ldots,\mathtt{aptre}[i]-1. 
-    \end{array}
-
-
+Replaces all elements in several rows the linear constraint matrix by new values.
 
 .. index:: put_aij
 
@@ -5136,13 +4250,9 @@ Replaces all elements in a set of rows of :math:`A`. The elements is replaced as
 ``j``
     Index of the variable in which the change should occur.
 ``aij``
-    New coefficient for :math:`a_{i,j}`. 
+    New coefficient.
 
-
-Changes a coefficient in :math:`A` using the method
-
-.. math:: a_{\mathtt{i}\mathtt{j}} = \mathtt{aij}.
-
+Changes a single value in the linear coefficient matrix.
 
 .. index:: put_aij_list
 
@@ -5163,51 +4273,9 @@ Changes a coefficient in :math:`A` using the method
 ``subj``
     Variable indexes in which the change should occur.
 ``valij``
-    New coefficient values for :math:`a_{i,j}`. 
+    New coefficient values.
 
-
-Changes one or more coefficients in :math:`A` using the method
-
-.. math:: a_{\mathtt{subi[k]},\mathtt{subj[k]}} = \mathtt{valij[k]}, \quad k=0,\ldots,\mathtt{num}-1.
-
-
-.. index:: put_bar_aij
-
-.. _optimizer_task_putbaraij:
-
-``put_bar_aij()``
------------------
-
-.. code-block:: rust
-
-    pub fn put_bar_aij ( &self,
-                         i        : i32,
-                         j        : i32,
-                         sub_     : & [i64],
-                         weights_ : & [f64] )
-
-``i``
-    Row index of :math:`\bar{A}`.  
-``j``
-    Column index of :math:`\bar{A}`.  
-``sub``
-    See argument ``texttt`` for an explanation.  
-``weights``
-    ``texttt`` times ``texttt``'th term of $E$ is added to :math:`\bar{A}_{ij}`.  
-
-
-This function puts one element associated with :math:`\bar{X}_j` in the :math:`\bar{A}` matrix.
-
-Each element in the :math:`\bar{A}` matrix is a weighted sum of
-symmetric matrixes, i.e. :math:`\bar{A}_{ij}` is a symmetric matrix
-with dimensions as :math:`\bar{X}_j`. By default all elements in
-:math:`\bar{A}` are 0, so only non-zero elements need be added.
-
-Setting the same elements again will overwrite the earlier entry. 
-
-The symmetric matrixes themselves are defined separately
-using the function :ref:`optimizer_task_appendsparsesymmat`.
-
+Changes one or more coefficients in the linear constraint matrix.
 
 .. index:: put_bara_block_triplet
 
@@ -5239,7 +4307,33 @@ using the function :ref:`optimizer_task_appendsparsesymmat`.
 ``valijkl``
     The numerical value associated with the block triplet.
 
-Inputs the :math:`\bar{A}` in block triplet form.  
+Inputs barA in block triplet form.
+
+.. index:: put_bara_ij
+
+.. _optimizer_task_putbaraij:
+
+``put_bara_ij()``
+-----------------
+
+.. code-block:: rust
+
+    pub fn put_bara_ij ( &self,
+                         i        : i32,
+                         j        : i32,
+                         sub_     : & [i64],
+                         weights_ : & [f64] )
+
+``i``
+    Row index of barA.
+``j``
+    Column index of barA.
+``sub``
+    See argument weights for an explanation.
+``weights``
+    Weights in the weighted sum.
+
+Inputs an element of barA.
 
 .. index:: put_barc_block_triplet
 
@@ -5268,7 +4362,7 @@ Inputs the :math:`\bar{A}` in block triplet form.
 ``valjkl``
     The numerical value associated with the block triplet.
 
-Inputs the :math:`\bar{C}` in block triplet form.  
+Inputs barC in block triplet form.
 
 .. index:: put_barc_j
 
@@ -5285,24 +4379,13 @@ Inputs the :math:`\bar{C}` in block triplet form.
                         weights_ : & [f64] )
 
 ``j``
-    Index of the element in :math:`\bar{c}` that should be changed.  
+    Index of the element in barc` that should be changed.
 ``sub``
-    ``sub`` is list of indexes of those symmetric matrices appearing in sum.  
+    sub is list of indexes of those symmetric matrices appearing in sum.
 ``weights``
-    The weights of the terms in the weighted sum that forms :math:`\mathtt{c}_j`.  
+    The weights of the terms in the weighted sum.
 
-
-This function puts one element associated with :math:`\bar{X}_j` in the :math:`\bar{c}` vector. 
-
-Each element in the :math:`\bar{c}` vector is a weighted sum of symmetric
-matrixes, i.e. :math:`\bar{c}_j` is a symmetric matrix with dimensions as
-:math:`\bar{X}_j`. By default all elements in :math:`\bar{c}` are :math:`0`, so only non-zero elements need be added.
-
-Setting the same elements again will overwrite the earlier entry. 
-
-The symmetric matrixes themselves are defined separately using the function
-:ref:`optimizer_task_appendsparsesymmat`.
-
+Changes one element in barc.
 
 .. index:: put_bars_j
 
@@ -5323,7 +4406,7 @@ The symmetric matrixes themselves are defined separately using the function
 ``j``
     Index of the semidefinite variable.
 ``barsj``
-    Value of :math:`\bar{s}_j`. 
+    Value of the j'th variable of barx.
 
 Sets the dual solution for a semidefinite variable.
 
@@ -5366,7 +4449,7 @@ Puts the name of a semidefinite variable.
 ``j``
     Index of the semidefinite variable.
 ``barxj``
-    Value of :math:`\bar{X}_j`. 
+    Value of the j'th variable of barx.
 
 Sets the primal solution for a semidefinite variable.
 
@@ -5397,15 +4480,7 @@ Sets the primal solution for a semidefinite variable.
 ``bu``
     New upper bound.
 
-
-Changes the bounds for either one constraint or one variable.
-
-If the a bound value specified is numerically larger than
-:ref:`dparam_data_tol_bound_inf` it is considered infinite and the bound key is
-changed accordingly. If a bound value is numerically larger than
-:ref:`dparam_data_tol_bound_wrn`, a warning will be displayed, but the bound is
-inputted as specified.
-
+Changes the bound for either one constraint or one variable.
 
 .. index:: put_bound_list
 
@@ -5424,15 +4499,15 @@ inputted as specified.
                             bu_     : & [f64] )
 
 ``accmode``
-    Defines whether bounds for constraints (:ref:`fusion_accCon`) or variables (:ref:`fusion_accVar`) are changed.  
+    Defines whether to access bounds on variables or constraints.
 ``sub``
     Subscripts of the bounds that should be changed.
 ``bk``
-    Constraint or variable index ``sub[t]`` is assigned the bound key ``bk[t]``.  
+    Bound keys for variables or constraints.
 ``bl``
-    Constraint or variable index ``sub[t]`` is assigned the lower bound ``bl[t]``.  
+    Bound keys for variables or constraints.
 ``bu``
-    Constraint or variable index ``sub[t]`` is assigned the upper bound ``bu[t]``.  
+    Constraint or variable upper bounds.
 
 Changes the bounds of constraints or variables.
 
@@ -5454,7 +4529,7 @@ Changes the bounds of constraints or variables.
                              bu_   : & [f64] )
 
 ``con``
-    Defines whether bounds for constraints (:ref:`fusion_accCon`) or variables (:ref:`fusion_accVar`) are changed.  
+    Determines whether variables or constraints are modified.
 ``first``
     
 ``last``
@@ -5484,13 +4559,9 @@ Modifies bounds.
 ``j``
     Index of the variable whose objective coefficient should be changed.
 ``cj``
-    New value of :math:`c_j`. 
+    New coefficient value.
 
-
-Modifies one coefficient in the linear objective vector :math:`c`, i.e.
-
-.. math:: c_{\mathtt{j}} = \mathtt{cj}.
-
+Modifies one linear coefficient in the objective.
 
 .. index:: put_c_list
 
@@ -5510,13 +4581,7 @@ Modifies one coefficient in the linear objective vector :math:`c`, i.e.
 ``val``
     New numerical values for the objective coefficients that should be modified.
 
-
-Modifies elements in the linear term :math:`c` in the objective using the principle
-
-.. math:: c_{\mathtt{subj[t]}} = \mathtt{val[t]}, \quad t=0,\ldots,\mathtt{num}-1.
-
-If a variable index is specified multiple times in ``subj`` only the last entry is used.
-
+Modifies a part of the linear objective coefficients.
 
 .. index:: put_c_slice
 
@@ -5533,18 +4598,13 @@ If a variable index is specified multiple times in ``subj`` only the last entry 
                          slice_ : & [f64] )
 
 ``first``
-    First element in the slice of :math:`c`. 
+    First element in the slice of c.
 ``last``
-    Last element plus 1 of the slice in :math:`c` to be changed. 
+    Last element plus 1 of the slice in c to be changed.
 ``slice``
-    New numerical values for coefficients in :math:`c` that should be modified.  
+    New numerical values for the objective coefficients that should be modified.
 
-
-Modifies a slice in the linear term :math:`c` in the objective using the principle
-
-.. math:: c_{\mathtt{j}} = \mathtt{slice[j-first]}, \quad j=first,..,|idxend:last|
-
-
+Modifies a slice of the linear objective coefficients.
 
 .. index:: put_callback
 
@@ -5624,15 +4684,7 @@ Replaces the fixed term in the objective.
 ``bu``
     New upper bound.
 
-
-Changes the bounds for one constraint.
-
-If the a bound value specified is numerically larger than
-:ref:`dparam__data_tol_bound_inf` it is considered infinite and the bound key is
-changed accordingly. If a bound value is numerically larger than
-:ref:`dparam_data_tol_bound_wWrn`, a warning will be displayed, but the bound is
-inputted as specified.
-
+Changes the bound for one constraint.
 
 .. index:: put_con_bound_list
 
@@ -5793,19 +4845,7 @@ Sets a double parameter.
 ``parvalue``
     
 
-
-Sets the value of an integer parameter.
-
-.. ifconfig:: msk_lang=='java'
-
-   Please notice that some parameters take values that are defined in Enum
-   classes. This function accepts only integer values, so to use e.g. the value
-   :ref:`fusion_on`, is necessary to use the member ``.value``. For example: ::
-
-       task.putintparam(Env.iparam.opf_write_problem,Env.onoffkey.on.value)
-
-
-
+Sets an integer parameter.
 
 .. index:: put_max_num_a_nz
 
@@ -5819,25 +4859,9 @@ Sets the value of an integer parameter.
     pub fn put_max_num_a_nz ( &self,maxnumanz : i64 )
 
 ``maxnumanz``
-    New size of the storage reserved for storing :math:`A`. 
+    New size of the storage reserved for storing the linear coefficient matrix.
 
-
-|mosek| stores only the non-zero elements in :math:`A`.  Therefore1 |mosek|
-cannot predict how much storage is required to store :math:`A`. Using this
-function it is possible to specify the number of non-zeros to preallocate for
-storing :math:`A`.
-
-If the number of non-zeros in the problem is known, it is a good idea to set
-``maxnumanz`` slightly larger than this number, otherwise a rough estimate can
-be used. In general, if :math:`A` is inputted in many small chunks, setting
-this value may speed up the data input phase.
-
-It is not mandatory to call this function, since |mosek| will reallocate
-internal structures whenever it is necessary.
-
-Observe the function call has no effect if both ``maxnumcon`` and ``maxnumvar``
-is zero.
-
+The function changes the size of the preallocated storage for linear coefficients.
 
 .. index:: put_max_num_barvar
 
@@ -5853,17 +4877,7 @@ is zero.
 ``maxnumbarvar``
     The maximum number of semidefinite variables.
 
-
-Sets the number of preallocated symmetric matrix variables in the optimization
-task. When this number of variables is reached |mosek| will automatically
-allocate more space for variables.
-
-It is not mandatory to call this function, since its only function is to give a
-hint of the amount of data to preallocate for efficiency reasons.
-
-Please note that ``maxnumbarvar`` must be larger than the current number of
-variables in the task.
-
+Sets the number of preallocated symmetric matrix variables in the optimization task.
 
 .. index:: put_max_num_con
 
@@ -5879,17 +4893,7 @@ variables in the task.
 ``maxnumcon``
     
 
-
-Sets the number of preallocated constraints in the optimization task. When this
-number of constraints is reached |mosek| will automatically allocate more space
-for constraints.
-
-It is never mandatory to call this function, since |mosek| will reallocate any
-internal structures whenever it is required.
-
-Please note that ``maxnumcon`` must be larger than the current number of
-constraints in the task.
-
+Sets the number of preallocated constraints in the optimization task.
 
 .. index:: put_max_num_cone
 
@@ -5905,17 +4909,7 @@ constraints in the task.
 ``maxnumcone``
     
 
-
 Sets the number of preallocated conic constraints in the optimization task.
-When this number of conic constraints is reached |mosek| will automatically
-allocate more space for conic constraints.
-
-It is never mandatory to call this function, since |mosek| will reallocate any
-internal structures whenever it is required.
-
-Please note that ``maxnumcon`` must be larger than the current number of
-constraints in the task.
-
 
 .. index:: put_max_num_q_nz
 
@@ -5931,20 +4925,7 @@ constraints in the task.
 ``maxnumqnz``
     
 
-
-|mosek| stores only the non-zero elements in :math:`Q`. Therefore, |mosek|
-cannot predict how much storage is required to store :math:`Q`. Using this
-function it is possible to specify the number non-zeros to preallocate for
-storing :math:`Q` (both objective and constraints).
-
-It may be advantageous to reserve more non-zeros for :math:`Q` than actually
-needed since it may improve the internal efficiency of |mosek|, however, it is
-never worthwhile to specify more than the double of the anticipated number of
-non-zeros in :math:`Q`.
-
-It is never mandatory to call this function, since its only function is to give
-a hint of the amount of data to preallocate for efficiency reasons.
-
+Changes the size of the preallocated storage for quadratic terms.
 
 .. index:: put_max_num_var
 
@@ -5960,17 +4941,7 @@ a hint of the amount of data to preallocate for efficiency reasons.
 ``maxnumvar``
     
 
-
-Sets the number of preallocated variables in the optimization task. When this
-number of variables is reached |mosek| will automatically allocate more space
-for variables.
-
-It is never mandatory to call this function, since its only function is to give
-a hint of the amount of data to preallocate for efficiency reasons.
-
-Please note that ``maxnumvar`` must be larger than the current number of
-variables in the task.
-
+Sets the number of preallocated variables in the optimization task.
 
 .. index:: put_na_dou_param
 
@@ -6046,7 +5017,7 @@ Sets a string parameter.
 ``objname``
     
 
-Assigns the name given by ``objname`` to the objective function.  
+Assigns a new name to the objective.
 
 .. index:: put_obj_sense
 
@@ -6060,11 +5031,7 @@ Assigns the name given by ``objname`` to the objective function.
     pub fn put_obj_sense ( &self,sense : i32 )
 
 ``sense``
-    
-    The objective sense of the task. The values :ref:`fusion_objectiveSenseMaximize`  and
-    :ref:`fusion_objectiveSenseMinimize`  means that the problem is maximized or
-    minimized respectively.
-    
+    The objective sense of the task
 
 Sets the objective sense.
 
@@ -6086,10 +5053,7 @@ Sets the objective sense.
 ``parvalue``
     
 
-
-Checks if a ``parname`` is valid parameter name. If it is, the parameter is
-assigned the value specified by ``parvalue``.
-
+Modifies the value of parameter.
 
 .. index:: put_q_con
 
@@ -6115,23 +5079,7 @@ assigned the value specified by ``parvalue``.
 ``qcval``
     
 
-
-Replace all quadratic entries in the constraints. consider constraints on the form:
-
-.. math:: l_k^c \leq  \frac{1}{2} \sum_{i=0}^{|idxend:numvar|} \sum_{j=0}^{|idxend:numvar|} q_{ij}^k x_i x_j + \sum_{j=0}^{|idxend:numvar|} a_{kj} x_j \leq u_k^c, ~  k=0,\ldots,m-1.
-
-the function assigns values to :math:`q` such that:
-
-.. math:: q_{\mathtt{qcsubi[t]},\mathtt{qcsubj[t]}}^{\mathtt{qcsubk[t]}} = \mathtt{qcval[t]},~t=0,\ldots,\mathtt{numqcnz}-1.
-
-and
-
-.. math:: q_{\mathtt{\mathtt{qcsubj[t]},qcsubi[t]}}^{\mathtt{qcsubk[t]}} = \mathtt{qcval[t]},~t=0,\ldots,\mathtt{numqcnz}-1.
-
-values not assigned are set to zero.
-
-Please note that duplicate entries are added together.
-
+Replaces all quadratic terms in constraints.
 
 .. index:: put_q_con_k
 
@@ -6157,39 +5105,7 @@ Please note that duplicate entries are added together.
 ``qcval``
     
 
-
-Replaces all the quadratic entries in one constraint :math:`k` of the form:
-
- .. math:: l_k^c \leq  \frac{1}{2} \sum_{i=|idxbeg|}^{|idxend:numvar|} \sum_{j=|idxbeg|}^{|idxend:numvar|} q_{ij}^k x_i x_j + \sum_{j=|idxbeg|}^{|idxend:numvar|} a_{kj} x_j \leq u_k^c.
-
-It is assumed that :math:`Q^k` is symmetric, i.e. :math:`q^k_{ij} = q^k_{ji}`,and therefore, only the values of :math:`q^k_{ij}` for which :math:`i \geq j`
-should be inputted to |mosek|.  To be precise, |mosek| uses the following procedure
-
-.. math::
-
-    \begin{array}{ll}
-    1. & Q^{k}  = 0\\
-    2. & \mbox{for } t=|idxbeg| \mbox{ to }|idxend:numqcnz| \\
-    3. & \qquad q_{\mathtt{qcsubi[t]},\mathtt{qcsubj[t]}}^{k} = q_{\mathtt{qcsubi[t]},\mathtt{qcsubj[t]}}^{k} + \mathtt{qcval[t]} \\
-    3. & \qquad q_{\mathtt{qcsubj[t]},\mathtt{qcsubi[t]}}^{k} = q_{\mathtt{qcsubj[t]},\mathtt{qcsubi[t]}}^{k} + \mathtt{qcval[t]} \\
-    \end{array}
-
-Please note that:
-
-*   For large problems it is essential for the efficiency that the function
-    :ref:`optimizer_task_putmaxnumqnz` is employed to specify an appropriate
-    \texttt{maxnumqnz}.
-*   Only the lower triangular part should be specified because :math:`Q^k` is
-    symmetric. Specifying values for :math:`q^k_{ij}` where :math:`i < j`
-    will result in an error. 
-*   Only non-zero elements should be specified.
-*   The order in which the non-zero elements are specified is insignificant.
-*   Duplicate elements are added together. Hence, it is recommended not to
-    specify the same element multiple times in \texttt{qcsubi},
-    \texttt{qcsubj}, and \texttt{qcval}.
-
-For a code example see Section :ref:`optimizer-quadratic-opt`
-
+Replaces all quadratic terms in a single constraint.
 
 .. index:: put_q_obj
 
@@ -6212,35 +5128,7 @@ For a code example see Section :ref:`optimizer-quadratic-opt`
 ``qoval``
     
 
-
-Replaces all the quadratic terms in the objective
-
-.. math:: \frac{1}{2} \sum_{i=|idxbeg|}^{|idxend:numvar|} \sum_{j=|idxbeg|}^{|idxend:numvar|} q_{ij}^o x_i x_j + \sum_{j=|idxbeg|}^{|idxend:numvar|} c_j x_j + c^f.
-
-It is assumed that :math:`Q^o` is symmetric, i.e. :math:`q^o_{ij} = q^o_{ji}`, and therefore, only the values of :math:`q^o_{ij}` for which :math:`i \geq j` should be specified.  To be precise, |mosek| uses the following procedure
-
-.. math::
-
-   \begin{array}{ll}
-    1. & Q^o = 0\\
-    2. & \mbox{for } t=|idxbeg| \mbox{ to } |idxend:numqonz| \\
-    3. & \qquad q_{\mathtt{qosubi[t]},\mathtt{qosubj[t]}}^o = q_{\mathtt{qosubi[t]},\mathtt{qosubj[t]}}^o + \mathtt{qoval[t]} \\
-    3. & \qquad q_{\mathtt{qosubj[t]},\mathtt{qosubi[t]}}^o = q_{\mathtt{qosubj[t]},\mathtt{qosubi[t]}}^o + \mathtt{qoval[t]} \\
-    \end{array}
-
-Please note that:
-
-* Only the lower triangular part should be specified because :math:`Q^o` is symmetric. Specifying values for :math:`q^o_{ij}` where :math:`i < j` will result in an error. 
-
-* Only non-zero elements should be specified.
-
-* The order in which the non-zero elements are specified is insignificant.
-
-* Duplicate entries are added to together.
-
-For a code example see Section :ref:`optimizer-quadratic-objective`.
-
-
+Replaces all quadratic terms in the objective.
 
 .. index:: put_q_obj_i_j
 
@@ -6261,21 +5149,9 @@ For a code example see Section :ref:`optimizer-quadratic-objective`.
 ``j``
     Column index for the coefficient to be replaced.
 ``qoij``
-    The new value for :math:`q_{ij}^o`. 
+    The new coefficient value.
 
-
-Replaces one coefficient in the quadratic term in the objective. The function
-performs the assignment
-
-.. math:: q_{\mathtt{i}\mathtt{j}}^o = \mathtt{qoij}.
-
-Only the elements in the lower triangular part are accepted. Setting
-:math:`q_{ij}` with :math:`j>i` will cause an error.
-
-Please note that replacing all quadratic element, one at a time, is more
-computationally expensive than replacing all elements at once. Use
-:ref:`optimizer_task_putqobj` instead whenever possible.
-
+Replaces one coefficient in the quadratic term in the objective.
 
 .. index:: put_skc
 
@@ -6385,9 +5261,9 @@ Sets the status keys for the variables.
 ``whichsol``
     
 ``slc``
-    The :math:`s_l^c` vector. 
+    The slc vector.
 
-Sets the :math:`s_l^c` vector for a solution.  
+Sets the slc vector for a solution.
 
 .. index:: put_slc_slice
 
@@ -6413,7 +5289,7 @@ Sets the :math:`s_l^c` vector for a solution.
 ``slc``
     
 
-Sets a slice of the :math:`s_l^c` vector for a solution.  
+Sets a slice of the slc vector for a solution.
 
 .. index:: put_slx
 
@@ -6431,9 +5307,9 @@ Sets a slice of the :math:`s_l^c` vector for a solution.
 ``whichsol``
     
 ``slx``
-    The :math:`s_l^x` vector. 
+    The slx vector.
 
-Sets the :math:`s_l^x` vector for a solution.  
+Sets the slx vector for a solution.
 
 .. index:: put_slx_slice
 
@@ -6459,7 +5335,7 @@ Sets the :math:`s_l^x` vector for a solution.
 ``slx``
     
 
-Sets a slice of the :math:`s_l^x` vector for a solution.  
+Sets a slice of the slx vector for a solution.
 
 .. index:: put_snx
 
@@ -6477,9 +5353,9 @@ Sets a slice of the :math:`s_l^x` vector for a solution.
 ``whichsol``
     
 ``sux``
-    The :math:`s_n^x` vector. 
+    The snx vector.
 
-Sets the :math:`s_n^x` vector for a solution.  
+Sets the snx vector for a solution.
 
 .. index:: put_snx_slice
 
@@ -6505,7 +5381,7 @@ Sets the :math:`s_n^x` vector for a solution.
 ``snx``
     
 
-Sets a slice of the :math:`s_n^x` vector for a solution.  
+Sets a slice of the snx vector for a solution.
 
 .. index:: put_solution
 
@@ -6577,10 +5453,7 @@ Inserts a solution.
                             sn       : f64 )
 
 ``accmode``
-    
-    If set to :ref:`fusion_accCon` the solution information for a constraint
-    is modified. Otherwise for a variable.
-    
+    Defines whether solution information for a constraint or for a variable is modified.
 ``i``
     Index of the constraint or variable.
 ``whichsol``
@@ -6681,9 +5554,9 @@ Sets the callback function and handle for the given stream in the
 ``whichsol``
     
 ``suc``
-    The :math:`s_u^c` vector. 
+    The suc vector.
 
-Sets the :math:`s_u^c` vector for a solution.  
+Sets the suc vector for a solution.
 
 .. index:: put_suc_slice
 
@@ -6709,7 +5582,7 @@ Sets the :math:`s_u^c` vector for a solution.
 ``suc``
     
 
-Sets a slice of the :math:`s_u^c` vector for a solution.  
+Sets a slice of the suc vector for a solution.
 
 .. index:: put_sux
 
@@ -6727,9 +5600,9 @@ Sets a slice of the :math:`s_u^c` vector for a solution.
 ``whichsol``
     
 ``sux``
-    The :math:`s_u^x` vector. 
+    The sux vector.
 
-Sets the :math:`s_u^x` vector for a solution.  
+Sets the sux vector for a solution.
 
 .. index:: put_sux_slice
 
@@ -6755,7 +5628,7 @@ Sets the :math:`s_u^x` vector for a solution.
 ``sux``
     
 
-Sets a slice of the :math:`s_u^x` vector for a solution.  
+Sets a slice of the sux vector for a solution.
 
 .. index:: put_task_name
 
@@ -6771,7 +5644,7 @@ Sets a slice of the :math:`s_u^x` vector for a solution.
 ``taskname``
     
 
-Assigns the name ``taskname`` to the task. 
+Assigns a new name to the task.
 
 .. index:: put_var_bound
 
@@ -6797,15 +5670,7 @@ Assigns the name ``taskname`` to the task.
 ``bu``
     New upper bound.
 
-
-Changes the bounds for one variable.
-
-If the a bound value specified is numerically larger than
-:ref:`dparam_data_tol_bound_inf` it is considered infinite and the bound key is
-changed accordingly. If a bound value is numerically larger than
-:ref:`dparam_data_tol_bound_wrn`, a warning will be displayed, but the bound is
-inputted as specified.
-
+Changes the bound for one variable.
 
 .. index:: put_var_bound_list
 
@@ -6861,29 +5726,6 @@ Changes the bounds of a list of variables.
     New upper bounds.
 
 Changes the bounds for a slice of the variables.
-
-.. index:: put_var_branch_order
-
-.. _optimizer_task_putvarbranchorder:
-
-``put_var_branch_order()``
---------------------------
-
-.. code-block:: rust
-
-    pub fn put_var_branch_order ( &self,
-                                  j         : i32,
-                                  priority  : i32,
-                                  direction : i32 )
-
-``j``
-    Index of the variable.
-``priority``
-    The branching priority that should be assigned to variable :math:`j`. 
-``direction``
-    Specifies the preferred branching direction for variable :math:`j`. 
-
-Assigns a branching priority and direction to a variable.
 
 .. index:: put_var_name
 
@@ -6942,20 +5784,9 @@ Sets the variable type of one variable.
     A list of variable indexes for which the variable
                                type should be changed.
 ``vartype``
-    
-    A list of variable types that should be assigned to the variables specified by
-    ``subj``. See section :ref:`fusion_variabletype` for the possible values of
-    ``vartype``.
-    
+    A list of variable types.
 
-
-Sets the variable type for one or more variables, i.e.  variable number
-:math:`\mathtt{subj}[k]` is assigned the variable type
-:math:`\mathtt{vartype}[k]`.
-
-If the same index is specified multiple times in ``subj`` only the last entry
-takes effect.
-
+Sets the variable type for one or more variables.
 
 .. index:: put_xc
 
@@ -6975,7 +5806,7 @@ takes effect.
 ``xc``
     The xc vector.
 
-Sets the :math:`x^c` vector for a solution.  
+Sets the xc vector for a solution.
 
 .. index:: put_xc_slice
 
@@ -7001,7 +5832,7 @@ Sets the :math:`x^c` vector for a solution.
 ``xc``
     
 
-Sets a slice of the :math:`x^c` vector for a solution.  
+Sets a slice of the xc vector for a solution.
 
 .. index:: put_xx
 
@@ -7019,9 +5850,9 @@ Sets a slice of the :math:`x^c` vector for a solution.
 ``whichsol``
     
 ``xx``
-    The :math:`x^x` vector. 
+    The xx vector.
 
-Sets the :math:`x^x` vector for a solution.  
+Sets the xx vector for a solution.
 
 .. index:: put_xx_slice
 
@@ -7065,9 +5896,9 @@ Obtains a slice of the xx vector for a solution.
 ``whichsol``
     
 ``y``
-    The :math:`y` vector. 
+    The y vector.
 
-Sets the :math:`y` vector for a solution.  
+Sets the y vector for a solution.
 
 .. index:: put_y_slice
 
@@ -7093,23 +5924,7 @@ Sets the :math:`y` vector for a solution.
 ``y``
     
 
-Sets a slice of the :math:`y` vector for a solution.  
-
-.. index:: read_branch_priorities
-
-.. _optimizer_task_readbranchpriorities:
-
-``read_branch_priorities()``
-----------------------------
-
-.. code-block:: rust
-
-    pub fn read_branch_priorities ( &self,filename : &str )
-
-``filename``
-    Data is read from the file ``filename``.  
-
-Reads branching priority data from a file.
+Sets a slice of the y vector for a solution.
 
 .. index:: read_data
 
@@ -7123,7 +5938,7 @@ Reads branching priority data from a file.
     pub fn read_data ( &self,filename : &str )
 
 ``filename``
-    Data is read from the file ``filename``.  
+    Input data file name.
 
 Reads problem data from a file.
 
@@ -7162,11 +5977,7 @@ Reads problem data from a file.
     pub fn read_param_file ( &self,filename : &str )
 
 ``filename``
-    
-    Data is read from the file ``filename``
-    if it is a nonempty string. Otherwise data is read
-    from the file specified by :ref:`sparam_param_read_file_name`.
-    
+    Input data file name.
 
 Reads a parameter file.
 
@@ -7188,7 +5999,7 @@ Reads a parameter file.
 ``filename``
     
 
-Reads a solution file and inserts the solution into the solution ``whichsol``.  
+Reads a solution from a file.
 
 .. index:: read_summary
 
@@ -7220,14 +6031,7 @@ Prints information about last file read.
 ``filename``
     Input file name.
 
-
-Load task data from a file, replacing any data that already is in the task
-object. All problem data are resorted, but if the file contains solutions, the
-solution status after loading a file is still unknown, even if it was optimal
-or otherwise well-defined when the file was dumped.
-
-See section :ref:`shared-taskformat` for a description of the Task format.
-
+Load task data from a file.
 
 .. index:: remove_barvars
 
@@ -7316,20 +6120,11 @@ The function removes a number of variables.
 ``maxnumcone``
     New maximum number of cones.
 ``maxnumanz``
-    New maximum number of non-zeros in :math:`A`. 
+    New maximum number of linear non-zero elements.
 ``maxnumqnz``
-    New maximum number of non-zeros in all :math:`Q` matrices. 
+    New maximum number of quadratic non-zeros elements.
 
-
-Sets the amount of preallocated space assigned for each type of data in an
-optimization task.
-
-It is never mandatory to call this function, since its only function is to give
-a hint of the amount of data to preallocate for efficiency reasons.
-
-Please note that the procedure is **destructive** in the sense that all
-existing data stored in the task is destroyed.
-
+Resizes an optimization task.
 
 .. index:: sensitivity_report
 
@@ -7345,12 +6140,7 @@ existing data stored in the task is destroyed.
 ``whichstream``
     
 
-
-Reads a sensitivity format file from a location given by
-:ref:`sparam_sensitivity_file_name` and writes the result to the stream
-``whichstream``. If :ref:`sparam_sensitivity_res_file_name` is set to a non-empty
-string, then the sensitivity report is also written to a file of this name.
-
+Creates a sensitivity report.
 
 .. index:: set_defaults
 
@@ -7381,7 +6171,7 @@ Resets all parameters values.
     A valid status key.
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the status key ``sk``. 
+        String corresponding to the status key.
 
 Obtains a status key string.
 
@@ -7400,7 +6190,7 @@ Obtains a status key string.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the solution status ``solsta``.  
+        String corresponding to the solution status.
 
 Obtains a solution status string.
 
@@ -7455,114 +6245,18 @@ Prints a short summary of the current solutions.
                               val    : & mut [f64] )
 
 ``transp``
-    
-    If this argument is non-zero, then :eq:`ais-eq-Btxb` is solved. Otherwise the system :eq:`ais-eq-Bxb` is solved.
-    
+    Controls which problem formulation is solved.
 ``numnz``
-    
-    As input it is the number of non-zeros in :math:`b`.  As output it is the number of non-zeros in :math:`\bar{X}`.
-    
+    Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
 ``sub``
-    
-    As input it contains the positions of the non-zeros in :math:`b`, i.e.
-    
-    .. math:: b[ \mathtt{sub} [k] ] \neq 0, \quad k=|idxbeg|,\ldots,|idxend:numnz[|idxbeg|]|.
-    
-    As output it contains the positions of the non-zeros in :math:`\bar{X}`. It is important that ``sub`` has room for ``numcon`` elements.
-    
-    
+    Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
 ``val``
-    
-    
-    As input it is the vector :math:`b`. Although the positions of the non-zero elements are specified in ``sub`` it is required that
-    :math:`\mathtt{val}[i] = 0` if :math:`b[i] = 0`.  As output ``val`` is the vector :math:`\bar{X}`.
-    
-    Please note that ``val`` is a dense vector --- not a packed sparse vector. This implies that ``val`` has room for ``numcon`` elements.
-    
-    
+    Input (right-hand side values) and output (solution vector values).
 *Returns:* ``numnz``
     ``numnz : i32``
-        
-        As input it is the number of non-zeros in :math:`b`.  As output it is the number of non-zeros in :math:`\bar{X}`.
-        
+        Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
 
-
-If a basic solution is available, then exactly :math:`\mathtt{numcon}`
-basis variables are defined.  These :math:`\mathtt{numcon}` basis
-variables are denoted the basis.  Associated with the basis is a basis
-matrix denoted :math:`B`.  This function solves either the linear
-equation system
-
-.. math:: 
-   :label: ais-eq-Bxb
-
-   B \bar{X} = b                       
-
-or the system
-
-.. math::
-   :label: ais-eq-Btxb
-
-   B^T \bar{X} = b
-
-for the unknowns :math:`\bar{X}`, with :math:`b` being a user-defined  vector.
-
-In order to make sense of the solution :math:`\bar{X}` it is important
-to know the ordering of the variables in the basis because the
-ordering specifies how :math:`B` is constructed. When calling
-:ref:`optimizer_task_initbasissolve` an ordering of the basis variables is
-obtained, which can be used to deduce how |mosek| has constructed
-:math:`B`. Indeed if the :math:`k`\ th basis variable is variable
-:math:`x_j` it implies that
-
-
-.. math:: B_{i,k} = A_{i,j}, ~i=|idxbeg|,\ldots,|idxend:numcon|.
-
-
-Otherwise if the :math:`k`\ th basis variable is variable :math:`x_j^c` it implies that
-
-.. math::
-    
-  B_{i,k} = \left\{ \begin{array}{ll}
-                          -1, & i = j, \\
-                          0 , & i \neq j. \\
-                      \end{array} 
-              \right.
-
-
-Given the knowledge of how :math:`B` is constructed it is possible to interpret the solution :math:`\bar{X}` correctly.
-
-Please note that this function exploits the sparsity in the vector :math:`b` to speed up the computations.
-
-
-
-.. index:: start_stat
-
-.. _optimizer_task_startstat:
-
-``start_stat()``
-----------------
-
-.. code-block:: rust
-
-    pub fn start_stat ( &self )
-
-
-Starts the statistics file.
-
-.. index:: stop_stat
-
-.. _optimizer_task_stopstat:
-
-``stop_stat()``
----------------
-
-.. code-block:: rust
-
-    pub fn stop_stat ( &self )
-
-
-Stops the statistics file.
+Solve a linear equation system involving a basis matrix.
 
 .. index:: str_to_cone_type
 
@@ -7576,10 +6270,10 @@ Stops the statistics file.
     pub fn str_to_cone_type ( &self,str   : &str ) -> i32
 
 ``str``
-    String corresponding to the cone type code ``codetype``.  
+    String corresponding to the cone type code.
 *Returns:* ``conetype``
     ``conetype : i32``
-        The cone type corresponding to the string ``str``.  
+        The cone type corresponding to str.
 
 Obtains a cone type code.
 
@@ -7614,25 +6308,7 @@ Obtains a status key.
     pub fn toconic ( &self )
 
 
-
-This function tries to reformulate a given Quadratically Constrained Quadratic
-Optimization problem (QCQP) as a Conic Quadratic Optimization problem (CQO).
-The first step of the reformulation is to convert the quadratic term of the
-objective function as a constraint, if any. Then the following steps are
-repeated for each quadratic constraint:
-
-* a conic constraint is added along with a suitable number of auxiliary variables and constraints;
-* the original quadratic constraint is not removed, but all its coefficients are zeroed out.
-
-
-Note that the reformulation preserves all the original variables.
-
-The conversion is performed in-place, i.e. the task passed as argument is
-modified on exit. That also means that if the reformulation fails, i.e. the
-given QCQP is not representable as a CQO, then the task has an undefined state.
-In some cases, users may want to clone the task to ensure a clean copy is
-preserved.
-
+Inplace reformulation of a QCQP to a COP
 
 .. index:: update_solution_info
 
@@ -7650,22 +6326,6 @@ preserved.
 
 Update the information items related to the solution.
 
-.. index:: write_branch_priorities
-
-.. _optimizer_task_writebranchpriorities:
-
-``write_branch_priorities()``
------------------------------
-
-.. code-block:: rust
-
-    pub fn write_branch_priorities ( &self,filename : &str )
-
-``filename``
-    Data is written to the file ``filename``.  
-
-Writes branching priority data to a file.
-
 .. index:: write_data
 
 .. _optimizer_task_writedata:
@@ -7678,44 +6338,25 @@ Writes branching priority data to a file.
     pub fn write_data ( &self,filename : &str )
 
 ``filename``
+    Output file name.
+
+Writes problem data to a file.
+
+.. index:: write_json_sol
+
+.. _optimizer_task_writejsonsol:
+
+``write_json_sol()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn write_json_sol ( &self,filename : &str )
+
+``filename``
     
-    Data is written to the file ``filename``
-    if it is a nonempty string. Otherwise data is written
-    to the file specified by :ref:`sparam_data_file_name`.
-    
 
-
-Writes problem data associated with the optimization task to a file in one of
-four formats:
-
-LP:
-    A text based row oriented format. File extension ``.lp``. See Appendix
-    :ref:`shared-lpformat`.
-MPS:
-    A text based column oriented format. File extension ``.mps``. See Appendix
-    :ref:`shared-mpsformat`.
-OPF:
-    A text based row oriented format. File extension ``.opf``. Supports more
-    problem types than MPS and LP. See Appendix :ref:`shared-opfformat`.
-TASK:
-    A MOSEK specific binary format for fast reading and writing. File extension ``.task``.
-
-By default the data file format is determined by the file name extension. This
-behaviour can be overridden by setting the :ref:`iparam_write_data_format`
-parameter.
-
-|mosek| is able to read and write files in a compressed format (gzip). To write
-in the compressed format append the extension "``.gz``".  E.g to write a gzip
-compressed MPS file use the extension ``mps.gz``.
-
-Please note that MPS, LP and OPF files require all variables to have unique
-names. If a task contains no names, it is possible to write the file with
-automatically generated anonymous names by setting the
-:ref:`iparam_write_generic_names` parameter to :ref:`fusion_on`.
-
-Please note that if a general nonlinear function appears in the problem then
-such function *cannot* be written to file and |mosek| will issue a warning.
-
+Write a solution to a file.
 
 .. index:: write_param_file
 
@@ -7767,9 +6408,4 @@ Write a solution to a file.
 ``filename``
     Output file name.
 
-
-Write a binary dump of the task data. This format saves all problem data, but
-not callback-functions and general non-linear terms.
-
-See section :ref:`shared-taskformat` for a description of the Task format.
-
+Write a complete binary dump of the task data.
