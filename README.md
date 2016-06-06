@@ -8,9 +8,13 @@ The API has been tested on 64bit Linux, but may work on other posix platforms as
 # Mosek Rust interface
 
 Mosek:
+
     https://mosek.com/
+
 Rust:
-     https://www.rust-lang.com
+
+    https://www.rust-lang.com
+
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
@@ -37,5 +41,7 @@ Examples are located under `examples/`
 
 To compile examples, run
 
-```cargo test```
+```
+cargo test
+```
 
