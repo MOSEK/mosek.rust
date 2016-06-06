@@ -1,8 +1,11 @@
-# *DISCLAIMER* 
+# *DISCLAIMER*
 
+<font color="red">
 This software is experimental. We (MOSEK) may fix errors and bugs, but provide
-no guarantee on how quickly or how we do so. We may at any point decide to
-terminate support for the code.
+no guarantee on how or how quickly we do so.
+
+The API has been tested on 64bit Linux, but may work on other posix platforms as well.
+</font>
 
 # Mosek Rust interface
 
@@ -13,21 +16,26 @@ Rust:
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
-Building requires MOSEK to be installed. By default the build script will look
-for MOSEK in `$HOME/mosek`, but if the location is different, set the
-environment variable `MOSEK_INST_BASE` to point to the directory where MOSEK
-is installed before building.
+Building the API requires the MOSEK 8.0 library.
+- By default the build script will look for MOSEK in `$HOME/mosek`.
+- If `MOSEK_INST_BASE` is defined, this will override `$HOME`.
+- If `MOSEK_8_BINDIR` is defined, this overrides all others, and it is
+  expected to point the the directory containing the MOSEK binaries.
 
-To build, use
+For example
 ```
+export MOSEK_INST_BASE=$HOME/local
 cargo build
 ```
-
-
+or
+```
+export MOSEK_8_BINDIR=$HOME/local/mosek/8/tools/platform/linux64x86/bin
+cargo build
+```
 
 ## Examples
 
 Examples are located under `examples/`
 
-To compile examples, run `cargo test`
+To compile examples, run `cargo test`.
 
