@@ -7,11 +7,8 @@ The API has been tested on 64bit Linux, but may work on other posix platforms as
 
 # Mosek Rust interface
 
-Mosek:
-    https://mosek.com/
-Rust:
-    https://www.rust-lang.com
-
+- Mosek optimization software: https://mosek.com/
+- Rust language: https://www.rust-lang.com
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
