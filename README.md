@@ -8,11 +8,8 @@ The API has been tested on 64bit Linux, but may work on other posix platforms as
 # Mosek Rust interface
 
 Mosek:
-
     https://mosek.com/
-
 Rust:
-
     https://www.rust-lang.com
 
 
