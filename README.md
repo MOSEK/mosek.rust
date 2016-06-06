@@ -1,11 +1,9 @@
 # *DISCLAIMER*
 
-<font color="red">
 This software is experimental. We (MOSEK) may fix errors and bugs, but provide
 no guarantee on how or how quickly we do so.
 
 The API has been tested on 64bit Linux, but may work on other posix platforms as well.
-</font>
 
 # Mosek Rust interface
 
@@ -37,5 +35,7 @@ cargo build
 
 Examples are located under `examples/`
 
-To compile examples, run `cargo test`.
+To compile examples, run
+
+```cargo test```
 
