@@ -32,7 +32,6 @@ extern
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
     fn MSK_checkconvexity(task_ : * const u8) -> i32;
     fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : libc::int32_t) -> i32;
-    fn MSK_chgbound(task_ : * const u8,accmode_ : i32,i_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
     fn MSK_chgconbound(task_ : * const u8,i_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
     fn MSK_chgvarbound(task_ : * const u8,j_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
     fn MSK_commitchanges(task_ : * const u8) -> i32;
@@ -40,39 +39,42 @@ extern
     fn MSK_dualsensitivity(task_ : * const u8,numj_ : libc::int32_t,subj_ : * const libc::int32_t,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
     fn MSK_getacol(task_ : * const u8,j_ : libc::int32_t,nzj_ : & mut libc::int32_t,subj_ : * mut libc::int32_t,valj_ : * mut f64) -> i32;
     fn MSK_getacolnumnz(task_ : * const u8,i_ : libc::int32_t,nzj_ : & mut libc::int32_t) -> i32;
+    fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,numnz_ : & mut libc::int64_t) -> i32;
     fn MSK_getaij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,aij_ : & mut f64) -> i32;
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : libc::int32_t,lasti_ : libc::int32_t,firstj_ : libc::int32_t,lastj_ : libc::int32_t,numnz_ : & mut libc::int32_t) -> i32;
     fn MSK_getarow(task_ : * const u8,i_ : libc::int32_t,nzi_ : & mut libc::int32_t,subi_ : * mut libc::int32_t,vali_ : * mut f64) -> i32;
     fn MSK_getarownumnz(task_ : * const u8,i_ : libc::int32_t,nzi_ : & mut libc::int32_t) -> i32;
-    fn MSK_getaslicenumnz64(task_ : * const u8,accmode_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getatruncatetol(task_ : * const u8,tolzero_ : * mut f64) -> i32;
     fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subi_ : * mut libc::int32_t,subj_ : * mut libc::int32_t,subk_ : * mut libc::int32_t,subl_ : * mut libc::int32_t,valijkl_ : * mut f64) -> i32;
     fn MSK_getbaraidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,i_ : & mut libc::int32_t,j_ : & mut libc::int32_t,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
     fn MSK_getbaraidxij(task_ : * const u8,idx_ : libc::int64_t,i_ : & mut libc::int32_t,j_ : & mut libc::int32_t) -> i32;
     fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxij_ : * mut libc::int64_t) -> i32;
-    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subj_ : * mut libc::int32_t,subk_ : * mut libc::int32_t,subl_ : * mut libc::int32_t,valijkl_ : * mut f64) -> i32;
+    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subj_ : * mut libc::int32_t,subk_ : * mut libc::int32_t,subl_ : * mut libc::int32_t,valjkl_ : * mut f64) -> i32;
     fn MSK_getbarcidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,j_ : & mut libc::int32_t,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
     fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getbarcidxj(task_ : * const u8,idx_ : libc::int64_t,j_ : & mut libc::int32_t) -> i32;
     fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxj_ : * mut libc::int64_t) -> i32;
     fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barsj_ : * mut f64) -> i32;
-    fn MSK_getbarvarname(task_ : * const u8,i_ : libc::int32_t,maxlen_ : libc::int32_t,name_ : * const u8) -> i32;
+    fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slicesize_ : libc::int64_t,barsslice_ : * mut f64) -> i32;
+    fn MSK_getbarvarname(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
     fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
     fn MSK_getbarvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barxj_ : * mut f64) -> i32;
-    fn MSK_getbound(task_ : * const u8,accmode_ : i32,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
-    fn MSK_getboundslice(task_ : * const u8,accmode_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slicesize_ : libc::int64_t,barxslice_ : * mut f64) -> i32;
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
     fn MSK_getcj(task_ : * const u8,j_ : libc::int32_t,cj_ : & mut f64) -> i32;
+    fn MSK_getclist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,c_ : * mut f64) -> i32;
     fn MSK_getconbound(task_ : * const u8,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
     fn MSK_getconboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
     fn MSK_getcone(task_ : * const u8,k_ : libc::int32_t,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut libc::int32_t,submem_ : * mut libc::int32_t) -> i32;
     fn MSK_getconeinfo(task_ : * const u8,k_ : libc::int32_t,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconename(task_ : * const u8,i_ : libc::int32_t,maxlen_ : libc::int32_t,name_ : * const u8) -> i32;
+    fn MSK_getconename(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
     fn MSK_getconenameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
     fn MSK_getconenamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconname(task_ : * const u8,i_ : libc::int32_t,maxlen_ : libc::int32_t,name_ : * const u8) -> i32;
+    fn MSK_getconname(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
     fn MSK_getconnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
     fn MSK_getconnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getcslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,c_ : * mut f64) -> i32;
@@ -115,7 +117,7 @@ extern
     fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut libc::int32_t) -> i32;
-    fn MSK_getobjname(task_ : * const u8,maxlen_ : libc::int32_t,objname_ : * const u8) -> i32;
+    fn MSK_getobjname(task_ : * const u8,sizeobjname_ : libc::int32_t,objname_ : * const u8) -> i32;
     fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getobjsense(task_ : * const u8,sense_ : & mut i32) -> i32;
     fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut libc::int32_t) -> i32;
@@ -142,7 +144,6 @@ extern
     fn MSK_getsnxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,snx_ : * mut f64) -> i32;
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solsta_ : & mut i32) -> i32;
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
-    fn MSK_getsolutioni(task_ : * const u8,accmode_ : i32,i_ : libc::int32_t,whichsol_ : i32,sk_ : & mut i32,x_ : & mut f64,sl_ : & mut f64,su_ : & mut f64,sn_ : & mut f64) -> i32;
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,values_ : * mut f64) -> i32;
     fn MSK_getsparsesymmat(task_ : * const u8,idx_ : libc::int64_t,maxlen_ : libc::int64_t,subi_ : * mut libc::int32_t,subj_ : * mut libc::int32_t,valij_ : * mut f64) -> i32;
@@ -153,11 +154,11 @@ extern
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
     fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,sux_ : * mut f64) -> i32;
     fn MSK_getsymmatinfo(task_ : * const u8,idx_ : libc::int64_t,dim_ : & mut libc::int32_t,nz_ : & mut libc::int64_t,type_ : & mut i32) -> i32;
-    fn MSK_gettaskname(task_ : * const u8,maxlen_ : libc::int32_t,taskname_ : * const u8) -> i32;
+    fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : libc::int32_t,taskname_ : * const u8) -> i32;
     fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getvarbound(task_ : * const u8,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
     fn MSK_getvarboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
-    fn MSK_getvarname(task_ : * const u8,j_ : libc::int32_t,maxlen_ : libc::int32_t,name_ : * const u8) -> i32;
+    fn MSK_getvarname(task_ : * const u8,j_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
     fn MSK_getvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
     fn MSK_getvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getvartype(task_ : * const u8,j_ : libc::int32_t,vartype_ : & mut i32) -> i32;
@@ -187,8 +188,9 @@ extern
     fn MSK_putaij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,aij_ : f64) -> i32;
     fn MSK_putaijlist64(task_ : * const u8,num_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64) -> i32;
     fn MSK_putarow(task_ : * const u8,i_ : libc::int32_t,nzi_ : libc::int32_t,subi_ : * const libc::int32_t,vali_ : * const f64) -> i32;
-    fn MSK_putarowlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,aptrb_ : * const libc::int32_t,aptre_ : * const libc::int32_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
+    fn MSK_putarowlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,ptrb_ : * const libc::int32_t,ptre_ : * const libc::int32_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
     fn MSK_putarowslice64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
+    fn MSK_putatruncatetol(task_ : * const u8,tolzero_ : f64) -> i32;
     fn MSK_putbarablocktriplet(task_ : * const u8,num_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,subk_ : * const libc::int32_t,subl_ : * const libc::int32_t,valijkl_ : * const f64) -> i32;
     fn MSK_putbaraij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
     fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : libc::int64_t,subj_ : * const libc::int32_t,subk_ : * const libc::int32_t,subl_ : * const libc::int32_t,valjkl_ : * const f64) -> i32;
@@ -196,18 +198,16 @@ extern
     fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barsj_ : * const f64) -> i32;
     fn MSK_putbarvarname(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
     fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barxj_ : * const f64) -> i32;
-    fn MSK_putbound(task_ : * const u8,accmode_ : i32,i_ : libc::int32_t,bk_ : i32,bl_ : f64,bu_ : f64) -> i32;
-    fn MSK_putboundlist(task_ : * const u8,accmode_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,bk_ : * const i32,bl_ : * const f64,bu_ : * const f64) -> i32;
-    fn MSK_putboundslice(task_ : * const u8,con_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * const i32,bl_ : * const f64,bu_ : * const f64) -> i32;
     fn MSK_putcfix(task_ : * const u8,cfix_ : f64) -> i32;
     fn MSK_putcj(task_ : * const u8,j_ : libc::int32_t,cj_ : f64) -> i32;
     fn MSK_putclist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,val_ : * const f64) -> i32;
     fn MSK_putconbound(task_ : * const u8,i_ : libc::int32_t,bk_ : i32,bl_ : f64,bu_ : f64) -> i32;
-    fn MSK_putconboundlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    fn MSK_putconboundlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bk_ : * const i32,bl_ : * const f64,bu_ : * const f64) -> i32;
     fn MSK_putconboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * const i32,bl_ : * const f64,bu_ : * const f64) -> i32;
     fn MSK_putcone(task_ : * const u8,k_ : libc::int32_t,ct_ : i32,conepar_ : f64,nummem_ : libc::int32_t,submem_ : * const libc::int32_t) -> i32;
     fn MSK_putconename(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
     fn MSK_putconname(task_ : * const u8,i_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
+    fn MSK_putconsolutioni(task_ : * const u8,i_ : libc::int32_t,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
     fn MSK_putcslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,slice_ : * const f64) -> i32;
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : libc::int32_t) -> i32;
@@ -238,7 +238,6 @@ extern
     fn MSK_putsnx(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
     fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,snx_ : * const f64) -> i32;
     fn MSK_putsolution(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64) -> i32;
-    fn MSK_putsolutioni(task_ : * const u8,accmode_ : i32,i_ : libc::int32_t,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
     fn MSK_putsolutionyi(task_ : * const u8,i_ : libc::int32_t,whichsol_ : i32,y_ : f64) -> i32;
     fn MSK_putstrparam(task_ : * const u8,param_ : i32,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putsuc(task_ : * const u8,whichsol_ : i32,suc_ : * const f64) -> i32;
@@ -250,6 +249,7 @@ extern
     fn MSK_putvarboundlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
     fn MSK_putvarboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * const i32,bl_ : * const f64,bu_ : * const f64) -> i32;
     fn MSK_putvarname(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
+    fn MSK_putvarsolutionj(task_ : * const u8,j_ : libc::int32_t,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
     fn MSK_putvartype(task_ : * const u8,j_ : libc::int32_t,vartype_ : i32) -> i32;
     fn MSK_putvartypelist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,vartype_ : * const i32) -> i32;
     fn MSK_putxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
@@ -260,6 +260,9 @@ extern
     fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,y_ : * const f64) -> i32;
     fn MSK_readdataautoformat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readdataformat(task_ : * const u8,filename_ : * const libc::c_char,format_ : i32,compress_ : i32) -> i32;
+    fn MSK_readjsonstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    fn MSK_readlpstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    fn MSK_readopfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
     fn MSK_readparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readsolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
     fn MSK_readsummary(task_ : * const u8,whichstream_ : i32) -> i32;
@@ -277,7 +280,7 @@ extern
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_solvewithbasis(task_ : * const u8,transp_ : libc::int32_t,numnz_ : & mut libc::int32_t,sub_ : * mut libc::int32_t,val_ : * mut f64) -> i32;
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : & mut i32) -> i32;
-    fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : & mut libc::int32_t) -> i32;
+    fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : & mut i32) -> i32;
     fn MSK_toconic(task_ : * const u8) -> i32;
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
@@ -330,12 +333,6 @@ macro_rules! callMSK
 
 }
 
-// accmode
-pub const MSK_ACC_CON : i32 = 1;
-pub const MSK_ACC_VAR : i32 = 0;
-pub const MSK_ACC_BEGIN : i32 = 0;
-pub const MSK_ACC_END   : i32 = 2;
-
 // basindtype
 pub const MSK_BI_ALWAYS      : i32 = 1;
 pub const MSK_BI_IF_FEASIBLE : i32 = 3;
@@ -367,122 +364,101 @@ pub const MSK_BRANCH_DIR_BEGIN : i32 = 0;
 pub const MSK_BRANCH_DIR_END   : i32 = 8;
 
 // callbackcode
-pub const MSK_CALLBACK_BEGIN_BI                      : i32 = 0;
-pub const MSK_CALLBACK_BEGIN_CONCURRENT              : i32 = 1;
-pub const MSK_CALLBACK_BEGIN_CONIC                   : i32 = 2;
-pub const MSK_CALLBACK_BEGIN_DUAL_BI                 : i32 = 3;
-pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY        : i32 = 4;
-pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI           : i32 = 5;
-pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX            : i32 = 6;
-pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI         : i32 = 7;
-pub const MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK    : i32 = 8;
-pub const MSK_CALLBACK_BEGIN_INFEAS_ANA              : i32 = 9;
-pub const MSK_CALLBACK_BEGIN_INTPNT                  : i32 = 10;
-pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT            : i32 = 11;
-pub const MSK_CALLBACK_BEGIN_MIO                     : i32 = 12;
-pub const MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX    : i32 = 13;
-pub const MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX  : i32 = 14;
-pub const MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX         : i32 = 15;
-pub const MSK_CALLBACK_BEGIN_OPTIMIZER               : i32 = 16;
-pub const MSK_CALLBACK_BEGIN_PRESOLVE                : i32 = 17;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_BI               : i32 = 18;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX     : i32 = 19;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI  : i32 = 20;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR           : i32 = 21;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY      : i32 = 22;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI         : i32 = 23;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX          : i32 = 24;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI       : i32 = 25;
-pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE        : i32 = 26;
-pub const MSK_CALLBACK_BEGIN_READ                    : i32 = 27;
-pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN             : i32 = 28;
-pub const MSK_CALLBACK_BEGIN_SIMPLEX                 : i32 = 29;
-pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI              : i32 = 30;
-pub const MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT  : i32 = 31;
-pub const MSK_CALLBACK_BEGIN_TO_CONIC                : i32 = 32;
-pub const MSK_CALLBACK_BEGIN_WRITE                   : i32 = 33;
-pub const MSK_CALLBACK_CONIC                         : i32 = 34;
-pub const MSK_CALLBACK_DUAL_SIMPLEX                  : i32 = 35;
-pub const MSK_CALLBACK_END_BI                        : i32 = 36;
-pub const MSK_CALLBACK_END_CONCURRENT                : i32 = 37;
-pub const MSK_CALLBACK_END_CONIC                     : i32 = 38;
-pub const MSK_CALLBACK_END_DUAL_BI                   : i32 = 39;
-pub const MSK_CALLBACK_END_DUAL_SENSITIVITY          : i32 = 40;
-pub const MSK_CALLBACK_END_DUAL_SETUP_BI             : i32 = 41;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX              : i32 = 42;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI           : i32 = 43;
-pub const MSK_CALLBACK_END_FULL_CONVEXITY_CHECK      : i32 = 44;
-pub const MSK_CALLBACK_END_INFEAS_ANA                : i32 = 45;
-pub const MSK_CALLBACK_END_INTPNT                    : i32 = 46;
-pub const MSK_CALLBACK_END_LICENSE_WAIT              : i32 = 47;
-pub const MSK_CALLBACK_END_MIO                       : i32 = 48;
-pub const MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX      : i32 = 49;
-pub const MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX    : i32 = 50;
-pub const MSK_CALLBACK_END_NETWORK_SIMPLEX           : i32 = 51;
-pub const MSK_CALLBACK_END_OPTIMIZER                 : i32 = 52;
-pub const MSK_CALLBACK_END_PRESOLVE                  : i32 = 53;
-pub const MSK_CALLBACK_END_PRIMAL_BI                 : i32 = 54;
-pub const MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX       : i32 = 55;
-pub const MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI    : i32 = 56;
-pub const MSK_CALLBACK_END_PRIMAL_REPAIR             : i32 = 57;
-pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY        : i32 = 58;
-pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI           : i32 = 59;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX            : i32 = 60;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI         : i32 = 61;
-pub const MSK_CALLBACK_END_QCQO_REFORMULATE          : i32 = 62;
-pub const MSK_CALLBACK_END_READ                      : i32 = 63;
-pub const MSK_CALLBACK_END_ROOT_CUTGEN               : i32 = 64;
-pub const MSK_CALLBACK_END_SIMPLEX                   : i32 = 65;
-pub const MSK_CALLBACK_END_SIMPLEX_BI                : i32 = 66;
-pub const MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT    : i32 = 67;
-pub const MSK_CALLBACK_END_TO_CONIC                  : i32 = 68;
-pub const MSK_CALLBACK_END_WRITE                     : i32 = 69;
-pub const MSK_CALLBACK_IM_BI                         : i32 = 70;
-pub const MSK_CALLBACK_IM_CONIC                      : i32 = 71;
-pub const MSK_CALLBACK_IM_DUAL_BI                    : i32 = 72;
-pub const MSK_CALLBACK_IM_DUAL_SENSIVITY             : i32 = 73;
-pub const MSK_CALLBACK_IM_DUAL_SIMPLEX               : i32 = 74;
-pub const MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK       : i32 = 75;
-pub const MSK_CALLBACK_IM_INTPNT                     : i32 = 76;
-pub const MSK_CALLBACK_IM_LICENSE_WAIT               : i32 = 77;
-pub const MSK_CALLBACK_IM_LU                         : i32 = 78;
-pub const MSK_CALLBACK_IM_MIO                        : i32 = 79;
-pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX           : i32 = 80;
-pub const MSK_CALLBACK_IM_MIO_INTPNT                 : i32 = 81;
-pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX         : i32 = 82;
-pub const MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX       : i32 = 83;
-pub const MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX     : i32 = 84;
-pub const MSK_CALLBACK_IM_ORDER                      : i32 = 85;
-pub const MSK_CALLBACK_IM_PRESOLVE                   : i32 = 86;
-pub const MSK_CALLBACK_IM_PRIMAL_BI                  : i32 = 87;
-pub const MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX        : i32 = 88;
-pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY           : i32 = 89;
-pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX             : i32 = 90;
-pub const MSK_CALLBACK_IM_QO_REFORMULATE             : i32 = 91;
-pub const MSK_CALLBACK_IM_READ                       : i32 = 92;
-pub const MSK_CALLBACK_IM_ROOT_CUTGEN                : i32 = 93;
-pub const MSK_CALLBACK_IM_SIMPLEX                    : i32 = 94;
-pub const MSK_CALLBACK_IM_SIMPLEX_BI                 : i32 = 95;
-pub const MSK_CALLBACK_INTPNT                        : i32 = 96;
-pub const MSK_CALLBACK_NEW_INT_MIO                   : i32 = 97;
-pub const MSK_CALLBACK_PRIMAL_SIMPLEX                : i32 = 98;
-pub const MSK_CALLBACK_READ_OPF                      : i32 = 99;
-pub const MSK_CALLBACK_READ_OPF_SECTION              : i32 = 100;
-pub const MSK_CALLBACK_SOLVING_REMOTE                : i32 = 101;
-pub const MSK_CALLBACK_UPDATE_DUAL_BI                : i32 = 102;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX           : i32 = 103;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI        : i32 = 104;
-pub const MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX   : i32 = 105;
-pub const MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX : i32 = 106;
-pub const MSK_CALLBACK_UPDATE_PRESOLVE               : i32 = 107;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_BI              : i32 = 108;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX    : i32 = 109;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI : i32 = 110;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX         : i32 = 111;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI      : i32 = 112;
-pub const MSK_CALLBACK_WRITE_OPF                     : i32 = 113;
+pub const MSK_CALLBACK_BEGIN_BI                   : i32 = 0;
+pub const MSK_CALLBACK_BEGIN_CONIC                : i32 = 1;
+pub const MSK_CALLBACK_BEGIN_DUAL_BI              : i32 = 2;
+pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY     : i32 = 3;
+pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI        : i32 = 4;
+pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX         : i32 = 5;
+pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI      : i32 = 6;
+pub const MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK : i32 = 7;
+pub const MSK_CALLBACK_BEGIN_INFEAS_ANA           : i32 = 8;
+pub const MSK_CALLBACK_BEGIN_INTPNT               : i32 = 9;
+pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT         : i32 = 10;
+pub const MSK_CALLBACK_BEGIN_MIO                  : i32 = 11;
+pub const MSK_CALLBACK_BEGIN_OPTIMIZER            : i32 = 12;
+pub const MSK_CALLBACK_BEGIN_PRESOLVE             : i32 = 13;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_BI            : i32 = 14;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR        : i32 = 15;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY   : i32 = 16;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI      : i32 = 17;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX       : i32 = 18;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI    : i32 = 19;
+pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE     : i32 = 20;
+pub const MSK_CALLBACK_BEGIN_READ                 : i32 = 21;
+pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN          : i32 = 22;
+pub const MSK_CALLBACK_BEGIN_SIMPLEX              : i32 = 23;
+pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI           : i32 = 24;
+pub const MSK_CALLBACK_BEGIN_TO_CONIC             : i32 = 25;
+pub const MSK_CALLBACK_BEGIN_WRITE                : i32 = 26;
+pub const MSK_CALLBACK_CONIC                      : i32 = 27;
+pub const MSK_CALLBACK_DUAL_SIMPLEX               : i32 = 28;
+pub const MSK_CALLBACK_END_BI                     : i32 = 29;
+pub const MSK_CALLBACK_END_CONIC                  : i32 = 30;
+pub const MSK_CALLBACK_END_DUAL_BI                : i32 = 31;
+pub const MSK_CALLBACK_END_DUAL_SENSITIVITY       : i32 = 32;
+pub const MSK_CALLBACK_END_DUAL_SETUP_BI          : i32 = 33;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX           : i32 = 34;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI        : i32 = 35;
+pub const MSK_CALLBACK_END_FULL_CONVEXITY_CHECK   : i32 = 36;
+pub const MSK_CALLBACK_END_INFEAS_ANA             : i32 = 37;
+pub const MSK_CALLBACK_END_INTPNT                 : i32 = 38;
+pub const MSK_CALLBACK_END_LICENSE_WAIT           : i32 = 39;
+pub const MSK_CALLBACK_END_MIO                    : i32 = 40;
+pub const MSK_CALLBACK_END_OPTIMIZER              : i32 = 41;
+pub const MSK_CALLBACK_END_PRESOLVE               : i32 = 42;
+pub const MSK_CALLBACK_END_PRIMAL_BI              : i32 = 43;
+pub const MSK_CALLBACK_END_PRIMAL_REPAIR          : i32 = 44;
+pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY     : i32 = 45;
+pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI        : i32 = 46;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX         : i32 = 47;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI      : i32 = 48;
+pub const MSK_CALLBACK_END_QCQO_REFORMULATE       : i32 = 49;
+pub const MSK_CALLBACK_END_READ                   : i32 = 50;
+pub const MSK_CALLBACK_END_ROOT_CUTGEN            : i32 = 51;
+pub const MSK_CALLBACK_END_SIMPLEX                : i32 = 52;
+pub const MSK_CALLBACK_END_SIMPLEX_BI             : i32 = 53;
+pub const MSK_CALLBACK_END_TO_CONIC               : i32 = 54;
+pub const MSK_CALLBACK_END_WRITE                  : i32 = 55;
+pub const MSK_CALLBACK_IM_BI                      : i32 = 56;
+pub const MSK_CALLBACK_IM_CONIC                   : i32 = 57;
+pub const MSK_CALLBACK_IM_DUAL_BI                 : i32 = 58;
+pub const MSK_CALLBACK_IM_DUAL_SENSIVITY          : i32 = 59;
+pub const MSK_CALLBACK_IM_DUAL_SIMPLEX            : i32 = 60;
+pub const MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK    : i32 = 61;
+pub const MSK_CALLBACK_IM_INTPNT                  : i32 = 62;
+pub const MSK_CALLBACK_IM_LICENSE_WAIT            : i32 = 63;
+pub const MSK_CALLBACK_IM_LU                      : i32 = 64;
+pub const MSK_CALLBACK_IM_MIO                     : i32 = 65;
+pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX        : i32 = 66;
+pub const MSK_CALLBACK_IM_MIO_INTPNT              : i32 = 67;
+pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX      : i32 = 68;
+pub const MSK_CALLBACK_IM_ORDER                   : i32 = 69;
+pub const MSK_CALLBACK_IM_PRESOLVE                : i32 = 70;
+pub const MSK_CALLBACK_IM_PRIMAL_BI               : i32 = 71;
+pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY        : i32 = 72;
+pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX          : i32 = 73;
+pub const MSK_CALLBACK_IM_QO_REFORMULATE          : i32 = 74;
+pub const MSK_CALLBACK_IM_READ                    : i32 = 75;
+pub const MSK_CALLBACK_IM_ROOT_CUTGEN             : i32 = 76;
+pub const MSK_CALLBACK_IM_SIMPLEX                 : i32 = 77;
+pub const MSK_CALLBACK_IM_SIMPLEX_BI              : i32 = 78;
+pub const MSK_CALLBACK_INTPNT                     : i32 = 79;
+pub const MSK_CALLBACK_NEW_INT_MIO                : i32 = 80;
+pub const MSK_CALLBACK_PRIMAL_SIMPLEX             : i32 = 81;
+pub const MSK_CALLBACK_READ_OPF                   : i32 = 82;
+pub const MSK_CALLBACK_READ_OPF_SECTION           : i32 = 83;
+pub const MSK_CALLBACK_SOLVING_REMOTE             : i32 = 84;
+pub const MSK_CALLBACK_UPDATE_DUAL_BI             : i32 = 85;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX        : i32 = 86;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI     : i32 = 87;
+pub const MSK_CALLBACK_UPDATE_PRESOLVE            : i32 = 88;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_BI           : i32 = 89;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX      : i32 = 90;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI   : i32 = 91;
+pub const MSK_CALLBACK_WRITE_OPF                  : i32 = 92;
 pub const MSK_CALLBACK_BEGIN : i32 = 0;
-pub const MSK_CALLBACK_END   : i32 = 114;
+pub const MSK_CALLBACK_END   : i32 = 93;
 
 // checkconvexitytype
 pub const MSK_CHECK_CONVEXITY_FULL   : i32 = 2;
@@ -499,10 +475,13 @@ pub const MSK_COMPRESS_BEGIN : i32 = 0;
 pub const MSK_COMPRESS_END   : i32 = 3;
 
 // conetype
+pub const MSK_CT_PEXP  : i32 = 2;
+pub const MSK_CT_PPOW  : i32 = 3;
 pub const MSK_CT_QUAD  : i32 = 0;
 pub const MSK_CT_RQUAD : i32 = 1;
+pub const MSK_CT_ZERO  : i32 = 4;
 pub const MSK_CT_BEGIN : i32 = 0;
-pub const MSK_CT_END   : i32 = 2;
+pub const MSK_CT_END   : i32 = 5;
 
 // dataformat
 pub const MSK_DATA_FORMAT_CB        : i32 = 7;
@@ -519,105 +498,99 @@ pub const MSK_DATA_FORMAT_END   : i32 = 9;
 
 // dinfitem
 pub const MSK_DINF_BI_CLEAN_DUAL_TIME                             : i32 = 0;
-pub const MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME                      : i32 = 1;
-pub const MSK_DINF_BI_CLEAN_PRIMAL_TIME                           : i32 = 2;
-pub const MSK_DINF_BI_CLEAN_TIME                                  : i32 = 3;
-pub const MSK_DINF_BI_DUAL_TIME                                   : i32 = 4;
-pub const MSK_DINF_BI_PRIMAL_TIME                                 : i32 = 5;
-pub const MSK_DINF_BI_TIME                                        : i32 = 6;
-pub const MSK_DINF_CONCURRENT_TIME                                : i32 = 7;
-pub const MSK_DINF_INTPNT_DUAL_FEAS                               : i32 = 8;
-pub const MSK_DINF_INTPNT_DUAL_OBJ                                : i32 = 9;
-pub const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS                        : i32 = 10;
-pub const MSK_DINF_INTPNT_OPT_STATUS                              : i32 = 11;
-pub const MSK_DINF_INTPNT_ORDER_TIME                              : i32 = 12;
-pub const MSK_DINF_INTPNT_PRIMAL_FEAS                             : i32 = 13;
-pub const MSK_DINF_INTPNT_PRIMAL_OBJ                              : i32 = 14;
-pub const MSK_DINF_INTPNT_TIME                                    : i32 = 15;
-pub const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME                     : i32 = 16;
-pub const MSK_DINF_MIO_CMIR_SEPARATION_TIME                       : i32 = 17;
-pub const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ                     : i32 = 18;
-pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE                  : i32 = 19;
-pub const MSK_DINF_MIO_GMI_SEPARATION_TIME                        : i32 = 20;
-pub const MSK_DINF_MIO_HEURISTIC_TIME                             : i32 = 21;
-pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME                         : i32 = 22;
-pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME             : i32 = 23;
-pub const MSK_DINF_MIO_OBJ_ABS_GAP                                : i32 = 24;
-pub const MSK_DINF_MIO_OBJ_BOUND                                  : i32 = 25;
-pub const MSK_DINF_MIO_OBJ_INT                                    : i32 = 26;
-pub const MSK_DINF_MIO_OBJ_REL_GAP                                : i32 = 27;
-pub const MSK_DINF_MIO_OPTIMIZER_TIME                             : i32 = 28;
-pub const MSK_DINF_MIO_PROBING_TIME                               : i32 = 29;
-pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME                           : i32 = 30;
-pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME                        : i32 = 31;
-pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME                         : i32 = 32;
-pub const MSK_DINF_MIO_TIME                                       : i32 = 33;
-pub const MSK_DINF_MIO_USER_OBJ_CUT                               : i32 = 34;
-pub const MSK_DINF_OPTIMIZER_TIME                                 : i32 = 35;
-pub const MSK_DINF_PRESOLVE_ELI_TIME                              : i32 = 36;
-pub const MSK_DINF_PRESOLVE_LINDEP_TIME                           : i32 = 37;
-pub const MSK_DINF_PRESOLVE_TIME                                  : i32 = 38;
-pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ                      : i32 = 39;
-pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION              : i32 = 40;
-pub const MSK_DINF_QCQO_REFORMULATE_TIME                          : i32 = 41;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 42;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING   : i32 = 43;
-pub const MSK_DINF_RD_TIME                                        : i32 = 44;
-pub const MSK_DINF_SIM_DUAL_TIME                                  : i32 = 45;
-pub const MSK_DINF_SIM_FEAS                                       : i32 = 46;
-pub const MSK_DINF_SIM_NETWORK_DUAL_TIME                          : i32 = 47;
-pub const MSK_DINF_SIM_NETWORK_PRIMAL_TIME                        : i32 = 48;
-pub const MSK_DINF_SIM_NETWORK_TIME                               : i32 = 49;
-pub const MSK_DINF_SIM_OBJ                                        : i32 = 50;
-pub const MSK_DINF_SIM_PRIMAL_DUAL_TIME                           : i32 = 51;
-pub const MSK_DINF_SIM_PRIMAL_TIME                                : i32 = 52;
-pub const MSK_DINF_SIM_TIME                                       : i32 = 53;
-pub const MSK_DINF_SOL_BAS_DUAL_OBJ                               : i32 = 54;
-pub const MSK_DINF_SOL_BAS_DVIOLCON                               : i32 = 55;
-pub const MSK_DINF_SOL_BAS_DVIOLVAR                               : i32 = 56;
-pub const MSK_DINF_SOL_BAS_NRM_BARX                               : i32 = 57;
-pub const MSK_DINF_SOL_BAS_NRM_SLC                                : i32 = 58;
-pub const MSK_DINF_SOL_BAS_NRM_SLX                                : i32 = 59;
-pub const MSK_DINF_SOL_BAS_NRM_SUC                                : i32 = 60;
-pub const MSK_DINF_SOL_BAS_NRM_SUX                                : i32 = 61;
-pub const MSK_DINF_SOL_BAS_NRM_XC                                 : i32 = 62;
-pub const MSK_DINF_SOL_BAS_NRM_XX                                 : i32 = 63;
-pub const MSK_DINF_SOL_BAS_NRM_Y                                  : i32 = 64;
-pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ                             : i32 = 65;
-pub const MSK_DINF_SOL_BAS_PVIOLCON                               : i32 = 66;
-pub const MSK_DINF_SOL_BAS_PVIOLVAR                               : i32 = 67;
-pub const MSK_DINF_SOL_ITG_NRM_BARX                               : i32 = 68;
-pub const MSK_DINF_SOL_ITG_NRM_XC                                 : i32 = 69;
-pub const MSK_DINF_SOL_ITG_NRM_XX                                 : i32 = 70;
-pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ                             : i32 = 71;
-pub const MSK_DINF_SOL_ITG_PVIOLBARVAR                            : i32 = 72;
-pub const MSK_DINF_SOL_ITG_PVIOLCON                               : i32 = 73;
-pub const MSK_DINF_SOL_ITG_PVIOLCONES                             : i32 = 74;
-pub const MSK_DINF_SOL_ITG_PVIOLITG                               : i32 = 75;
-pub const MSK_DINF_SOL_ITG_PVIOLVAR                               : i32 = 76;
-pub const MSK_DINF_SOL_ITR_DUAL_OBJ                               : i32 = 77;
-pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 78;
-pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 79;
-pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 80;
-pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 81;
-pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 82;
-pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 83;
-pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 84;
-pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 85;
-pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 86;
-pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 87;
-pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 88;
-pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 89;
-pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 90;
-pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 91;
-pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 92;
-pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 93;
-pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 94;
-pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 95;
-pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 96;
-pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 97;
+pub const MSK_DINF_BI_CLEAN_PRIMAL_TIME                           : i32 = 1;
+pub const MSK_DINF_BI_CLEAN_TIME                                  : i32 = 2;
+pub const MSK_DINF_BI_DUAL_TIME                                   : i32 = 3;
+pub const MSK_DINF_BI_PRIMAL_TIME                                 : i32 = 4;
+pub const MSK_DINF_BI_TIME                                        : i32 = 5;
+pub const MSK_DINF_INTPNT_DUAL_FEAS                               : i32 = 6;
+pub const MSK_DINF_INTPNT_DUAL_OBJ                                : i32 = 7;
+pub const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS                        : i32 = 8;
+pub const MSK_DINF_INTPNT_OPT_STATUS                              : i32 = 9;
+pub const MSK_DINF_INTPNT_ORDER_TIME                              : i32 = 10;
+pub const MSK_DINF_INTPNT_PRIMAL_FEAS                             : i32 = 11;
+pub const MSK_DINF_INTPNT_PRIMAL_OBJ                              : i32 = 12;
+pub const MSK_DINF_INTPNT_TIME                                    : i32 = 13;
+pub const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME                     : i32 = 14;
+pub const MSK_DINF_MIO_CMIR_SEPARATION_TIME                       : i32 = 15;
+pub const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ                     : i32 = 16;
+pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE                  : i32 = 17;
+pub const MSK_DINF_MIO_GMI_SEPARATION_TIME                        : i32 = 18;
+pub const MSK_DINF_MIO_HEURISTIC_TIME                             : i32 = 19;
+pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME                         : i32 = 20;
+pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME             : i32 = 21;
+pub const MSK_DINF_MIO_OBJ_ABS_GAP                                : i32 = 22;
+pub const MSK_DINF_MIO_OBJ_BOUND                                  : i32 = 23;
+pub const MSK_DINF_MIO_OBJ_INT                                    : i32 = 24;
+pub const MSK_DINF_MIO_OBJ_REL_GAP                                : i32 = 25;
+pub const MSK_DINF_MIO_OPTIMIZER_TIME                             : i32 = 26;
+pub const MSK_DINF_MIO_PROBING_TIME                               : i32 = 27;
+pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME                           : i32 = 28;
+pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME                        : i32 = 29;
+pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME                         : i32 = 30;
+pub const MSK_DINF_MIO_TIME                                       : i32 = 31;
+pub const MSK_DINF_MIO_USER_OBJ_CUT                               : i32 = 32;
+pub const MSK_DINF_OPTIMIZER_TIME                                 : i32 = 33;
+pub const MSK_DINF_PRESOLVE_ELI_TIME                              : i32 = 34;
+pub const MSK_DINF_PRESOLVE_LINDEP_TIME                           : i32 = 35;
+pub const MSK_DINF_PRESOLVE_TIME                                  : i32 = 36;
+pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ                      : i32 = 37;
+pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION              : i32 = 38;
+pub const MSK_DINF_QCQO_REFORMULATE_TIME                          : i32 = 39;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 40;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING   : i32 = 41;
+pub const MSK_DINF_RD_TIME                                        : i32 = 42;
+pub const MSK_DINF_SIM_DUAL_TIME                                  : i32 = 43;
+pub const MSK_DINF_SIM_FEAS                                       : i32 = 44;
+pub const MSK_DINF_SIM_OBJ                                        : i32 = 45;
+pub const MSK_DINF_SIM_PRIMAL_TIME                                : i32 = 46;
+pub const MSK_DINF_SIM_TIME                                       : i32 = 47;
+pub const MSK_DINF_SOL_BAS_DUAL_OBJ                               : i32 = 48;
+pub const MSK_DINF_SOL_BAS_DVIOLCON                               : i32 = 49;
+pub const MSK_DINF_SOL_BAS_DVIOLVAR                               : i32 = 50;
+pub const MSK_DINF_SOL_BAS_NRM_BARX                               : i32 = 51;
+pub const MSK_DINF_SOL_BAS_NRM_SLC                                : i32 = 52;
+pub const MSK_DINF_SOL_BAS_NRM_SLX                                : i32 = 53;
+pub const MSK_DINF_SOL_BAS_NRM_SUC                                : i32 = 54;
+pub const MSK_DINF_SOL_BAS_NRM_SUX                                : i32 = 55;
+pub const MSK_DINF_SOL_BAS_NRM_XC                                 : i32 = 56;
+pub const MSK_DINF_SOL_BAS_NRM_XX                                 : i32 = 57;
+pub const MSK_DINF_SOL_BAS_NRM_Y                                  : i32 = 58;
+pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ                             : i32 = 59;
+pub const MSK_DINF_SOL_BAS_PVIOLCON                               : i32 = 60;
+pub const MSK_DINF_SOL_BAS_PVIOLVAR                               : i32 = 61;
+pub const MSK_DINF_SOL_ITG_NRM_BARX                               : i32 = 62;
+pub const MSK_DINF_SOL_ITG_NRM_XC                                 : i32 = 63;
+pub const MSK_DINF_SOL_ITG_NRM_XX                                 : i32 = 64;
+pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ                             : i32 = 65;
+pub const MSK_DINF_SOL_ITG_PVIOLBARVAR                            : i32 = 66;
+pub const MSK_DINF_SOL_ITG_PVIOLCON                               : i32 = 67;
+pub const MSK_DINF_SOL_ITG_PVIOLCONES                             : i32 = 68;
+pub const MSK_DINF_SOL_ITG_PVIOLITG                               : i32 = 69;
+pub const MSK_DINF_SOL_ITG_PVIOLVAR                               : i32 = 70;
+pub const MSK_DINF_SOL_ITR_DUAL_OBJ                               : i32 = 71;
+pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 72;
+pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 73;
+pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 74;
+pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 75;
+pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 76;
+pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 77;
+pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 78;
+pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 79;
+pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 80;
+pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 81;
+pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 82;
+pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 83;
+pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 84;
+pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 85;
+pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 86;
+pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 87;
+pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 88;
+pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 89;
+pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 90;
+pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 91;
 pub const MSK_DINF_BEGIN : i32 = 0;
-pub const MSK_DINF_END   : i32 = 98;
+pub const MSK_DINF_END   : i32 = 92;
 
 // dparam
 pub const MSK_DPAR_ANA_SOL_INFEAS_TOL                 : i32 = 0;
@@ -625,78 +598,72 @@ pub const MSK_DPAR_BASIS_REL_TOL_S                    : i32 = 1;
 pub const MSK_DPAR_BASIS_TOL_S                        : i32 = 2;
 pub const MSK_DPAR_BASIS_TOL_X                        : i32 = 3;
 pub const MSK_DPAR_CHECK_CONVEXITY_REL_TOL            : i32 = 4;
-pub const MSK_DPAR_DATA_TOL_AIJ                       : i32 = 5;
-pub const MSK_DPAR_DATA_TOL_AIJ_HUGE                  : i32 = 6;
-pub const MSK_DPAR_DATA_TOL_AIJ_LARGE                 : i32 = 7;
-pub const MSK_DPAR_DATA_TOL_BOUND_INF                 : i32 = 8;
-pub const MSK_DPAR_DATA_TOL_BOUND_WRN                 : i32 = 9;
-pub const MSK_DPAR_DATA_TOL_C_HUGE                    : i32 = 10;
-pub const MSK_DPAR_DATA_TOL_CJ_LARGE                  : i32 = 11;
-pub const MSK_DPAR_DATA_TOL_QIJ                       : i32 = 12;
-pub const MSK_DPAR_DATA_TOL_X                         : i32 = 13;
-pub const MSK_DPAR_FEASREPAIR_TOL                     : i32 = 14;
-pub const MSK_DPAR_INTPNT_CO_TOL_DFEAS                : i32 = 15;
-pub const MSK_DPAR_INTPNT_CO_TOL_INFEAS               : i32 = 16;
-pub const MSK_DPAR_INTPNT_CO_TOL_MU_RED               : i32 = 17;
-pub const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL             : i32 = 18;
-pub const MSK_DPAR_INTPNT_CO_TOL_PFEAS                : i32 = 19;
-pub const MSK_DPAR_INTPNT_CO_TOL_REL_GAP              : i32 = 20;
-pub const MSK_DPAR_INTPNT_NL_MERIT_BAL                : i32 = 21;
-pub const MSK_DPAR_INTPNT_NL_TOL_DFEAS                : i32 = 22;
-pub const MSK_DPAR_INTPNT_NL_TOL_MU_RED               : i32 = 23;
-pub const MSK_DPAR_INTPNT_NL_TOL_NEAR_REL             : i32 = 24;
-pub const MSK_DPAR_INTPNT_NL_TOL_PFEAS                : i32 = 25;
-pub const MSK_DPAR_INTPNT_NL_TOL_REL_GAP              : i32 = 26;
-pub const MSK_DPAR_INTPNT_NL_TOL_REL_STEP             : i32 = 27;
-pub const MSK_DPAR_INTPNT_QO_TOL_DFEAS                : i32 = 28;
-pub const MSK_DPAR_INTPNT_QO_TOL_INFEAS               : i32 = 29;
-pub const MSK_DPAR_INTPNT_QO_TOL_MU_RED               : i32 = 30;
-pub const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL             : i32 = 31;
-pub const MSK_DPAR_INTPNT_QO_TOL_PFEAS                : i32 = 32;
-pub const MSK_DPAR_INTPNT_QO_TOL_REL_GAP              : i32 = 33;
-pub const MSK_DPAR_INTPNT_TOL_DFEAS                   : i32 = 34;
-pub const MSK_DPAR_INTPNT_TOL_DSAFE                   : i32 = 35;
-pub const MSK_DPAR_INTPNT_TOL_INFEAS                  : i32 = 36;
-pub const MSK_DPAR_INTPNT_TOL_MU_RED                  : i32 = 37;
-pub const MSK_DPAR_INTPNT_TOL_PATH                    : i32 = 38;
-pub const MSK_DPAR_INTPNT_TOL_PFEAS                   : i32 = 39;
-pub const MSK_DPAR_INTPNT_TOL_PSAFE                   : i32 = 40;
-pub const MSK_DPAR_INTPNT_TOL_REL_GAP                 : i32 = 41;
-pub const MSK_DPAR_INTPNT_TOL_REL_STEP                : i32 = 42;
-pub const MSK_DPAR_INTPNT_TOL_STEP_SIZE               : i32 = 43;
-pub const MSK_DPAR_LOWER_OBJ_CUT                      : i32 = 44;
-pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH           : i32 = 45;
-pub const MSK_DPAR_MIO_DISABLE_TERM_TIME              : i32 = 46;
-pub const MSK_DPAR_MIO_MAX_TIME                       : i32 = 47;
-pub const MSK_DPAR_MIO_NEAR_TOL_ABS_GAP               : i32 = 48;
-pub const MSK_DPAR_MIO_NEAR_TOL_REL_GAP               : i32 = 49;
-pub const MSK_DPAR_MIO_REL_GAP_CONST                  : i32 = 50;
-pub const MSK_DPAR_MIO_TOL_ABS_GAP                    : i32 = 51;
-pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT              : i32 = 52;
-pub const MSK_DPAR_MIO_TOL_FEAS                       : i32 = 53;
-pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 54;
-pub const MSK_DPAR_MIO_TOL_REL_GAP                    : i32 = 55;
-pub const MSK_DPAR_OPTIMIZER_MAX_TIME                 : i32 = 56;
-pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP            : i32 = 57;
-pub const MSK_DPAR_PRESOLVE_TOL_AIJ                   : i32 = 58;
-pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP            : i32 = 59;
-pub const MSK_DPAR_PRESOLVE_TOL_S                     : i32 = 60;
-pub const MSK_DPAR_PRESOLVE_TOL_X                     : i32 = 61;
-pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL      : i32 = 62;
-pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX            : i32 = 63;
-pub const MSK_DPAR_SIM_LU_TOL_REL_PIV                 : i32 = 64;
-pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV                : i32 = 65;
-pub const MSK_DPAR_UPPER_OBJ_CUT                      : i32 = 66;
-pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH           : i32 = 67;
+pub const MSK_DPAR_DATA_SYM_MAT_TOL                   : i32 = 5;
+pub const MSK_DPAR_DATA_SYM_MAT_TOL_HUGE              : i32 = 6;
+pub const MSK_DPAR_DATA_SYM_MAT_TOL_LARGE             : i32 = 7;
+pub const MSK_DPAR_DATA_TOL_AIJ_HUGE                  : i32 = 8;
+pub const MSK_DPAR_DATA_TOL_AIJ_LARGE                 : i32 = 9;
+pub const MSK_DPAR_DATA_TOL_BOUND_INF                 : i32 = 10;
+pub const MSK_DPAR_DATA_TOL_BOUND_WRN                 : i32 = 11;
+pub const MSK_DPAR_DATA_TOL_C_HUGE                    : i32 = 12;
+pub const MSK_DPAR_DATA_TOL_CJ_LARGE                  : i32 = 13;
+pub const MSK_DPAR_DATA_TOL_QIJ                       : i32 = 14;
+pub const MSK_DPAR_DATA_TOL_X                         : i32 = 15;
+pub const MSK_DPAR_INTPNT_CO_TOL_DFEAS                : i32 = 16;
+pub const MSK_DPAR_INTPNT_CO_TOL_INFEAS               : i32 = 17;
+pub const MSK_DPAR_INTPNT_CO_TOL_MU_RED               : i32 = 18;
+pub const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL             : i32 = 19;
+pub const MSK_DPAR_INTPNT_CO_TOL_PFEAS                : i32 = 20;
+pub const MSK_DPAR_INTPNT_CO_TOL_REL_GAP              : i32 = 21;
+pub const MSK_DPAR_INTPNT_NL_MERIT_BAL                : i32 = 22;
+pub const MSK_DPAR_INTPNT_NL_TOL_DFEAS                : i32 = 23;
+pub const MSK_DPAR_INTPNT_NL_TOL_MU_RED               : i32 = 24;
+pub const MSK_DPAR_INTPNT_NL_TOL_NEAR_REL             : i32 = 25;
+pub const MSK_DPAR_INTPNT_NL_TOL_PFEAS                : i32 = 26;
+pub const MSK_DPAR_INTPNT_NL_TOL_REL_GAP              : i32 = 27;
+pub const MSK_DPAR_INTPNT_NL_TOL_REL_STEP             : i32 = 28;
+pub const MSK_DPAR_INTPNT_QO_TOL_DFEAS                : i32 = 29;
+pub const MSK_DPAR_INTPNT_QO_TOL_INFEAS               : i32 = 30;
+pub const MSK_DPAR_INTPNT_QO_TOL_MU_RED               : i32 = 31;
+pub const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL             : i32 = 32;
+pub const MSK_DPAR_INTPNT_QO_TOL_PFEAS                : i32 = 33;
+pub const MSK_DPAR_INTPNT_QO_TOL_REL_GAP              : i32 = 34;
+pub const MSK_DPAR_INTPNT_TOL_DFEAS                   : i32 = 35;
+pub const MSK_DPAR_INTPNT_TOL_DSAFE                   : i32 = 36;
+pub const MSK_DPAR_INTPNT_TOL_INFEAS                  : i32 = 37;
+pub const MSK_DPAR_INTPNT_TOL_MU_RED                  : i32 = 38;
+pub const MSK_DPAR_INTPNT_TOL_PATH                    : i32 = 39;
+pub const MSK_DPAR_INTPNT_TOL_PFEAS                   : i32 = 40;
+pub const MSK_DPAR_INTPNT_TOL_PSAFE                   : i32 = 41;
+pub const MSK_DPAR_INTPNT_TOL_REL_GAP                 : i32 = 42;
+pub const MSK_DPAR_INTPNT_TOL_REL_STEP                : i32 = 43;
+pub const MSK_DPAR_INTPNT_TOL_STEP_SIZE               : i32 = 44;
+pub const MSK_DPAR_LOWER_OBJ_CUT                      : i32 = 45;
+pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH           : i32 = 46;
+pub const MSK_DPAR_MIO_DISABLE_TERM_TIME              : i32 = 47;
+pub const MSK_DPAR_MIO_MAX_TIME                       : i32 = 48;
+pub const MSK_DPAR_MIO_NEAR_TOL_ABS_GAP               : i32 = 49;
+pub const MSK_DPAR_MIO_NEAR_TOL_REL_GAP               : i32 = 50;
+pub const MSK_DPAR_MIO_REL_GAP_CONST                  : i32 = 51;
+pub const MSK_DPAR_MIO_TOL_ABS_GAP                    : i32 = 52;
+pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT              : i32 = 53;
+pub const MSK_DPAR_MIO_TOL_FEAS                       : i32 = 54;
+pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 55;
+pub const MSK_DPAR_MIO_TOL_REL_GAP                    : i32 = 56;
+pub const MSK_DPAR_OPTIMIZER_MAX_TIME                 : i32 = 57;
+pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP            : i32 = 58;
+pub const MSK_DPAR_PRESOLVE_TOL_AIJ                   : i32 = 59;
+pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP            : i32 = 60;
+pub const MSK_DPAR_PRESOLVE_TOL_S                     : i32 = 61;
+pub const MSK_DPAR_PRESOLVE_TOL_X                     : i32 = 62;
+pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL      : i32 = 63;
+pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX            : i32 = 64;
+pub const MSK_DPAR_SIM_LU_TOL_REL_PIV                 : i32 = 65;
+pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV                : i32 = 66;
+pub const MSK_DPAR_UPPER_OBJ_CUT                      : i32 = 67;
+pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH           : i32 = 68;
 pub const MSK_DPAR_BEGIN : i32 = 0;
-pub const MSK_DPAR_END   : i32 = 68;
-
-// feasrepairtype
-pub const MSK_FEASREPAIR_OPTIMIZE_COMBINED : i32 = 2;
-pub const MSK_FEASREPAIR_OPTIMIZE_NONE     : i32 = 0;
-pub const MSK_FEASREPAIR_OPTIMIZE_PENALTY  : i32 = 1;
-pub const MSK_FEASREPAIR_BEGIN : i32 = 0;
-pub const MSK_FEASREPAIR_END   : i32 = 3;
+pub const MSK_DPAR_END   : i32 = 69;
 
 // feature
 pub const MSK_FEATURE_PTON : i32 = 1;
@@ -705,103 +672,89 @@ pub const MSK_FEATURE_BEGIN : i32 = 0;
 pub const MSK_FEATURE_END   : i32 = 2;
 
 // iinfitem
-pub const MSK_IINF_ANA_PRO_NUM_CON                : i32 = 0;
-pub const MSK_IINF_ANA_PRO_NUM_CON_EQ             : i32 = 1;
-pub const MSK_IINF_ANA_PRO_NUM_CON_FR             : i32 = 2;
-pub const MSK_IINF_ANA_PRO_NUM_CON_LO             : i32 = 3;
-pub const MSK_IINF_ANA_PRO_NUM_CON_RA             : i32 = 4;
-pub const MSK_IINF_ANA_PRO_NUM_CON_UP             : i32 = 5;
-pub const MSK_IINF_ANA_PRO_NUM_VAR                : i32 = 6;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_BIN            : i32 = 7;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_CONT           : i32 = 8;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_EQ             : i32 = 9;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_FR             : i32 = 10;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_INT            : i32 = 11;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_LO             : i32 = 12;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_RA             : i32 = 13;
-pub const MSK_IINF_ANA_PRO_NUM_VAR_UP             : i32 = 14;
-pub const MSK_IINF_CONCURRENT_WINNING_OPTIMIZER   : i32 = 15;
-pub const MSK_IINF_INTPNT_FACTOR_DIM_DENSE        : i32 = 16;
-pub const MSK_IINF_INTPNT_ITER                    : i32 = 17;
-pub const MSK_IINF_INTPNT_NUM_THREADS             : i32 = 18;
-pub const MSK_IINF_INTPNT_SOLVE_DUAL              : i32 = 19;
-pub const MSK_IINF_MIO_ABSGAP_SATISFIED           : i32 = 20;
-pub const MSK_IINF_MIO_CLIQUE_TABLE_SIZE          : i32 = 21;
-pub const MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS    : i32 = 22;
-pub const MSK_IINF_MIO_CONSTRUCT_SOLUTION         : i32 = 23;
-pub const MSK_IINF_MIO_INITIAL_SOLUTION           : i32 = 24;
-pub const MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED      : i32 = 25;
-pub const MSK_IINF_MIO_NEAR_RELGAP_SATISFIED      : i32 = 26;
-pub const MSK_IINF_MIO_NODE_DEPTH                 : i32 = 27;
-pub const MSK_IINF_MIO_NUM_ACTIVE_NODES           : i32 = 28;
-pub const MSK_IINF_MIO_NUM_BRANCH                 : i32 = 29;
-pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS            : i32 = 30;
-pub const MSK_IINF_MIO_NUM_CMIR_CUTS              : i32 = 31;
-pub const MSK_IINF_MIO_NUM_GOMORY_CUTS            : i32 = 32;
-pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS     : i32 = 33;
-pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS          : i32 = 34;
-pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS    : i32 = 35;
-pub const MSK_IINF_MIO_NUM_RELAX                  : i32 = 36;
-pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE      : i32 = 37;
-pub const MSK_IINF_MIO_NUMCON                     : i32 = 38;
-pub const MSK_IINF_MIO_NUMINT                     : i32 = 39;
-pub const MSK_IINF_MIO_NUMVAR                     : i32 = 40;
-pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED          : i32 = 41;
-pub const MSK_IINF_MIO_PRESOLVED_NUMBIN           : i32 = 42;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCON           : i32 = 43;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONT          : i32 = 44;
-pub const MSK_IINF_MIO_PRESOLVED_NUMINT           : i32 = 45;
-pub const MSK_IINF_MIO_PRESOLVED_NUMVAR           : i32 = 46;
-pub const MSK_IINF_MIO_RELGAP_SATISFIED           : i32 = 47;
-pub const MSK_IINF_MIO_TOTAL_NUM_CUTS             : i32 = 48;
-pub const MSK_IINF_MIO_USER_OBJ_CUT               : i32 = 49;
-pub const MSK_IINF_OPT_NUMCON                     : i32 = 50;
-pub const MSK_IINF_OPT_NUMVAR                     : i32 = 51;
-pub const MSK_IINF_OPTIMIZE_RESPONSE              : i32 = 52;
-pub const MSK_IINF_RD_NUMBARVAR                   : i32 = 53;
-pub const MSK_IINF_RD_NUMCON                      : i32 = 54;
-pub const MSK_IINF_RD_NUMCONE                     : i32 = 55;
-pub const MSK_IINF_RD_NUMINTVAR                   : i32 = 56;
-pub const MSK_IINF_RD_NUMQ                        : i32 = 57;
-pub const MSK_IINF_RD_NUMVAR                      : i32 = 58;
-pub const MSK_IINF_RD_PROTYPE                     : i32 = 59;
-pub const MSK_IINF_SIM_DUAL_DEG_ITER              : i32 = 60;
-pub const MSK_IINF_SIM_DUAL_HOTSTART              : i32 = 61;
-pub const MSK_IINF_SIM_DUAL_HOTSTART_LU           : i32 = 62;
-pub const MSK_IINF_SIM_DUAL_INF_ITER              : i32 = 63;
-pub const MSK_IINF_SIM_DUAL_ITER                  : i32 = 64;
-pub const MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER      : i32 = 65;
-pub const MSK_IINF_SIM_NETWORK_DUAL_HOTSTART      : i32 = 66;
-pub const MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU   : i32 = 67;
-pub const MSK_IINF_SIM_NETWORK_DUAL_INF_ITER      : i32 = 68;
-pub const MSK_IINF_SIM_NETWORK_DUAL_ITER          : i32 = 69;
-pub const MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER    : i32 = 70;
-pub const MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART    : i32 = 71;
-pub const MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU : i32 = 72;
-pub const MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER    : i32 = 73;
-pub const MSK_IINF_SIM_NETWORK_PRIMAL_ITER        : i32 = 74;
-pub const MSK_IINF_SIM_NUMCON                     : i32 = 75;
-pub const MSK_IINF_SIM_NUMVAR                     : i32 = 76;
-pub const MSK_IINF_SIM_PRIMAL_DEG_ITER            : i32 = 77;
-pub const MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER       : i32 = 78;
-pub const MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART       : i32 = 79;
-pub const MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU    : i32 = 80;
-pub const MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER       : i32 = 81;
-pub const MSK_IINF_SIM_PRIMAL_DUAL_ITER           : i32 = 82;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART            : i32 = 83;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU         : i32 = 84;
-pub const MSK_IINF_SIM_PRIMAL_INF_ITER            : i32 = 85;
-pub const MSK_IINF_SIM_PRIMAL_ITER                : i32 = 86;
-pub const MSK_IINF_SIM_SOLVE_DUAL                 : i32 = 87;
-pub const MSK_IINF_SOL_BAS_PROSTA                 : i32 = 88;
-pub const MSK_IINF_SOL_BAS_SOLSTA                 : i32 = 89;
-pub const MSK_IINF_SOL_ITG_PROSTA                 : i32 = 90;
-pub const MSK_IINF_SOL_ITG_SOLSTA                 : i32 = 91;
-pub const MSK_IINF_SOL_ITR_PROSTA                 : i32 = 92;
-pub const MSK_IINF_SOL_ITR_SOLSTA                 : i32 = 93;
-pub const MSK_IINF_STO_NUM_A_REALLOC              : i32 = 94;
+pub const MSK_IINF_ANA_PRO_NUM_CON             : i32 = 0;
+pub const MSK_IINF_ANA_PRO_NUM_CON_EQ          : i32 = 1;
+pub const MSK_IINF_ANA_PRO_NUM_CON_FR          : i32 = 2;
+pub const MSK_IINF_ANA_PRO_NUM_CON_LO          : i32 = 3;
+pub const MSK_IINF_ANA_PRO_NUM_CON_RA          : i32 = 4;
+pub const MSK_IINF_ANA_PRO_NUM_CON_UP          : i32 = 5;
+pub const MSK_IINF_ANA_PRO_NUM_VAR             : i32 = 6;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_BIN         : i32 = 7;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_CONT        : i32 = 8;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_EQ          : i32 = 9;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_FR          : i32 = 10;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_INT         : i32 = 11;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_LO          : i32 = 12;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_RA          : i32 = 13;
+pub const MSK_IINF_ANA_PRO_NUM_VAR_UP          : i32 = 14;
+pub const MSK_IINF_INTPNT_FACTOR_DIM_DENSE     : i32 = 15;
+pub const MSK_IINF_INTPNT_ITER                 : i32 = 16;
+pub const MSK_IINF_INTPNT_NUM_THREADS          : i32 = 17;
+pub const MSK_IINF_INTPNT_SOLVE_DUAL           : i32 = 18;
+pub const MSK_IINF_MIO_ABSGAP_SATISFIED        : i32 = 19;
+pub const MSK_IINF_MIO_CLIQUE_TABLE_SIZE       : i32 = 20;
+pub const MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS : i32 = 21;
+pub const MSK_IINF_MIO_CONSTRUCT_SOLUTION      : i32 = 22;
+pub const MSK_IINF_MIO_INITIAL_SOLUTION        : i32 = 23;
+pub const MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED   : i32 = 24;
+pub const MSK_IINF_MIO_NEAR_RELGAP_SATISFIED   : i32 = 25;
+pub const MSK_IINF_MIO_NODE_DEPTH              : i32 = 26;
+pub const MSK_IINF_MIO_NUM_ACTIVE_NODES        : i32 = 27;
+pub const MSK_IINF_MIO_NUM_BRANCH              : i32 = 28;
+pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS         : i32 = 29;
+pub const MSK_IINF_MIO_NUM_CMIR_CUTS           : i32 = 30;
+pub const MSK_IINF_MIO_NUM_GOMORY_CUTS         : i32 = 31;
+pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS  : i32 = 32;
+pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS       : i32 = 33;
+pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 34;
+pub const MSK_IINF_MIO_NUM_RELAX               : i32 = 35;
+pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE   : i32 = 36;
+pub const MSK_IINF_MIO_NUMCON                  : i32 = 37;
+pub const MSK_IINF_MIO_NUMINT                  : i32 = 38;
+pub const MSK_IINF_MIO_NUMVAR                  : i32 = 39;
+pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED       : i32 = 40;
+pub const MSK_IINF_MIO_PRESOLVED_NUMBIN        : i32 = 41;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCON        : i32 = 42;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONT       : i32 = 43;
+pub const MSK_IINF_MIO_PRESOLVED_NUMINT        : i32 = 44;
+pub const MSK_IINF_MIO_PRESOLVED_NUMVAR        : i32 = 45;
+pub const MSK_IINF_MIO_RELGAP_SATISFIED        : i32 = 46;
+pub const MSK_IINF_MIO_TOTAL_NUM_CUTS          : i32 = 47;
+pub const MSK_IINF_MIO_USER_OBJ_CUT            : i32 = 48;
+pub const MSK_IINF_OPT_NUMCON                  : i32 = 49;
+pub const MSK_IINF_OPT_NUMVAR                  : i32 = 50;
+pub const MSK_IINF_OPTIMIZE_RESPONSE           : i32 = 51;
+pub const MSK_IINF_PURIFY_DUAL_SUCCESS         : i32 = 52;
+pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS       : i32 = 53;
+pub const MSK_IINF_RD_NUMBARVAR                : i32 = 54;
+pub const MSK_IINF_RD_NUMCON                   : i32 = 55;
+pub const MSK_IINF_RD_NUMCONE                  : i32 = 56;
+pub const MSK_IINF_RD_NUMINTVAR                : i32 = 57;
+pub const MSK_IINF_RD_NUMQ                     : i32 = 58;
+pub const MSK_IINF_RD_NUMVAR                   : i32 = 59;
+pub const MSK_IINF_RD_PROTYPE                  : i32 = 60;
+pub const MSK_IINF_SIM_DUAL_DEG_ITER           : i32 = 61;
+pub const MSK_IINF_SIM_DUAL_HOTSTART           : i32 = 62;
+pub const MSK_IINF_SIM_DUAL_HOTSTART_LU        : i32 = 63;
+pub const MSK_IINF_SIM_DUAL_INF_ITER           : i32 = 64;
+pub const MSK_IINF_SIM_DUAL_ITER               : i32 = 65;
+pub const MSK_IINF_SIM_NUMCON                  : i32 = 66;
+pub const MSK_IINF_SIM_NUMVAR                  : i32 = 67;
+pub const MSK_IINF_SIM_PRIMAL_DEG_ITER         : i32 = 68;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART         : i32 = 69;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU      : i32 = 70;
+pub const MSK_IINF_SIM_PRIMAL_INF_ITER         : i32 = 71;
+pub const MSK_IINF_SIM_PRIMAL_ITER             : i32 = 72;
+pub const MSK_IINF_SIM_SOLVE_DUAL              : i32 = 73;
+pub const MSK_IINF_SOL_BAS_PROSTA              : i32 = 74;
+pub const MSK_IINF_SOL_BAS_SOLSTA              : i32 = 75;
+pub const MSK_IINF_SOL_ITG_PROSTA              : i32 = 76;
+pub const MSK_IINF_SOL_ITG_SOLSTA              : i32 = 77;
+pub const MSK_IINF_SOL_ITR_PROSTA              : i32 = 78;
+pub const MSK_IINF_SOL_ITR_SOLSTA              : i32 = 79;
+pub const MSK_IINF_STO_NUM_A_REALLOC           : i32 = 80;
 pub const MSK_IINF_BEGIN : i32 = 0;
-pub const MSK_IINF_END   : i32 = 95;
+pub const MSK_IINF_END   : i32 = 81;
 
 // inftype
 pub const MSK_INF_DOU_TYPE  : i32 = 0;
@@ -826,220 +779,201 @@ pub const MSK_IOMODE_BEGIN : i32 = 0;
 pub const MSK_IOMODE_END   : i32 = 3;
 
 // iparam
-pub const MSK_IPAR_ANA_SOL_BASIS                         : i32 = 0;
-pub const MSK_IPAR_ANA_SOL_PRINT_VIOLATED                : i32 = 1;
-pub const MSK_IPAR_AUTO_SORT_A_BEFORE_OPT                : i32 = 2;
-pub const MSK_IPAR_AUTO_UPDATE_SOL_INFO                  : i32 = 3;
-pub const MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE              : i32 = 4;
-pub const MSK_IPAR_BI_CLEAN_OPTIMIZER                    : i32 = 5;
-pub const MSK_IPAR_BI_IGNORE_MAX_ITER                    : i32 = 6;
-pub const MSK_IPAR_BI_IGNORE_NUM_ERROR                   : i32 = 7;
-pub const MSK_IPAR_BI_MAX_ITERATIONS                     : i32 = 8;
-pub const MSK_IPAR_CACHE_LICENSE                         : i32 = 9;
-pub const MSK_IPAR_CHECK_CONVEXITY                       : i32 = 10;
-pub const MSK_IPAR_COMPRESS_STATFILE                     : i32 = 11;
-pub const MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS             : i32 = 12;
-pub const MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX      : i32 = 13;
-pub const MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX      : i32 = 14;
-pub const MSK_IPAR_CONCURRENT_PRIORITY_INTPNT            : i32 = 15;
-pub const MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX    : i32 = 16;
-pub const MSK_IPAR_FEASREPAIR_OPTIMIZE                   : i32 = 17;
-pub const MSK_IPAR_INFEAS_GENERIC_NAMES                  : i32 = 18;
-pub const MSK_IPAR_INFEAS_PREFER_PRIMAL                  : i32 = 19;
-pub const MSK_IPAR_INFEAS_REPORT_AUTO                    : i32 = 20;
-pub const MSK_IPAR_INFEAS_REPORT_LEVEL                   : i32 = 21;
-pub const MSK_IPAR_INTPNT_BASIS                          : i32 = 22;
-pub const MSK_IPAR_INTPNT_DIFF_STEP                      : i32 = 23;
-pub const MSK_IPAR_INTPNT_HOTSTART                       : i32 = 24;
-pub const MSK_IPAR_INTPNT_MAX_ITERATIONS                 : i32 = 25;
-pub const MSK_IPAR_INTPNT_MAX_NUM_COR                    : i32 = 26;
-pub const MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS       : i32 = 27;
-pub const MSK_IPAR_INTPNT_MULTI_THREAD                   : i32 = 28;
-pub const MSK_IPAR_INTPNT_OFF_COL_TRH                    : i32 = 29;
-pub const MSK_IPAR_INTPNT_ORDER_METHOD                   : i32 = 30;
-pub const MSK_IPAR_INTPNT_REGULARIZATION_USE             : i32 = 31;
-pub const MSK_IPAR_INTPNT_SCALING                        : i32 = 32;
-pub const MSK_IPAR_INTPNT_SOLVE_FORM                     : i32 = 33;
-pub const MSK_IPAR_INTPNT_STARTING_POINT                 : i32 = 34;
-pub const MSK_IPAR_LICENSE_DEBUG                         : i32 = 35;
-pub const MSK_IPAR_LICENSE_PAUSE_TIME                    : i32 = 36;
-pub const MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS          : i32 = 37;
-pub const MSK_IPAR_LICENSE_TRH_EXPIRY_WRN                : i32 = 38;
-pub const MSK_IPAR_LICENSE_WAIT                          : i32 = 39;
-pub const MSK_IPAR_LOG                                   : i32 = 40;
-pub const MSK_IPAR_LOG_ANA_PRO                           : i32 = 41;
-pub const MSK_IPAR_LOG_BI                                : i32 = 42;
-pub const MSK_IPAR_LOG_BI_FREQ                           : i32 = 43;
-pub const MSK_IPAR_LOG_CHECK_CONVEXITY                   : i32 = 44;
-pub const MSK_IPAR_LOG_CONCURRENT                        : i32 = 45;
-pub const MSK_IPAR_LOG_CUT_SECOND_OPT                    : i32 = 46;
-pub const MSK_IPAR_LOG_EXPAND                            : i32 = 47;
-pub const MSK_IPAR_LOG_FACTOR                            : i32 = 48;
-pub const MSK_IPAR_LOG_FEAS_REPAIR                       : i32 = 49;
-pub const MSK_IPAR_LOG_FILE                              : i32 = 50;
-pub const MSK_IPAR_LOG_HEAD                              : i32 = 51;
-pub const MSK_IPAR_LOG_INFEAS_ANA                        : i32 = 52;
-pub const MSK_IPAR_LOG_INTPNT                            : i32 = 53;
-pub const MSK_IPAR_LOG_MIO                               : i32 = 54;
-pub const MSK_IPAR_LOG_MIO_FREQ                          : i32 = 55;
-pub const MSK_IPAR_LOG_OPTIMIZER                         : i32 = 56;
-pub const MSK_IPAR_LOG_ORDER                             : i32 = 57;
-pub const MSK_IPAR_LOG_PRESOLVE                          : i32 = 58;
-pub const MSK_IPAR_LOG_RESPONSE                          : i32 = 59;
-pub const MSK_IPAR_LOG_SENSITIVITY                       : i32 = 60;
-pub const MSK_IPAR_LOG_SENSITIVITY_OPT                   : i32 = 61;
-pub const MSK_IPAR_LOG_SIM                               : i32 = 62;
-pub const MSK_IPAR_LOG_SIM_FREQ                          : i32 = 63;
-pub const MSK_IPAR_LOG_SIM_MINOR                         : i32 = 64;
-pub const MSK_IPAR_LOG_STORAGE                           : i32 = 65;
-pub const MSK_IPAR_MAX_NUM_WARNINGS                      : i32 = 66;
-pub const MSK_IPAR_MIO_BRANCH_DIR                        : i32 = 67;
-pub const MSK_IPAR_MIO_CONSTRUCT_SOL                     : i32 = 68;
-pub const MSK_IPAR_MIO_CUT_CLIQUE                        : i32 = 69;
-pub const MSK_IPAR_MIO_CUT_CMIR                          : i32 = 70;
-pub const MSK_IPAR_MIO_CUT_GMI                           : i32 = 71;
-pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND                 : i32 = 72;
-pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER                : i32 = 73;
-pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL               : i32 = 74;
-pub const MSK_IPAR_MIO_HEURISTIC_LEVEL                   : i32 = 75;
-pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES                  : i32 = 76;
-pub const MSK_IPAR_MIO_MAX_NUM_RELAXS                    : i32 = 77;
-pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS                 : i32 = 78;
-pub const MSK_IPAR_MIO_MODE                              : i32 = 79;
-pub const MSK_IPAR_MIO_MT_USER_CB                        : i32 = 80;
-pub const MSK_IPAR_MIO_NODE_OPTIMIZER                    : i32 = 81;
-pub const MSK_IPAR_MIO_NODE_SELECTION                    : i32 = 82;
-pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE           : i32 = 83;
-pub const MSK_IPAR_MIO_PROBING_LEVEL                     : i32 = 84;
-pub const MSK_IPAR_MIO_RINS_MAX_NODES                    : i32 = 85;
-pub const MSK_IPAR_MIO_ROOT_OPTIMIZER                    : i32 = 86;
-pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL        : i32 = 87;
-pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL                : i32 = 88;
-pub const MSK_IPAR_MT_SPINCOUNT                          : i32 = 89;
-pub const MSK_IPAR_NUM_THREADS                           : i32 = 90;
-pub const MSK_IPAR_OPF_MAX_TERMS_PER_LINE                : i32 = 91;
-pub const MSK_IPAR_OPF_WRITE_HEADER                      : i32 = 92;
-pub const MSK_IPAR_OPF_WRITE_HINTS                       : i32 = 93;
-pub const MSK_IPAR_OPF_WRITE_PARAMETERS                  : i32 = 94;
-pub const MSK_IPAR_OPF_WRITE_PROBLEM                     : i32 = 95;
-pub const MSK_IPAR_OPF_WRITE_SOL_BAS                     : i32 = 96;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITG                     : i32 = 97;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITR                     : i32 = 98;
-pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                   : i32 = 99;
-pub const MSK_IPAR_OPTIMIZER                             : i32 = 100;
-pub const MSK_IPAR_PARAM_READ_CASE_NAME                  : i32 = 101;
-pub const MSK_IPAR_PARAM_READ_IGN_ERROR                  : i32 = 102;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL          : i32 = 103;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES     : i32 = 104;
-pub const MSK_IPAR_PRESOLVE_LEVEL                        : i32 = 105;
-pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH          : i32 = 106;
-pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH          : i32 = 107;
-pub const MSK_IPAR_PRESOLVE_LINDEP_USE                   : i32 = 108;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS           : i32 = 109;
-pub const MSK_IPAR_PRESOLVE_USE                          : i32 = 110;
-pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER               : i32 = 111;
-pub const MSK_IPAR_READ_DATA_COMPRESSED                  : i32 = 112;
-pub const MSK_IPAR_READ_DATA_FORMAT                      : i32 = 113;
-pub const MSK_IPAR_READ_DEBUG                            : i32 = 114;
-pub const MSK_IPAR_READ_KEEP_FREE_CON                    : i32 = 115;
-pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU          : i32 = 116;
-pub const MSK_IPAR_READ_LP_QUOTED_NAMES                  : i32 = 117;
-pub const MSK_IPAR_READ_MPS_FORMAT                       : i32 = 118;
-pub const MSK_IPAR_READ_MPS_WIDTH                        : i32 = 119;
-pub const MSK_IPAR_READ_TASK_IGNORE_PARAM                : i32 = 120;
-pub const MSK_IPAR_SENSITIVITY_ALL                       : i32 = 121;
-pub const MSK_IPAR_SENSITIVITY_OPTIMIZER                 : i32 = 122;
-pub const MSK_IPAR_SENSITIVITY_TYPE                      : i32 = 123;
-pub const MSK_IPAR_SIM_BASIS_FACTOR_USE                  : i32 = 124;
-pub const MSK_IPAR_SIM_DEGEN                             : i32 = 125;
-pub const MSK_IPAR_SIM_DUAL_CRASH                        : i32 = 126;
-pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD              : i32 = 127;
-pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION           : i32 = 128;
-pub const MSK_IPAR_SIM_DUAL_SELECTION                    : i32 = 129;
-pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                    : i32 = 130;
-pub const MSK_IPAR_SIM_HOTSTART                          : i32 = 131;
-pub const MSK_IPAR_SIM_HOTSTART_LU                       : i32 = 132;
-pub const MSK_IPAR_SIM_INTEGER                           : i32 = 133;
-pub const MSK_IPAR_SIM_MAX_ITERATIONS                    : i32 = 134;
-pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS                  : i32 = 135;
-pub const MSK_IPAR_SIM_NON_SINGULAR                      : i32 = 136;
-pub const MSK_IPAR_SIM_PRIMAL_CRASH                      : i32 = 137;
-pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD            : i32 = 138;
-pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION         : i32 = 139;
-pub const MSK_IPAR_SIM_PRIMAL_SELECTION                  : i32 = 140;
-pub const MSK_IPAR_SIM_REFACTOR_FREQ                     : i32 = 141;
-pub const MSK_IPAR_SIM_REFORMULATION                     : i32 = 142;
-pub const MSK_IPAR_SIM_SAVE_LU                           : i32 = 143;
-pub const MSK_IPAR_SIM_SCALING                           : i32 = 144;
-pub const MSK_IPAR_SIM_SCALING_METHOD                    : i32 = 145;
-pub const MSK_IPAR_SIM_SOLVE_FORM                        : i32 = 146;
-pub const MSK_IPAR_SIM_STABILITY_PRIORITY                : i32 = 147;
-pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER                  : i32 = 148;
-pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC                 : i32 = 149;
-pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED                : i32 = 150;
-pub const MSK_IPAR_SOL_READ_NAME_WIDTH                   : i32 = 151;
-pub const MSK_IPAR_SOL_READ_WIDTH                        : i32 = 152;
-pub const MSK_IPAR_SOLUTION_CALLBACK                     : i32 = 153;
-pub const MSK_IPAR_TIMING_LEVEL                          : i32 = 154;
-pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS                 : i32 = 155;
-pub const MSK_IPAR_WRITE_BAS_HEAD                        : i32 = 156;
-pub const MSK_IPAR_WRITE_BAS_VARIABLES                   : i32 = 157;
-pub const MSK_IPAR_WRITE_DATA_COMPRESSED                 : i32 = 158;
-pub const MSK_IPAR_WRITE_DATA_FORMAT                     : i32 = 159;
-pub const MSK_IPAR_WRITE_DATA_PARAM                      : i32 = 160;
-pub const MSK_IPAR_WRITE_FREE_CON                        : i32 = 161;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES                   : i32 = 162;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO                : i32 = 163;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS : i32 = 164;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS       : i32 = 165;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS    : i32 = 166;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS   : i32 = 167;
-pub const MSK_IPAR_WRITE_INT_CONSTRAINTS                 : i32 = 168;
-pub const MSK_IPAR_WRITE_INT_HEAD                        : i32 = 169;
-pub const MSK_IPAR_WRITE_INT_VARIABLES                   : i32 = 170;
-pub const MSK_IPAR_WRITE_LP_FULL_OBJ                     : i32 = 171;
-pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                   : i32 = 172;
-pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES                 : i32 = 173;
-pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT                : i32 = 174;
-pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE               : i32 = 175;
-pub const MSK_IPAR_WRITE_MPS_FORMAT                      : i32 = 176;
-pub const MSK_IPAR_WRITE_MPS_INT                         : i32 = 177;
-pub const MSK_IPAR_WRITE_PRECISION                       : i32 = 178;
-pub const MSK_IPAR_WRITE_SOL_BARVARIABLES                : i32 = 179;
-pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS                 : i32 = 180;
-pub const MSK_IPAR_WRITE_SOL_HEAD                        : i32 = 181;
-pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES        : i32 = 182;
-pub const MSK_IPAR_WRITE_SOL_VARIABLES                   : i32 = 183;
-pub const MSK_IPAR_WRITE_TASK_INC_SOL                    : i32 = 184;
-pub const MSK_IPAR_WRITE_XML_MODE                        : i32 = 185;
+pub const MSK_IPAR_ANA_SOL_BASIS                      : i32 = 0;
+pub const MSK_IPAR_ANA_SOL_PRINT_VIOLATED             : i32 = 1;
+pub const MSK_IPAR_AUTO_SORT_A_BEFORE_OPT             : i32 = 2;
+pub const MSK_IPAR_AUTO_UPDATE_SOL_INFO               : i32 = 3;
+pub const MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE           : i32 = 4;
+pub const MSK_IPAR_BI_CLEAN_OPTIMIZER                 : i32 = 5;
+pub const MSK_IPAR_BI_IGNORE_MAX_ITER                 : i32 = 6;
+pub const MSK_IPAR_BI_IGNORE_NUM_ERROR                : i32 = 7;
+pub const MSK_IPAR_BI_MAX_ITERATIONS                  : i32 = 8;
+pub const MSK_IPAR_CACHE_LICENSE                      : i32 = 9;
+pub const MSK_IPAR_CHECK_CONVEXITY                    : i32 = 10;
+pub const MSK_IPAR_COMPRESS_STATFILE                  : i32 = 11;
+pub const MSK_IPAR_INFEAS_GENERIC_NAMES               : i32 = 12;
+pub const MSK_IPAR_INFEAS_PREFER_PRIMAL               : i32 = 13;
+pub const MSK_IPAR_INFEAS_REPORT_AUTO                 : i32 = 14;
+pub const MSK_IPAR_INFEAS_REPORT_LEVEL                : i32 = 15;
+pub const MSK_IPAR_INTPNT_BASIS                       : i32 = 16;
+pub const MSK_IPAR_INTPNT_DIFF_STEP                   : i32 = 17;
+pub const MSK_IPAR_INTPNT_HOTSTART                    : i32 = 18;
+pub const MSK_IPAR_INTPNT_MAX_ITERATIONS              : i32 = 19;
+pub const MSK_IPAR_INTPNT_MAX_NUM_COR                 : i32 = 20;
+pub const MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS    : i32 = 21;
+pub const MSK_IPAR_INTPNT_MULTI_THREAD                : i32 = 22;
+pub const MSK_IPAR_INTPNT_OFF_COL_TRH                 : i32 = 23;
+pub const MSK_IPAR_INTPNT_ORDER_METHOD                : i32 = 24;
+pub const MSK_IPAR_INTPNT_PURIFY                      : i32 = 25;
+pub const MSK_IPAR_INTPNT_REGULARIZATION_USE          : i32 = 26;
+pub const MSK_IPAR_INTPNT_SCALING                     : i32 = 27;
+pub const MSK_IPAR_INTPNT_SOLVE_FORM                  : i32 = 28;
+pub const MSK_IPAR_INTPNT_STARTING_POINT              : i32 = 29;
+pub const MSK_IPAR_LICENSE_DEBUG                      : i32 = 30;
+pub const MSK_IPAR_LICENSE_PAUSE_TIME                 : i32 = 31;
+pub const MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS       : i32 = 32;
+pub const MSK_IPAR_LICENSE_TRH_EXPIRY_WRN             : i32 = 33;
+pub const MSK_IPAR_LICENSE_WAIT                       : i32 = 34;
+pub const MSK_IPAR_LOG                                : i32 = 35;
+pub const MSK_IPAR_LOG_ANA_PRO                        : i32 = 36;
+pub const MSK_IPAR_LOG_BI                             : i32 = 37;
+pub const MSK_IPAR_LOG_BI_FREQ                        : i32 = 38;
+pub const MSK_IPAR_LOG_CHECK_CONVEXITY                : i32 = 39;
+pub const MSK_IPAR_LOG_CUT_SECOND_OPT                 : i32 = 40;
+pub const MSK_IPAR_LOG_EXPAND                         : i32 = 41;
+pub const MSK_IPAR_LOG_FEAS_REPAIR                    : i32 = 42;
+pub const MSK_IPAR_LOG_FILE                           : i32 = 43;
+pub const MSK_IPAR_LOG_INFEAS_ANA                     : i32 = 44;
+pub const MSK_IPAR_LOG_INTPNT                         : i32 = 45;
+pub const MSK_IPAR_LOG_MIO                            : i32 = 46;
+pub const MSK_IPAR_LOG_MIO_FREQ                       : i32 = 47;
+pub const MSK_IPAR_LOG_ORDER                          : i32 = 48;
+pub const MSK_IPAR_LOG_PRESOLVE                       : i32 = 49;
+pub const MSK_IPAR_LOG_RESPONSE                       : i32 = 50;
+pub const MSK_IPAR_LOG_SENSITIVITY                    : i32 = 51;
+pub const MSK_IPAR_LOG_SENSITIVITY_OPT                : i32 = 52;
+pub const MSK_IPAR_LOG_SIM                            : i32 = 53;
+pub const MSK_IPAR_LOG_SIM_FREQ                       : i32 = 54;
+pub const MSK_IPAR_LOG_SIM_MINOR                      : i32 = 55;
+pub const MSK_IPAR_LOG_STORAGE                        : i32 = 56;
+pub const MSK_IPAR_MAX_NUM_WARNINGS                   : i32 = 57;
+pub const MSK_IPAR_MIO_BRANCH_DIR                     : i32 = 58;
+pub const MSK_IPAR_MIO_CONSTRUCT_SOL                  : i32 = 59;
+pub const MSK_IPAR_MIO_CUT_CLIQUE                     : i32 = 60;
+pub const MSK_IPAR_MIO_CUT_CMIR                       : i32 = 61;
+pub const MSK_IPAR_MIO_CUT_GMI                        : i32 = 62;
+pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND              : i32 = 63;
+pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER             : i32 = 64;
+pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL            : i32 = 65;
+pub const MSK_IPAR_MIO_HEURISTIC_LEVEL                : i32 = 66;
+pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES               : i32 = 67;
+pub const MSK_IPAR_MIO_MAX_NUM_RELAXS                 : i32 = 68;
+pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS              : i32 = 69;
+pub const MSK_IPAR_MIO_MODE                           : i32 = 70;
+pub const MSK_IPAR_MIO_MT_USER_CB                     : i32 = 71;
+pub const MSK_IPAR_MIO_NODE_OPTIMIZER                 : i32 = 72;
+pub const MSK_IPAR_MIO_NODE_SELECTION                 : i32 = 73;
+pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE        : i32 = 74;
+pub const MSK_IPAR_MIO_PROBING_LEVEL                  : i32 = 75;
+pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 76;
+pub const MSK_IPAR_MIO_RINS_MAX_NODES                 : i32 = 77;
+pub const MSK_IPAR_MIO_ROOT_OPTIMIZER                 : i32 = 78;
+pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL     : i32 = 79;
+pub const MSK_IPAR_MIO_SEED                           : i32 = 80;
+pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL             : i32 = 81;
+pub const MSK_IPAR_MT_SPINCOUNT                       : i32 = 82;
+pub const MSK_IPAR_NUM_THREADS                        : i32 = 83;
+pub const MSK_IPAR_OPF_MAX_TERMS_PER_LINE             : i32 = 84;
+pub const MSK_IPAR_OPF_WRITE_HEADER                   : i32 = 85;
+pub const MSK_IPAR_OPF_WRITE_HINTS                    : i32 = 86;
+pub const MSK_IPAR_OPF_WRITE_PARAMETERS               : i32 = 87;
+pub const MSK_IPAR_OPF_WRITE_PROBLEM                  : i32 = 88;
+pub const MSK_IPAR_OPF_WRITE_SOL_BAS                  : i32 = 89;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITG                  : i32 = 90;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITR                  : i32 = 91;
+pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                : i32 = 92;
+pub const MSK_IPAR_OPTIMIZER                          : i32 = 93;
+pub const MSK_IPAR_PARAM_READ_CASE_NAME               : i32 = 94;
+pub const MSK_IPAR_PARAM_READ_IGN_ERROR               : i32 = 95;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       : i32 = 96;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  : i32 = 97;
+pub const MSK_IPAR_PRESOLVE_LEVEL                     : i32 = 98;
+pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       : i32 = 99;
+pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       : i32 = 100;
+pub const MSK_IPAR_PRESOLVE_LINDEP_USE                : i32 = 101;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        : i32 = 102;
+pub const MSK_IPAR_PRESOLVE_USE                       : i32 = 103;
+pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            : i32 = 104;
+pub const MSK_IPAR_READ_DATA_COMPRESSED               : i32 = 105;
+pub const MSK_IPAR_READ_DATA_FORMAT                   : i32 = 106;
+pub const MSK_IPAR_READ_DEBUG                         : i32 = 107;
+pub const MSK_IPAR_READ_KEEP_FREE_CON                 : i32 = 108;
+pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU       : i32 = 109;
+pub const MSK_IPAR_READ_LP_QUOTED_NAMES               : i32 = 110;
+pub const MSK_IPAR_READ_MPS_FORMAT                    : i32 = 111;
+pub const MSK_IPAR_READ_MPS_WIDTH                     : i32 = 112;
+pub const MSK_IPAR_READ_TASK_IGNORE_PARAM             : i32 = 113;
+pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            : i32 = 114;
+pub const MSK_IPAR_SENSITIVITY_ALL                    : i32 = 115;
+pub const MSK_IPAR_SENSITIVITY_OPTIMIZER              : i32 = 116;
+pub const MSK_IPAR_SENSITIVITY_TYPE                   : i32 = 117;
+pub const MSK_IPAR_SIM_BASIS_FACTOR_USE               : i32 = 118;
+pub const MSK_IPAR_SIM_DEGEN                          : i32 = 119;
+pub const MSK_IPAR_SIM_DUAL_CRASH                     : i32 = 120;
+pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           : i32 = 121;
+pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        : i32 = 122;
+pub const MSK_IPAR_SIM_DUAL_SELECTION                 : i32 = 123;
+pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                 : i32 = 124;
+pub const MSK_IPAR_SIM_HOTSTART                       : i32 = 125;
+pub const MSK_IPAR_SIM_HOTSTART_LU                    : i32 = 126;
+pub const MSK_IPAR_SIM_MAX_ITERATIONS                 : i32 = 127;
+pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS               : i32 = 128;
+pub const MSK_IPAR_SIM_NON_SINGULAR                   : i32 = 129;
+pub const MSK_IPAR_SIM_PRIMAL_CRASH                   : i32 = 130;
+pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         : i32 = 131;
+pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      : i32 = 132;
+pub const MSK_IPAR_SIM_PRIMAL_SELECTION               : i32 = 133;
+pub const MSK_IPAR_SIM_REFACTOR_FREQ                  : i32 = 134;
+pub const MSK_IPAR_SIM_REFORMULATION                  : i32 = 135;
+pub const MSK_IPAR_SIM_SAVE_LU                        : i32 = 136;
+pub const MSK_IPAR_SIM_SCALING                        : i32 = 137;
+pub const MSK_IPAR_SIM_SCALING_METHOD                 : i32 = 138;
+pub const MSK_IPAR_SIM_SOLVE_FORM                     : i32 = 139;
+pub const MSK_IPAR_SIM_STABILITY_PRIORITY             : i32 = 140;
+pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER               : i32 = 141;
+pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC              : i32 = 142;
+pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED             : i32 = 143;
+pub const MSK_IPAR_SOL_READ_NAME_WIDTH                : i32 = 144;
+pub const MSK_IPAR_SOL_READ_WIDTH                     : i32 = 145;
+pub const MSK_IPAR_SOLUTION_CALLBACK                  : i32 = 146;
+pub const MSK_IPAR_TIMING_LEVEL                       : i32 = 147;
+pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS              : i32 = 148;
+pub const MSK_IPAR_WRITE_BAS_HEAD                     : i32 = 149;
+pub const MSK_IPAR_WRITE_BAS_VARIABLES                : i32 = 150;
+pub const MSK_IPAR_WRITE_DATA_COMPRESSED              : i32 = 151;
+pub const MSK_IPAR_WRITE_DATA_FORMAT                  : i32 = 152;
+pub const MSK_IPAR_WRITE_DATA_PARAM                   : i32 = 153;
+pub const MSK_IPAR_WRITE_FREE_CON                     : i32 = 154;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES                : i32 = 155;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO             : i32 = 156;
+pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    : i32 = 157;
+pub const MSK_IPAR_WRITE_INT_CONSTRAINTS              : i32 = 158;
+pub const MSK_IPAR_WRITE_INT_HEAD                     : i32 = 159;
+pub const MSK_IPAR_WRITE_INT_VARIABLES                : i32 = 160;
+pub const MSK_IPAR_WRITE_LP_FULL_OBJ                  : i32 = 161;
+pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                : i32 = 162;
+pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES              : i32 = 163;
+pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT             : i32 = 164;
+pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE            : i32 = 165;
+pub const MSK_IPAR_WRITE_MPS_FORMAT                   : i32 = 166;
+pub const MSK_IPAR_WRITE_MPS_INT                      : i32 = 167;
+pub const MSK_IPAR_WRITE_PRECISION                    : i32 = 168;
+pub const MSK_IPAR_WRITE_SOL_BARVARIABLES             : i32 = 169;
+pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS              : i32 = 170;
+pub const MSK_IPAR_WRITE_SOL_HEAD                     : i32 = 171;
+pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     : i32 = 172;
+pub const MSK_IPAR_WRITE_SOL_VARIABLES                : i32 = 173;
+pub const MSK_IPAR_WRITE_TASK_INC_SOL                 : i32 = 174;
+pub const MSK_IPAR_WRITE_XML_MODE                     : i32 = 175;
 pub const MSK_IPAR_BEGIN : i32 = 0;
-pub const MSK_IPAR_END   : i32 = 186;
-
-// language
-pub const MSK_LANG_DAN : i32 = 1;
-pub const MSK_LANG_ENG : i32 = 0;
-pub const MSK_LANG_BEGIN : i32 = 0;
-pub const MSK_LANG_END   : i32 = 2;
+pub const MSK_IPAR_END   : i32 = 176;
 
 // liinfitem
-pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER        : i32 = 0;
-pub const MSK_LIINF_BI_CLEAN_DUAL_ITER            : i32 = 1;
-pub const MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER      : i32 = 2;
-pub const MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER : i32 = 3;
-pub const MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER     : i32 = 4;
-pub const MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER : i32 = 5;
-pub const MSK_LIINF_BI_CLEAN_PRIMAL_ITER          : i32 = 6;
-pub const MSK_LIINF_BI_DUAL_ITER                  : i32 = 7;
-pub const MSK_LIINF_BI_PRIMAL_ITER                : i32 = 8;
-pub const MSK_LIINF_INTPNT_FACTOR_NUM_NZ          : i32 = 9;
-pub const MSK_LIINF_MIO_INTPNT_ITER               : i32 = 10;
-pub const MSK_LIINF_MIO_PRESOLVED_ANZ             : i32 = 11;
-pub const MSK_LIINF_MIO_SIM_MAXITER_SETBACKS      : i32 = 12;
-pub const MSK_LIINF_MIO_SIMPLEX_ITER              : i32 = 13;
-pub const MSK_LIINF_RD_NUMANZ                     : i32 = 14;
-pub const MSK_LIINF_RD_NUMQNZ                     : i32 = 15;
+pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER   : i32 = 0;
+pub const MSK_LIINF_BI_CLEAN_DUAL_ITER       : i32 = 1;
+pub const MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER : i32 = 2;
+pub const MSK_LIINF_BI_CLEAN_PRIMAL_ITER     : i32 = 3;
+pub const MSK_LIINF_BI_DUAL_ITER             : i32 = 4;
+pub const MSK_LIINF_BI_PRIMAL_ITER           : i32 = 5;
+pub const MSK_LIINF_INTPNT_FACTOR_NUM_NZ     : i32 = 6;
+pub const MSK_LIINF_MIO_INTPNT_ITER          : i32 = 7;
+pub const MSK_LIINF_MIO_PRESOLVED_ANZ        : i32 = 8;
+pub const MSK_LIINF_MIO_SIM_MAXITER_SETBACKS : i32 = 9;
+pub const MSK_LIINF_MIO_SIMPLEX_ITER         : i32 = 10;
+pub const MSK_LIINF_RD_NUMANZ                : i32 = 11;
+pub const MSK_LIINF_RD_NUMQNZ                : i32 = 12;
 pub const MSK_LIINF_BEGIN : i32 = 0;
-pub const MSK_LIINF_END   : i32 = 16;
+pub const MSK_LIINF_END   : i32 = 13;
 
 // mark
 pub const MSK_MARK_LO : i32 = 0;
@@ -1078,11 +1012,6 @@ pub const MSK_MPS_FORMAT_RELAXED : i32 = 1;
 pub const MSK_MPS_FORMAT_STRICT  : i32 = 0;
 pub const MSK_MPS_FORMAT_BEGIN : i32 = 0;
 pub const MSK_MPS_FORMAT_END   : i32 = 4;
-
-// msgkey
-pub const MSK_MSG_MPS_SELECTED : i32 = 1100;
-pub const MSK_MSG_READING_FILE : i32 = 1000;
-pub const MSK_MSG_WRITING_FILE : i32 = 1001;
 
 // nametype
 pub const MSK_NAME_TYPE_GEN : i32 = 0;
@@ -1170,453 +1099,472 @@ pub const MSK_PRO_STA_UNKNOWN                  : i32 = 0;
 pub const MSK_PRO_STA_BEGIN : i32 = 0;
 pub const MSK_PRO_STA_END   : i32 = 12;
 
+// purify
+pub const MSK_PURIFY_AUTO        : i32 = 4;
+pub const MSK_PURIFY_DUAL        : i32 = 2;
+pub const MSK_PURIFY_NONE        : i32 = 0;
+pub const MSK_PURIFY_PRIMAL      : i32 = 1;
+pub const MSK_PURIFY_PRIMAL_DUAL : i32 = 3;
+pub const MSK_PURIFY_BEGIN : i32 = 0;
+pub const MSK_PURIFY_END   : i32 = 5;
+
 // rescode
-pub const MSK_RES_ERR_AD_INVALID_CODELIST                 : i32 = 3102;
-pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL                 : i32 = 3001;
-pub const MSK_RES_ERR_API_CB_CONNECT                      : i32 = 3002;
-pub const MSK_RES_ERR_API_FATAL_ERROR                     : i32 = 3005;
-pub const MSK_RES_ERR_API_INTERNAL                        : i32 = 3999;
-pub const MSK_RES_ERR_ARG_IS_TOO_LARGE                    : i32 = 1227;
-pub const MSK_RES_ERR_ARG_IS_TOO_SMALL                    : i32 = 1226;
-pub const MSK_RES_ERR_ARGUMENT_DIMENSION                  : i32 = 1201;
-pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE               : i32 = 5005;
-pub const MSK_RES_ERR_ARGUMENT_LENNEQ                     : i32 = 1197;
-pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY                 : i32 = 1299;
-pub const MSK_RES_ERR_ARGUMENT_TYPE                       : i32 = 1198;
-pub const MSK_RES_ERR_BAR_VAR_DIM                         : i32 = 3920;
-pub const MSK_RES_ERR_BASIS                               : i32 = 1266;
-pub const MSK_RES_ERR_BASIS_FACTOR                        : i32 = 1610;
-pub const MSK_RES_ERR_BASIS_SINGULAR                      : i32 = 1615;
-pub const MSK_RES_ERR_BLANK_NAME                          : i32 = 1070;
-pub const MSK_RES_ERR_CANNOT_CLONE_NL                     : i32 = 2505;
-pub const MSK_RES_ERR_CANNOT_HANDLE_NL                    : i32 = 2506;
-pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                : i32 = 7116;
-pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                : i32 = 7115;
-pub const MSK_RES_ERR_CBF_DUPLICATE_CON                   : i32 = 7108;
-pub const MSK_RES_ERR_CBF_DUPLICATE_INT                   : i32 = 7110;
-pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ                   : i32 = 7107;
-pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD             : i32 = 7114;
-pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                   : i32 = 7109;
-pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                : i32 = 7112;
-pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION        : i32 = 7113;
-pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX               : i32 = 7121;
-pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                : i32 = 7111;
-pub const MSK_RES_ERR_CBF_NO_VARIABLES                    : i32 = 7102;
-pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED            : i32 = 7105;
-pub const MSK_RES_ERR_CBF_OBJ_SENSE                       : i32 = 7101;
-pub const MSK_RES_ERR_CBF_PARSE                           : i32 = 7100;
-pub const MSK_RES_ERR_CBF_SYNTAX                          : i32 = 7106;
-pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS             : i32 = 7118;
-pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                    : i32 = 7119;
-pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES               : i32 = 7117;
-pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS            : i32 = 7103;
-pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                   : i32 = 7120;
-pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES              : i32 = 7104;
-pub const MSK_RES_ERR_CBF_UNSUPPORTED                     : i32 = 7122;
-pub const MSK_RES_ERR_CON_Q_NOT_NSD                       : i32 = 1294;
-pub const MSK_RES_ERR_CON_Q_NOT_PSD                       : i32 = 1293;
-pub const MSK_RES_ERR_CONCURRENT_OPTIMIZER                : i32 = 3059;
-pub const MSK_RES_ERR_CONE_INDEX                          : i32 = 1300;
-pub const MSK_RES_ERR_CONE_OVERLAP                        : i32 = 1302;
-pub const MSK_RES_ERR_CONE_OVERLAP_APPEND                 : i32 = 1307;
-pub const MSK_RES_ERR_CONE_REP_VAR                        : i32 = 1303;
-pub const MSK_RES_ERR_CONE_SIZE                           : i32 = 1301;
-pub const MSK_RES_ERR_CONE_TYPE                           : i32 = 1305;
-pub const MSK_RES_ERR_CONE_TYPE_STR                       : i32 = 1306;
-pub const MSK_RES_ERR_DATA_FILE_EXT                       : i32 = 1055;
-pub const MSK_RES_ERR_DUP_NAME                            : i32 = 1071;
-pub const MSK_RES_ERR_DUPLICATE_AIJ                       : i32 = 1385;
-pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES         : i32 = 4502;
-pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES                : i32 = 4503;
-pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES          : i32 = 4500;
-pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES            : i32 = 4501;
-pub const MSK_RES_ERR_END_OF_FILE                         : i32 = 1059;
-pub const MSK_RES_ERR_FACTOR                              : i32 = 1650;
-pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX             : i32 = 1700;
-pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND       : i32 = 1702;
-pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED          : i32 = 1701;
-pub const MSK_RES_ERR_FILE_LICENSE                        : i32 = 1007;
-pub const MSK_RES_ERR_FILE_OPEN                           : i32 = 1052;
-pub const MSK_RES_ERR_FILE_READ                           : i32 = 1053;
-pub const MSK_RES_ERR_FILE_WRITE                          : i32 = 1054;
-pub const MSK_RES_ERR_FIRST                               : i32 = 1261;
-pub const MSK_RES_ERR_FIRSTI                              : i32 = 1285;
-pub const MSK_RES_ERR_FIRSTJ                              : i32 = 1287;
-pub const MSK_RES_ERR_FIXED_BOUND_VALUES                  : i32 = 1425;
-pub const MSK_RES_ERR_FLEXLM                              : i32 = 1014;
-pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM            : i32 = 1503;
-pub const MSK_RES_ERR_HUGE_AIJ                            : i32 = 1380;
-pub const MSK_RES_ERR_HUGE_C                              : i32 = 1375;
-pub const MSK_RES_ERR_IDENTICAL_TASKS                     : i32 = 3101;
-pub const MSK_RES_ERR_IN_ARGUMENT                         : i32 = 1200;
-pub const MSK_RES_ERR_INDEX                               : i32 = 1235;
-pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE              : i32 = 1222;
-pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL              : i32 = 1221;
-pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                  : i32 = 1204;
-pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                  : i32 = 1203;
-pub const MSK_RES_ERR_INF_DOU_INDEX                       : i32 = 1219;
-pub const MSK_RES_ERR_INF_DOU_NAME                        : i32 = 1230;
-pub const MSK_RES_ERR_INF_INT_INDEX                       : i32 = 1220;
-pub const MSK_RES_ERR_INF_INT_NAME                        : i32 = 1231;
-pub const MSK_RES_ERR_INF_LINT_INDEX                      : i32 = 1225;
-pub const MSK_RES_ERR_INF_LINT_NAME                       : i32 = 1234;
-pub const MSK_RES_ERR_INF_TYPE                            : i32 = 1232;
-pub const MSK_RES_ERR_INFEAS_UNDEFINED                    : i32 = 3910;
-pub const MSK_RES_ERR_INFINITE_BOUND                      : i32 = 1400;
-pub const MSK_RES_ERR_INT64_TO_INT32_CAST                 : i32 = 3800;
-pub const MSK_RES_ERR_INTERNAL                            : i32 = 3000;
-pub const MSK_RES_ERR_INTERNAL_TEST_FAILED                : i32 = 3500;
-pub const MSK_RES_ERR_INV_APTRE                           : i32 = 1253;
-pub const MSK_RES_ERR_INV_BK                              : i32 = 1255;
-pub const MSK_RES_ERR_INV_BKC                             : i32 = 1256;
-pub const MSK_RES_ERR_INV_BKX                             : i32 = 1257;
-pub const MSK_RES_ERR_INV_CONE_TYPE                       : i32 = 1272;
-pub const MSK_RES_ERR_INV_CONE_TYPE_STR                   : i32 = 1271;
-pub const MSK_RES_ERR_INV_MARKI                           : i32 = 2501;
-pub const MSK_RES_ERR_INV_MARKJ                           : i32 = 2502;
-pub const MSK_RES_ERR_INV_NAME_ITEM                       : i32 = 1280;
-pub const MSK_RES_ERR_INV_NUMI                            : i32 = 2503;
-pub const MSK_RES_ERR_INV_NUMJ                            : i32 = 2504;
-pub const MSK_RES_ERR_INV_OPTIMIZER                       : i32 = 1550;
-pub const MSK_RES_ERR_INV_PROBLEM                         : i32 = 1500;
-pub const MSK_RES_ERR_INV_QCON_SUBI                       : i32 = 1405;
-pub const MSK_RES_ERR_INV_QCON_SUBJ                       : i32 = 1406;
-pub const MSK_RES_ERR_INV_QCON_SUBK                       : i32 = 1404;
-pub const MSK_RES_ERR_INV_QCON_VAL                        : i32 = 1407;
-pub const MSK_RES_ERR_INV_QOBJ_SUBI                       : i32 = 1401;
-pub const MSK_RES_ERR_INV_QOBJ_SUBJ                       : i32 = 1402;
-pub const MSK_RES_ERR_INV_QOBJ_VAL                        : i32 = 1403;
-pub const MSK_RES_ERR_INV_SK                              : i32 = 1270;
-pub const MSK_RES_ERR_INV_SK_STR                          : i32 = 1269;
-pub const MSK_RES_ERR_INV_SKC                             : i32 = 1267;
-pub const MSK_RES_ERR_INV_SKN                             : i32 = 1274;
-pub const MSK_RES_ERR_INV_SKX                             : i32 = 1268;
-pub const MSK_RES_ERR_INV_VAR_TYPE                        : i32 = 1258;
-pub const MSK_RES_ERR_INVALID_ACCMODE                     : i32 = 2520;
-pub const MSK_RES_ERR_INVALID_AIJ                         : i32 = 1473;
-pub const MSK_RES_ERR_INVALID_AMPL_STUB                   : i32 = 3700;
-pub const MSK_RES_ERR_INVALID_BARVAR_NAME                 : i32 = 1079;
-pub const MSK_RES_ERR_INVALID_COMPRESSION                 : i32 = 1800;
-pub const MSK_RES_ERR_INVALID_CON_NAME                    : i32 = 1076;
-pub const MSK_RES_ERR_INVALID_CONE_NAME                   : i32 = 1078;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES       : i32 = 4005;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL  : i32 = 4010;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT     : i32 = 4000;
-pub const MSK_RES_ERR_INVALID_FILE_NAME                   : i32 = 1056;
-pub const MSK_RES_ERR_INVALID_FORMAT_TYPE                 : i32 = 1283;
-pub const MSK_RES_ERR_INVALID_IDX                         : i32 = 1246;
-pub const MSK_RES_ERR_INVALID_IOMODE                      : i32 = 1801;
-pub const MSK_RES_ERR_INVALID_MAX_NUM                     : i32 = 1247;
-pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE            : i32 = 1170;
-pub const MSK_RES_ERR_INVALID_NETWORK_PROBLEM             : i32 = 1504;
-pub const MSK_RES_ERR_INVALID_OBJ_NAME                    : i32 = 1075;
-pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE             : i32 = 1445;
-pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE                : i32 = 6000;
-pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME               : i32 = 1057;
-pub const MSK_RES_ERR_INVALID_STREAM                      : i32 = 1062;
-pub const MSK_RES_ERR_INVALID_SURPLUS                     : i32 = 1275;
-pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM                 : i32 = 3950;
-pub const MSK_RES_ERR_INVALID_TASK                        : i32 = 1064;
-pub const MSK_RES_ERR_INVALID_UTF8                        : i32 = 2900;
-pub const MSK_RES_ERR_INVALID_VAR_NAME                    : i32 = 1077;
-pub const MSK_RES_ERR_INVALID_WCHAR                       : i32 = 2901;
-pub const MSK_RES_ERR_INVALID_WHICHSOL                    : i32 = 1228;
-pub const MSK_RES_ERR_JSON_DATA                           : i32 = 1179;
-pub const MSK_RES_ERR_JSON_FORMAT                         : i32 = 1178;
-pub const MSK_RES_ERR_JSON_MISSING_DATA                   : i32 = 1180;
-pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW                : i32 = 1177;
-pub const MSK_RES_ERR_JSON_STRING                         : i32 = 1176;
-pub const MSK_RES_ERR_JSON_SYNTAX                         : i32 = 1175;
-pub const MSK_RES_ERR_LAST                                : i32 = 1262;
-pub const MSK_RES_ERR_LASTI                               : i32 = 1286;
-pub const MSK_RES_ERR_LASTJ                               : i32 = 1288;
-pub const MSK_RES_ERR_LAU_ARG_K                           : i32 = 7012;
-pub const MSK_RES_ERR_LAU_ARG_M                           : i32 = 7010;
-pub const MSK_RES_ERR_LAU_ARG_N                           : i32 = 7011;
-pub const MSK_RES_ERR_LAU_ARG_TRANS                       : i32 = 7018;
-pub const MSK_RES_ERR_LAU_ARG_TRANSA                      : i32 = 7015;
-pub const MSK_RES_ERR_LAU_ARG_TRANSB                      : i32 = 7016;
-pub const MSK_RES_ERR_LAU_ARG_UPLO                        : i32 = 7017;
-pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX : i32 = 7002;
-pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX : i32 = 7019;
-pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE           : i32 = 7001;
-pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX                 : i32 = 7000;
-pub const MSK_RES_ERR_LAU_UNKNOWN                         : i32 = 7005;
-pub const MSK_RES_ERR_LICENSE                             : i32 = 1000;
-pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE             : i32 = 1020;
-pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT              : i32 = 1021;
-pub const MSK_RES_ERR_LICENSE_EXPIRED                     : i32 = 1001;
-pub const MSK_RES_ERR_LICENSE_FEATURE                     : i32 = 1018;
-pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID              : i32 = 1025;
-pub const MSK_RES_ERR_LICENSE_MAX                         : i32 = 1016;
-pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON              : i32 = 1017;
-pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE              : i32 = 1028;
-pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT           : i32 = 1027;
-pub const MSK_RES_ERR_LICENSE_SERVER                      : i32 = 1015;
-pub const MSK_RES_ERR_LICENSE_SERVER_VERSION              : i32 = 1026;
-pub const MSK_RES_ERR_LICENSE_VERSION                     : i32 = 1002;
-pub const MSK_RES_ERR_LINK_FILE_DLL                       : i32 = 1040;
-pub const MSK_RES_ERR_LIVING_TASKS                        : i32 = 1066;
-pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN                : i32 = 1390;
-pub const MSK_RES_ERR_LP_DUP_SLACK_NAME                   : i32 = 1152;
-pub const MSK_RES_ERR_LP_EMPTY                            : i32 = 1151;
-pub const MSK_RES_ERR_LP_FILE_FORMAT                      : i32 = 1157;
-pub const MSK_RES_ERR_LP_FORMAT                           : i32 = 1160;
-pub const MSK_RES_ERR_LP_FREE_CONSTRAINT                  : i32 = 1155;
-pub const MSK_RES_ERR_LP_INCOMPATIBLE                     : i32 = 1150;
-pub const MSK_RES_ERR_LP_INVALID_CON_NAME                 : i32 = 1171;
-pub const MSK_RES_ERR_LP_INVALID_VAR_NAME                 : i32 = 1154;
-pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM              : i32 = 1163;
-pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM               : i32 = 1164;
-pub const MSK_RES_ERR_LU_MAX_NUM_TRIES                    : i32 = 2800;
-pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL                : i32 = 1289;
-pub const MSK_RES_ERR_MAXNUMBARVAR                        : i32 = 1242;
-pub const MSK_RES_ERR_MAXNUMCON                           : i32 = 1240;
-pub const MSK_RES_ERR_MAXNUMCONE                          : i32 = 1304;
-pub const MSK_RES_ERR_MAXNUMQNZ                           : i32 = 1243;
-pub const MSK_RES_ERR_MAXNUMVAR                           : i32 = 1241;
-pub const MSK_RES_ERR_MIO_INTERNAL                        : i32 = 5010;
-pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER          : i32 = 7131;
-pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER          : i32 = 7130;
-pub const MSK_RES_ERR_MIO_NO_OPTIMIZER                    : i32 = 1551;
-pub const MSK_RES_ERR_MIO_NOT_LOADED                      : i32 = 1553;
-pub const MSK_RES_ERR_MISSING_LICENSE_FILE                : i32 = 1008;
-pub const MSK_RES_ERR_MIXED_CONIC_AND_NL                  : i32 = 1501;
-pub const MSK_RES_ERR_MPS_CONE_OVERLAP                    : i32 = 1118;
-pub const MSK_RES_ERR_MPS_CONE_REPEAT                     : i32 = 1119;
-pub const MSK_RES_ERR_MPS_CONE_TYPE                       : i32 = 1117;
-pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT             : i32 = 1121;
-pub const MSK_RES_ERR_MPS_FILE                            : i32 = 1100;
-pub const MSK_RES_ERR_MPS_INV_BOUND_KEY                   : i32 = 1108;
-pub const MSK_RES_ERR_MPS_INV_CON_KEY                     : i32 = 1107;
-pub const MSK_RES_ERR_MPS_INV_FIELD                       : i32 = 1101;
-pub const MSK_RES_ERR_MPS_INV_MARKER                      : i32 = 1102;
-pub const MSK_RES_ERR_MPS_INV_SEC_NAME                    : i32 = 1109;
-pub const MSK_RES_ERR_MPS_INV_SEC_ORDER                   : i32 = 1115;
-pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME                : i32 = 1128;
-pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE                : i32 = 1122;
-pub const MSK_RES_ERR_MPS_MUL_CON_NAME                    : i32 = 1112;
-pub const MSK_RES_ERR_MPS_MUL_CSEC                        : i32 = 1116;
-pub const MSK_RES_ERR_MPS_MUL_QOBJ                        : i32 = 1114;
-pub const MSK_RES_ERR_MPS_MUL_QSEC                        : i32 = 1113;
-pub const MSK_RES_ERR_MPS_NO_OBJECTIVE                    : i32 = 1110;
-pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q                 : i32 = 1120;
-pub const MSK_RES_ERR_MPS_NULL_CON_NAME                   : i32 = 1103;
-pub const MSK_RES_ERR_MPS_NULL_VAR_NAME                   : i32 = 1104;
-pub const MSK_RES_ERR_MPS_SPLITTED_VAR                    : i32 = 1111;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2                   : i32 = 1125;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                   : i32 = 1126;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                   : i32 = 1127;
-pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                  : i32 = 1105;
-pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                  : i32 = 1106;
-pub const MSK_RES_ERR_MUL_A_ELEMENT                       : i32 = 1254;
-pub const MSK_RES_ERR_NAME_IS_NULL                        : i32 = 1760;
-pub const MSK_RES_ERR_NAME_MAX_LEN                        : i32 = 1750;
-pub const MSK_RES_ERR_NAN_IN_BLC                          : i32 = 1461;
-pub const MSK_RES_ERR_NAN_IN_BLX                          : i32 = 1471;
-pub const MSK_RES_ERR_NAN_IN_BUC                          : i32 = 1462;
-pub const MSK_RES_ERR_NAN_IN_BUX                          : i32 = 1472;
-pub const MSK_RES_ERR_NAN_IN_C                            : i32 = 1470;
-pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA                  : i32 = 1450;
-pub const MSK_RES_ERR_NEGATIVE_APPEND                     : i32 = 1264;
-pub const MSK_RES_ERR_NEGATIVE_SURPLUS                    : i32 = 1263;
-pub const MSK_RES_ERR_NEWER_DLL                           : i32 = 1036;
-pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION                : i32 = 3916;
-pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION                : i32 = 3915;
-pub const MSK_RES_ERR_NO_BASIS_SOL                        : i32 = 1600;
-pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL                 : i32 = 2950;
-pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER                  : i32 = 2001;
-pub const MSK_RES_ERR_NO_INIT_ENV                         : i32 = 1063;
-pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE               : i32 = 1552;
-pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER                : i32 = 2000;
-pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL                  : i32 = 2953;
-pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK             : i32 = 2500;
-pub const MSK_RES_ERR_NON_UNIQUE_ARRAY                    : i32 = 5000;
-pub const MSK_RES_ERR_NONCONVEX                           : i32 = 1291;
-pub const MSK_RES_ERR_NONLINEAR_EQUALITY                  : i32 = 1290;
-pub const MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED     : i32 = 1428;
-pub const MSK_RES_ERR_NONLINEAR_RANGED                    : i32 = 1292;
-pub const MSK_RES_ERR_NR_ARGUMENTS                        : i32 = 1199;
-pub const MSK_RES_ERR_NULL_ENV                            : i32 = 1060;
-pub const MSK_RES_ERR_NULL_POINTER                        : i32 = 1065;
-pub const MSK_RES_ERR_NULL_TASK                           : i32 = 1061;
-pub const MSK_RES_ERR_NUMCONLIM                           : i32 = 1250;
-pub const MSK_RES_ERR_NUMVARLIM                           : i32 = 1251;
-pub const MSK_RES_ERR_OBJ_Q_NOT_NSD                       : i32 = 1296;
-pub const MSK_RES_ERR_OBJ_Q_NOT_PSD                       : i32 = 1295;
-pub const MSK_RES_ERR_OBJECTIVE_RANGE                     : i32 = 1260;
-pub const MSK_RES_ERR_OLDER_DLL                           : i32 = 1035;
-pub const MSK_RES_ERR_OPEN_DL                             : i32 = 1030;
-pub const MSK_RES_ERR_OPF_FORMAT                          : i32 = 1168;
-pub const MSK_RES_ERR_OPF_NEW_VARIABLE                    : i32 = 1169;
-pub const MSK_RES_ERR_OPF_PREMATURE_EOF                   : i32 = 1172;
-pub const MSK_RES_ERR_OPTIMIZER_LICENSE                   : i32 = 1013;
-pub const MSK_RES_ERR_OVERFLOW                            : i32 = 1590;
-pub const MSK_RES_ERR_PARAM_INDEX                         : i32 = 1210;
-pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE                  : i32 = 1215;
-pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL                  : i32 = 1216;
-pub const MSK_RES_ERR_PARAM_NAME                          : i32 = 1205;
-pub const MSK_RES_ERR_PARAM_NAME_DOU                      : i32 = 1206;
-pub const MSK_RES_ERR_PARAM_NAME_INT                      : i32 = 1207;
-pub const MSK_RES_ERR_PARAM_NAME_STR                      : i32 = 1208;
-pub const MSK_RES_ERR_PARAM_TYPE                          : i32 = 1218;
-pub const MSK_RES_ERR_PARAM_VALUE_STR                     : i32 = 1217;
-pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED               : i32 = 1019;
-pub const MSK_RES_ERR_POSTSOLVE                           : i32 = 1580;
-pub const MSK_RES_ERR_PRO_ITEM                            : i32 = 1281;
-pub const MSK_RES_ERR_PROB_LICENSE                        : i32 = 1006;
-pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE                 : i32 = 1409;
-pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL                 : i32 = 1408;
-pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE                 : i32 = 1417;
-pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE                 : i32 = 1415;
-pub const MSK_RES_ERR_READ_FORMAT                         : i32 = 1090;
-pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG             : i32 = 1159;
-pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME            : i32 = 1162;
-pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE                : i32 = 1310;
-pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM              : i32 = 1710;
-pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED          : i32 = 1711;
-pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO                : i32 = 3054;
-pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP                : i32 = 3053;
-pub const MSK_RES_ERR_SEN_FORMAT                          : i32 = 3050;
-pub const MSK_RES_ERR_SEN_INDEX_INVALID                   : i32 = 3055;
-pub const MSK_RES_ERR_SEN_INDEX_RANGE                     : i32 = 3052;
-pub const MSK_RES_ERR_SEN_INVALID_REGEXP                  : i32 = 3056;
-pub const MSK_RES_ERR_SEN_NUMERICAL                       : i32 = 3058;
-pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                 : i32 = 3057;
-pub const MSK_RES_ERR_SEN_UNDEF_NAME                      : i32 = 3051;
-pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE          : i32 = 3080;
-pub const MSK_RES_ERR_SERVER_CONNECT                      : i32 = 8000;
-pub const MSK_RES_ERR_SERVER_PROTOCOL                     : i32 = 8001;
-pub const MSK_RES_ERR_SERVER_STATUS                       : i32 = 8002;
-pub const MSK_RES_ERR_SERVER_TOKEN                        : i32 = 8003;
-pub const MSK_RES_ERR_SIZE_LICENSE                        : i32 = 1005;
-pub const MSK_RES_ERR_SIZE_LICENSE_CON                    : i32 = 1010;
-pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR                 : i32 = 1012;
-pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES               : i32 = 3900;
-pub const MSK_RES_ERR_SIZE_LICENSE_VAR                    : i32 = 1011;
-pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER             : i32 = 1350;
-pub const MSK_RES_ERR_SOLITEM                             : i32 = 1237;
-pub const MSK_RES_ERR_SOLVER_PROBTYPE                     : i32 = 1259;
-pub const MSK_RES_ERR_SPACE                               : i32 = 1051;
-pub const MSK_RES_ERR_SPACE_LEAKING                       : i32 = 1080;
-pub const MSK_RES_ERR_SPACE_NO_INFO                       : i32 = 1081;
-pub const MSK_RES_ERR_SYM_MAT_DUPLICATE                   : i32 = 3944;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX           : i32 = 3941;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX           : i32 = 3940;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE               : i32 = 3943;
-pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR         : i32 = 3942;
-pub const MSK_RES_ERR_TASK_INCOMPATIBLE                   : i32 = 2560;
-pub const MSK_RES_ERR_TASK_INVALID                        : i32 = 2561;
-pub const MSK_RES_ERR_THREAD_COND_INIT                    : i32 = 1049;
-pub const MSK_RES_ERR_THREAD_CREATE                       : i32 = 1048;
-pub const MSK_RES_ERR_THREAD_MUTEX_INIT                   : i32 = 1045;
-pub const MSK_RES_ERR_THREAD_MUTEX_LOCK                   : i32 = 1046;
-pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK                 : i32 = 1047;
-pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC            : i32 = 7153;
-pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD            : i32 = 7150;
-pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX               : i32 = 7151;
-pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA               : i32 = 7152;
-pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD           : i32 = 7155;
-pub const MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS           : i32 = 3090;
-pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ                : i32 = 1245;
-pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ                 : i32 = 1252;
-pub const MSK_RES_ERR_UNB_STEP_SIZE                       : i32 = 3100;
-pub const MSK_RES_ERR_UNDEF_SOLUTION                      : i32 = 1265;
-pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE           : i32 = 1446;
-pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS           : i32 = 6010;
-pub const MSK_RES_ERR_UNKNOWN                             : i32 = 1050;
-pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN                : i32 = 1391;
-pub const MSK_RES_ERR_UPPER_TRIANGLE                      : i32 = 6020;
-pub const MSK_RES_ERR_USER_FUNC_RET                       : i32 = 1430;
-pub const MSK_RES_ERR_USER_FUNC_RET_DATA                  : i32 = 1431;
-pub const MSK_RES_ERR_USER_NLO_EVAL                       : i32 = 1433;
-pub const MSK_RES_ERR_USER_NLO_EVAL_HESSUBI               : i32 = 1440;
-pub const MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ               : i32 = 1441;
-pub const MSK_RES_ERR_USER_NLO_FUNC                       : i32 = 1432;
-pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED               : i32 = 1238;
-pub const MSK_RES_ERR_WHICHSOL                            : i32 = 1236;
-pub const MSK_RES_ERR_WRITE_LP_FORMAT                     : i32 = 1158;
-pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME            : i32 = 1161;
-pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME              : i32 = 1153;
-pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME          : i32 = 1156;
-pub const MSK_RES_ERR_WRITING_FILE                        : i32 = 1166;
-pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE            : i32 = 3600;
-pub const MSK_RES_ERR_Y_IS_UNDEFINED                      : i32 = 1449;
-pub const MSK_RES_OK                                      : i32 = 0;
-pub const MSK_RES_TRM_INTERNAL                            : i32 = 10030;
-pub const MSK_RES_TRM_INTERNAL_STOP                       : i32 = 10031;
-pub const MSK_RES_TRM_MAX_ITERATIONS                      : i32 = 10000;
-pub const MSK_RES_TRM_MAX_NUM_SETBACKS                    : i32 = 10020;
-pub const MSK_RES_TRM_MAX_TIME                            : i32 = 10001;
-pub const MSK_RES_TRM_MIO_NEAR_ABS_GAP                    : i32 = 10004;
-pub const MSK_RES_TRM_MIO_NEAR_REL_GAP                    : i32 = 10003;
-pub const MSK_RES_TRM_MIO_NUM_BRANCHES                    : i32 = 10009;
-pub const MSK_RES_TRM_MIO_NUM_RELAXS                      : i32 = 10008;
-pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS           : i32 = 10015;
-pub const MSK_RES_TRM_NUMERICAL_PROBLEM                   : i32 = 10025;
-pub const MSK_RES_TRM_OBJECTIVE_RANGE                     : i32 = 10002;
-pub const MSK_RES_TRM_STALL                               : i32 = 10006;
-pub const MSK_RES_TRM_USER_CALLBACK                       : i32 = 10007;
-pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS               : i32 = 904;
-pub const MSK_RES_WRN_ANA_C_ZERO                          : i32 = 901;
-pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS                    : i32 = 903;
-pub const MSK_RES_WRN_ANA_EMPTY_COLS                      : i32 = 902;
-pub const MSK_RES_WRN_ANA_LARGE_BOUNDS                    : i32 = 900;
-pub const MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG           : i32 = 807;
-pub const MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG                : i32 = 810;
-pub const MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS           : i32 = 805;
-pub const MSK_RES_WRN_DROPPED_NZ_QOBJ                     : i32 = 201;
-pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES         : i32 = 852;
-pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES                : i32 = 853;
-pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES          : i32 = 850;
-pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES            : i32 = 851;
-pub const MSK_RES_WRN_ELIMINATOR_SPACE                    : i32 = 801;
-pub const MSK_RES_WRN_EMPTY_NAME                          : i32 = 502;
-pub const MSK_RES_WRN_IGNORE_INTEGER                      : i32 = 250;
-pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK  : i32 = 800;
-pub const MSK_RES_WRN_LARGE_AIJ                           : i32 = 62;
-pub const MSK_RES_WRN_LARGE_BOUND                         : i32 = 51;
-pub const MSK_RES_WRN_LARGE_CJ                            : i32 = 57;
-pub const MSK_RES_WRN_LARGE_CON_FX                        : i32 = 54;
-pub const MSK_RES_WRN_LARGE_LO_BOUND                      : i32 = 52;
-pub const MSK_RES_WRN_LARGE_UP_BOUND                      : i32 = 53;
-pub const MSK_RES_WRN_LICENSE_EXPIRE                      : i32 = 500;
-pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE              : i32 = 505;
-pub const MSK_RES_WRN_LICENSE_SERVER                      : i32 = 501;
-pub const MSK_RES_WRN_LP_DROP_VARIABLE                    : i32 = 85;
-pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                  : i32 = 80;
-pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL                : i32 = 270;
-pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR                : i32 = 72;
-pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR                : i32 = 71;
-pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR                : i32 = 70;
-pub const MSK_RES_WRN_NAME_MAX_LEN                        : i32 = 65;
-pub const MSK_RES_WRN_NO_DUALIZER                         : i32 = 950;
-pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER                 : i32 = 251;
-pub const MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE         : i32 = 450;
-pub const MSK_RES_WRN_NZ_IN_UPR_TRI                       : i32 = 200;
-pub const MSK_RES_WRN_OPEN_PARAM_FILE                     : i32 = 50;
-pub const MSK_RES_WRN_PARAM_IGNORED_CMIO                  : i32 = 516;
-pub const MSK_RES_WRN_PARAM_NAME_DOU                      : i32 = 510;
-pub const MSK_RES_WRN_PARAM_NAME_INT                      : i32 = 511;
-pub const MSK_RES_WRN_PARAM_NAME_STR                      : i32 = 512;
-pub const MSK_RES_WRN_PARAM_STR_VALUE                     : i32 = 515;
-pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE                 : i32 = 802;
-pub const MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO  : i32 = 930;
-pub const MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO : i32 = 931;
-pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON                : i32 = 351;
-pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR                : i32 = 352;
-pub const MSK_RES_WRN_SOL_FILTER                          : i32 = 300;
-pub const MSK_RES_WRN_SPAR_MAX_LEN                        : i32 = 66;
-pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS                  : i32 = 400;
-pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS                 : i32 = 405;
-pub const MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT         : i32 = 750;
-pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME                 : i32 = 350;
-pub const MSK_RES_WRN_USING_GENERIC_NAMES                 : i32 = 503;
-pub const MSK_RES_WRN_WRITE_CHANGED_NAMES                 : i32 = 803;
-pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX                : i32 = 804;
-pub const MSK_RES_WRN_ZERO_AIJ                            : i32 = 63;
-pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL                 : i32 = 710;
-pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW                 : i32 = 705;
+pub const MSK_RES_ERR_AD_INVALID_CODELIST                        : i32 = 3102;
+pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL                        : i32 = 3001;
+pub const MSK_RES_ERR_API_CB_CONNECT                             : i32 = 3002;
+pub const MSK_RES_ERR_API_FATAL_ERROR                            : i32 = 3005;
+pub const MSK_RES_ERR_API_INTERNAL                               : i32 = 3999;
+pub const MSK_RES_ERR_ARG_IS_TOO_LARGE                           : i32 = 1227;
+pub const MSK_RES_ERR_ARG_IS_TOO_SMALL                           : i32 = 1226;
+pub const MSK_RES_ERR_ARGUMENT_DIMENSION                         : i32 = 1201;
+pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE                      : i32 = 5005;
+pub const MSK_RES_ERR_ARGUMENT_LENNEQ                            : i32 = 1197;
+pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY                        : i32 = 1299;
+pub const MSK_RES_ERR_ARGUMENT_TYPE                              : i32 = 1198;
+pub const MSK_RES_ERR_BAR_VAR_DIM                                : i32 = 3920;
+pub const MSK_RES_ERR_BASIS                                      : i32 = 1266;
+pub const MSK_RES_ERR_BASIS_FACTOR                               : i32 = 1610;
+pub const MSK_RES_ERR_BASIS_SINGULAR                             : i32 = 1615;
+pub const MSK_RES_ERR_BLANK_NAME                                 : i32 = 1070;
+pub const MSK_RES_ERR_CANNOT_CLONE_NL                            : i32 = 2505;
+pub const MSK_RES_ERR_CANNOT_HANDLE_NL                           : i32 = 2506;
+pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                       : i32 = 7116;
+pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                       : i32 = 7115;
+pub const MSK_RES_ERR_CBF_DUPLICATE_CON                          : i32 = 7108;
+pub const MSK_RES_ERR_CBF_DUPLICATE_INT                          : i32 = 7110;
+pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ                          : i32 = 7107;
+pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD                    : i32 = 7114;
+pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR                       : i32 = 7123;
+pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                          : i32 = 7109;
+pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                       : i32 = 7112;
+pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION               : i32 = 7113;
+pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX                      : i32 = 7121;
+pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION               : i32 = 7124;
+pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                       : i32 = 7111;
+pub const MSK_RES_ERR_CBF_NO_VARIABLES                           : i32 = 7102;
+pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED                   : i32 = 7105;
+pub const MSK_RES_ERR_CBF_OBJ_SENSE                              : i32 = 7101;
+pub const MSK_RES_ERR_CBF_PARSE                                  : i32 = 7100;
+pub const MSK_RES_ERR_CBF_SYNTAX                                 : i32 = 7106;
+pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS                    : i32 = 7118;
+pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                           : i32 = 7119;
+pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR                         : i32 = 7125;
+pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES                      : i32 = 7117;
+pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS                   : i32 = 7103;
+pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                          : i32 = 7120;
+pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES                     : i32 = 7104;
+pub const MSK_RES_ERR_CBF_UNSUPPORTED                            : i32 = 7122;
+pub const MSK_RES_ERR_CON_Q_NOT_NSD                              : i32 = 1294;
+pub const MSK_RES_ERR_CON_Q_NOT_PSD                              : i32 = 1293;
+pub const MSK_RES_ERR_CONE_INDEX                                 : i32 = 1300;
+pub const MSK_RES_ERR_CONE_OVERLAP                               : i32 = 1302;
+pub const MSK_RES_ERR_CONE_OVERLAP_APPEND                        : i32 = 1307;
+pub const MSK_RES_ERR_CONE_PARAMETER                             : i32 = 1320;
+pub const MSK_RES_ERR_CONE_REP_VAR                               : i32 = 1303;
+pub const MSK_RES_ERR_CONE_SIZE                                  : i32 = 1301;
+pub const MSK_RES_ERR_CONE_TYPE                                  : i32 = 1305;
+pub const MSK_RES_ERR_CONE_TYPE_STR                              : i32 = 1306;
+pub const MSK_RES_ERR_DATA_FILE_EXT                              : i32 = 1055;
+pub const MSK_RES_ERR_DUP_NAME                                   : i32 = 1071;
+pub const MSK_RES_ERR_DUPLICATE_AIJ                              : i32 = 1385;
+pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES                : i32 = 4502;
+pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES                       : i32 = 4503;
+pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES                 : i32 = 4500;
+pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES                   : i32 = 4501;
+pub const MSK_RES_ERR_END_OF_FILE                                : i32 = 1059;
+pub const MSK_RES_ERR_FACTOR                                     : i32 = 1650;
+pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX                    : i32 = 1700;
+pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND              : i32 = 1702;
+pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED                 : i32 = 1701;
+pub const MSK_RES_ERR_FILE_LICENSE                               : i32 = 1007;
+pub const MSK_RES_ERR_FILE_OPEN                                  : i32 = 1052;
+pub const MSK_RES_ERR_FILE_READ                                  : i32 = 1053;
+pub const MSK_RES_ERR_FILE_WRITE                                 : i32 = 1054;
+pub const MSK_RES_ERR_FINAL_SOLUTION                             : i32 = 1560;
+pub const MSK_RES_ERR_FIRST                                      : i32 = 1570;
+pub const MSK_RES_ERR_FIRSTI                                     : i32 = 1285;
+pub const MSK_RES_ERR_FIRSTJ                                     : i32 = 1287;
+pub const MSK_RES_ERR_FIXED_BOUND_VALUES                         : i32 = 1420;
+pub const MSK_RES_ERR_FLEXLM                                     : i32 = 1014;
+pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM                   : i32 = 1503;
+pub const MSK_RES_ERR_HUGE_AIJ                                   : i32 = 1380;
+pub const MSK_RES_ERR_HUGE_C                                     : i32 = 1375;
+pub const MSK_RES_ERR_IDENTICAL_TASKS                            : i32 = 3101;
+pub const MSK_RES_ERR_IN_ARGUMENT                                : i32 = 1200;
+pub const MSK_RES_ERR_INDEX                                      : i32 = 1235;
+pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE                     : i32 = 1222;
+pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL                     : i32 = 1221;
+pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                         : i32 = 1204;
+pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                         : i32 = 1203;
+pub const MSK_RES_ERR_INF_DOU_INDEX                              : i32 = 1219;
+pub const MSK_RES_ERR_INF_DOU_NAME                               : i32 = 1230;
+pub const MSK_RES_ERR_INF_INT_INDEX                              : i32 = 1220;
+pub const MSK_RES_ERR_INF_INT_NAME                               : i32 = 1231;
+pub const MSK_RES_ERR_INF_LINT_INDEX                             : i32 = 1225;
+pub const MSK_RES_ERR_INF_LINT_NAME                              : i32 = 1234;
+pub const MSK_RES_ERR_INF_TYPE                                   : i32 = 1232;
+pub const MSK_RES_ERR_INFEAS_UNDEFINED                           : i32 = 3910;
+pub const MSK_RES_ERR_INFINITE_BOUND                             : i32 = 1400;
+pub const MSK_RES_ERR_INT64_TO_INT32_CAST                        : i32 = 3800;
+pub const MSK_RES_ERR_INTERNAL                                   : i32 = 3000;
+pub const MSK_RES_ERR_INTERNAL_TEST_FAILED                       : i32 = 3500;
+pub const MSK_RES_ERR_INV_APTRE                                  : i32 = 1253;
+pub const MSK_RES_ERR_INV_BK                                     : i32 = 1255;
+pub const MSK_RES_ERR_INV_BKC                                    : i32 = 1256;
+pub const MSK_RES_ERR_INV_BKX                                    : i32 = 1257;
+pub const MSK_RES_ERR_INV_CONE_TYPE                              : i32 = 1272;
+pub const MSK_RES_ERR_INV_CONE_TYPE_STR                          : i32 = 1271;
+pub const MSK_RES_ERR_INV_MARKI                                  : i32 = 2501;
+pub const MSK_RES_ERR_INV_MARKJ                                  : i32 = 2502;
+pub const MSK_RES_ERR_INV_NAME_ITEM                              : i32 = 1280;
+pub const MSK_RES_ERR_INV_NUMI                                   : i32 = 2503;
+pub const MSK_RES_ERR_INV_NUMJ                                   : i32 = 2504;
+pub const MSK_RES_ERR_INV_OPTIMIZER                              : i32 = 1550;
+pub const MSK_RES_ERR_INV_PROBLEM                                : i32 = 1500;
+pub const MSK_RES_ERR_INV_QCON_SUBI                              : i32 = 1405;
+pub const MSK_RES_ERR_INV_QCON_SUBJ                              : i32 = 1406;
+pub const MSK_RES_ERR_INV_QCON_SUBK                              : i32 = 1404;
+pub const MSK_RES_ERR_INV_QCON_VAL                               : i32 = 1407;
+pub const MSK_RES_ERR_INV_QOBJ_SUBI                              : i32 = 1401;
+pub const MSK_RES_ERR_INV_QOBJ_SUBJ                              : i32 = 1402;
+pub const MSK_RES_ERR_INV_QOBJ_VAL                               : i32 = 1403;
+pub const MSK_RES_ERR_INV_SK                                     : i32 = 1270;
+pub const MSK_RES_ERR_INV_SK_STR                                 : i32 = 1269;
+pub const MSK_RES_ERR_INV_SKC                                    : i32 = 1267;
+pub const MSK_RES_ERR_INV_SKN                                    : i32 = 1274;
+pub const MSK_RES_ERR_INV_SKX                                    : i32 = 1268;
+pub const MSK_RES_ERR_INV_VAR_TYPE                               : i32 = 1258;
+pub const MSK_RES_ERR_INVALID_ACCMODE                            : i32 = 2520;
+pub const MSK_RES_ERR_INVALID_AIJ                                : i32 = 1473;
+pub const MSK_RES_ERR_INVALID_AMPL_STUB                          : i32 = 3700;
+pub const MSK_RES_ERR_INVALID_BARVAR_NAME                        : i32 = 1079;
+pub const MSK_RES_ERR_INVALID_COMPRESSION                        : i32 = 1800;
+pub const MSK_RES_ERR_INVALID_CON_NAME                           : i32 = 1076;
+pub const MSK_RES_ERR_INVALID_CONE_NAME                          : i32 = 1078;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX               : i32 = 4001;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES              : i32 = 4005;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS   : i32 = 4003;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR          : i32 = 4010;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS : i32 = 4002;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT            : i32 = 4000;
+pub const MSK_RES_ERR_INVALID_FILE_NAME                          : i32 = 1056;
+pub const MSK_RES_ERR_INVALID_FORMAT_TYPE                        : i32 = 1283;
+pub const MSK_RES_ERR_INVALID_IDX                                : i32 = 1246;
+pub const MSK_RES_ERR_INVALID_IOMODE                             : i32 = 1801;
+pub const MSK_RES_ERR_INVALID_MAX_NUM                            : i32 = 1247;
+pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE                   : i32 = 1170;
+pub const MSK_RES_ERR_INVALID_OBJ_NAME                           : i32 = 1075;
+pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE                    : i32 = 1445;
+pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE                       : i32 = 6000;
+pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME                      : i32 = 1057;
+pub const MSK_RES_ERR_INVALID_STREAM                             : i32 = 1062;
+pub const MSK_RES_ERR_INVALID_SURPLUS                            : i32 = 1275;
+pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM                        : i32 = 3950;
+pub const MSK_RES_ERR_INVALID_TASK                               : i32 = 1064;
+pub const MSK_RES_ERR_INVALID_UTF8                               : i32 = 2900;
+pub const MSK_RES_ERR_INVALID_VAR_NAME                           : i32 = 1077;
+pub const MSK_RES_ERR_INVALID_WCHAR                              : i32 = 2901;
+pub const MSK_RES_ERR_INVALID_WHICHSOL                           : i32 = 1228;
+pub const MSK_RES_ERR_JSON_DATA                                  : i32 = 1179;
+pub const MSK_RES_ERR_JSON_FORMAT                                : i32 = 1178;
+pub const MSK_RES_ERR_JSON_MISSING_DATA                          : i32 = 1180;
+pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW                       : i32 = 1177;
+pub const MSK_RES_ERR_JSON_STRING                                : i32 = 1176;
+pub const MSK_RES_ERR_JSON_SYNTAX                                : i32 = 1175;
+pub const MSK_RES_ERR_LAST                                       : i32 = 1571;
+pub const MSK_RES_ERR_LASTI                                      : i32 = 1286;
+pub const MSK_RES_ERR_LASTJ                                      : i32 = 1288;
+pub const MSK_RES_ERR_LAU_ARG_K                                  : i32 = 7012;
+pub const MSK_RES_ERR_LAU_ARG_M                                  : i32 = 7010;
+pub const MSK_RES_ERR_LAU_ARG_N                                  : i32 = 7011;
+pub const MSK_RES_ERR_LAU_ARG_TRANS                              : i32 = 7018;
+pub const MSK_RES_ERR_LAU_ARG_TRANSA                             : i32 = 7015;
+pub const MSK_RES_ERR_LAU_ARG_TRANSB                             : i32 = 7016;
+pub const MSK_RES_ERR_LAU_ARG_UPLO                               : i32 = 7017;
+pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX        : i32 = 7002;
+pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX        : i32 = 7019;
+pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE                  : i32 = 7001;
+pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX                        : i32 = 7000;
+pub const MSK_RES_ERR_LAU_UNKNOWN                                : i32 = 7005;
+pub const MSK_RES_ERR_LICENSE                                    : i32 = 1000;
+pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE                    : i32 = 1020;
+pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT                     : i32 = 1021;
+pub const MSK_RES_ERR_LICENSE_EXPIRED                            : i32 = 1001;
+pub const MSK_RES_ERR_LICENSE_FEATURE                            : i32 = 1018;
+pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID                     : i32 = 1025;
+pub const MSK_RES_ERR_LICENSE_MAX                                : i32 = 1016;
+pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON                     : i32 = 1017;
+pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE                     : i32 = 1028;
+pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT                  : i32 = 1027;
+pub const MSK_RES_ERR_LICENSE_SERVER                             : i32 = 1015;
+pub const MSK_RES_ERR_LICENSE_SERVER_VERSION                     : i32 = 1026;
+pub const MSK_RES_ERR_LICENSE_VERSION                            : i32 = 1002;
+pub const MSK_RES_ERR_LINK_FILE_DLL                              : i32 = 1040;
+pub const MSK_RES_ERR_LIVING_TASKS                               : i32 = 1066;
+pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN                       : i32 = 1390;
+pub const MSK_RES_ERR_LP_DUP_SLACK_NAME                          : i32 = 1152;
+pub const MSK_RES_ERR_LP_EMPTY                                   : i32 = 1151;
+pub const MSK_RES_ERR_LP_FILE_FORMAT                             : i32 = 1157;
+pub const MSK_RES_ERR_LP_FORMAT                                  : i32 = 1160;
+pub const MSK_RES_ERR_LP_FREE_CONSTRAINT                         : i32 = 1155;
+pub const MSK_RES_ERR_LP_INCOMPATIBLE                            : i32 = 1150;
+pub const MSK_RES_ERR_LP_INVALID_CON_NAME                        : i32 = 1171;
+pub const MSK_RES_ERR_LP_INVALID_VAR_NAME                        : i32 = 1154;
+pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM                     : i32 = 1163;
+pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM                      : i32 = 1164;
+pub const MSK_RES_ERR_LU_MAX_NUM_TRIES                           : i32 = 2800;
+pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL                       : i32 = 1289;
+pub const MSK_RES_ERR_MAXNUMBARVAR                               : i32 = 1242;
+pub const MSK_RES_ERR_MAXNUMCON                                  : i32 = 1240;
+pub const MSK_RES_ERR_MAXNUMCONE                                 : i32 = 1304;
+pub const MSK_RES_ERR_MAXNUMQNZ                                  : i32 = 1243;
+pub const MSK_RES_ERR_MAXNUMVAR                                  : i32 = 1241;
+pub const MSK_RES_ERR_MIO_INTERNAL                               : i32 = 5010;
+pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER                 : i32 = 7131;
+pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER                 : i32 = 7130;
+pub const MSK_RES_ERR_MIO_NO_OPTIMIZER                           : i32 = 1551;
+pub const MSK_RES_ERR_MISSING_LICENSE_FILE                       : i32 = 1008;
+pub const MSK_RES_ERR_MIXED_CONIC_AND_NL                         : i32 = 1501;
+pub const MSK_RES_ERR_MPS_CONE_OVERLAP                           : i32 = 1118;
+pub const MSK_RES_ERR_MPS_CONE_REPEAT                            : i32 = 1119;
+pub const MSK_RES_ERR_MPS_CONE_TYPE                              : i32 = 1117;
+pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT                    : i32 = 1121;
+pub const MSK_RES_ERR_MPS_FILE                                   : i32 = 1100;
+pub const MSK_RES_ERR_MPS_INV_BOUND_KEY                          : i32 = 1108;
+pub const MSK_RES_ERR_MPS_INV_CON_KEY                            : i32 = 1107;
+pub const MSK_RES_ERR_MPS_INV_FIELD                              : i32 = 1101;
+pub const MSK_RES_ERR_MPS_INV_MARKER                             : i32 = 1102;
+pub const MSK_RES_ERR_MPS_INV_SEC_NAME                           : i32 = 1109;
+pub const MSK_RES_ERR_MPS_INV_SEC_ORDER                          : i32 = 1115;
+pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME                       : i32 = 1128;
+pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE                       : i32 = 1122;
+pub const MSK_RES_ERR_MPS_MUL_CON_NAME                           : i32 = 1112;
+pub const MSK_RES_ERR_MPS_MUL_CSEC                               : i32 = 1116;
+pub const MSK_RES_ERR_MPS_MUL_QOBJ                               : i32 = 1114;
+pub const MSK_RES_ERR_MPS_MUL_QSEC                               : i32 = 1113;
+pub const MSK_RES_ERR_MPS_NO_OBJECTIVE                           : i32 = 1110;
+pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q                        : i32 = 1120;
+pub const MSK_RES_ERR_MPS_NULL_CON_NAME                          : i32 = 1103;
+pub const MSK_RES_ERR_MPS_NULL_VAR_NAME                          : i32 = 1104;
+pub const MSK_RES_ERR_MPS_SPLITTED_VAR                           : i32 = 1111;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2                          : i32 = 1125;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                          : i32 = 1126;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                          : i32 = 1127;
+pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                         : i32 = 1105;
+pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                         : i32 = 1106;
+pub const MSK_RES_ERR_MUL_A_ELEMENT                              : i32 = 1254;
+pub const MSK_RES_ERR_NAME_IS_NULL                               : i32 = 1760;
+pub const MSK_RES_ERR_NAME_MAX_LEN                               : i32 = 1750;
+pub const MSK_RES_ERR_NAN_IN_BLC                                 : i32 = 1461;
+pub const MSK_RES_ERR_NAN_IN_BLX                                 : i32 = 1471;
+pub const MSK_RES_ERR_NAN_IN_BUC                                 : i32 = 1462;
+pub const MSK_RES_ERR_NAN_IN_BUX                                 : i32 = 1472;
+pub const MSK_RES_ERR_NAN_IN_C                                   : i32 = 1470;
+pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA                         : i32 = 1450;
+pub const MSK_RES_ERR_NEGATIVE_APPEND                            : i32 = 1578;
+pub const MSK_RES_ERR_NEGATIVE_SURPLUS                           : i32 = 1573;
+pub const MSK_RES_ERR_NEWER_DLL                                  : i32 = 1036;
+pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION                       : i32 = 3916;
+pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION                       : i32 = 3915;
+pub const MSK_RES_ERR_NO_BASIS_SOL                               : i32 = 1600;
+pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL                        : i32 = 2950;
+pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER                         : i32 = 2001;
+pub const MSK_RES_ERR_NO_INIT_ENV                                : i32 = 1063;
+pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE                      : i32 = 1552;
+pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER                       : i32 = 2000;
+pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL                         : i32 = 2953;
+pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK                    : i32 = 2500;
+pub const MSK_RES_ERR_NON_UNIQUE_ARRAY                           : i32 = 5000;
+pub const MSK_RES_ERR_NONCONVEX                                  : i32 = 1291;
+pub const MSK_RES_ERR_NONLINEAR_EQUALITY                         : i32 = 1290;
+pub const MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED            : i32 = 1428;
+pub const MSK_RES_ERR_NONLINEAR_RANGED                           : i32 = 1292;
+pub const MSK_RES_ERR_NULL_ENV                                   : i32 = 1060;
+pub const MSK_RES_ERR_NULL_POINTER                               : i32 = 1065;
+pub const MSK_RES_ERR_NULL_TASK                                  : i32 = 1061;
+pub const MSK_RES_ERR_NUM_ARGUMENTS                              : i32 = 1199;
+pub const MSK_RES_ERR_NUMCONLIM                                  : i32 = 1250;
+pub const MSK_RES_ERR_NUMVARLIM                                  : i32 = 1251;
+pub const MSK_RES_ERR_OBJ_Q_NOT_NSD                              : i32 = 1296;
+pub const MSK_RES_ERR_OBJ_Q_NOT_PSD                              : i32 = 1295;
+pub const MSK_RES_ERR_OBJECTIVE_RANGE                            : i32 = 1260;
+pub const MSK_RES_ERR_OLDER_DLL                                  : i32 = 1035;
+pub const MSK_RES_ERR_OPEN_DL                                    : i32 = 1030;
+pub const MSK_RES_ERR_OPF_FORMAT                                 : i32 = 1168;
+pub const MSK_RES_ERR_OPF_NEW_VARIABLE                           : i32 = 1169;
+pub const MSK_RES_ERR_OPF_PREMATURE_EOF                          : i32 = 1172;
+pub const MSK_RES_ERR_OPTIMIZER_LICENSE                          : i32 = 1013;
+pub const MSK_RES_ERR_OVERFLOW                                   : i32 = 1590;
+pub const MSK_RES_ERR_PARAM_INDEX                                : i32 = 1210;
+pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE                         : i32 = 1215;
+pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL                         : i32 = 1216;
+pub const MSK_RES_ERR_PARAM_NAME                                 : i32 = 1205;
+pub const MSK_RES_ERR_PARAM_NAME_DOU                             : i32 = 1206;
+pub const MSK_RES_ERR_PARAM_NAME_INT                             : i32 = 1207;
+pub const MSK_RES_ERR_PARAM_NAME_STR                             : i32 = 1208;
+pub const MSK_RES_ERR_PARAM_TYPE                                 : i32 = 1218;
+pub const MSK_RES_ERR_PARAM_VALUE_STR                            : i32 = 1217;
+pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED                      : i32 = 1019;
+pub const MSK_RES_ERR_POSTSOLVE                                  : i32 = 1580;
+pub const MSK_RES_ERR_PRO_ITEM                                   : i32 = 1281;
+pub const MSK_RES_ERR_PROB_LICENSE                               : i32 = 1006;
+pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE                        : i32 = 1409;
+pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL                        : i32 = 1408;
+pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE                        : i32 = 1417;
+pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE                        : i32 = 1415;
+pub const MSK_RES_ERR_READ_FORMAT                                : i32 = 1090;
+pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG                    : i32 = 1159;
+pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME                   : i32 = 1162;
+pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE                       : i32 = 1310;
+pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM                     : i32 = 1710;
+pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED                 : i32 = 1711;
+pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO                       : i32 = 3054;
+pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP                       : i32 = 3053;
+pub const MSK_RES_ERR_SEN_FORMAT                                 : i32 = 3050;
+pub const MSK_RES_ERR_SEN_INDEX_INVALID                          : i32 = 3055;
+pub const MSK_RES_ERR_SEN_INDEX_RANGE                            : i32 = 3052;
+pub const MSK_RES_ERR_SEN_INVALID_REGEXP                         : i32 = 3056;
+pub const MSK_RES_ERR_SEN_NUMERICAL                              : i32 = 3058;
+pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
+pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
+pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
+pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
+pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
+pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
+pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
+pub const MSK_RES_ERR_SIZE_LICENSE                               : i32 = 1005;
+pub const MSK_RES_ERR_SIZE_LICENSE_CON                           : i32 = 1010;
+pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR                        : i32 = 1012;
+pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES                      : i32 = 3900;
+pub const MSK_RES_ERR_SIZE_LICENSE_VAR                           : i32 = 1011;
+pub const MSK_RES_ERR_SLICE_SIZE                                 : i32 = 1572;
+pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER                    : i32 = 1350;
+pub const MSK_RES_ERR_SOLITEM                                    : i32 = 1237;
+pub const MSK_RES_ERR_SOLVER_PROBTYPE                            : i32 = 1259;
+pub const MSK_RES_ERR_SPACE                                      : i32 = 1051;
+pub const MSK_RES_ERR_SPACE_LEAKING                              : i32 = 1080;
+pub const MSK_RES_ERR_SPACE_NO_INFO                              : i32 = 1081;
+pub const MSK_RES_ERR_SYM_MAT_DUPLICATE                          : i32 = 3944;
+pub const MSK_RES_ERR_SYM_MAT_HUGE                               : i32 = 1482;
+pub const MSK_RES_ERR_SYM_MAT_INVALID                            : i32 = 1480;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX                  : i32 = 3941;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX                  : i32 = 3940;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE                      : i32 = 3943;
+pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR                : i32 = 3942;
+pub const MSK_RES_ERR_TASK_INCOMPATIBLE                          : i32 = 2560;
+pub const MSK_RES_ERR_TASK_INVALID                               : i32 = 2561;
+pub const MSK_RES_ERR_TASK_WRITE                                 : i32 = 2562;
+pub const MSK_RES_ERR_THREAD_COND_INIT                           : i32 = 1049;
+pub const MSK_RES_ERR_THREAD_CREATE                              : i32 = 1048;
+pub const MSK_RES_ERR_THREAD_MUTEX_INIT                          : i32 = 1045;
+pub const MSK_RES_ERR_THREAD_MUTEX_LOCK                          : i32 = 1046;
+pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK                        : i32 = 1047;
+pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC                   : i32 = 7153;
+pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD                   : i32 = 7150;
+pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX                      : i32 = 7151;
+pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA                      : i32 = 7152;
+pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD                  : i32 = 7155;
+pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE               : i32 = 1421;
+pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ                       : i32 = 1245;
+pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ                        : i32 = 1252;
+pub const MSK_RES_ERR_UNB_STEP_SIZE                              : i32 = 3100;
+pub const MSK_RES_ERR_UNDEF_SOLUTION                             : i32 = 1265;
+pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE                  : i32 = 1446;
+pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS                  : i32 = 6010;
+pub const MSK_RES_ERR_UNKNOWN                                    : i32 = 1050;
+pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN                       : i32 = 1391;
+pub const MSK_RES_ERR_UPPER_TRIANGLE                             : i32 = 6020;
+pub const MSK_RES_ERR_USER_FUNC_RET                              : i32 = 1430;
+pub const MSK_RES_ERR_USER_FUNC_RET_DATA                         : i32 = 1431;
+pub const MSK_RES_ERR_USER_NLO_EVAL                              : i32 = 1433;
+pub const MSK_RES_ERR_USER_NLO_EVAL_HESSUBI                      : i32 = 1440;
+pub const MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ                      : i32 = 1441;
+pub const MSK_RES_ERR_USER_NLO_FUNC                              : i32 = 1432;
+pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED                      : i32 = 1238;
+pub const MSK_RES_ERR_WHICHSOL                                   : i32 = 1236;
+pub const MSK_RES_ERR_WRITE_LP_FORMAT                            : i32 = 1158;
+pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME                   : i32 = 1161;
+pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME                     : i32 = 1153;
+pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME                 : i32 = 1156;
+pub const MSK_RES_ERR_WRITING_FILE                               : i32 = 1166;
+pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE                   : i32 = 3600;
+pub const MSK_RES_ERR_Y_IS_UNDEFINED                             : i32 = 1449;
+pub const MSK_RES_OK                                             : i32 = 0;
+pub const MSK_RES_TRM_INTERNAL                                   : i32 = 10030;
+pub const MSK_RES_TRM_INTERNAL_STOP                              : i32 = 10031;
+pub const MSK_RES_TRM_MAX_ITERATIONS                             : i32 = 10000;
+pub const MSK_RES_TRM_MAX_NUM_SETBACKS                           : i32 = 10020;
+pub const MSK_RES_TRM_MAX_TIME                                   : i32 = 10001;
+pub const MSK_RES_TRM_MIO_NEAR_ABS_GAP                           : i32 = 10004;
+pub const MSK_RES_TRM_MIO_NEAR_REL_GAP                           : i32 = 10003;
+pub const MSK_RES_TRM_MIO_NUM_BRANCHES                           : i32 = 10009;
+pub const MSK_RES_TRM_MIO_NUM_RELAXS                             : i32 = 10008;
+pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS                  : i32 = 10015;
+pub const MSK_RES_TRM_NUMERICAL_PROBLEM                          : i32 = 10025;
+pub const MSK_RES_TRM_OBJECTIVE_RANGE                            : i32 = 10002;
+pub const MSK_RES_TRM_STALL                                      : i32 = 10006;
+pub const MSK_RES_TRM_USER_CALLBACK                              : i32 = 10007;
+pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS                      : i32 = 904;
+pub const MSK_RES_WRN_ANA_C_ZERO                                 : i32 = 901;
+pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS                           : i32 = 903;
+pub const MSK_RES_WRN_ANA_EMPTY_COLS                             : i32 = 902;
+pub const MSK_RES_WRN_ANA_LARGE_BOUNDS                           : i32 = 900;
+pub const MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG                  : i32 = 807;
+pub const MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG                       : i32 = 810;
+pub const MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS                  : i32 = 805;
+pub const MSK_RES_WRN_DROPPED_NZ_QOBJ                            : i32 = 201;
+pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES                : i32 = 852;
+pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES                       : i32 = 853;
+pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES                 : i32 = 850;
+pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES                   : i32 = 851;
+pub const MSK_RES_WRN_ELIMINATOR_SPACE                           : i32 = 801;
+pub const MSK_RES_WRN_EMPTY_NAME                                 : i32 = 502;
+pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO     : i32 = 932;
+pub const MSK_RES_WRN_IGNORE_INTEGER                             : i32 = 250;
+pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800;
+pub const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62;
+pub const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51;
+pub const MSK_RES_WRN_LARGE_CJ                                   : i32 = 57;
+pub const MSK_RES_WRN_LARGE_CON_FX                               : i32 = 54;
+pub const MSK_RES_WRN_LARGE_LO_BOUND                             : i32 = 52;
+pub const MSK_RES_WRN_LARGE_UP_BOUND                             : i32 = 53;
+pub const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500;
+pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 505;
+pub const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501;
+pub const MSK_RES_WRN_LP_DROP_VARIABLE                           : i32 = 85;
+pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                         : i32 = 80;
+pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL                       : i32 = 270;
+pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR                       : i32 = 72;
+pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR                       : i32 = 71;
+pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR                       : i32 = 70;
+pub const MSK_RES_WRN_NAME_MAX_LEN                               : i32 = 65;
+pub const MSK_RES_WRN_NO_DUALIZER                                : i32 = 950;
+pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER                        : i32 = 251;
+pub const MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE                : i32 = 450;
+pub const MSK_RES_WRN_NZ_IN_UPR_TRI                              : i32 = 200;
+pub const MSK_RES_WRN_OPEN_PARAM_FILE                            : i32 = 50;
+pub const MSK_RES_WRN_PARAM_IGNORED_CMIO                         : i32 = 516;
+pub const MSK_RES_WRN_PARAM_NAME_DOU                             : i32 = 510;
+pub const MSK_RES_WRN_PARAM_NAME_INT                             : i32 = 511;
+pub const MSK_RES_WRN_PARAM_NAME_STR                             : i32 = 512;
+pub const MSK_RES_WRN_PARAM_STR_VALUE                            : i32 = 515;
+pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE                        : i32 = 802;
+pub const MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO         : i32 = 930;
+pub const MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO        : i32 = 931;
+pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON                       : i32 = 351;
+pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR                       : i32 = 352;
+pub const MSK_RES_WRN_SOL_FILTER                                 : i32 = 300;
+pub const MSK_RES_WRN_SPAR_MAX_LEN                               : i32 = 66;
+pub const MSK_RES_WRN_SYM_MAT_LARGE                              : i32 = 960;
+pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS                         : i32 = 400;
+pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS                        : i32 = 405;
+pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME                        : i32 = 350;
+pub const MSK_RES_WRN_USING_GENERIC_NAMES                        : i32 = 503;
+pub const MSK_RES_WRN_WRITE_CHANGED_NAMES                        : i32 = 803;
+pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX                       : i32 = 804;
+pub const MSK_RES_WRN_ZERO_AIJ                                   : i32 = 63;
+pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL                        : i32 = 710;
+pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW                        : i32 = 705;
 
 // rescodetype
 pub const MSK_RESPONSE_ERR : i32 = 3;
@@ -1702,24 +1650,24 @@ pub const MSK_SOL_ITEM_END   : i32 = 8;
 
 // solsta
 pub const MSK_SOL_STA_DUAL_FEAS               : i32 = 3;
-pub const MSK_SOL_STA_DUAL_ILLPOSED_CER       : i32 = 15;
+pub const MSK_SOL_STA_DUAL_ILLPOSED_CER       : i32 = 14;
 pub const MSK_SOL_STA_DUAL_INFEAS_CER         : i32 = 6;
-pub const MSK_SOL_STA_INTEGER_OPTIMAL         : i32 = 16;
-pub const MSK_SOL_STA_NEAR_DUAL_FEAS          : i32 = 10;
-pub const MSK_SOL_STA_NEAR_DUAL_INFEAS_CER    : i32 = 13;
-pub const MSK_SOL_STA_NEAR_INTEGER_OPTIMAL    : i32 = 17;
-pub const MSK_SOL_STA_NEAR_OPTIMAL            : i32 = 8;
-pub const MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS : i32 = 11;
-pub const MSK_SOL_STA_NEAR_PRIM_FEAS          : i32 = 9;
-pub const MSK_SOL_STA_NEAR_PRIM_INFEAS_CER    : i32 = 12;
+pub const MSK_SOL_STA_INTEGER_OPTIMAL         : i32 = 15;
+pub const MSK_SOL_STA_NEAR_DUAL_FEAS          : i32 = 9;
+pub const MSK_SOL_STA_NEAR_DUAL_INFEAS_CER    : i32 = 12;
+pub const MSK_SOL_STA_NEAR_INTEGER_OPTIMAL    : i32 = 16;
+pub const MSK_SOL_STA_NEAR_OPTIMAL            : i32 = 7;
+pub const MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS : i32 = 10;
+pub const MSK_SOL_STA_NEAR_PRIM_FEAS          : i32 = 8;
+pub const MSK_SOL_STA_NEAR_PRIM_INFEAS_CER    : i32 = 11;
 pub const MSK_SOL_STA_OPTIMAL                 : i32 = 1;
 pub const MSK_SOL_STA_PRIM_AND_DUAL_FEAS      : i32 = 4;
 pub const MSK_SOL_STA_PRIM_FEAS               : i32 = 2;
-pub const MSK_SOL_STA_PRIM_ILLPOSED_CER       : i32 = 14;
+pub const MSK_SOL_STA_PRIM_ILLPOSED_CER       : i32 = 13;
 pub const MSK_SOL_STA_PRIM_INFEAS_CER         : i32 = 5;
 pub const MSK_SOL_STA_UNKNOWN                 : i32 = 0;
 pub const MSK_SOL_STA_BEGIN : i32 = 0;
-pub const MSK_SOL_STA_END   : i32 = 18;
+pub const MSK_SOL_STA_END   : i32 = 17;
 
 // soltype
 pub const MSK_SOL_BAS : i32 = 1;
@@ -1808,7 +1756,7 @@ pub const MSK_UPLO_BEGIN : i32 = 0;
 pub const MSK_UPLO_END   : i32 = 2;
 
 // value
-pub const MSK_LICENSE_BUFFER_LENGTH : i32 = 20;
+pub const MSK_LICENSE_BUFFER_LENGTH : i32 = 21;
 pub const MSK_MAX_STR_LEN           : i32 = 1024;
 
 // variabletype
@@ -2288,16 +2236,6 @@ impl<H> Task<H>
       callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
     }
     
-    // chgbound
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn chg_bound(&self,accmode_ : i32,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
-    {
-      callMSK!(MSK_chgbound,self.ptr,accmode_,i_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
-    }
-    
     // chgconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2381,6 +2319,18 @@ impl<H> Task<H>
       _ref_nzj_ as i32
     }
     
+    // getacolslicenumnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> i64
+    {
+      let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
+      callMSK!(MSK_getacolslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
+      _ref_numnz_ as i64
+    }
+    
     // getaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2433,16 +2383,27 @@ impl<H> Task<H>
       _ref_nzi_ as i32
     }
     
-    // getaslicenumnz64
+    // getarowslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_slice_num_nz(&self,accmode_ : i32,first_ : i32,last_ : i32) -> i64
+    pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> i64
     {
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getaslicenumnz64,self.ptr,accmode_,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
+      callMSK!(MSK_getarowslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
       _ref_numnz_ as i64
+    }
+    
+    // getatruncatetol
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_a_truncate_tol(&self,tolzero_ : & mut [f64])
+    {
+      if tolzero_.len() != ((1) as usize) { panic!("Argument 'tolzero_' is too short in call to 'get_a_truncate_tol'") }
+      callMSK!(MSK_getatruncatetol,self.ptr,tolzero_.as_mut_ptr());
     }
     
     // getbarablocktriplet
@@ -2527,7 +2488,7 @@ impl<H> Task<H>
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
+    pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valjkl_ : & mut [f64]) -> i64
     {
       let tmp_var_1__ = self.get_num_barc_block_triplets();
       let maxnum_ = tmp_var_1__;
@@ -2535,8 +2496,8 @@ impl<H> Task<H>
       if subj_.len() != ((maxnum_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_barc_block_triplet'") }
       if subk_.len() != ((maxnum_) as usize) { panic!("Argument 'subk_' is too short in call to 'get_barc_block_triplet'") }
       if subl_.len() != ((maxnum_) as usize) { panic!("Argument 'subl_' is too short in call to 'get_barc_block_triplet'") }
-      if valijkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'get_barc_block_triplet'") }
-      callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
+      if valjkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valjkl_' is too short in call to 'get_barc_block_triplet'") }
+      callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr());
       _ref_num_ as i64
     }
     
@@ -2608,6 +2569,17 @@ impl<H> Task<H>
       callMSK!(MSK_getbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_mut_ptr());
     }
     
+    // getbarsslice
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : & mut [f64])
+    {
+      if barsslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barsslice_' is too short in call to 'get_bars_slice'") }
+      callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barsslice_.as_mut_ptr());
+    }
+    
     // getbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2616,10 +2588,10 @@ impl<H> Task<H>
     pub fn get_barvar_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_barvar_name_len(i_);
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _name__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getbarvarname,self.ptr,i_ as libc::int32_t,maxlen_ as libc::int32_t,_name__bytes.as_mut_ptr());
-      unsafe { _name__bytes.set_len((maxlen_) as usize) };
+      let sizename_ = 1 + tmp_var_3__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      callMSK!(MSK_getbarvarname,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
     
@@ -2660,31 +2632,15 @@ impl<H> Task<H>
       callMSK!(MSK_getbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_mut_ptr());
     }
     
-    // getbound
+    // getbarxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bound(&self,accmode_ : i32,i_ : i32) -> (i32,f64,f64)
+    pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : & mut [f64])
     {
-      let mut _ref_bk_ : i32 = 0 as i32;
-      let mut _ref_bl_ : f64 = 0 as f64;
-      let mut _ref_bu_ : f64 = 0 as f64;
-      callMSK!(MSK_getbound,self.ptr,accmode_,i_ as libc::int32_t,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
-      return (_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64)
-    }
-    
-    // getboundslice
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn get_bound_slice(&self,accmode_ : i32,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
-    {
-      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_bound_slice'") }
-      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_bound_slice'") }
-      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_bound_slice'") }
-      callMSK!(MSK_getboundslice,self.ptr,accmode_,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
+      if barxslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barxslice_' is too short in call to 'get_barx_slice'") }
+      callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barxslice_.as_mut_ptr());
     }
     
     // getc
@@ -2721,6 +2677,18 @@ impl<H> Task<H>
       let mut _ref_cj_ : f64 = 0 as f64;
       callMSK!(MSK_getcj,self.ptr,j_ as libc::int32_t,& mut _ref_cj_);
       _ref_cj_ as f64
+    }
+    
+    // getclist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_c_list(&self,subj_ : & [i32],c_ : & mut [f64])
+    {
+      let mut num_ = subj_.len();
+      if c_.len() != ((num_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_list'") }
+      callMSK!(MSK_getclist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),c_.as_mut_ptr());
     }
     
     // getconbound
@@ -2788,10 +2756,10 @@ impl<H> Task<H>
     pub fn get_cone_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_cone_name_len(i_);
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _name__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getconename,self.ptr,i_ as libc::int32_t,maxlen_ as libc::int32_t,_name__bytes.as_mut_ptr());
-      unsafe { _name__bytes.set_len((maxlen_) as usize) };
+      let sizename_ = 1 + tmp_var_3__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      callMSK!(MSK_getconename,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
     
@@ -2828,10 +2796,10 @@ impl<H> Task<H>
     pub fn get_con_name(&self,i_ : i32) -> String
     {
       let tmp_var_3__ = self.get_con_name_len(i_);
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _name__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getconname,self.ptr,i_ as libc::int32_t,maxlen_ as libc::int32_t,_name__bytes.as_mut_ptr());
-      unsafe { _name__bytes.set_len((maxlen_) as usize) };
+      let sizename_ = 1 + tmp_var_3__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      callMSK!(MSK_getconname,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
     
@@ -3354,10 +3322,10 @@ impl<H> Task<H>
     pub fn get_obj_name(&self) -> String
     {
       let tmp_var_3__ = self.get_obj_name_len();
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _objname__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getobjname,self.ptr,maxlen_ as libc::int32_t,_objname__bytes.as_mut_ptr());
-      unsafe { _objname__bytes.set_len((maxlen_) as usize) };
+      let sizeobjname_ = 1 + tmp_var_3__;
+      let mut _objname__bytes = Vec::with_capacity(sizeobjname_ as usize);
+      callMSK!(MSK_getobjname,self.ptr,sizeobjname_ as libc::int32_t,_objname__bytes.as_mut_ptr());
+      unsafe { _objname__bytes.set_len((sizeobjname_) as usize) };
       String::from_utf8_lossy(&_objname__bytes[..]).into_owned()
     }
     
@@ -3693,22 +3661,6 @@ impl<H> Task<H>
       return (_ref_prosta_ as i32,_ref_solsta_ as i32)
     }
     
-    // getsolutioni
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn get_solution_i(&self,accmode_ : i32,i_ : i32,whichsol_ : i32) -> (i32,f64,f64,f64,f64)
-    {
-      let mut _ref_sk_ : i32 = 0 as i32;
-      let mut _ref_x_ : f64 = 0 as f64;
-      let mut _ref_sl_ : f64 = 0 as f64;
-      let mut _ref_su_ : f64 = 0 as f64;
-      let mut _ref_sn_ : f64 = 0 as f64;
-      callMSK!(MSK_getsolutioni,self.ptr,accmode_,i_ as libc::int32_t,whichsol_,& mut _ref_sk_,& mut _ref_x_,& mut _ref_sl_,& mut _ref_su_,& mut _ref_sn_);
-      return (_ref_sk_ as i32,_ref_x_ as f64,_ref_sl_ as f64,_ref_su_ as f64,_ref_sn_ as f64)
-    }
-    
     // getsolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3853,10 +3805,10 @@ impl<H> Task<H>
     pub fn get_task_name(&self) -> String
     {
       let tmp_var_3__ = self.get_task_name_len();
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _taskname__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_gettaskname,self.ptr,maxlen_ as libc::int32_t,_taskname__bytes.as_mut_ptr());
-      unsafe { _taskname__bytes.set_len((maxlen_) as usize) };
+      let sizetaskname_ = 1 + tmp_var_3__;
+      let mut _taskname__bytes = Vec::with_capacity(sizetaskname_ as usize);
+      callMSK!(MSK_gettaskname,self.ptr,sizetaskname_ as libc::int32_t,_taskname__bytes.as_mut_ptr());
+      unsafe { _taskname__bytes.set_len((sizetaskname_) as usize) };
       String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()
     }
     
@@ -3907,10 +3859,10 @@ impl<H> Task<H>
     pub fn get_var_name(&self,j_ : i32) -> String
     {
       let tmp_var_3__ = self.get_var_name_len(j_);
-      let maxlen_ = 1 + tmp_var_3__;
-      let mut _name__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getvarname,self.ptr,j_ as libc::int32_t,maxlen_ as libc::int32_t,_name__bytes.as_mut_ptr());
-      unsafe { _name__bytes.set_len((maxlen_) as usize) };
+      let sizename_ = 1 + tmp_var_3__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      callMSK!(MSK_getvarname,self.ptr,j_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
     
@@ -4239,8 +4191,6 @@ impl<H> Task<H>
     #[allow(unused_variables)]
     pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
-      if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_col_slice'") }
-      if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_col_slice'") }
       callMSK!(MSK_putacolslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
     
@@ -4284,12 +4234,12 @@ impl<H> Task<H>
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row_list(&self,sub_ : & [i32],aptrb_ : & [i32],aptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_row_list(&self,sub_ : & [i32],ptrb_ : & [i32],ptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
-      if aptrb_.len() > num_ { num_ = aptrb_.len() };
-      if aptre_.len() > num_ { num_ = aptre_.len() };
-      callMSK!(MSK_putarowlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      if ptrb_.len() > num_ { num_ = ptrb_.len() };
+      if ptre_.len() > num_ { num_ = ptre_.len() };
+      callMSK!(MSK_putarowlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
     
     // putarowslice64
@@ -4302,6 +4252,16 @@ impl<H> Task<H>
       if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_row_slice'") }
       if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_row_slice'") }
       callMSK!(MSK_putarowslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+    }
+    
+    // putatruncatetol
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_a_truncate_tol(&self,tolzero_ : f64)
+    {
+      callMSK!(MSK_putatruncatetol,self.ptr,tolzero_ as f64);
     }
     
     // putbarablocktriplet
@@ -4391,43 +4351,6 @@ impl<H> Task<H>
       callMSK!(MSK_putbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_ptr());
     }
     
-    // putbound
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn put_bound(&self,accmode_ : i32,i_ : i32,bk_ : i32,bl_ : f64,bu_ : f64)
-    {
-      callMSK!(MSK_putbound,self.ptr,accmode_,i_ as libc::int32_t,bk_,bl_ as f64,bu_ as f64);
-    }
-    
-    // putboundlist
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn put_bound_list(&self,accmode_ : i32,sub_ : & [i32],bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
-    {
-      let mut num_ = sub_.len();
-      if bk_.len() > num_ { num_ = bk_.len() };
-      if bl_.len() > num_ { num_ = bl_.len() };
-      if bu_.len() > num_ { num_ = bu_.len() };
-      callMSK!(MSK_putboundlist,self.ptr,accmode_,num_ as libc::int32_t,sub_.as_ptr(),bk_.as_ptr(),bl_.as_ptr(),bu_.as_ptr());
-    }
-    
-    // putboundslice
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn put_bound_slice(&self,con_ : i32,first_ : i32,last_ : i32,bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
-    {
-      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'put_bound_slice'") }
-      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'put_bound_slice'") }
-      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'put_bound_slice'") }
-      callMSK!(MSK_putboundslice,self.ptr,con_,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_ptr(),bl_.as_ptr(),bu_.as_ptr());
-    }
-    
     // putcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4475,13 +4398,13 @@ impl<H> Task<H>
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64])
+    pub fn put_con_bound_list(&self,sub_ : & [i32],bk_ : & [i32],bl_ : & [f64],bu_ : & [f64])
     {
       let mut num_ = sub_.len();
-      if bkc_.len() > num_ { num_ = bkc_.len() };
-      if blc_.len() > num_ { num_ = blc_.len() };
-      if buc_.len() > num_ { num_ = buc_.len() };
-      callMSK!(MSK_putconboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
+      if bk_.len() > num_ { num_ = bk_.len() };
+      if bl_.len() > num_ { num_ = bl_.len() };
+      if bu_.len() > num_ { num_ = bu_.len() };
+      callMSK!(MSK_putconboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bk_.as_ptr(),bl_.as_ptr(),bu_.as_ptr());
     }
     
     // putconboundslice
@@ -4526,6 +4449,16 @@ impl<H> Task<H>
     pub fn put_con_name(&self,i_ : i32,name_ : &str)
     {
       callMSK!(MSK_putconname,self.ptr,i_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
+    }
+    
+    // putconsolutioni
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_con_solution_i(&self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64)
+    {
+      callMSK!(MSK_putconsolutioni,self.ptr,i_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64);
     }
     
     // putcslice
@@ -4853,16 +4786,6 @@ impl<H> Task<H>
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
     }
     
-    // putsolutioni
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn put_solution_i(&self,accmode_ : i32,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64)
-    {
-      callMSK!(MSK_putsolutioni,self.ptr,accmode_,i_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
-    }
-    
     // putsolutionyi
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4986,6 +4909,16 @@ impl<H> Task<H>
       callMSK!(MSK_putvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
     
+    // putvarsolutionj
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_var_solution_j(&self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64)
+    {
+      callMSK!(MSK_putvarsolutionj,self.ptr,j_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
+    }
+    
     // putvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5095,6 +5028,36 @@ impl<H> Task<H>
     pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32)
     {
       callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
+    }
+    
+    // readjsonstring
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn read_json_string(&self,data_ : &str)
+    {
+      callMSK!(MSK_readjsonstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+    }
+    
+    // readlpstring
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn read_lp_string(&self,data_ : &str)
+    {
+      callMSK!(MSK_readlpstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+    }
+    
+    // readopfstring
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn read_opf_string(&self,data_ : &str)
+    {
+      callMSK!(MSK_readopfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
     }
     
     // readparamfile
@@ -5294,7 +5257,7 @@ impl<H> Task<H>
     #[allow(unused_variables)]
     pub fn str_to_sk(&self,str_ : &str) -> i32
     {
-      let mut _ref_sk_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_sk_ : i32 = 0 as i32;
       callMSK!(MSK_strtosk,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_sk_);
       _ref_sk_ as i32
     }
