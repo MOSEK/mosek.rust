@@ -27,7 +27,7 @@ fn getplatformname() -> String {
 }
 
 fn main() {
-    // 1. if MOSEK_8_BINDIR is set, use that
+    // 1. if MOSEK_BINDIR is set, use that
 
     match env::var_os("MOSEK_BINDIR") {
         Some(path) => {
@@ -48,8 +48,8 @@ fn main() {
                     None       => { env::var_os("HOME").unwrap_or_else(|| { panic!("No MOSEK available") }).into_string().unwrap_or_else(|_| {panic!("No MOSEK available") }) }
                 };
 
-            // 2. if ~/mosek/8/... exists, use that
-            let pfdir = instbase+"/mosek/8/tools/platform/"+pfname.as_ref();
+            // 2. if ~/mosek/9.1/... exists, use that
+            let pfdir = instbase+"/mosek/9.1/tools/platform/"+pfname.as_ref();
 
             match fs::metadata(&pfdir).ok() {
                 Some(md) => {
