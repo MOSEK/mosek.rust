@@ -139,7 +139,7 @@ fn main()
 
     match solsta
     {
-        mosek::MSK_SOL_STA_OPTIMAL | mosek::MSK_SOL_STA_NEAR_OPTIMAL =>
+        mosek::MSK_SOL_STA_OPTIMAL =>
         {
             let mut xx = vec![0.0,0.0,0.0];
             let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
@@ -164,9 +164,7 @@ fn main()
           }
 
         mosek::MSK_SOL_STA_DUAL_INFEAS_CER       |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       |
-        mosek::MSK_SOL_STA_NEAR_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_NEAR_PRIM_INFEAS_CER => 
+        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       => 
         {
             println!("Primal or dual infeasibility certificate found.");
         }

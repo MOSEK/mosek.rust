@@ -113,7 +113,7 @@ fn main()
 
     match solsta
     {
-        mosek::MSK_SOL_STA_OPTIMAL | mosek::MSK_SOL_STA_NEAR_OPTIMAL =>
+        mosek::MSK_SOL_STA_OPTIMAL =>
         {
             let mut xx = vec![0.0,0.0,0.0,0.0];
             task.get_xx(mosek::MSK_SOL_BAS,    /* Request the basic solution. */
@@ -125,10 +125,8 @@ fn main()
             }
           }
 
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER       |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       |
-        mosek::MSK_SOL_STA_NEAR_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_NEAR_PRIM_INFEAS_CER => 
+        mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
+        mosek::MSK_SOL_STA_PRIM_INFEAS_CER => 
         {
             println!("Primal or dual infeasibility certificate found.");
         }
