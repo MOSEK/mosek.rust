@@ -17,14 +17,13 @@ Module level functions
     pub fn get_code_desc ( code : i32 ) -> (String,String)
 
 ``code``
-    A valid response code.
+    
 *Returns:* ``(symname,str)``
     ``symname : String``
-        Symbolic name corresponding to the code.
+        
     ``str : String``
-        Obtains a short description of a response code.
+        
 
-Obtains a short description of a response code.
 
 .. index:: get_version
 
@@ -35,19 +34,16 @@ Obtains a short description of a response code.
 
 .. code-block:: rust
 
-    pub fn get_version (  ) -> (i32,i32,i32,i32)
+    pub fn get_version (  ) -> (i32,i32,i32)
 
-*Returns:* ``(major,minor,build,revision)``
+*Returns:* ``(major,minor,revision)``
     ``major : i32``
-        Major version number.
+        
     ``minor : i32``
-        Minor version number.
-    ``build : i32``
-        Build number.
+        
     ``revision : i32``
-        Revision number.
+        
 
-Obtains |mosek| version information.
 
 .. index:: licensecleanup
 
@@ -61,7 +57,6 @@ Obtains |mosek| version information.
     pub fn licensecleanup (  )
 
 
-Stops all threads and delete all handles used by the license system.
 Env methods
 ===========
 
@@ -81,15 +76,14 @@ Env methods
                   y     : & mut [f64] )
 
 ``n``
-    Length of the vectors.
+    
 ``alpha``
-    The scalar that multiplies x.
+    
 ``x``
-    The :math:`x` vector.
+    
 ``y``
-    The :math:`y` vector.
+    
 
-Adds alpha times x to y.
 
 .. index:: check_in_all
 
@@ -103,7 +97,6 @@ Adds alpha times x to y.
     pub fn check_in_all ( &self )
 
 
-Check in all unsued license features to the license token server.
 
 .. index:: check_in_license
 
@@ -117,9 +110,8 @@ Check in all unsued license features to the license token server.
     pub fn check_in_license ( &self,feature : i32 )
 
 ``feature``
-    Feature to check in to the license system.
+    
 
-Check in a license feature from the license server ahead of time.
 
 .. index:: checkout_license
 
@@ -133,9 +125,8 @@ Check in a license feature from the license server ahead of time.
     pub fn checkout_license ( &self,feature : i32 )
 
 ``feature``
-    Feature to check out from the license system.
+    
 
-Check out a license feature from the license server ahead of time.
 
 .. index:: dot
 
@@ -152,16 +143,15 @@ Check out a license feature from the license server ahead of time.
                  y_    : & [f64] )
 
 ``n``
-    Length of the vectors.
+    
 ``x``
-    The x vector.
+    
 ``y``
-    The y vector.
+    
 *Returns:* ``xty``
     ``xty : f64``
-        The result of the inner product.
+        
 
-Computes the inner product of two vectors.
 
 .. index:: echo_intro
 
@@ -175,9 +165,8 @@ Computes the inner product of two vectors.
     pub fn echo_intro ( &self,longver : i32 )
 
 ``longver``
-    If non-zero, then the intro is slightly longer.
+    
 
-Prints an intro to message stream.
 
 .. index:: gemm
 
@@ -201,27 +190,26 @@ Prints an intro to message stream.
                   c      : & mut [f64] )
 
 ``transa``
-    Indicates whether the matrix A must be transposed.
+    
 ``transb``
-    Indicates whether the matrix B must be transposed.
+    
 ``m``
-    Indicates the number of rows of matrices A and C.
+    
 ``n``
-    Indicates the number of columns of matrices B and C.
+    
 ``k``
-    Specifies the number of columns of the matrix A and the number of rows of the matrix B.
+    
 ``alpha``
-    A scalar value multipling the result of the matrix multiplication.
+    
 ``a``
-    The pointer to the array storing matrix A in a column-major format.
+    
 ``b``
-    Indicates the number of rows of matrix B and columns of matrix A.
+    
 ``beta``
-    A scalar value that multiplies C.
+    
 ``c``
-    The pointer to the array storing matrix C in a column-major format.
+    
 
-Performs a dense matrix multiplication.
 
 .. index:: gemv
 
@@ -243,23 +231,22 @@ Performs a dense matrix multiplication.
                   y      : & mut [f64] )
 
 ``transa``
-    Indicates whether the matrix A must be transposed.
+    
 ``m``
-    Specifies the number of rows of the matrix A.
+    
 ``n``
-    Specifies the number of columns of the matrix A.
+    
 ``alpha``
-    A scalar value multipling the matrix A.
+    
 ``a``
-    A pointer to the array storing matrix A in a column-major format.
+    
 ``x``
-    A pointer to the array storing the vector x.
+    
 ``beta``
-    A scalar value multipling thevector y.
+    
 ``y``
-    A pointer to the array storing the vector y.
+    
 
-Computes dense matrix times a dense vector product.
 
 .. index:: linkfiletostream
 
@@ -278,11 +265,10 @@ Computes dense matrix times a dense vector product.
 ``whichstream``
     
 ``filename``
-    Name of the file to write stream data to.
+    
 ``append``
-    If this argument is non-zero, the output is appended to the file.
+    
 
-Directs all output from a stream to a file.
 
 .. index:: new
 
@@ -320,13 +306,12 @@ Directs all output from a stream to a file.
                    a     : & mut [f64] )
 
 ``uplo``
-    Indicates whether the upper or lower triangular part of the matrix is stored.
+    
 ``n``
-    Dimension of the symmetric matrix.
+    
 ``a``
-    A symmetric matrix stored in column-major order. Only the lower or the upper triangular part is used, accordingly with the uplo parameter. It will contain the result on exit.
+    
 
-Computes a Cholesky factorization a dense matrix.
 
 .. index:: put_license_code
 
@@ -340,9 +325,8 @@ Computes a Cholesky factorization a dense matrix.
     pub fn put_license_code ( &self,code_ : & [i32] )
 
 ``code``
-    A license key string.
+    
 
-The purpose of this function is to input a runtime license code.
 
 .. index:: put_license_debug
 
@@ -356,9 +340,8 @@ The purpose of this function is to input a runtime license code.
     pub fn put_license_debug ( &self,licdebug : i32 )
 
 ``licdebug``
-    Enable output of license check-out debug information.
+    
 
-Enables debug information for the license system.
 
 .. index:: put_license_path
 
@@ -372,9 +355,8 @@ Enables debug information for the license system.
     pub fn put_license_path ( &self,licensepath : &str )
 
 ``licensepath``
-    A path specifycing where to search for the license.
+    
 
-Set the path to the license file.
 
 .. index:: put_license_wait
 
@@ -388,9 +370,23 @@ Set the path to the license file.
     pub fn put_license_wait ( &self,licwait : i32 )
 
 ``licwait``
-    Enable waiting for a license.
+    
 
-Control whether mosek should wait for an available license if no license is available.
+
+.. index:: setup_threads
+
+.. _optimizer_env_setupthreads:
+
+``setup_threads()``
+-------------------
+
+.. code-block:: rust
+
+    pub fn setup_threads ( &self,numthreads : i32 )
+
+``numthreads``
+    
+
 
 .. index:: syeig
 
@@ -408,15 +404,14 @@ Control whether mosek should wait for an available license if no license is avai
                    w     : & mut [f64] )
 
 ``uplo``
-    Indicates whether the upper or lower triangular part is used.
+    
 ``n``
-    Dimension of the symmetric input matrix.
+    
 ``a``
-    A symmetric matrix stored in column-major order. Only the lower-triangular part is used.
+    
 ``w``
-    Array of minimum dimension n where eigenvalues will be stored.
+    
 
-Computes all eigenvalues of a symmetric dense matrix.
 
 .. index:: syevd
 
@@ -434,15 +429,14 @@ Computes all eigenvalues of a symmetric dense matrix.
                    w     : & mut [f64] )
 
 ``uplo``
-    Indicates whether the upper or lower triangular part is used.
+    
 ``n``
-    Dimension of symmetric input matrix.
+    
 ``a``
-    A symmetric matrix stored in column-major order. Only the lower-triangular part is used. It will be overwritten on exit.
+    
 ``w``
-    An array where eigenvalues will be stored. Its lenght must be at least the dimension of the input matrix.
+    
 
-Computes all the eigenvalue and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 
 .. index:: syrk
 
@@ -464,23 +458,22 @@ Computes all the eigenvalue and eigenvectors of a symmetric dense matrix, and th
                   c     : & mut [f64] )
 
 ``uplo``
-    Indicates whether the upper or lower triangular part of C is stored.
+    
 ``trans``
-    Indicates whether the matrix A must be transposed.
+    
 ``n``
-    Specifies the order of C.
+    
 ``k``
-    Indicates the number of rows or columns of A, and its rank.
+    
 ``alpha``
-    A scalar value multipling the result of the matrix multiplication.
+    
 ``a``
-    The pointer to the array storing matrix A in a column-major format.
+    
 ``beta``
-    A scalar value that multiplies C.
+    
 ``c``
-    The pointer to the array storing matrix C in a column-major format.
+    
 
-Performs a rank-k update of a symmetric matrix.
 
 .. index:: task
 
@@ -534,9 +527,8 @@ Task methods
 ``whichstream``
     
 ``nametype``
-    The type of names e.g. valid in MPS or LP files.
+    
 
-Analyze the names and issue an error for the first invalid name.
 
 .. index:: analyze_problem
 
@@ -552,7 +544,6 @@ Analyze the names and issue an error for the first invalid name.
 ``whichstream``
     
 
-Analyze the data of a task.
 
 .. index:: analyze_solution
 
@@ -572,7 +563,6 @@ Analyze the data of a task.
 ``whichsol``
     
 
-Print information related to the quality of the solution.
 
 .. index:: append_barvars
 
@@ -586,9 +576,8 @@ Print information related to the quality of the solution.
     pub fn append_barvars ( &self,dim_  : & [i32] )
 
 ``dim``
-    Dimension of symmetric matrix variables to be added.
+    
 
-Appends a semidefinite  variable of dimension dim to the problem.
 
 .. index:: append_cone
 
@@ -611,7 +600,6 @@ Appends a semidefinite  variable of dimension dim to the problem.
 ``submem``
     
 
-Appends a new cone constraint to the problem.
 
 .. index:: append_cone_seq
 
@@ -633,11 +621,10 @@ Appends a new cone constraint to the problem.
 ``conepar``
     
 ``nummem``
-    Dimension of the conic constraint.
+    
 ``j``
-    Index of the first variable in the conic constraint.
+    
 
-Appends a new conic constraint to the problem.
 
 .. index:: append_cones_seq
 
@@ -661,9 +648,8 @@ Appends a new conic constraint to the problem.
 ``nummem``
     
 ``j``
-    Index of the first variable in the first cone to be appended.
+    
 
-Appends a multiple conic constraints to the problem.
 
 .. index:: append_cons
 
@@ -677,9 +663,8 @@ Appends a multiple conic constraints to the problem.
     pub fn append_cons ( &self,num   : i32 )
 
 ``num``
-    Number of constraints which should be appended.
+    
 
-Appends a number of constraints to the optimization task.
 
 .. index:: append_sparse_sym_mat
 
@@ -697,18 +682,48 @@ Appends a number of constraints to the optimization task.
                                    valij_ : & [f64] )
 
 ``dim``
-    Dimension of the symmetric matrix that is appended.
+    
 ``subi``
-    Row subscript in the triplets.
+    
 ``subj``
-    Column subscripts in the triplets.
+    
 ``valij``
-    Values of each triplet.
+    
 *Returns:* ``idx``
     ``idx : i64``
-        Unique index assigned to inputted matrix.
+        
 
-Appends a general sparse symmetric matrix to the vector E of symmetric matrixes.
+
+.. index:: append_sparse_sym_mat_list
+
+.. _optimizer_task_appendsparsesymmatlist:
+
+``append_sparse_sym_mat_list()``
+--------------------------------
+
+.. code-block:: rust
+
+    pub fn append_sparse_sym_mat_list ( &self,
+                                        dims_  : & [i32],
+                                        nz_    : & [i64],
+                                        subi_  : & [i32],
+                                        subj_  : & [i32],
+                                        valij_ : & [f64],
+                                        idx    : & mut [i64] )
+
+``dims``
+    
+``nz``
+    
+``subi``
+    
+``subj``
+    
+``valij``
+    
+``idx``
+    
+
 
 .. index:: append_vars
 
@@ -722,9 +737,8 @@ Appends a general sparse symmetric matrix to the vector E of symmetric matrixes.
     pub fn append_vars ( &self,num   : i32 )
 
 ``num``
-    Number of variables which should be appended.
+    
 
-Appends a number of variables to the optimization task.
 
 .. index:: basis_cond
 
@@ -739,11 +753,10 @@ Appends a number of variables to the optimization task.
 
 *Returns:* ``(nrmbasis,nrminvbasis)``
     ``nrmbasis : f64``
-        An estimate for the 1 norm of the basis.
+        
     ``nrminvbasis : f64``
-        An estimate for the 1 norm of the inverse of the basis.
+        
 
-Computes conditioning information for the basis matrix.
 
 .. index:: check_convexity
 
@@ -757,7 +770,6 @@ Computes conditioning information for the basis matrix.
     pub fn check_convexity ( &self )
 
 
-Checks if a quadratic optimization problem is convex.
 
 .. index:: check_mem
 
@@ -773,41 +785,10 @@ Checks if a quadratic optimization problem is convex.
                        line  : i32 )
 
 ``file``
-    File from which the function is called.
-``line``
-    Line in the file from which the function is called.
-
-Checks the memory allocated by the task.
-
-.. index:: chg_bound
-
-.. _optimizer_task_chgbound:
-
-``chg_bound()``
----------------
-
-.. code-block:: rust
-
-    pub fn chg_bound ( &self,
-                       accmode : i32,
-                       i       : i32,
-                       lower   : i32,
-                       finite  : i32,
-                       value   : f64 )
-
-``accmode``
     
-``i``
-    Index of the constraint or variable for which the bounds should be changed.
-``lower``
-    If non-zero, then the lower bound is changed, otherwise
-                                the upper bound is changed.
-``finite``
-    If non-zero, then the given value is assumed to be finite.
-``value``
-    New value for the bound.
+``line``
+    
 
-Changes the bounds for one constraint or variable.
 
 .. index:: chg_con_bound
 
@@ -825,15 +806,14 @@ Changes the bounds for one constraint or variable.
                            value  : f64 )
 
 ``i``
-    Index of the constraint for which the bounds should be changed.
+    
 ``lower``
-    If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
+    
 ``finite``
-    If non-zero, then the given value is assumed to be finite.
+    
 ``value``
-    New value for the bound.
+    
 
-Changes the bounds for one constraint.
 
 .. index:: chg_var_bound
 
@@ -851,16 +831,14 @@ Changes the bounds for one constraint.
                            value  : f64 )
 
 ``j``
-    Index of the variable for which the bounds should be changed.
+    
 ``lower``
-    If non-zero, then the lower bound is changed, otherwise
-                                the upper bound is changed.
+    
 ``finite``
-    If non-zero, then the given value is assumed to be finite.
+    
 ``value``
-    New value for the bound.
+    
 
-Changes the bounds for one variable.
 
 .. index:: commit_changes
 
@@ -874,7 +852,6 @@ Changes the bounds for one variable.
     pub fn commit_changes ( &self )
 
 
-Commits all cached problem changes.
 
 .. index:: delete_solution
 
@@ -890,7 +867,6 @@ Commits all cached problem changes.
 ``whichsol``
     
 
-Undefine a solution and frees the memory it uses.
 
 .. index:: dual_sensitivity
 
@@ -909,17 +885,91 @@ Undefine a solution and frees the memory it uses.
                               rightrangej : & mut [f64] )
 
 ``subj``
-    Index of objective coefficients to analyze.
+    
 ``leftpricej``
-    Left shadow prices for requested coefficients.
+    
 ``rightpricej``
-    Right shadow prices for requested coefficients.
+    
 ``leftrangej``
-    Left range for requested coefficients.
+    
 ``rightrangej``
-    Right range for requested coefficients.
+    
 
-Performs sensitivity analysis on objective coefficients.
+
+.. index:: generate_con_names
+
+.. _optimizer_task_generateconnames:
+
+``generate_con_names()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn generate_con_names ( &self,
+                                subi_ : & [i32],
+                                fmt   : &str,
+                                dims_ : & [i32],
+                                sp_   : & [i64] )
+
+``subi``
+    
+``fmt``
+    
+``dims``
+    
+``sp``
+    
+
+
+.. index:: generate_cone_names
+
+.. _optimizer_task_generateconenames:
+
+``generate_cone_names()``
+-------------------------
+
+.. code-block:: rust
+
+    pub fn generate_cone_names ( &self,
+                                 subk_ : & [i32],
+                                 fmt   : &str,
+                                 dims_ : & [i32],
+                                 sp_   : & [i64] )
+
+``subk``
+    
+``fmt``
+    
+``dims``
+    
+``sp``
+    
+
+
+.. index:: generate_var_names
+
+.. _optimizer_task_generatevarnames:
+
+``generate_var_names()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn generate_var_names ( &self,
+                                subj_ : & [i32],
+                                fmt   : &str,
+                                dims_ : & [i32],
+                                sp_   : & [i64] )
+
+``subj``
+    
+``fmt``
+    
+``dims``
+    
+``sp``
+    
+
 
 .. index:: get_a_col
 
@@ -936,16 +986,15 @@ Performs sensitivity analysis on objective coefficients.
                        valj  : & mut [f64] )
 
 ``j``
-    Index of the column.
+    
 ``subj``
-    Index of the non-zeros in the row obtained.
+    
 ``valj``
-    Numerical values of the column obtained.
+    
 *Returns:* ``nzj``
     ``nzj : i32``
-        Number of non-zeros in the column obtained.
+        
 
-Obtains one column of the linear constraint matrix.
 
 .. index:: get_a_col_num_nz
 
@@ -959,12 +1008,33 @@ Obtains one column of the linear constraint matrix.
     pub fn get_a_col_num_nz ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index of the column.
+    
 *Returns:* ``nzj``
     ``nzj : i32``
-        Number of non-zeros in the j'th row or column of (A).
+        
 
-Obtains the number of non-zero elements in one column of the linear constraint matrix
+
+.. index:: get_a_col_slice_num_nz
+
+.. _optimizer_task_getacolslicenumnz64:
+
+``get_a_col_slice_num_nz()``
+----------------------------
+
+.. code-block:: rust
+
+    pub fn get_a_col_slice_num_nz ( &self,
+                                    first : i32,
+                                    last  : i32 )
+
+``first``
+    
+``last``
+    
+*Returns:* ``numnz``
+    ``numnz : i64``
+        
+
 
 .. index:: get_a_piece_num_nz
 
@@ -982,18 +1052,17 @@ Obtains the number of non-zero elements in one column of the linear constraint m
                                 lastj  : i32 )
 
 ``firsti``
-    Index of the first row in the rectangular piece.
+    
 ``lasti``
-    Index of the last row plus one in the rectangular piece.
+    
 ``firstj``
-    Index of the first column in the rectangular piece.
+    
 ``lastj``
-    Index of the last column plus one in the rectangular piece.
+    
 *Returns:* ``numnz``
     ``numnz : i32``
-        Number of non-zero elements in the rectangular piece of the linear constraint matrix.
+        
 
-Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
 
 .. index:: get_a_row
 
@@ -1010,16 +1079,15 @@ Obtains the number non-zeros in a rectangular piece of the linear constraint mat
                        vali  : & mut [f64] )
 
 ``i``
-    Index of the row or column.
+    
 ``subi``
-    Index of the non-zeros in the row obtained.
+    
 ``vali``
-    Numerical values of the row obtained.
+    
 *Returns:* ``nzi``
     ``nzi : i32``
-        Number of non-zeros in the row obtained.
+        
 
-Obtains one row of the linear constraint matrix.
 
 .. index:: get_a_row_num_nz
 
@@ -1033,38 +1101,48 @@ Obtains one row of the linear constraint matrix.
     pub fn get_a_row_num_nz ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index of the row or column.
+    
 *Returns:* ``nzi``
     ``nzi : i32``
-        Number of non-zeros in the i'th row of `A`.
+        
 
-Obtains the number of non-zero elements in one row of the linear constraint matrix
 
-.. index:: get_a_slice_num_nz
+.. index:: get_a_row_slice_num_nz
 
-.. _optimizer_task_getaslicenumnz64:
+.. _optimizer_task_getarowslicenumnz64:
 
-``get_a_slice_num_nz()``
+``get_a_row_slice_num_nz()``
+----------------------------
+
+.. code-block:: rust
+
+    pub fn get_a_row_slice_num_nz ( &self,
+                                    first : i32,
+                                    last  : i32 )
+
+``first``
+    
+``last``
+    
+*Returns:* ``numnz``
+    ``numnz : i64``
+        
+
+
+.. index:: get_a_truncate_tol
+
+.. _optimizer_task_getatruncatetol:
+
+``get_a_truncate_tol()``
 ------------------------
 
 .. code-block:: rust
 
-    pub fn get_a_slice_num_nz ( &self,
-                                accmode : i32,
-                                first   : i32,
-                                last    : i32 )
+    pub fn get_a_truncate_tol ( &self,tolzero : & mut [f64] )
 
-``accmode``
-    Defines whether non-zeros are counted in a column slice or a row slice.
-``first``
-    Index of the first row or column in the sequence.
-``last``
-    Index of the last row or column plus one in the sequence.
-*Returns:* ``numnz``
-    ``numnz : i64``
-        Number of non-zeros in the slice.
+``tolzero``
+    
 
-Obtains the number of non-zeros in a slice of rows or columns of the coefficient matrix.
 
 .. index:: get_aij
 
@@ -1080,14 +1158,13 @@ Obtains the number of non-zeros in a slice of rows or columns of the coefficient
                      j     : i32 )
 
 ``i``
-    Row index of the coefficient to be returned.
+    
 ``j``
-    Column index of the coefficient to be returned.
+    
 *Returns:* ``aij``
     ``aij : f64``
-        Returns the requested coefficient.
+        
 
-Obtains a single coefficient in linear constraint matrix.
 
 .. index:: get_bara_block_triplet
 
@@ -1106,20 +1183,19 @@ Obtains a single coefficient in linear constraint matrix.
                                     valijkl : & mut [f64] )
 
 ``subi``
-    Constraint index.
+    
 ``subj``
-    Symmetric matrix variable index.
+    
 ``subk``
-    Block row index.
+    
 ``subl``
-    Block column index.
+    
 ``valijkl``
-    A list indexes of the elements from symmetric matrix storage that appears in the weighted sum.
+    
 *Returns:* ``num``
     ``num : i64``
-        Number of elements in the block triplet form.
+        
 
-Obtains barA in block triplet form.
 
 .. index:: get_bara_idx
 
@@ -1136,20 +1212,19 @@ Obtains barA in block triplet form.
                           weights : & mut [f64] )
 
 ``idx``
-    Position of the element in the vectorized form.
+    
 ``sub``
-    A list indexes   of the elements from symmetric matrix storage that appears in the weighted sum.
+    
 ``weights``
-    The weights associated with each term in the weighted sum.
+    
 *Returns:* ``(i,j,num)``
     ``i : i32``
-        Row index of the element at position idx.
+        
     ``j : i32``
-        Column index of the element at position idx.
+        
     ``num : i64``
-        Number of terms in weighted sum that forms the element.
+        
 
-Obtains information about an element barA.
 
 .. index:: get_bara_idx_i_j
 
@@ -1163,14 +1238,13 @@ Obtains information about an element barA.
     pub fn get_bara_idx_i_j ( &self,idx   : i64 ) -> (i32,i32)
 
 ``idx``
-    Position of the element in the vectorized form.
+    
 *Returns:* ``(i,j)``
     ``i : i32``
-        Row index of the element at position idx.
+        
     ``j : i32``
-        Column index of the element at position idx.
+        
 
-Obtains information about an element barA.
 
 .. index:: get_bara_idx_info
 
@@ -1184,12 +1258,11 @@ Obtains information about an element barA.
     pub fn get_bara_idx_info ( &self,idx   : i64 ) -> i64
 
 ``idx``
-    The internal position of the element that should be obtained information for.
+    
 *Returns:* ``num``
     ``num : i64``
-        Number of terms in the weighted sum that forms the specified element in barA.
+        
 
-Obtains the number terms in the weighted sum that forms a particular element in barA.
 
 .. index:: get_bara_sparsity
 
@@ -1203,12 +1276,11 @@ Obtains the number terms in the weighted sum that forms a particular element in 
     pub fn get_bara_sparsity ( &self,idxij : & mut [i64] ) -> i64
 
 ``idxij``
-    Position of each nonzero element in the vector representation of barA.
+    
 *Returns:* ``numnz``
     ``numnz : i64``
-        Number of nonzero elements in barA.
+        
 
-Obtains the sparsity pattern of the barA matrix.
 
 .. index:: get_barc_block_triplet
 
@@ -1220,24 +1292,23 @@ Obtains the sparsity pattern of the barA matrix.
 .. code-block:: rust
 
     pub fn get_barc_block_triplet ( &self,
-                                    subj    : & mut [i32],
-                                    subk    : & mut [i32],
-                                    subl    : & mut [i32],
-                                    valijkl : & mut [f64] )
+                                    subj   : & mut [i32],
+                                    subk   : & mut [i32],
+                                    subl   : & mut [i32],
+                                    valjkl : & mut [f64] )
 
 ``subj``
-    Symmetric matrix variable index.
+    
 ``subk``
-    Block row index.
+    
 ``subl``
-    Block column index.
-``valijkl``
-    A list indexes of the elements from symmetric matrix storage that appears in the weighted sum.
+    
+``valjkl``
+    
 *Returns:* ``num``
     ``num : i64``
-        Number of elements in the block triplet form.
+        
 
-Obtains barc in block triplet form.
 
 .. index:: get_barc_idx
 
@@ -1254,18 +1325,17 @@ Obtains barc in block triplet form.
                           weights : & mut [f64] )
 
 ``idx``
-    Index of the element that should be obtained information about.
+    
 ``sub``
-    Elements appearing the weighted sum.
+    
 ``weights``
-    Weights of terms in the weighted sum.
+    
 *Returns:* ``(j,num)``
     ``j : i32``
-        Row index in barc.
+        
     ``num : i64``
-        Number of terms in the weighted sum.
+        
 
-Obtains information about an element in barc.
 
 .. index:: get_barc_idx_info
 
@@ -1279,12 +1349,11 @@ Obtains information about an element in barc.
     pub fn get_barc_idx_info ( &self,idx   : i64 ) -> i64
 
 ``idx``
-    Index of element that should be obtained information about. The value is an index of a symmetric sparse variable.
+    
 *Returns:* ``num``
     ``num : i64``
-        Number of terms that appears in weighted that forms the requested element.
+        
 
-Obtains information about an element in barc.
 
 .. index:: get_barc_idx_j
 
@@ -1298,12 +1367,11 @@ Obtains information about an element in barc.
     pub fn get_barc_idx_j ( &self,idx   : i64 ) -> i32
 
 ``idx``
-    Index of the element that should be obtained information about.
+    
 *Returns:* ``j``
     ``j : i32``
-        Row index in barc.
+        
 
-Obtains the row index of an element in barc.
 
 .. index:: get_barc_sparsity
 
@@ -1317,12 +1385,11 @@ Obtains the row index of an element in barc.
     pub fn get_barc_sparsity ( &self,idxj  : & mut [i64] ) -> i64
 
 ``idxj``
-    Internal positions of the nonzeros elements in barc.
+    
 *Returns:* ``numnz``
     ``numnz : i64``
-        Number of nonzero elements in barc.
+        
 
-Get the positions of the nonzero elements in barc.
 
 .. index:: get_bars_j
 
@@ -1341,11 +1408,38 @@ Get the positions of the nonzero elements in barc.
 ``whichsol``
     
 ``j``
-    Index of the semidefinite variable.
+    
 ``barsj``
-    Value of the j'th variable of barx.
+    
 
-Obtains the dual solution for a semidefinite variable.
+
+.. index:: get_bars_slice
+
+.. _optimizer_task_getbarsslice:
+
+``get_bars_slice()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn get_bars_slice ( &self,
+                            whichsol  : i32,
+                            first     : i32,
+                            last      : i32,
+                            slicesize : i64,
+                            barsslice : & mut [f64] )
+
+``whichsol``
+    
+``first``
+    
+``last``
+    
+``slicesize``
+    
+``barsslice``
+    
+
 
 .. index:: get_barvar_name
 
@@ -1359,12 +1453,11 @@ Obtains the dual solution for a semidefinite variable.
     pub fn get_barvar_name ( &self,i     : i32 ) -> String
 
 ``i``
-    Index.
+    
 *Returns:* ``name``
     ``name : String``
-        The requested name is copied to this buffer.
+        
 
-Obtains a name of a semidefinite variable.
 
 .. index:: get_barvar_name_index
 
@@ -1378,14 +1471,13 @@ Obtains a name of a semidefinite variable.
     pub fn get_barvar_name_index ( &self,somename : &str ) -> (i32,i32)
 
 ``somename``
-    The requested name is copied to this buffer.
+    
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if name somename is assigned to a semidefinite variable.
+        
     ``index : i32``
-        If the name somename is assigned to a semidefinite variable, then index is the name of the constraint.
+        
 
-Obtains the index of name of semidefinite variable.
 
 .. index:: get_barvar_name_len
 
@@ -1399,12 +1491,11 @@ Obtains the index of name of semidefinite variable.
     pub fn get_barvar_name_len ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index.
+    
 *Returns:* ``len``
     ``len : i32``
-        Returns the length of the indicated name.
+        
 
-Obtains the length of a name of a semidefinite variable.
 
 .. index:: get_barx_j
 
@@ -1423,70 +1514,38 @@ Obtains the length of a name of a semidefinite variable.
 ``whichsol``
     
 ``j``
-    Index of the semidefinite variable.
-``barxj``
-    Value of the j'th variable of barx.
-
-Obtains the primal solution for a semidefinite variable.
-
-.. index:: get_bound
-
-.. _optimizer_task_getbound:
-
-``get_bound()``
----------------
-
-.. code-block:: rust
-
-    pub fn get_bound ( &self,
-                       accmode : i32,
-                       i       : i32 )
-
-``accmode``
     
-``i``
-    Index of the constraint or variable for which the bound information should be obtained.
-*Returns:* ``(bk,bl,bu)``
-    ``bk : i32``
-        
-    ``bl : f64``
-        
-    ``bu : f64``
-        
+``barxj``
+    
 
-Obtains bound information for one constraint or variable.
 
-.. index:: get_bound_slice
+.. index:: get_barx_slice
 
-.. _optimizer_task_getboundslice:
+.. _optimizer_task_getbarxslice:
 
-``get_bound_slice()``
----------------------
+``get_barx_slice()``
+--------------------
 
 .. code-block:: rust
 
-    pub fn get_bound_slice ( &self,
-                             accmode : i32,
-                             first   : i32,
-                             last    : i32,
-                             bk      : & mut [i32],
-                             bl      : & mut [f64],
-                             bu      : & mut [f64] )
+    pub fn get_barx_slice ( &self,
+                            whichsol  : i32,
+                            first     : i32,
+                            last      : i32,
+                            slicesize : i64,
+                            barxslice : & mut [f64] )
 
-``accmode``
+``whichsol``
     
 ``first``
     
 ``last``
     
-``bk``
+``slicesize``
     
-``bl``
-    
-``bu``
+``barxslice``
     
 
-Obtains bounds information for a sequence of variables or constraints.
 
 .. index:: get_c
 
@@ -1502,7 +1561,6 @@ Obtains bounds information for a sequence of variables or constraints.
 ``c``
     
 
-Obtains all objective coefficients.
 
 .. index:: get_c_j
 
@@ -1516,12 +1574,30 @@ Obtains all objective coefficients.
     pub fn get_c_j ( &self,j     : i32 ) -> f64
 
 ``j``
-    Index of the variable for which c coefficient should be obtained.
+    
 *Returns:* ``cj``
     ``cj : f64``
-        The c coefficient value.
+        
 
-Obtains one coefficient of c.
+
+.. index:: get_c_list
+
+.. _optimizer_task_getclist:
+
+``get_c_list()``
+----------------
+
+.. code-block:: rust
+
+    pub fn get_c_list ( &self,
+                        subj_ : & [i32],
+                        c     : & mut [f64] )
+
+``subj``
+    
+``c``
+    
+
 
 .. index:: get_c_slice
 
@@ -1544,7 +1620,6 @@ Obtains one coefficient of c.
 ``c``
     
 
-Obtains a sequence of coefficients from the objective.
 
 .. index:: get_cfix
 
@@ -1561,7 +1636,6 @@ Obtains a sequence of coefficients from the objective.
     ``cfix : f64``
         
 
-Obtains the fixed term in the objective.
 
 .. index:: get_con_bound
 
@@ -1575,7 +1649,7 @@ Obtains the fixed term in the objective.
     pub fn get_con_bound ( &self,i     : i32 ) -> (i32,f64,f64)
 
 ``i``
-    Index of the constraint for which the bound information should be obtained.
+    
 *Returns:* ``(bk,bl,bu)``
     ``bk : i32``
         
@@ -1584,7 +1658,6 @@ Obtains the fixed term in the objective.
     ``bu : f64``
         
 
-Obtains bound information for one constraint.
 
 .. index:: get_con_bound_slice
 
@@ -1613,7 +1686,6 @@ Obtains bound information for one constraint.
 ``bu``
     
 
-Obtains bounds information for a slice of the constraints.
 
 .. index:: get_con_name
 
@@ -1627,12 +1699,11 @@ Obtains bounds information for a slice of the constraints.
     pub fn get_con_name ( &self,i     : i32 ) -> String
 
 ``i``
-    Index.
+    
 *Returns:* ``name``
     ``name : String``
-        Is assigned the required name.
+        
 
-Obtains a name of a constraint.
 
 .. index:: get_con_name_index
 
@@ -1646,14 +1717,13 @@ Obtains a name of a constraint.
     pub fn get_con_name_index ( &self,somename : &str ) -> (i32,i32)
 
 ``somename``
-    The name which should be checked.
+    
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if name somename is assigned to a constraint.
+        
     ``index : i32``
-        If the name somename is assigned to a constraint, then index is the name of the constraint.
+        
 
-Checks whether the name somename has been assigned  to any constraint.
 
 .. index:: get_con_name_len
 
@@ -1667,12 +1737,11 @@ Checks whether the name somename has been assigned  to any constraint.
     pub fn get_con_name_len ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index.
+    
 *Returns:* ``len``
     ``len : i32``
-        Returns the length of the indicated name.
+        
 
-Obtains the length of a name of a constraint variable.
 
 .. index:: get_cone
 
@@ -1688,7 +1757,7 @@ Obtains the length of a name of a constraint variable.
                       submem : & mut [i32] )
 
 ``k``
-    Index of the cone constraint.
+    
 ``submem``
     
 *Returns:* ``(ct,conepar,nummem)``
@@ -1699,7 +1768,6 @@ Obtains the length of a name of a constraint variable.
     ``nummem : i32``
         
 
-Obtains a conic constraint.
 
 .. index:: get_cone_info
 
@@ -1713,7 +1781,7 @@ Obtains a conic constraint.
     pub fn get_cone_info ( &self,k     : i32 ) -> (i32,f64,i32)
 
 ``k``
-    Index of the conic constraint.
+    
 *Returns:* ``(ct,conepar,nummem)``
     ``ct : i32``
         
@@ -1722,7 +1790,6 @@ Obtains a conic constraint.
     ``nummem : i32``
         
 
-Obtains information about a conic constraint.
 
 .. index:: get_cone_name
 
@@ -1736,12 +1803,11 @@ Obtains information about a conic constraint.
     pub fn get_cone_name ( &self,i     : i32 ) -> String
 
 ``i``
-    Index.
+    
 *Returns:* ``name``
     ``name : String``
-        Is assigned the required name.
+        
 
-Obtains a name of a cone.
 
 .. index:: get_cone_name_index
 
@@ -1755,14 +1821,13 @@ Obtains a name of a cone.
     pub fn get_cone_name_index ( &self,somename : &str ) -> (i32,i32)
 
 ``somename``
-    The name which should be checked.
+    
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if name somename is assigned to a cone.
+        
     ``index : i32``
-        If the name somename is assigned to a cone, then index is the name of the cone.
+        
 
-Checks whether the name somename has been assigned  to any cone.
 
 .. index:: get_cone_name_len
 
@@ -1776,12 +1841,11 @@ Checks whether the name somename has been assigned  to any cone.
     pub fn get_cone_name_len ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index.
+    
 *Returns:* ``len``
     ``len : i32``
-        Returns the length of the indicated name.
+        
 
-Obtains the length of a name of a cone.
 
 .. index:: get_dim_barvar_j
 
@@ -1795,12 +1859,11 @@ Obtains the length of a name of a cone.
     pub fn get_dim_barvar_j ( &self,j     : i32 ) -> i32
 
 ``j``
-    Index of the semidefinite variable whose dimension is requested.
+    
 *Returns:* ``dimbarvarj``
     ``dimbarvarj : i32``
-        The dimension of the j'th semidefinite variable.
+        
 
-Obtains the dimension of a symmetric matrix variable.
 
 .. index:: get_dou_inf
 
@@ -1817,9 +1880,8 @@ Obtains the dimension of a symmetric matrix variable.
     
 *Returns:* ``dvalue``
     ``dvalue : f64``
-        The value of the required double information item.
+        
 
-Obtains a double information item.
 
 .. index:: get_dou_param
 
@@ -1838,7 +1900,6 @@ Obtains a double information item.
     ``parvalue : f64``
         
 
-Obtains a double parameter.
 
 .. index:: get_dual_obj
 
@@ -1857,7 +1918,6 @@ Obtains a double parameter.
     ``dualobj : f64``
         
 
-Computes the dual objective value associated with the solution.
 
 .. index:: get_dual_solution_norms
 
@@ -1874,21 +1934,20 @@ Computes the dual objective value associated with the solution.
     
 *Returns:* ``(nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)``
     ``nrmy : f64``
-        The norm of the y vector.
+        
     ``nrmslc : f64``
-        The norm of the slc vector.
+        
     ``nrmsuc : f64``
-        The norm of the suc vector.
+        
     ``nrmslx : f64``
-        The norm of the slx vector.
+        
     ``nrmsux : f64``
-        The norm of the sux vector.
+        
     ``nrmsnx : f64``
-        The norm of the snx vector.
+        
     ``nrmbars : f64``
-        The norm of the bars vector.
+        
 
-Compute norms of the primal solution.
 
 .. index:: get_dviol_barvar
 
@@ -1907,11 +1966,10 @@ Compute norms of the primal solution.
 ``whichsol``
     
 ``sub``
-    An array of indexes of barx variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of dual solution for a set of barx variables.
 
 .. index:: get_dviol_con
 
@@ -1930,11 +1988,10 @@ Computes the violation of dual solution for a set of barx variables.
 ``whichsol``
     
 ``sub``
-    An array of indexes of constraints.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a dual solution associated with a set of constraints.
 
 .. index:: get_dviol_cones
 
@@ -1953,11 +2010,10 @@ Computes the violation of a dual solution associated with a set of constraints.
 ``whichsol``
     
 ``sub``
-    An array of indexes of barx variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a solution for set of dual conic constraints.
 
 .. index:: get_dviol_var
 
@@ -1976,11 +2032,10 @@ Computes the violation of a solution for set of dual conic constraints.
 ``whichsol``
     
 ``sub``
-    An array of indexes of x variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a dual solution associated with a set of x variables.
 
 .. index:: get_inf_index
 
@@ -2001,9 +2056,8 @@ Computes the violation of a dual solution associated with a set of x variables.
     
 *Returns:* ``infindex``
     ``infindex : i32``
-        The item index.
+        
 
-Obtains the index of a named information item.
 
 .. index:: get_inf_max
 
@@ -2023,7 +2077,6 @@ Obtains the index of a named information item.
 ``infmax``
     
 
-Obtains the maximum index of an information of a given type inftype plus 1.
 
 .. index:: get_inf_name
 
@@ -2046,7 +2099,6 @@ Obtains the maximum index of an information of a given type inftype plus 1.
     ``infname : String``
         
 
-Obtains the name of an information item.
 
 .. index:: get_int_inf
 
@@ -2063,9 +2115,8 @@ Obtains the name of an information item.
     
 *Returns:* ``ivalue``
     ``ivalue : i32``
-        The value of the required integer information item.
+        
 
-Obtains an integer information item.
 
 .. index:: get_int_param
 
@@ -2084,7 +2135,6 @@ Obtains an integer information item.
     ``parvalue : i32``
         
 
-Obtains an integer parameter.
 
 .. index:: get_len_barvar_j
 
@@ -2098,12 +2148,11 @@ Obtains an integer parameter.
     pub fn get_len_barvar_j ( &self,j     : i32 ) -> i64
 
 ``j``
-    Index of the semidefinite variable whose length if requested.
+    
 *Returns:* ``lenbarvarj``
     ``lenbarvarj : i64``
-        Number of scalar elements in the lower triangular part of the semidefinite variable.
+        
 
-Obtains the length if the j'th semidefinite variables.
 
 .. index:: get_lint_inf
 
@@ -2120,9 +2169,8 @@ Obtains the length if the j'th semidefinite variables.
     
 *Returns:* ``ivalue``
     ``ivalue : i64``
-        The value of the required integer information item.
+        
 
-Obtains an integer information item.
 
 .. index:: get_max_num_a_nz
 
@@ -2139,7 +2187,6 @@ Obtains an integer information item.
     ``maxnumanz : i64``
         
 
-Obtains number of preallocated non-zeros in the linear constraint matrix.
 
 .. index:: get_max_num_barvar
 
@@ -2154,9 +2201,8 @@ Obtains number of preallocated non-zeros in the linear constraint matrix.
 
 *Returns:* ``maxnumbarvar``
     ``maxnumbarvar : i32``
-        Obtains maximum number of semidefinite variable currently allowed.
+        
 
-Obtains the number of semidefinite variables.
 
 .. index:: get_max_num_con
 
@@ -2173,7 +2219,6 @@ Obtains the number of semidefinite variables.
     ``maxnumcon : i32``
         
 
-Obtains the number of preallocated constraints in the optimization task.
 
 .. index:: get_max_num_cone
 
@@ -2190,7 +2235,6 @@ Obtains the number of preallocated constraints in the optimization task.
     ``maxnumcone : i32``
         
 
-Obtains the number of preallocated cones in the optimization task.
 
 .. index:: get_max_num_q_nz
 
@@ -2207,7 +2251,6 @@ Obtains the number of preallocated cones in the optimization task.
     ``maxnumqnz : i64``
         
 
-Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
 
 .. index:: get_max_num_var
 
@@ -2224,7 +2267,6 @@ Obtains the number of preallocated non-zeros for all quadratic terms in objectiv
     ``maxnumvar : i32``
         
 
-Obtains the maximum number variables allowed.
 
 .. index:: get_mem_usage
 
@@ -2239,11 +2281,10 @@ Obtains the maximum number variables allowed.
 
 *Returns:* ``(meminuse,maxmemuse)``
     ``meminuse : i64``
-        Amount of memory currently used by the task.
+        
     ``maxmemuse : i64``
-        Maximum amount of memory used by the task until now.
+        
 
-Obtains information about the amount of memory used by a task.
 
 .. index:: get_num_a_nz
 
@@ -2260,7 +2301,6 @@ Obtains information about the amount of memory used by a task.
     ``numanz : i32``
         
 
-Obtains the number of non-zeros in the coefficient matrix.
 
 .. index:: get_num_a_nz_64
 
@@ -2277,7 +2317,6 @@ Obtains the number of non-zeros in the coefficient matrix.
     ``numanz : i64``
         
 
-Obtains the number of non-zeros in the coefficient matrix.
 
 .. index:: get_num_bara_block_triplets
 
@@ -2292,9 +2331,8 @@ Obtains the number of non-zeros in the coefficient matrix.
 
 *Returns:* ``num``
     ``num : i64``
-        Number elements in the block triplet form of bara.
+        
 
-Obtains an upper bound on the number of scalar elements in the block triplet form of bara.
 
 .. index:: get_num_bara_nz
 
@@ -2309,9 +2347,8 @@ Obtains an upper bound on the number of scalar elements in the block triplet for
 
 *Returns:* ``nz``
     ``nz : i64``
-        The number of nonzero block elements in barA.
+        
 
-Get the number of nonzero elements in barA.
 
 .. index:: get_num_barc_block_triplets
 
@@ -2326,9 +2363,8 @@ Get the number of nonzero elements in barA.
 
 *Returns:* ``num``
     ``num : i64``
-        An upper bound on the number elements in the block trip let form of barc.
+        
 
-Obtains an upper bound on the number of elements in the block triplet form of barc.
 
 .. index:: get_num_barc_nz
 
@@ -2343,9 +2379,8 @@ Obtains an upper bound on the number of elements in the block triplet form of ba
 
 *Returns:* ``nz``
     ``nz : i64``
-        The number of nonzero elements in barc.
+        
 
-Obtains the number of nonzero elements in barc.
 
 .. index:: get_num_barvar
 
@@ -2360,9 +2395,8 @@ Obtains the number of nonzero elements in barc.
 
 *Returns:* ``numbarvar``
     ``numbarvar : i32``
-        Number of semidefinite variable in the problem.
+        
 
-Obtains the number of semidefinite variables.
 
 .. index:: get_num_con
 
@@ -2379,7 +2413,6 @@ Obtains the number of semidefinite variables.
     ``numcon : i32``
         
 
-Obtains the number of constraints.
 
 .. index:: get_num_cone
 
@@ -2394,9 +2427,8 @@ Obtains the number of constraints.
 
 *Returns:* ``numcone``
     ``numcone : i32``
-        Number conic constraints.
+        
 
-Obtains the number of cones.
 
 .. index:: get_num_cone_mem
 
@@ -2410,12 +2442,11 @@ Obtains the number of cones.
     pub fn get_num_cone_mem ( &self,k     : i32 ) -> i32
 
 ``k``
-    Index of the cone.
+    
 *Returns:* ``nummem``
     ``nummem : i32``
         
 
-Obtains the number of members in a cone.
 
 .. index:: get_num_int_var
 
@@ -2430,9 +2461,8 @@ Obtains the number of members in a cone.
 
 *Returns:* ``numintvar``
     ``numintvar : i32``
-        Number of integer variables.
+        
 
-Obtains the number of integer-constrained variables.
 
 .. index:: get_num_param
 
@@ -2449,9 +2479,8 @@ Obtains the number of integer-constrained variables.
     
 *Returns:* ``numparam``
     ``numparam : i32``
-        Returns the number of parameters of the requested type.
+        
 
-Obtains the number of parameters of a given type.
 
 .. index:: get_num_q_con_k_nz
 
@@ -2465,12 +2494,11 @@ Obtains the number of parameters of a given type.
     pub fn get_num_q_con_k_nz ( &self,k     : i32 ) -> i64
 
 ``k``
-    Index of the constraint for which the number quadratic terms should be obtained.
+    
 *Returns:* ``numqcnz``
     ``numqcnz : i64``
         
 
-Obtains the number of non-zero quadratic terms in a constraint.
 
 .. index:: get_num_q_obj_nz
 
@@ -2487,7 +2515,6 @@ Obtains the number of non-zero quadratic terms in a constraint.
     ``numqonz : i64``
         
 
-Obtains the number of non-zero quadratic terms in the objective.
 
 .. index:: get_num_sym_mat
 
@@ -2502,9 +2529,8 @@ Obtains the number of non-zero quadratic terms in the objective.
 
 *Returns:* ``num``
     ``num : i64``
-        Returns the number of symmetric sparse matrixes.
+        
 
-Get the number of symmetric matrixes stored.
 
 .. index:: get_num_var
 
@@ -2521,7 +2547,6 @@ Get the number of symmetric matrixes stored.
     ``numvar : i32``
         
 
-Obtains the number of variables.
 
 .. index:: get_obj_name
 
@@ -2536,9 +2561,8 @@ Obtains the number of variables.
 
 *Returns:* ``objname``
     ``objname : String``
-        Assigned the objective name.
+        
 
-Obtains the name assigned to the objective function.
 
 .. index:: get_obj_name_len
 
@@ -2553,9 +2577,8 @@ Obtains the name assigned to the objective function.
 
 *Returns:* ``len``
     ``len : i32``
-        Assigned the length of the objective name.
+        
 
-Obtains the length of the name assigned to the objective function.
 
 .. index:: get_obj_sense
 
@@ -2570,9 +2593,8 @@ Obtains the length of the name assigned to the objective function.
 
 *Returns:* ``sense``
     ``sense : i32``
-        The returned objective sense.
+        
 
-Gets the objective sense.
 
 .. index:: get_param_max
 
@@ -2591,7 +2613,6 @@ Gets the objective sense.
     ``parammax : i32``
         
 
-Obtains the maximum index of a parameter of a given type plus 1.
 
 .. index:: get_param_name
 
@@ -2614,7 +2635,6 @@ Obtains the maximum index of a parameter of a given type plus 1.
     ``parname : String``
         
 
-Obtains the name of a parameter.
 
 .. index:: get_primal_obj
 
@@ -2633,7 +2653,6 @@ Obtains the name of a parameter.
     ``primalobj : f64``
         
 
-Computes the primal objective value for the desired solution.
 
 .. index:: get_primal_solution_norms
 
@@ -2650,13 +2669,12 @@ Computes the primal objective value for the desired solution.
     
 *Returns:* ``(nrmxc,nrmxx,nrmbarx)``
     ``nrmxc : f64``
-        The norm of xc vector.
+        
     ``nrmxx : f64``
-        The norm of xx vector.
+        
     ``nrmbarx : f64``
-        The norm of barx vector.
+        
 
-Compute norms of the primal solution.
 
 .. index:: get_pro_sta
 
@@ -2675,7 +2693,6 @@ Compute norms of the primal solution.
     ``prosta : i32``
         
 
-Obtains the problem status.
 
 .. index:: get_prob_type
 
@@ -2690,9 +2707,8 @@ Obtains the problem status.
 
 *Returns:* ``probtype``
     ``probtype : i32``
-        The problem type.
+        
 
-Obtains the problem type.
 
 .. index:: get_pviol_barvar
 
@@ -2711,11 +2727,10 @@ Obtains the problem type.
 ``whichsol``
     
 ``sub``
-    An array of indexes of barx variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a primal solution for a list of barx variables.
 
 .. index:: get_pviol_con
 
@@ -2734,11 +2749,10 @@ Computes the violation of a primal solution for a list of barx variables.
 ``whichsol``
     
 ``sub``
-    An array of indexes of constraints.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a primal solution for a list of xc variables.
 
 .. index:: get_pviol_cones
 
@@ -2757,11 +2771,10 @@ Computes the violation of a primal solution for a list of xc variables.
 ``whichsol``
     
 ``sub``
-    An array of indexes of barx variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a solution for set of conic constraints.
 
 .. index:: get_pviol_var
 
@@ -2780,11 +2793,10 @@ Computes the violation of a solution for set of conic constraints.
 ``whichsol``
     
 ``sub``
-    An array of indexes of x variables.
+    
 ``viol``
-    List of violations corresponding to sub.
+    
 
-Computes the violation of a primal solution for a list of x variables.
 
 .. index:: get_q_obj_i_j
 
@@ -2800,14 +2812,13 @@ Computes the violation of a primal solution for a list of x variables.
                            j     : i32 )
 
 ``i``
-    Row index of the coefficient.
+    
 ``j``
-    Column index of coefficient.
+    
 *Returns:* ``qoij``
     ``qoij : f64``
-        The required coefficient.
+        
 
-Obtains one coefficient from the quadratic term of the objective
 
 .. index:: get_reduced_costs
 
@@ -2827,13 +2838,12 @@ Obtains one coefficient from the quadratic term of the objective
 ``whichsol``
     
 ``first``
-    See the documentation for a full description.
+    
 ``last``
-    See the documentation for a full description.
+    
 ``redcosts``
-    Returns the requested reduced costs. See documentation for a full description.
+    
 
-Obtains the difference of (slx-sux) for a sequence of variables.
 
 .. index:: get_skc
 
@@ -2853,7 +2863,6 @@ Obtains the difference of (slx-sux) for a sequence of variables.
 ``skc``
     
 
-Obtains the status keys for the constraints.
 
 .. index:: get_skc_slice
 
@@ -2879,7 +2888,6 @@ Obtains the status keys for the constraints.
 ``skc``
     
 
-Obtains the status keys for the constraints.
 
 .. index:: get_skx
 
@@ -2899,7 +2907,6 @@ Obtains the status keys for the constraints.
 ``skx``
     
 
-Obtains the status keys for the scalar variables.
 
 .. index:: get_skx_slice
 
@@ -2925,7 +2932,6 @@ Obtains the status keys for the scalar variables.
 ``skx``
     
 
-Obtains the status keys for the variables.
 
 .. index:: get_slc
 
@@ -2943,9 +2949,8 @@ Obtains the status keys for the variables.
 ``whichsol``
     
 ``slc``
-    The slc vector.
+    
 
-Obtains the slc vector for a solution.
 
 .. index:: get_slc_slice
 
@@ -2971,7 +2976,6 @@ Obtains the slc vector for a solution.
 ``slc``
     
 
-Obtains a slice of the slc vector for a solution.
 
 .. index:: get_slx
 
@@ -2989,9 +2993,8 @@ Obtains a slice of the slc vector for a solution.
 ``whichsol``
     
 ``slx``
-    The slx vector.
+    
 
-Obtains the slx vector for a solution.
 
 .. index:: get_slx_slice
 
@@ -3017,7 +3020,6 @@ Obtains the slx vector for a solution.
 ``slx``
     
 
-Obtains a slice of the slx vector for a solution.
 
 .. index:: get_snx
 
@@ -3035,9 +3037,8 @@ Obtains a slice of the slx vector for a solution.
 ``whichsol``
     
 ``snx``
-    The snx vector.
+    
 
-Obtains the snx vector for a solution.
 
 .. index:: get_snx_slice
 
@@ -3063,7 +3064,6 @@ Obtains the snx vector for a solution.
 ``snx``
     
 
-Obtains a slice of the snx vector for a solution.
 
 .. index:: get_sol_sta
 
@@ -3082,7 +3082,6 @@ Obtains a slice of the snx vector for a solution.
     ``solsta : i32``
         
 
-Obtains the solution status.
 
 .. index:: get_solution
 
@@ -3137,41 +3136,6 @@ Obtains the solution status.
     ``solsta : i32``
         
 
-Obtains the complete solution.
-
-.. index:: get_solution_i
-
-.. _optimizer_task_getsolutioni:
-
-``get_solution_i()``
---------------------
-
-.. code-block:: rust
-
-    pub fn get_solution_i ( &self,
-                            accmode  : i32,
-                            i        : i32,
-                            whichsol : i32 )
-
-``accmode``
-    Defines whether solution information for a constraint or for a variable is retrieved.
-``i``
-    Index of the constraint or variable.
-``whichsol``
-    
-*Returns:* ``(sk,x,sl,su,sn)``
-    ``sk : i32``
-        Status key of the constraint of variable.
-    ``x : f64``
-        Solution value of the primal variable.
-    ``sl : f64``
-        Solution value of the dual variable associated with the lower bound.
-    ``su : f64``
-        Solution value of the dual variable associated with the upper bound.
-    ``sn : f64``
-        Solution value of the dual variable associated with the cone constraint.
-
-Obtains the solution for a single constraint or variable.
 
 .. index:: get_solution_info
 
@@ -3188,29 +3152,28 @@ Obtains the solution for a single constraint or variable.
     
 *Returns:* ``(pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)``
     ``pobj : f64``
-        The primal objective value.
+        
     ``pviolcon : f64``
-        Maximal primal bound violation for a xc variable.
+        
     ``pviolvar : f64``
-        Maximal primal bound violation for a xx variable.
+        
     ``pviolbarvar : f64``
-        Maximal primal bound violation for a barx variable.
+        
     ``pviolcone : f64``
-        Maximal primal violation of the solution with respect to the conic constraints.
+        
     ``pviolitg : f64``
-        Maximal violation in the integer constraints.
+        
     ``dobj : f64``
-        Dual objective value.
+        
     ``dviolcon : f64``
-        Maximal dual bound violation a xc variable.
+        
     ``dviolvar : f64``
-        Maximal dual bound violation xx variable.
+        
     ``dviolbarvar : f64``
-        Maximal dual bound violation for a bars variable.
+        
     ``dviolcone : f64``
-        Maximum violation of the dual solution in the dual conic constraints .
+        
 
-Obtains information about of a solution.
 
 .. index:: get_solution_slice
 
@@ -3233,13 +3196,12 @@ Obtains information about of a solution.
 ``solitem``
     
 ``first``
-    Index of the first value in the slice.
+    
 ``last``
-    Value of the last index+1 in the slice.
+    
 ``values``
-    The values of the requested solution elements.
+    
 
-Obtains a slice of the solution.
 
 .. index:: get_sparse_sym_mat
 
@@ -3257,15 +3219,14 @@ Obtains a slice of the solution.
                                 valij : & mut [f64] )
 
 ``idx``
-    Index of the matrix to get.
+    
 ``subi``
-    Row subscripts of the matrix non-zero elements.
+    
 ``subj``
-    Column subscripts of the matrix non-zero elements.
+    
 ``valij``
-    Coefficients of the matrix non-zero elements.
+    
 
-Gets a single symmetric matrix from the matrix store.
 
 .. index:: get_str_param
 
@@ -3282,11 +3243,10 @@ Gets a single symmetric matrix from the matrix store.
     
 *Returns:* ``(len,parvalue)``
     ``len : i32``
-        The length of the parameter value.
+        
     ``parvalue : String``
-        If this is not |null|, the parameter value is stored here.
+        
 
-Obtains the value of a string parameter.
 
 .. index:: get_str_param_len
 
@@ -3303,9 +3263,8 @@ Obtains the value of a string parameter.
     
 *Returns:* ``len``
     ``len : i32``
-        The length of the parameter value.
+        
 
-Obtains the length of a string parameter.
 
 .. index:: get_suc
 
@@ -3323,9 +3282,8 @@ Obtains the length of a string parameter.
 ``whichsol``
     
 ``suc``
-    The suc vector.
+    
 
-Obtains the suc vector for a solution.
 
 .. index:: get_suc_slice
 
@@ -3351,7 +3309,6 @@ Obtains the suc vector for a solution.
 ``suc``
     
 
-Obtains a slice of the suc vector for a solution.
 
 .. index:: get_sux
 
@@ -3369,9 +3326,8 @@ Obtains a slice of the suc vector for a solution.
 ``whichsol``
     
 ``sux``
-    The sux vector.
+    
 
-Obtains the sux vector for a solution.
 
 .. index:: get_sux_slice
 
@@ -3397,7 +3353,6 @@ Obtains the sux vector for a solution.
 ``sux``
     
 
-Obtains a slice of the sux vector for a solution.
 
 .. index:: get_sym_mat_info
 
@@ -3411,16 +3366,15 @@ Obtains a slice of the sux vector for a solution.
     pub fn get_sym_mat_info ( &self,idx   : i64 ) -> (i32,i64,i32)
 
 ``idx``
-    Index of the matrix that is requested information about.
+    
 *Returns:* ``(dim,nz,type)``
     ``dim : i32``
-        Returns the dimension of the requested matrix.
+        
     ``nz : i64``
-        Returns the number of non-zeros in the requested matrix.
+        
     ``type : i32``
-        Returns the type of the requested matrix.
+        
 
-Obtains information of  a matrix from the symmetric matrix storage E.
 
 .. index:: get_task_name
 
@@ -3435,9 +3389,8 @@ Obtains information of  a matrix from the symmetric matrix storage E.
 
 *Returns:* ``taskname``
     ``taskname : String``
-        Is assigned the task name.
+        
 
-Obtains the task name.
 
 .. index:: get_task_name_len
 
@@ -3452,9 +3405,8 @@ Obtains the task name.
 
 *Returns:* ``len``
     ``len : i32``
-        Returns the length of the task name.
+        
 
-Obtains the length the task name.
 
 .. index:: get_var_bound
 
@@ -3468,7 +3420,7 @@ Obtains the length the task name.
     pub fn get_var_bound ( &self,i     : i32 ) -> (i32,f64,f64)
 
 ``i``
-    Index of the variable for which the bound information should be obtained.
+    
 *Returns:* ``(bk,bl,bu)``
     ``bk : i32``
         
@@ -3477,7 +3429,6 @@ Obtains the length the task name.
     ``bu : f64``
         
 
-Obtains bound information for one variable.
 
 .. index:: get_var_bound_slice
 
@@ -3506,7 +3457,6 @@ Obtains bound information for one variable.
 ``bu``
     
 
-Obtains bounds information for a slice of the variables.
 
 .. index:: get_var_name
 
@@ -3520,12 +3470,11 @@ Obtains bounds information for a slice of the variables.
     pub fn get_var_name ( &self,j     : i32 ) -> String
 
 ``j``
-    Index.
+    
 *Returns:* ``name``
     ``name : String``
-        Returns the required name.
+        
 
-Obtains a name of a variable.
 
 .. index:: get_var_name_index
 
@@ -3539,14 +3488,13 @@ Obtains a name of a variable.
     pub fn get_var_name_index ( &self,somename : &str ) -> (i32,i32)
 
 ``somename``
-    The name which should be checked.
+    
 *Returns:* ``(asgn,index)``
     ``asgn : i32``
-        Is non-zero if name somename is assigned to a variable.
+        
     ``index : i32``
-        If the name somename is assigned to a variable, then index is the name of the variable.
+        
 
-Checks whether the name somename has been assigned  to any variable.
 
 .. index:: get_var_name_len
 
@@ -3560,12 +3508,11 @@ Checks whether the name somename has been assigned  to any variable.
     pub fn get_var_name_len ( &self,i     : i32 ) -> i32
 
 ``i``
-    Index.
+    
 *Returns:* ``len``
     ``len : i32``
-        Returns the length of the indicated name.
+        
 
-Obtains the length of a name of a variable variable.
 
 .. index:: get_var_type
 
@@ -3579,12 +3526,11 @@ Obtains the length of a name of a variable variable.
     pub fn get_var_type ( &self,j     : i32 ) -> i32
 
 ``j``
-    Index of the variable.
+    
 *Returns:* ``vartype``
     ``vartype : i32``
-        Variable type of variable index j.
+        
 
-Gets the variable type of one variable.
 
 .. index:: get_var_type_list
 
@@ -3600,11 +3546,10 @@ Gets the variable type of one variable.
                                vartype : & mut [i32] )
 
 ``subj``
-    A list of variable indexes.
+    
 ``vartype``
-    Returns the variables types corresponding the variable indexes requested.
+    
 
-Obtains the variable type for one or more variables.
 
 .. index:: get_xc
 
@@ -3622,9 +3567,8 @@ Obtains the variable type for one or more variables.
 ``whichsol``
     
 ``xc``
-    The xc vector.
+    
 
-Obtains the xc vector for a solution.
 
 .. index:: get_xc_slice
 
@@ -3650,7 +3594,6 @@ Obtains the xc vector for a solution.
 ``xc``
     
 
-Obtains a slice of the xc vector for a solution.
 
 .. index:: get_xx
 
@@ -3668,9 +3611,8 @@ Obtains a slice of the xc vector for a solution.
 ``whichsol``
     
 ``xx``
-    The xx vector.
+    
 
-Obtains the xx vector for a solution.
 
 .. index:: get_xx_slice
 
@@ -3696,7 +3638,6 @@ Obtains the xx vector for a solution.
 ``xx``
     
 
-Obtains a slice of the xx vector for a solution.
 
 .. index:: get_y
 
@@ -3714,9 +3655,8 @@ Obtains a slice of the xx vector for a solution.
 ``whichsol``
     
 ``y``
-    The y vector.
+    
 
-Obtains the y vector for a solution.
 
 .. index:: get_y_slice
 
@@ -3742,7 +3682,6 @@ Obtains the y vector for a solution.
 ``y``
     
 
-Obtains a slice of the y vector for a solution.
 
 .. index:: init_basis_solve
 
@@ -3756,9 +3695,8 @@ Obtains a slice of the y vector for a solution.
     pub fn init_basis_solve ( &self,basis : & mut [i32] )
 
 ``basis``
-    The array of basis indexes to use.
+    
 
-Prepare a task for basis solver.
 
 .. index:: input_data
 
@@ -3814,7 +3752,6 @@ Prepare a task for basis solver.
 ``bux``
     
 
-Input the linear part of an optimization task in one function call.
 
 .. index:: is_dou_par_name
 
@@ -3833,7 +3770,6 @@ Input the linear part of an optimization task in one function call.
     ``param : i32``
         
 
-Checks a double parameter name.
 
 .. index:: is_int_par_name
 
@@ -3852,7 +3788,6 @@ Checks a double parameter name.
     ``param : i32``
         
 
-Checks an integer parameter name.
 
 .. index:: is_str_par_name
 
@@ -3871,7 +3806,6 @@ Checks an integer parameter name.
     ``param : i32``
         
 
-Checks a string parameter name.
 
 .. index:: link_file_to_stream
 
@@ -3890,11 +3824,10 @@ Checks a string parameter name.
 ``whichstream``
     
 ``filename``
-    The name of the file where the stream is written.
+    
 ``append``
-    If this argument is 0 the output file will be overwritten, otherwise text is append to the output file.
+    
 
-Directs all output from a task stream to a file.
 
 .. index:: one_solution_summary
 
@@ -3914,7 +3847,6 @@ Directs all output from a task stream to a file.
 ``whichsol``
     
 
-Prints a short summary for the specified solution.
 
 .. index:: optimize
 
@@ -3929,9 +3861,8 @@ Prints a short summary for the specified solution.
 
 *Returns:* ``trmcode``
     ``trmcode : i32``
-        Is either OK or a termination response code.
+        
 
-Optimizes the problem.
 
 .. index:: optimizer_summary
 
@@ -3947,7 +3878,6 @@ Optimizes the problem.
 ``whichstream``
     
 
-Prints a short summary with optimizer statistics for last optimization.
 
 .. index:: primal_repair
 
@@ -3965,15 +3895,14 @@ Prints a short summary with optimizer statistics for last optimization.
                            wux_  : & [f64] )
 
 ``wlc``
-    Weights associated with relaxing lower bounds on the constraints.
+    
 ``wuc``
-    Weights associated with relaxing the upper bound on the constraints.
+    
 ``wlx``
-    Weights associated with relaxing the lower bounds of the variables.
+    
 ``wux``
-    Weights associated with relaxing the upper bounds of variables.
+    
 
-The function repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
 
 .. index:: primal_sensitivity
 
@@ -3999,31 +3928,30 @@ The function repairs a primal infeasible optimization problem by adjusting the b
                                 rightrangej : & mut [f64] )
 
 ``subi``
-    Indexes of bounds on constraints to analyze.
+    
 ``marki``
-    Mark which constraint bounds to analyze.
+    
 ``subj``
-    Indexes of bounds on variables to analyze.
+    
 ``markj``
-    Mark which variable bounds to analyze.
+    
 ``leftpricei``
-    Left shadow price for constraints.
+    
 ``rightpricei``
-    Right shadow price for constraints.
+    
 ``leftrangei``
-    Left range for constraints.
+    
 ``rightrangei``
-    Right range for constraints.
+    
 ``leftpricej``
-    Left price for variables.
+    
 ``rightpricej``
-    Right price for variables.
+    
 ``leftrangej``
-    Left range for variables.
+    
 ``rightrangej``
-    Right range for variables.
+    
 
-Perform sensitivity analysis on bounds.
 
 .. index:: pro_sta_to_str
 
@@ -4040,9 +3968,8 @@ Perform sensitivity analysis on bounds.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the status key.
+        
 
-Obtains a string containing the name of a problem status given.
 
 .. index:: prob_type_to_str
 
@@ -4059,9 +3986,8 @@ Obtains a string containing the name of a problem status given.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the problem type key.
+        
 
-Obtains a string containing the name of a problem type given.
 
 .. index:: put_a_col
 
@@ -4078,13 +4004,12 @@ Obtains a string containing the name of a problem type given.
                        valj_ : & [f64] )
 
 ``j``
-    Column index.
+    
 ``subj``
-    Row indexes of non-zero values in column.
+    
 ``valj``
-    New non-zero values of column.
+    
 
-Replaces all elements in one column of A.
 
 .. index:: put_a_col_list
 
@@ -4103,17 +4028,16 @@ Replaces all elements in one column of A.
                             aval_ : & [f64] )
 
 ``sub``
-    Indexes of columns that should be replaced.
+    
 ``ptrb``
-    Array of pointers to the first element in the columns.
+    
 ``ptre``
-    Array of pointers to the last element plus one in the columns.
+    
 ``asub``
-    Variable indexes.
+    
 ``aval``
     
 
-Replaces all elements in several columns the linear constraint matrix by new values.
 
 .. index:: put_a_col_slice
 
@@ -4133,19 +4057,18 @@ Replaces all elements in several columns the linear constraint matrix by new val
                              aval_ : & [f64] )
 
 ``first``
-    First column in the slice.
+    
 ``last``
-    Last column plus one in the slice.
+    
 ``ptrb``
-    Array of pointers to the first element in the columns.
+    
 ``ptre``
-    Array of pointers to the last element plus one in the columns.
+    
 ``asub``
-    Variable indexes.
+    
 ``aval``
     
 
-Replaces all elements in several columns the linear constraint matrix by new values.
 
 .. index:: put_a_row
 
@@ -4162,13 +4085,12 @@ Replaces all elements in several columns the linear constraint matrix by new val
                        vali_ : & [f64] )
 
 ``i``
-    row index.
+    
 ``subi``
-    Row indexes of non-zero values in row.
+    
 ``vali``
-    New non-zero values of row.
+    
 
-Replaces all elements in one row of A.
 
 .. index:: put_a_row_list
 
@@ -4180,24 +4102,23 @@ Replaces all elements in one row of A.
 .. code-block:: rust
 
     pub fn put_a_row_list ( &self,
-                            sub_   : & [i32],
-                            aptrb_ : & [i32],
-                            aptre_ : & [i32],
-                            asub_  : & [i32],
-                            aval_  : & [f64] )
+                            sub_  : & [i32],
+                            ptrb_ : & [i32],
+                            ptre_ : & [i32],
+                            asub_ : & [i32],
+                            aval_ : & [f64] )
 
 ``sub``
-    Indexes of rows or columns that should be replaced.
-``aptrb``
-    Array of pointers to the first element in the rows or columns.
-``aptre``
-    Array of pointers to the last element plus one in the rows or columns.
+    
+``ptrb``
+    
+``ptre``
+    
 ``asub``
-    Variable indexes.
+    
 ``aval``
     
 
-Replaces all elements in several rows the linear constraint matrix by new values.
 
 .. index:: put_a_row_slice
 
@@ -4217,19 +4138,33 @@ Replaces all elements in several rows the linear constraint matrix by new values
                              aval_ : & [f64] )
 
 ``first``
-    First row in the slice.
+    
 ``last``
-    Last row plus one in the slice.
+    
 ``ptrb``
-    Array of pointers to the first element in the rows.
+    
 ``ptre``
-    Array of pointers to the last element plus one in the rows.
+    
 ``asub``
-    Variable indexes.
+    
 ``aval``
     
 
-Replaces all elements in several rows the linear constraint matrix by new values.
+
+.. index:: put_a_truncate_tol
+
+.. _optimizer_task_putatruncatetol:
+
+``put_a_truncate_tol()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn put_a_truncate_tol ( &self,tolzero : f64 )
+
+``tolzero``
+    
+
 
 .. index:: put_aij
 
@@ -4246,13 +4181,12 @@ Replaces all elements in several rows the linear constraint matrix by new values
                      aij   : f64 )
 
 ``i``
-    Index of the constraint in which the change should occur.
+    
 ``j``
-    Index of the variable in which the change should occur.
+    
 ``aij``
-    New coefficient.
+    
 
-Changes a single value in the linear coefficient matrix.
 
 .. index:: put_aij_list
 
@@ -4269,13 +4203,12 @@ Changes a single value in the linear coefficient matrix.
                           valij_ : & [f64] )
 
 ``subi``
-    Constraint indexes in which the change should occur.
+    
 ``subj``
-    Variable indexes in which the change should occur.
+    
 ``valij``
-    New coefficient values.
+    
 
-Changes one or more coefficients in the linear constraint matrix.
 
 .. index:: put_bara_block_triplet
 
@@ -4295,19 +4228,18 @@ Changes one or more coefficients in the linear constraint matrix.
                                     valijkl_ : & [f64] )
 
 ``num``
-    Number of elements in the block triplet form.
+    
 ``subi``
-    Constraint index.
+    
 ``subj``
-    Symmetric matrix variable index.
+    
 ``subk``
-    Block row index.
+    
 ``subl``
-    Block column index.
+    
 ``valijkl``
-    The numerical value associated with the block triplet.
+    
 
-Inputs barA in block triplet form.
 
 .. index:: put_bara_ij
 
@@ -4325,15 +4257,79 @@ Inputs barA in block triplet form.
                          weights_ : & [f64] )
 
 ``i``
-    Row index of barA.
+    
 ``j``
-    Column index of barA.
+    
 ``sub``
-    See argument weights for an explanation.
+    
 ``weights``
-    Weights in the weighted sum.
+    
 
-Inputs an element of barA.
+
+.. index:: put_bara_ij_list
+
+.. _optimizer_task_putbaraijlist:
+
+``put_bara_ij_list()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn put_bara_ij_list ( &self,
+                              subi_      : & [i32],
+                              subj_      : & [i32],
+                              alphaptrb_ : & [i64],
+                              alphaptre_ : & [i64],
+                              matidx_    : & [i64],
+                              weights_   : & [f64] )
+
+``subi``
+    
+``subj``
+    
+``alphaptrb``
+    
+``alphaptre``
+    
+``matidx``
+    
+``weights``
+    
+
+
+.. index:: put_bara_row_list
+
+.. _optimizer_task_putbararowlist:
+
+``put_bara_row_list()``
+-----------------------
+
+.. code-block:: rust
+
+    pub fn put_bara_row_list ( &self,
+                               subi_    : & [i32],
+                               ptrb_    : & [i64],
+                               ptre_    : & [i64],
+                               subj_    : & [i32],
+                               nummat_  : & [i64],
+                               matidx_  : & [i64],
+                               weights_ : & [f64] )
+
+``subi``
+    
+``ptrb``
+    
+``ptre``
+    
+``subj``
+    
+``nummat``
+    
+``matidx``
+    
+``weights``
+    
+
 
 .. index:: put_barc_block_triplet
 
@@ -4352,17 +4348,16 @@ Inputs an element of barA.
                                     valjkl_ : & [f64] )
 
 ``num``
-    Number of elements in the block triplet form.
+    
 ``subj``
-    Symmetric matrix variable index.
+    
 ``subk``
-    Block row index.
+    
 ``subl``
-    Block column index.
+    
 ``valjkl``
-    The numerical value associated with the block triplet.
+    
 
-Inputs barC in block triplet form.
 
 .. index:: put_barc_j
 
@@ -4379,13 +4374,12 @@ Inputs barC in block triplet form.
                         weights_ : & [f64] )
 
 ``j``
-    Index of the element in barc` that should be changed.
+    
 ``sub``
-    sub is list of indexes of those symmetric matrices appearing in sum.
+    
 ``weights``
-    The weights of the terms in the weighted sum.
+    
 
-Changes one element in barc.
 
 .. index:: put_bars_j
 
@@ -4404,11 +4398,10 @@ Changes one element in barc.
 ``whichsol``
     
 ``j``
-    Index of the semidefinite variable.
+    
 ``barsj``
-    Value of the j'th variable of barx.
+    
 
-Sets the dual solution for a semidefinite variable.
 
 .. index:: put_barvar_name
 
@@ -4424,11 +4417,10 @@ Sets the dual solution for a semidefinite variable.
                              name  : &str )
 
 ``j``
-    Index of the variable.
+    
 ``name``
-    The variable name.
+    
 
-Puts the name of a semidefinite variable.
 
 .. index:: put_barx_j
 
@@ -4447,101 +4439,10 @@ Puts the name of a semidefinite variable.
 ``whichsol``
     
 ``j``
-    Index of the semidefinite variable.
+    
 ``barxj``
-    Value of the j'th variable of barx.
-
-Sets the primal solution for a semidefinite variable.
-
-.. index:: put_bound
-
-.. _optimizer_task_putbound:
-
-``put_bound()``
----------------
-
-.. code-block:: rust
-
-    pub fn put_bound ( &self,
-                       accmode : i32,
-                       i       : i32,
-                       bk      : i32,
-                       bl      : f64,
-                       bu      : f64 )
-
-``accmode``
-    Defines whether the bound for a constraint or a variable is changed.
-``i``
-    Index of the constraint or variable.
-``bk``
-    New bound key.
-``bl``
-    New lower bound.
-``bu``
-    New upper bound.
-
-Changes the bound for either one constraint or one variable.
-
-.. index:: put_bound_list
-
-.. _optimizer_task_putboundlist:
-
-``put_bound_list()``
---------------------
-
-.. code-block:: rust
-
-    pub fn put_bound_list ( &self,
-                            accmode : i32,
-                            sub_    : & [i32],
-                            bk_     : & [i32],
-                            bl_     : & [f64],
-                            bu_     : & [f64] )
-
-``accmode``
-    Defines whether to access bounds on variables or constraints.
-``sub``
-    Subscripts of the bounds that should be changed.
-``bk``
-    Bound keys for variables or constraints.
-``bl``
-    Bound keys for variables or constraints.
-``bu``
-    Constraint or variable upper bounds.
-
-Changes the bounds of constraints or variables.
-
-.. index:: put_bound_slice
-
-.. _optimizer_task_putboundslice:
-
-``put_bound_slice()``
----------------------
-
-.. code-block:: rust
-
-    pub fn put_bound_slice ( &self,
-                             con   : i32,
-                             first : i32,
-                             last  : i32,
-                             bk_   : & [i32],
-                             bl_   : & [f64],
-                             bu_   : & [f64] )
-
-``con``
-    Determines whether variables or constraints are modified.
-``first``
-    
-``last``
-    
-``bk``
-    
-``bl``
-    
-``bu``
     
 
-Modifies bounds.
 
 .. index:: put_c_j
 
@@ -4557,11 +4458,10 @@ Modifies bounds.
                      cj    : f64 )
 
 ``j``
-    Index of the variable whose objective coefficient should be changed.
+    
 ``cj``
-    New coefficient value.
+    
 
-Modifies one linear coefficient in the objective.
 
 .. index:: put_c_list
 
@@ -4577,11 +4477,10 @@ Modifies one linear coefficient in the objective.
                         val_  : & [f64] )
 
 ``subj``
-    Index of variables for which objective coefficients should be changed.
+    
 ``val``
-    New numerical values for the objective coefficients that should be modified.
+    
 
-Modifies a part of the linear objective coefficients.
 
 .. index:: put_c_slice
 
@@ -4598,13 +4497,12 @@ Modifies a part of the linear objective coefficients.
                          slice_ : & [f64] )
 
 ``first``
-    First element in the slice of c.
+    
 ``last``
-    Last element plus 1 of the slice in c to be changed.
+    
 ``slice``
-    New numerical values for the objective coefficients that should be modified.
+    
 
-Modifies a slice of the linear objective coefficients.
 
 .. index:: put_callback
 
@@ -4658,7 +4556,6 @@ Modifies a slice of the linear objective coefficients.
 ``cfix``
     
 
-Replaces the fixed term in the objective.
 
 .. index:: put_con_bound
 
@@ -4676,15 +4573,14 @@ Replaces the fixed term in the objective.
                            bu    : f64 )
 
 ``i``
-    Index of the constraint.
+    
 ``bk``
-    New bound key.
+    
 ``bl``
-    New lower bound.
+    
 ``bu``
-    New upper bound.
+    
 
-Changes the bound for one constraint.
 
 .. index:: put_con_bound_list
 
@@ -4697,20 +4593,19 @@ Changes the bound for one constraint.
 
     pub fn put_con_bound_list ( &self,
                                 sub_  : & [i32],
-                                bkc_  : & [i32],
-                                blc_  : & [f64],
-                                buc_  : & [f64] )
+                                bk_   : & [i32],
+                                bl_   : & [f64],
+                                bu_   : & [f64] )
 
 ``sub``
-    List constraints indexes.
-``bkc``
-    New bound keys.
-``blc``
-    New lower bound values.
-``buc``
-    New upper bounds values.
+    
+``bk``
+    
+``bl``
+    
+``bu``
+    
 
-Changes the bounds of a list of constraints.
 
 .. index:: put_con_bound_slice
 
@@ -4729,17 +4624,16 @@ Changes the bounds of a list of constraints.
                                  bu_   : & [f64] )
 
 ``first``
-    Index of the first constraint in the slice.
+    
 ``last``
-    Index of the last constraint in the slice plus 1.
+    
 ``bk``
-    New bound keys.
+    
 ``bl``
-    New lower bounds.
+    
 ``bu``
-    New upper bounds.
+    
 
-Changes the bounds for a slice of the constraints.
 
 .. index:: put_con_name
 
@@ -4755,11 +4649,41 @@ Changes the bounds for a slice of the constraints.
                           name  : &str )
 
 ``i``
-    Index of the constraint.
+    
 ``name``
-    The variable name.
+    
 
-Puts the name of a constraint.
+
+.. index:: put_con_solution_i
+
+.. _optimizer_task_putconsolutioni:
+
+``put_con_solution_i()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn put_con_solution_i ( &self,
+                                i        : i32,
+                                whichsol : i32,
+                                sk       : i32,
+                                x        : f64,
+                                sl       : f64,
+                                su       : f64 )
+
+``i``
+    
+``whichsol``
+    
+``sk``
+    
+``x``
+    
+``sl``
+    
+``su``
+    
+
 
 .. index:: put_cone
 
@@ -4777,7 +4701,7 @@ Puts the name of a constraint.
                       submem_ : & [i32] )
 
 ``k``
-    Index of the cone.
+    
 ``ct``
     
 ``conepar``
@@ -4785,7 +4709,6 @@ Puts the name of a constraint.
 ``submem``
     
 
-Replaces a conic constraint.
 
 .. index:: put_cone_name
 
@@ -4801,11 +4724,10 @@ Replaces a conic constraint.
                            name  : &str )
 
 ``j``
-    Index of the cone.
+    
 ``name``
-    The variable name.
+    
 
-Puts the name of a cone.
 
 .. index:: put_dou_param
 
@@ -4825,7 +4747,6 @@ Puts the name of a cone.
 ``parvalue``
     
 
-Sets a double parameter.
 
 .. index:: put_int_param
 
@@ -4845,7 +4766,6 @@ Sets a double parameter.
 ``parvalue``
     
 
-Sets an integer parameter.
 
 .. index:: put_max_num_a_nz
 
@@ -4859,9 +4779,8 @@ Sets an integer parameter.
     pub fn put_max_num_a_nz ( &self,maxnumanz : i64 )
 
 ``maxnumanz``
-    New size of the storage reserved for storing the linear coefficient matrix.
+    
 
-The function changes the size of the preallocated storage for linear coefficients.
 
 .. index:: put_max_num_barvar
 
@@ -4875,9 +4794,8 @@ The function changes the size of the preallocated storage for linear coefficient
     pub fn put_max_num_barvar ( &self,maxnumbarvar : i32 )
 
 ``maxnumbarvar``
-    The maximum number of semidefinite variables.
+    
 
-Sets the number of preallocated symmetric matrix variables in the optimization task.
 
 .. index:: put_max_num_con
 
@@ -4893,7 +4811,6 @@ Sets the number of preallocated symmetric matrix variables in the optimization t
 ``maxnumcon``
     
 
-Sets the number of preallocated constraints in the optimization task.
 
 .. index:: put_max_num_cone
 
@@ -4909,7 +4826,6 @@ Sets the number of preallocated constraints in the optimization task.
 ``maxnumcone``
     
 
-Sets the number of preallocated conic constraints in the optimization task.
 
 .. index:: put_max_num_q_nz
 
@@ -4925,7 +4841,6 @@ Sets the number of preallocated conic constraints in the optimization task.
 ``maxnumqnz``
     
 
-Changes the size of the preallocated storage for quadratic terms.
 
 .. index:: put_max_num_var
 
@@ -4941,7 +4856,6 @@ Changes the size of the preallocated storage for quadratic terms.
 ``maxnumvar``
     
 
-Sets the number of preallocated variables in the optimization task.
 
 .. index:: put_na_dou_param
 
@@ -4961,7 +4875,6 @@ Sets the number of preallocated variables in the optimization task.
 ``parvalue``
     
 
-Sets a double parameter.
 
 .. index:: put_na_int_param
 
@@ -4981,7 +4894,6 @@ Sets a double parameter.
 ``parvalue``
     
 
-Sets an integer parameter.
 
 .. index:: put_na_str_param
 
@@ -5001,7 +4913,6 @@ Sets an integer parameter.
 ``parvalue``
     
 
-Sets a string parameter.
 
 .. index:: put_obj_name
 
@@ -5017,7 +4928,6 @@ Sets a string parameter.
 ``objname``
     
 
-Assigns a new name to the objective.
 
 .. index:: put_obj_sense
 
@@ -5031,9 +4941,8 @@ Assigns a new name to the objective.
     pub fn put_obj_sense ( &self,sense : i32 )
 
 ``sense``
-    The objective sense of the task
+    
 
-Sets the objective sense.
 
 .. index:: put_param
 
@@ -5053,7 +4962,6 @@ Sets the objective sense.
 ``parvalue``
     
 
-Modifies the value of parameter.
 
 .. index:: put_q_con
 
@@ -5079,7 +4987,6 @@ Modifies the value of parameter.
 ``qcval``
     
 
-Replaces all quadratic terms in constraints.
 
 .. index:: put_q_con_k
 
@@ -5097,7 +5004,7 @@ Replaces all quadratic terms in constraints.
                          qcval_  : & [f64] )
 
 ``k``
-    The constraint in which the new quadratic elements are inserted.
+    
 ``qcsubi``
     
 ``qcsubj``
@@ -5105,7 +5012,6 @@ Replaces all quadratic terms in constraints.
 ``qcval``
     
 
-Replaces all quadratic terms in a single constraint.
 
 .. index:: put_q_obj
 
@@ -5128,7 +5034,6 @@ Replaces all quadratic terms in a single constraint.
 ``qoval``
     
 
-Replaces all quadratic terms in the objective.
 
 .. index:: put_q_obj_i_j
 
@@ -5145,13 +5050,12 @@ Replaces all quadratic terms in the objective.
                            qoij  : f64 )
 
 ``i``
-    Row index for the coefficient to be replaced.
+    
 ``j``
-    Column index for the coefficient to be replaced.
+    
 ``qoij``
-    The new coefficient value.
+    
 
-Replaces one coefficient in the quadratic term in the objective.
 
 .. index:: put_skc
 
@@ -5171,7 +5075,6 @@ Replaces one coefficient in the quadratic term in the objective.
 ``skc``
     
 
-Sets the status keys for the constraints.
 
 .. index:: put_skc_slice
 
@@ -5197,7 +5100,6 @@ Sets the status keys for the constraints.
 ``skc``
     
 
-Sets the status keys for the constraints.
 
 .. index:: put_skx
 
@@ -5217,7 +5119,6 @@ Sets the status keys for the constraints.
 ``skx``
     
 
-Sets the status keys for the scalar variables.
 
 .. index:: put_skx_slice
 
@@ -5243,7 +5144,6 @@ Sets the status keys for the scalar variables.
 ``skx``
     
 
-Sets the status keys for the variables.
 
 .. index:: put_slc
 
@@ -5261,9 +5161,8 @@ Sets the status keys for the variables.
 ``whichsol``
     
 ``slc``
-    The slc vector.
+    
 
-Sets the slc vector for a solution.
 
 .. index:: put_slc_slice
 
@@ -5289,7 +5188,6 @@ Sets the slc vector for a solution.
 ``slc``
     
 
-Sets a slice of the slc vector for a solution.
 
 .. index:: put_slx
 
@@ -5307,9 +5205,8 @@ Sets a slice of the slc vector for a solution.
 ``whichsol``
     
 ``slx``
-    The slx vector.
+    
 
-Sets the slx vector for a solution.
 
 .. index:: put_slx_slice
 
@@ -5335,7 +5232,6 @@ Sets the slx vector for a solution.
 ``slx``
     
 
-Sets a slice of the slx vector for a solution.
 
 .. index:: put_snx
 
@@ -5353,9 +5249,8 @@ Sets a slice of the slx vector for a solution.
 ``whichsol``
     
 ``sux``
-    The snx vector.
+    
 
-Sets the snx vector for a solution.
 
 .. index:: put_snx_slice
 
@@ -5381,7 +5276,6 @@ Sets the snx vector for a solution.
 ``snx``
     
 
-Sets a slice of the snx vector for a solution.
 
 .. index:: put_solution
 
@@ -5431,45 +5325,6 @@ Sets a slice of the snx vector for a solution.
 ``snx``
     
 
-Inserts a solution.
-
-.. index:: put_solution_i
-
-.. _optimizer_task_putsolutioni:
-
-``put_solution_i()``
---------------------
-
-.. code-block:: rust
-
-    pub fn put_solution_i ( &self,
-                            accmode  : i32,
-                            i        : i32,
-                            whichsol : i32,
-                            sk       : i32,
-                            x        : f64,
-                            sl       : f64,
-                            su       : f64,
-                            sn       : f64 )
-
-``accmode``
-    Defines whether solution information for a constraint or for a variable is modified.
-``i``
-    Index of the constraint or variable.
-``whichsol``
-    
-``sk``
-    Status key of the constraint or variable.
-``x``
-    Solution value of the primal constraint or variable.
-``sl``
-    Solution value of the dual variable associated with the lower bound.
-``su``
-    Solution value of the dual variable associated with the upper bound.
-``sn``
-    Solution value of the dual variable associated with the cone constraint.
-
-Sets the primal and dual solution information for a single constraint or variable.
 
 .. index:: put_solution_y_i
 
@@ -5486,13 +5341,12 @@ Sets the primal and dual solution information for a single constraint or variabl
                               y        : f64 )
 
 ``i``
-    Index of the dual variable.
+    
 ``whichsol``
     
 ``y``
-    Solution value of the dual variable.
+    
 
-Inputs the dual variable of a solution.
 
 .. index:: put_str_param
 
@@ -5512,7 +5366,6 @@ Inputs the dual variable of a solution.
 ``parvalue``
     
 
-Sets a string parameter.
 
 .. index:: put_stream_callback
 ``put_stream_callback()``
@@ -5554,9 +5407,8 @@ Sets the callback function and handle for the given stream in the
 ``whichsol``
     
 ``suc``
-    The suc vector.
+    
 
-Sets the suc vector for a solution.
 
 .. index:: put_suc_slice
 
@@ -5582,7 +5434,6 @@ Sets the suc vector for a solution.
 ``suc``
     
 
-Sets a slice of the suc vector for a solution.
 
 .. index:: put_sux
 
@@ -5600,9 +5451,8 @@ Sets a slice of the suc vector for a solution.
 ``whichsol``
     
 ``sux``
-    The sux vector.
+    
 
-Sets the sux vector for a solution.
 
 .. index:: put_sux_slice
 
@@ -5628,7 +5478,6 @@ Sets the sux vector for a solution.
 ``sux``
     
 
-Sets a slice of the sux vector for a solution.
 
 .. index:: put_task_name
 
@@ -5644,7 +5493,6 @@ Sets a slice of the sux vector for a solution.
 ``taskname``
     
 
-Assigns a new name to the task.
 
 .. index:: put_var_bound
 
@@ -5662,15 +5510,14 @@ Assigns a new name to the task.
                            bu    : f64 )
 
 ``j``
-    Index of the variable.
+    
 ``bk``
-    New bound key.
+    
 ``bl``
-    New lower bound.
+    
 ``bu``
-    New upper bound.
+    
 
-Changes the bound for one variable.
 
 .. index:: put_var_bound_list
 
@@ -5688,15 +5535,14 @@ Changes the bound for one variable.
                                 bux_  : & [f64] )
 
 ``sub``
-    List of variable indexes.
+    
 ``bkx``
-    New bound keys.
+    
 ``blx``
-    New lower bound values.
+    
 ``bux``
-    New upper bounds values.
+    
 
-Changes the bounds of a list of variables.
 
 .. index:: put_var_bound_slice
 
@@ -5715,17 +5561,16 @@ Changes the bounds of a list of variables.
                                  bu_   : & [f64] )
 
 ``first``
-    Index of the first variable in the slice.
+    
 ``last``
-    Index of the last variable in the slice plus 1.
+    
 ``bk``
-    New bound keys.
+    
 ``bl``
-    New lower bounds.
+    
 ``bu``
-    New upper bounds.
+    
 
-Changes the bounds for a slice of the variables.
 
 .. index:: put_var_name
 
@@ -5741,11 +5586,44 @@ Changes the bounds for a slice of the variables.
                           name  : &str )
 
 ``j``
-    Index of the variable.
+    
 ``name``
-    The variable name.
+    
 
-Puts the name of a variable.
+
+.. index:: put_var_solution_j
+
+.. _optimizer_task_putvarsolutionj:
+
+``put_var_solution_j()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn put_var_solution_j ( &self,
+                                j        : i32,
+                                whichsol : i32,
+                                sk       : i32,
+                                x        : f64,
+                                sl       : f64,
+                                su       : f64,
+                                sn       : f64 )
+
+``j``
+    
+``whichsol``
+    
+``sk``
+    
+``x``
+    
+``sl``
+    
+``su``
+    
+``sn``
+    
+
 
 .. index:: put_var_type
 
@@ -5761,11 +5639,10 @@ Puts the name of a variable.
                           vartype : i32 )
 
 ``j``
-    Index of the variable.
+    
 ``vartype``
-    The new variable type.
+    
 
-Sets the variable type of one variable.
 
 .. index:: put_var_type_list
 
@@ -5781,12 +5658,10 @@ Sets the variable type of one variable.
                                vartype_ : & [i32] )
 
 ``subj``
-    A list of variable indexes for which the variable
-                               type should be changed.
+    
 ``vartype``
-    A list of variable types.
+    
 
-Sets the variable type for one or more variables.
 
 .. index:: put_xc
 
@@ -5804,9 +5679,8 @@ Sets the variable type for one or more variables.
 ``whichsol``
     
 ``xc``
-    The xc vector.
+    
 
-Sets the xc vector for a solution.
 
 .. index:: put_xc_slice
 
@@ -5832,7 +5706,6 @@ Sets the xc vector for a solution.
 ``xc``
     
 
-Sets a slice of the xc vector for a solution.
 
 .. index:: put_xx
 
@@ -5850,9 +5723,8 @@ Sets a slice of the xc vector for a solution.
 ``whichsol``
     
 ``xx``
-    The xx vector.
+    
 
-Sets the xx vector for a solution.
 
 .. index:: put_xx_slice
 
@@ -5878,7 +5750,6 @@ Sets the xx vector for a solution.
 ``xx``
     
 
-Obtains a slice of the xx vector for a solution.
 
 .. index:: put_y
 
@@ -5896,9 +5767,8 @@ Obtains a slice of the xx vector for a solution.
 ``whichsol``
     
 ``y``
-    The y vector.
+    
 
-Sets the y vector for a solution.
 
 .. index:: put_y_slice
 
@@ -5924,7 +5794,6 @@ Sets the y vector for a solution.
 ``y``
     
 
-Sets a slice of the y vector for a solution.
 
 .. index:: read_data
 
@@ -5938,9 +5807,8 @@ Sets a slice of the y vector for a solution.
     pub fn read_data ( &self,filename : &str )
 
 ``filename``
-    Input data file name.
+    
 
-Reads problem data from a file.
 
 .. index:: read_data_format
 
@@ -5957,13 +5825,57 @@ Reads problem data from a file.
                               compress : i32 )
 
 ``filename``
-    Input data file name.
+    
 ``format``
-    File data format.
+    
 ``compress``
-    File compression type.
+    
 
-Reads problem data from a file.
+
+.. index:: read_json_string
+
+.. _optimizer_task_readjsonstring:
+
+``read_json_string()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn read_json_string ( &self,data  : &str )
+
+``data``
+    
+
+
+.. index:: read_lp_string
+
+.. _optimizer_task_readlpstring:
+
+``read_lp_string()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn read_lp_string ( &self,data  : &str )
+
+``data``
+    
+
+
+.. index:: read_opf_string
+
+.. _optimizer_task_readopfstring:
+
+``read_opf_string()``
+---------------------
+
+.. code-block:: rust
+
+    pub fn read_opf_string ( &self,data  : &str )
+
+``data``
+    
+
 
 .. index:: read_param_file
 
@@ -5977,9 +5889,8 @@ Reads problem data from a file.
     pub fn read_param_file ( &self,filename : &str )
 
 ``filename``
-    Input data file name.
+    
 
-Reads a parameter file.
 
 .. index:: read_solution
 
@@ -5999,7 +5910,6 @@ Reads a parameter file.
 ``filename``
     
 
-Reads a solution from a file.
 
 .. index:: read_summary
 
@@ -6015,7 +5925,6 @@ Reads a solution from a file.
 ``whichstream``
     
 
-Prints information about last file read.
 
 .. index:: read_task
 
@@ -6029,9 +5938,8 @@ Prints information about last file read.
     pub fn read_task ( &self,filename : &str )
 
 ``filename``
-    Input file name.
+    
 
-Load task data from a file.
 
 .. index:: remove_barvars
 
@@ -6045,9 +5953,8 @@ Load task data from a file.
     pub fn remove_barvars ( &self,subset_ : & [i32] )
 
 ``subset``
-    Indexes of symmetric matrix which should be removed.
+    
 
-The function removes a number of symmetric matrix.
 
 .. index:: remove_cones
 
@@ -6061,9 +5968,8 @@ The function removes a number of symmetric matrix.
     pub fn remove_cones ( &self,subset_ : & [i32] )
 
 ``subset``
-    Indexes of cones which should be removed.
+    
 
-Removes a conic constraint from the problem.
 
 .. index:: remove_cons
 
@@ -6077,9 +5983,8 @@ Removes a conic constraint from the problem.
     pub fn remove_cons ( &self,subset_ : & [i32] )
 
 ``subset``
-    Indexes of constraints which should be removed.
+    
 
-The function removes a number of constraints.
 
 .. index:: remove_vars
 
@@ -6093,9 +5998,8 @@ The function removes a number of constraints.
     pub fn remove_vars ( &self,subset_ : & [i32] )
 
 ``subset``
-    Indexes of variables which should be removed.
+    
 
-The function removes a number of variables.
 
 .. index:: resize_task
 
@@ -6114,17 +6018,62 @@ The function removes a number of variables.
                          maxnumqnz  : i64 )
 
 ``maxnumcon``
-    New maximum number of constraints.
+    
 ``maxnumvar``
-    New maximum number of variables.
+    
 ``maxnumcone``
-    New maximum number of cones.
+    
 ``maxnumanz``
-    New maximum number of linear non-zero elements.
+    
 ``maxnumqnz``
-    New maximum number of quadratic non-zeros elements.
+    
 
-Resizes an optimization task.
+
+.. index:: sctoconic
+
+.. _optimizer_task_sctoconic:
+
+``sctoconic()``
+---------------
+
+.. code-block:: rust
+
+    pub fn sctoconic ( &self,
+                       opro_  : & [i32],
+                       oprjo_ : & [i32],
+                       oprfo_ : & [f64],
+                       oprgo_ : & [f64],
+                       oprho_ : & [f64],
+                       oprc_  : & [i32],
+                       opric_ : & [i32],
+                       oprjc_ : & [i32],
+                       oprfc_ : & [f64],
+                       oprgc_ : & [f64],
+                       oprhc_ : & [f64] )
+
+``opro``
+    
+``oprjo``
+    
+``oprfo``
+    
+``oprgo``
+    
+``oprho``
+    
+``oprc``
+    
+``opric``
+    
+``oprjc``
+    
+``oprfc``
+    
+``oprgc``
+    
+``oprhc``
+    
+
 
 .. index:: sensitivity_report
 
@@ -6140,7 +6089,6 @@ Resizes an optimization task.
 ``whichstream``
     
 
-Creates a sensitivity report.
 
 .. index:: set_defaults
 
@@ -6154,7 +6102,6 @@ Creates a sensitivity report.
     pub fn set_defaults ( &self )
 
 
-Resets all parameters values.
 
 .. index:: sk_to_str
 
@@ -6168,12 +6115,11 @@ Resets all parameters values.
     pub fn sk_to_str ( &self,sk    : i32 ) -> String
 
 ``sk``
-    A valid status key.
+    
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the status key.
+        
 
-Obtains a status key string.
 
 .. index:: sol_sta_to_str
 
@@ -6190,9 +6136,8 @@ Obtains a status key string.
     
 *Returns:* ``str``
     ``str : String``
-        String corresponding to the solution status.
+        
 
-Obtains a solution status string.
 
 .. index:: solution_def
 
@@ -6209,9 +6154,8 @@ Obtains a solution status string.
     
 *Returns:* ``isdef``
     ``isdef : bool``
-        Is non-zero if the requested solution is defined.
+        
 
-Checks whether a solution is defined.
 
 .. index:: solution_summary
 
@@ -6227,7 +6171,6 @@ Checks whether a solution is defined.
 ``whichstream``
     
 
-Prints a short summary of the current solutions.
 
 .. index:: solve_with_basis
 
@@ -6245,18 +6188,17 @@ Prints a short summary of the current solutions.
                               val    : & mut [f64] )
 
 ``transp``
-    Controls which problem formulation is solved.
+    
 ``numnz``
-    Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
+    
 ``sub``
-    Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
+    
 ``val``
-    Input (right-hand side values) and output (solution vector values).
+    
 *Returns:* ``numnz``
     ``numnz : i32``
-        Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
+        
 
-Solve a linear equation system involving a basis matrix.
 
 .. index:: str_to_cone_type
 
@@ -6270,12 +6212,11 @@ Solve a linear equation system involving a basis matrix.
     pub fn str_to_cone_type ( &self,str   : &str ) -> i32
 
 ``str``
-    String corresponding to the cone type code.
+    
 *Returns:* ``conetype``
     ``conetype : i32``
-        The cone type corresponding to str.
+        
 
-Obtains a cone type code.
 
 .. index:: str_to_sk
 
@@ -6289,12 +6230,11 @@ Obtains a cone type code.
     pub fn str_to_sk ( &self,str   : &str ) -> i32
 
 ``str``
-    Status key string.
+    
 *Returns:* ``sk``
     ``sk : i32``
-        Status key corresponding to the string.
+        
 
-Obtains a status key.
 
 .. index:: toconic
 
@@ -6308,7 +6248,6 @@ Obtains a status key.
     pub fn toconic ( &self )
 
 
-Inplace reformulation of a QCQP to a COP
 
 .. index:: update_solution_info
 
@@ -6324,7 +6263,6 @@ Inplace reformulation of a QCQP to a COP
 ``whichsol``
     
 
-Update the information items related to the solution.
 
 .. index:: write_data
 
@@ -6338,9 +6276,8 @@ Update the information items related to the solution.
     pub fn write_data ( &self,filename : &str )
 
 ``filename``
-    Output file name.
+    
 
-Writes problem data to a file.
 
 .. index:: write_json_sol
 
@@ -6356,7 +6293,6 @@ Writes problem data to a file.
 ``filename``
     
 
-Write a solution to a file.
 
 .. index:: write_param_file
 
@@ -6370,9 +6306,8 @@ Write a solution to a file.
     pub fn write_param_file ( &self,filename : &str )
 
 ``filename``
-    The name of parameter file.
+    
 
-Writes all the parameters to a parameter file.
 
 .. index:: write_solution
 
@@ -6392,7 +6327,6 @@ Writes all the parameters to a parameter file.
 ``filename``
     
 
-Write a solution to a file.
 
 .. index:: write_task
 
@@ -6406,6 +6340,5 @@ Write a solution to a file.
     pub fn write_task ( &self,filename : &str )
 
 ``filename``
-    Output file name.
+    
 
-Write a complete binary dump of the task data.
