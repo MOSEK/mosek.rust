@@ -19,27 +19,6 @@ extern
     fn MSK_putcallbackfunc(task        : * const u8,
                            func        : extern fn (task : * const c_void, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
                            handle      : * const c_void) -> i32;
-    fn MSK_axpy(env_ : * const u8,n_ : libc::int32_t,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
-    fn MSK_checkinall(env_ : * const u8) -> i32;
-    fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
-    fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
-    fn MSK_dot(env_ : * const u8,n_ : libc::int32_t,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
-    fn MSK_echointro(env_ : * const u8,longver_ : libc::int32_t) -> i32;
-    fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
-    fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
-    fn MSK_getcodedesc(code_ : i32,symname_ : * const u8,str_ : * const u8) -> i32;
-    fn MSK_getversion(major_ : & mut libc::int32_t,minor_ : & mut libc::int32_t,revision_ : & mut libc::int32_t) -> i32;
-    fn MSK_licensecleanup() -> i32;
-    fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
-    fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64) -> i32;
-    fn MSK_putlicensecode(env_ : * const u8,code_ : * const libc::int32_t) -> i32;
-    fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : libc::int32_t) -> i32;
-    fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
-    fn MSK_putlicensewait(env_ : * const u8,licwait_ : libc::int32_t) -> i32;
-    fn MSK_setupthreads(env_ : * const u8,numthreads_ : libc::int32_t) -> i32;
-    fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * const f64,w_ : * mut f64) -> i32;
-    fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64,w_ : * mut f64) -> i32;
-    fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
@@ -51,14 +30,33 @@ extern
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : libc::int32_t,nz_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64,idx_ : & mut libc::int64_t) -> i32;
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : libc::int32_t,dims_ : * const libc::int32_t,nz_ : * const libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64,idx_ : * mut libc::int64_t) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : libc::int32_t) -> i32;
+    fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut libc::int32_t,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncoptimize(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const u8) -> i32;
+    fn MSK_asyncpoll(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut libc::int32_t,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncstop(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    fn MSK_axpy(env_ : * const u8,n_ : libc::int32_t,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
+    fn MSK_bktostr(task_ : * const u8,bk_ : i32,str_ : * const u8) -> i32;
+    fn MSK_callbackcodetostr(code_ : i32,callbackcodestr_ : * const u8) -> i32;
     fn MSK_checkconvexity(task_ : * const u8) -> i32;
+    fn MSK_checkinall(env_ : * const u8) -> i32;
+    fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
+    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : libc::int32_t) -> i32;
     fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : libc::int32_t) -> i32;
+    fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
+    fn MSK_checkversion(env_ : * const u8,major_ : libc::int32_t,minor_ : libc::int32_t,revision_ : libc::int32_t) -> i32;
     fn MSK_chgconbound(task_ : * const u8,i_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
     fn MSK_chgvarbound(task_ : * const u8,j_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
     fn MSK_commitchanges(task_ : * const u8) -> i32;
+    fn MSK_conetypetostr(task_ : * const u8,ct_ : i32,str_ : * const u8) -> i32;
     fn MSK_deletesolution(task_ : * const u8,whichsol_ : i32) -> i32;
+    fn MSK_dot(env_ : * const u8,n_ : libc::int32_t,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
     fn MSK_dualsensitivity(task_ : * const u8,numj_ : libc::int32_t,subj_ : * const libc::int32_t,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    fn MSK_echoenv(env_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
+    fn MSK_echointro(env_ : * const u8,longver_ : libc::int32_t) -> i32;
+    fn MSK_echotask(task_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
+    fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
     fn MSK_generateconenames(task_ : * const u8,num_ : libc::int32_t,subk_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
     fn MSK_generateconnames(task_ : * const u8,num_ : libc::int32_t,subi_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
     fn MSK_generatevarnames(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
@@ -88,10 +86,12 @@ extern
     fn MSK_getbarvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barxj_ : * mut f64) -> i32;
     fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slicesize_ : libc::int64_t,barxslice_ : * mut f64) -> i32;
+    fn MSK_getbuildinfo(buildstate_ : * const u8,builddate_ : * const u8) -> i32;
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
     fn MSK_getcj(task_ : * const u8,j_ : libc::int32_t,cj_ : & mut f64) -> i32;
     fn MSK_getclist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,c_ : * mut f64) -> i32;
+    fn MSK_getcodedesc(code_ : i32,symname_ : * const u8,str_ : * const u8) -> i32;
     fn MSK_getconbound(task_ : * const u8,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
     fn MSK_getconboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
     fn MSK_getcone(task_ : * const u8,k_ : libc::int32_t,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut libc::int32_t,submem_ : * mut libc::int32_t) -> i32;
@@ -119,6 +119,7 @@ extern
     fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut libc::int32_t) -> i32;
     fn MSK_getlenbarvarj(task_ : * const u8,j_ : libc::int32_t,lenbarvarj_ : & mut libc::int64_t) -> i32;
     fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut libc::int64_t) -> i32;
+    fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut libc::int32_t) -> i32;
     fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut libc::int64_t) -> i32;
     fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut libc::int32_t) -> i32;
     fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut libc::int32_t) -> i32;
@@ -126,6 +127,11 @@ extern
     fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut libc::int64_t) -> i32;
     fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut libc::int32_t) -> i32;
     fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut libc::int64_t,maxmemuse_ : & mut libc::int64_t) -> i32;
+    fn MSK_getnadouinf(task_ : * const u8,infitemname_ : * const libc::c_char,dvalue_ : & mut f64) -> i32;
+    fn MSK_getnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut f64) -> i32;
+    fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut libc::int32_t) -> i32;
+    fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut libc::int32_t) -> i32;
+    fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : libc::int32_t,len_ : & mut libc::int32_t,parvalue_ : * const u8) -> i32;
     fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut libc::int32_t) -> i32;
     fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
@@ -157,6 +163,7 @@ extern
     fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
     fn MSK_getqobjij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,qoij_ : & mut f64) -> i32;
     fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,redcosts_ : * mut f64) -> i32;
+    fn MSK_getresponseclass(r_ : i32,rc_ : & mut i32) -> i32;
     fn MSK_getskc(task_ : * const u8,whichsol_ : i32,skc_ : * mut i32) -> i32;
     fn MSK_getskcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,skc_ : * mut i32) -> i32;
     fn MSK_getskx(task_ : * const u8,whichsol_ : i32,skx_ : * mut i32) -> i32;
@@ -178,6 +185,7 @@ extern
     fn MSK_getsucslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,suc_ : * mut f64) -> i32;
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
     fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,sux_ : * mut f64) -> i32;
+    fn MSK_getsymbcon(task_ : * const u8,i_ : libc::int32_t,sizevalue_ : libc::int32_t,name_ : * const u8,value_ : & mut libc::int32_t) -> i32;
     fn MSK_getsymmatinfo(task_ : * const u8,idx_ : libc::int64_t,dim_ : & mut libc::int32_t,nz_ : & mut libc::int64_t,type_ : & mut i32) -> i32;
     fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : libc::int32_t,taskname_ : * const u8) -> i32;
     fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut libc::int32_t) -> i32;
@@ -188,6 +196,7 @@ extern
     fn MSK_getvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
     fn MSK_getvartype(task_ : * const u8,j_ : libc::int32_t,vartype_ : & mut i32) -> i32;
     fn MSK_getvartypelist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,vartype_ : * mut i32) -> i32;
+    fn MSK_getversion(major_ : & mut libc::int32_t,minor_ : & mut libc::int32_t,revision_ : & mut libc::int32_t) -> i32;
     fn MSK_getxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
     fn MSK_getxcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,xc_ : * mut f64) -> i32;
     fn MSK_getxx(task_ : * const u8,whichsol_ : i32,xx_ : * mut f64) -> i32;
@@ -197,18 +206,25 @@ extern
     fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut libc::int32_t) -> i32;
     fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : libc::int32_t,maxnumvar_ : libc::int32_t,numcon_ : libc::int32_t,numvar_ : libc::int32_t,c_ : * const f64,cfix_ : f64,aptrb_ : * const libc::int64_t,aptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
+    fn MSK_isinfinity(value_ : f64) -> i32;
     fn MSK_isintparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
     fn MSK_isstrparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
+    fn MSK_licensecleanup() -> i32;
+    fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    fn MSK_optimize(task_ : * const u8) -> i32;
+    fn MSK_optimizermt(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : & mut i32) -> i32;
+    fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64) -> i32;
     fn MSK_primalrepair(task_ : * const u8,wlc_ : * const f64,wuc_ : * const f64,wlx_ : * const f64,wux_ : * const f64) -> i32;
     fn MSK_primalsensitivity(task_ : * const u8,numi_ : libc::int32_t,subi_ : * const libc::int32_t,marki_ : * const i32,numj_ : libc::int32_t,subj_ : * const libc::int32_t,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    fn MSK_printparam(task_ : * const u8) -> i32;
     fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str_ : * const u8) -> i32;
     fn MSK_prostatostr(task_ : * const u8,prosta_ : i32,str_ : * const u8) -> i32;
     fn MSK_putacol(task_ : * const u8,j_ : libc::int32_t,nzj_ : libc::int32_t,subj_ : * const libc::int32_t,valj_ : * const f64) -> i32;
-    fn MSK_putacollist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,ptrb_ : * const libc::int32_t,ptre_ : * const libc::int32_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
+    fn MSK_putacollist64(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
     fn MSK_putacolslice64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
     fn MSK_putaij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,aij_ : f64) -> i32;
     fn MSK_putaijlist64(task_ : * const u8,num_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64) -> i32;
@@ -238,6 +254,10 @@ extern
     fn MSK_putcslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,slice_ : * const f64) -> i32;
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : libc::int32_t) -> i32;
+    fn MSK_putlicensecode(env_ : * const u8,code_ : * const libc::int32_t) -> i32;
+    fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : libc::int32_t) -> i32;
+    fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
+    fn MSK_putlicensewait(env_ : * const u8,licwait_ : libc::int32_t) -> i32;
     fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : libc::int64_t) -> i32;
     fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : libc::int32_t) -> i32;
     fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : libc::int32_t) -> i32;
@@ -302,15 +322,25 @@ extern
     fn MSK_sctoconic(task_ : * const u8,numopro_ : libc::int32_t,opro_ : * const i32,oprjo_ : * const libc::int32_t,oprfo_ : * const f64,oprgo_ : * const f64,oprho_ : * const f64,numoprc_ : libc::int32_t,oprc_ : * const i32,opric_ : * const libc::int32_t,oprjc_ : * const libc::int32_t,oprfc_ : * const f64,oprgc_ : * const f64,oprhc_ : * const f64) -> i32;
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_setdefaults(task_ : * const u8) -> i32;
+    fn MSK_setupthreads(env_ : * const u8,numthreads_ : libc::int32_t) -> i32;
     fn MSK_sktostr(task_ : * const u8,sk_ : i32,str_ : * const u8) -> i32;
     fn MSK_solstatostr(task_ : * const u8,solsta_ : i32,str_ : * const u8) -> i32;
     fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut libc::int32_t) -> i32;
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_solvewithbasis(task_ : * const u8,transp_ : libc::int32_t,numnz_ : & mut libc::int32_t,sub_ : * mut libc::int32_t,val_ : * mut f64) -> i32;
+    fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : libc::int32_t,lnzc_ : * const libc::int32_t,lptrc_ : * const libc::int64_t,lensubnval_ : libc::int64_t,lsubc_ : * const libc::int32_t,lvalc_ : * const f64,b_ : * mut f64) -> i32;
+    fn MSK_strduptask(task_ : * const u8,str_ : * const libc::c_char) -> i32;
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : & mut i32) -> i32;
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : & mut i32) -> i32;
+    fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * const f64,w_ : * mut f64) -> i32;
+    fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64,w_ : * mut f64) -> i32;
+    fn MSK_symnamtovalue(name_ : * const libc::c_char,value_ : * const u8) -> i32;
+    fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_toconic(task_ : * const u8) -> i32;
+    fn MSK_unlinkfuncfromenvstream(env_ : * const u8,whichstream_ : i32) -> i32;
+    fn MSK_unlinkfuncfromtaskstream(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
+    fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : & mut i32,param_ : & mut libc::int32_t) -> i32;
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writejsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writeparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
@@ -1864,6 +1894,16 @@ impl Env
       callMSK!(MSK_checkinlicense,self.ptr,feature_);
     }
     
+    // checkmemenv
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn check_mem(&self,file_ : &str,line_ : i32)
+    {
+      callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
+    }
+    
     // checkoutlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1872,6 +1912,16 @@ impl Env
     pub fn checkout_license(&self,feature_ : i32)
     {
       callMSK!(MSK_checkoutlicense,self.ptr,feature_);
+    }
+    
+    // checkversion
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn check_version(&self,major_ : i32,minor_ : i32,revision_ : i32)
+    {
+      callMSK!(MSK_checkversion,self.ptr,major_ as libc::int32_t,minor_ as libc::int32_t,revision_ as libc::int32_t);
     }
     
     // dot
@@ -1886,6 +1936,16 @@ impl Env
       let mut _ref_xty_ : f64 = 0 as f64;
       callMSK!(MSK_dot,self.ptr,n_ as libc::int32_t,x_.as_ptr(),y_.as_ptr(),& mut _ref_xty_);
       _ref_xty_ as f64
+    }
+    
+    // echoenv
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn echo_env(&self,whichstream_ : i32,format_ : &str)
+    {
+      callMSK!(MSK_echoenv,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
     }
     
     // echointro
@@ -1941,7 +2001,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn linkfiletostream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
+    pub fn link_file_to_env_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
     {
       callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
     }
@@ -2008,6 +2068,26 @@ impl Env
       callMSK!(MSK_setupthreads,self.ptr,numthreads_ as libc::int32_t);
     }
     
+    // sparsetriangularsolvedense
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : & [i32],lptrc_ : & [i64],lsubc_ : & [i32],lvalc_ : & [f64],b_ : & mut [f64])
+    {
+      let mut n_ = b_.len();
+      if lnzc_.len() > n_ { n_ = lnzc_.len() };
+      if lptrc_.len() > n_ { n_ = lptrc_.len() };
+      if lnzc_.len() != ((n_) as usize) { panic!("Argument 'lnzc_' is too short in call to 'sparse_triangular_solve_dense'") }
+      if lptrc_.len() != ((n_) as usize) { panic!("Argument 'lptrc_' is too short in call to 'sparse_triangular_solve_dense'") }
+      let mut lensubnval_ = lsubc_.len();
+      if lvalc_.len() > lensubnval_ { lensubnval_ = lvalc_.len() };
+      if lsubc_.len() != ((lensubnval_) as usize) { panic!("Argument 'lsubc_' is too short in call to 'sparse_triangular_solve_dense'") }
+      if lvalc_.len() != ((lensubnval_) as usize) { panic!("Argument 'lvalc_' is too short in call to 'sparse_triangular_solve_dense'") }
+      if b_.len() != ((n_) as usize) { panic!("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'") }
+      callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as libc::int32_t,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as libc::int64_t,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
+    }
+    
     // syeig
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2042,6 +2122,16 @@ impl Env
       if a_.len() != ((n_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'syrk'") }
       if c_.len() != ((n_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'syrk'") }
       callMSK!(MSK_syrk,self.ptr,uplo_,trans_,n_ as libc::int32_t,k_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
+    }
+    
+    // unlinkfuncfromenvstream
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32)
+    {
+      callMSK!(MSK_unlinkfuncfromenvstream,self.ptr,whichstream_);
     }
 
 }
@@ -2232,6 +2322,57 @@ impl<H> Task<H>
       callMSK!(MSK_appendvars,self.ptr,num_ as libc::int32_t);
     }
     
+    // asyncgetresult
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> (bool,i32,i32)
+    {
+      let mut _ref_respavailable_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_resp_ : i32 = 0 as i32;
+      let mut _ref_trm_ : i32 = 0 as i32;
+      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
+    }
+    
+    // asyncoptimize
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn async_optimize(&self,server_ : &str,port_ : &str) -> String
+    {
+      let mut _token__bytes = Vec::with_capacity(33 as usize);
+      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
+      unsafe { _token__bytes.set_len((33) as usize) };
+      String::from_utf8_lossy(&_token__bytes[..]).into_owned()
+    }
+    
+    // asyncpoll
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> (bool,i32,i32)
+    {
+      let mut _ref_respavailable_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_resp_ : i32 = 0 as i32;
+      let mut _ref_trm_ : i32 = 0 as i32;
+      callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
+    }
+    
+    // asyncstop
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str)
+    {
+      callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
+    }
+    
     // basiscond
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2243,6 +2384,19 @@ impl<H> Task<H>
       let mut _ref_nrminvbasis_ : f64 = 0 as f64;
       callMSK!(MSK_basiscond,self.ptr,& mut _ref_nrmbasis_,& mut _ref_nrminvbasis_);
       return (_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64)
+    }
+    
+    // bktostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn bk_to_str(&self,bk_ : i32) -> String
+    {
+      let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+      callMSK!(MSK_bktostr,self.ptr,bk_,_str__bytes.as_mut_ptr());
+      unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
     
     // checkconvexity
@@ -2295,6 +2449,19 @@ impl<H> Task<H>
       callMSK!(MSK_commitchanges,self.ptr);
     }
     
+    // conetypetostr
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn cone_type_to_str(&self,ct_ : i32) -> String
+    {
+      let mut _str__bytes = Vec::with_capacity(1024 as usize);
+      callMSK!(MSK_conetypetostr,self.ptr,ct_,_str__bytes.as_mut_ptr());
+      unsafe { _str__bytes.set_len((1024) as usize) };
+      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+    }
+    
     // deletesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2318,6 +2485,16 @@ impl<H> Task<H>
       if leftrangej_.len() != ((numj_) as usize) { panic!("Argument 'leftrangej_' is too short in call to 'dual_sensitivity'") }
       if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'dual_sensitivity'") }
       callMSK!(MSK_dualsensitivity,self.ptr,numj_ as libc::int32_t,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
+    }
+    
+    // echotask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn echo_task(&self,whichstream_ : i32,format_ : &str)
+    {
+      callMSK!(MSK_echotask,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
     }
     
     // generateconenames
@@ -3105,6 +3282,18 @@ impl<H> Task<H>
       _ref_ivalue_ as i64
     }
     
+    // getmaxnamelen
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_max_name_len(&self) -> i32
+    {
+      let mut _ref_maxlen_ : libc::int32_t = 0 as libc::int32_t;
+      callMSK!(MSK_getmaxnamelen,self.ptr,& mut _ref_maxlen_);
+      _ref_maxlen_ as i32
+    }
+    
     // getmaxnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3188,6 +3377,68 @@ impl<H> Task<H>
       let mut _ref_maxmemuse_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getmemusagetask,self.ptr,& mut _ref_meminuse_,& mut _ref_maxmemuse_);
       return (_ref_meminuse_ as i64,_ref_maxmemuse_ as i64)
+    }
+    
+    // getnadouinf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_na_dou_inf(&self,infitemname_ : &str) -> f64
+    {
+      let mut _ref_dvalue_ : f64 = 0 as f64;
+      callMSK!(MSK_getnadouinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_dvalue_);
+      _ref_dvalue_ as f64
+    }
+    
+    // getnadouparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_na_dou_param(&self,paramname_ : &str) -> f64
+    {
+      let mut _ref_parvalue_ : f64 = 0 as f64;
+      callMSK!(MSK_getnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
+      _ref_parvalue_ as f64
+    }
+    
+    // getnaintinf
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_na_int_inf(&self,infitemname_ : &str) -> i32
+    {
+      let mut _ref_ivalue_ : libc::int32_t = 0 as libc::int32_t;
+      callMSK!(MSK_getnaintinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_ivalue_);
+      _ref_ivalue_ as i32
+    }
+    
+    // getnaintparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_na_int_param(&self,paramname_ : &str) -> i32
+    {
+      let mut _ref_parvalue_ : libc::int32_t = 0 as libc::int32_t;
+      callMSK!(MSK_getnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
+      _ref_parvalue_ as i32
+    }
+    
+    // getnastrparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32) -> (i32,String)
+    {
+      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _parvalue__bytes = Vec::with_capacity(sizeparamname_ as usize);
+      callMSK!(MSK_getnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),sizeparamname_ as libc::int32_t,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
+      unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
+      return (_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned())
     }
     
     // getnumanz
@@ -3851,6 +4102,21 @@ impl<H> Task<H>
       callMSK!(MSK_getsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_mut_ptr());
     }
     
+    // getsymbcon
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_symb_con(&self,i_ : i32) -> (String,i32)
+    {
+      let sizevalue_ = MSK_MAX_STR_LEN;
+      let mut _name__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+      let mut _ref_value_ : libc::int32_t = 0 as libc::int32_t;
+      callMSK!(MSK_getsymbcon,self.ptr,i_ as libc::int32_t,sizevalue_ as libc::int32_t,_name__bytes.as_mut_ptr(),& mut _ref_value_);
+      unsafe { _name__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+      return (String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32)
+    }
+    
     // getsymmatinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4139,6 +4405,28 @@ impl<H> Task<H>
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
     }
     
+    // optimize
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn optimize(&self)
+    {
+      callMSK!(MSK_optimize,self.ptr);
+    }
+    
+    // optimizermt
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> i32
+    {
+      let mut _ref_trmcode_ : i32 = 0 as i32;
+      callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
+      _ref_trmcode_ as i32
+    }
+    
     // optimizersummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4154,7 +4442,7 @@ impl<H> Task<H>
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize(&self) -> i32
+    pub fn optimize_trm(&self) -> i32
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
@@ -4201,6 +4489,16 @@ impl<H> Task<H>
       callMSK!(MSK_primalsensitivity,self.ptr,numi_ as libc::int32_t,subi_.as_ptr(),marki_.as_ptr(),numj_ as libc::int32_t,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
     }
     
+    // printparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn print_param(&self)
+    {
+      callMSK!(MSK_printparam,self.ptr);
+    }
+    
     // probtypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4239,17 +4537,17 @@ impl<H> Task<H>
       callMSK!(MSK_putacol,self.ptr,j_ as libc::int32_t,nzj_ as libc::int32_t,subj_.as_ptr(),valj_.as_ptr());
     }
     
-    // putacollist
+    // putacollist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i32],ptre_ : & [i32],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
     {
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
-      callMSK!(MSK_putacollist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      callMSK!(MSK_putacollist64,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
     
     // putacolslice64
@@ -5360,6 +5658,16 @@ impl<H> Task<H>
       _ref_numnz_ as i32
     }
     
+    // strduptask
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn str_dup_task(&self,str_ : &str)
+    {
+      callMSK!(MSK_strduptask,self.ptr,CString::new(str_).unwrap().as_ptr());
+    }
+    
     // strtoconetype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5394,6 +5702,16 @@ impl<H> Task<H>
       callMSK!(MSK_toconic,self.ptr);
     }
     
+    // unlinkfuncfromtaskstream
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32)
+    {
+      callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream_);
+    }
+    
     // updatesolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5402,6 +5720,19 @@ impl<H> Task<H>
     pub fn update_solution_info(&self,whichsol_ : i32)
     {
       callMSK!(MSK_updatesolutioninfo,self.ptr,whichsol_);
+    }
+    
+    // whichparam
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn which_param(&self,parname_ : &str) -> (i32,i32)
+    {
+      let mut _ref_partype_ : i32 = 0 as i32;
+      let mut _ref_param_ : libc::int32_t = 0 as libc::int32_t;
+      callMSK!(MSK_whichparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_partype_,& mut _ref_param_);
+      return (_ref_partype_ as i32,_ref_param_ as i32)
     }
     
     // writedata
@@ -5475,6 +5806,34 @@ impl<H> Drop for Task<H>
 
 
 
+// callbackcodetostr
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
+pub fn callback_code_to_str(code_ : i32) -> String
+{
+  let mut _callbackcodestr__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+  callMSK!(MSK_callbackcodetostr,code_,_callbackcodestr__bytes.as_mut_ptr());
+  unsafe { _callbackcodestr__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+  String::from_utf8_lossy(&_callbackcodestr__bytes[..]).into_owned()
+}
+
+// getbuildinfo
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
+pub fn get_build_info() -> (String,String)
+{
+  let mut _buildstate__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+  let mut _builddate__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+  callMSK!(MSK_getbuildinfo,_buildstate__bytes.as_mut_ptr(),_builddate__bytes.as_mut_ptr());
+  unsafe { _buildstate__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+  unsafe { _builddate__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+  return (String::from_utf8_lossy(&_buildstate__bytes[..]).into_owned(),String::from_utf8_lossy(&_builddate__bytes[..]).into_owned())
+}
+
 // getcodedesc
 #[allow(non_snake_case)]
 #[allow(unused_mut)]
@@ -5488,6 +5847,18 @@ pub fn get_code_desc(code_ : i32) -> (String,String)
   unsafe { _symname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
   unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
   return (String::from_utf8_lossy(&_symname__bytes[..]).into_owned(),String::from_utf8_lossy(&_str__bytes[..]).into_owned())
+}
+
+// getresponseclass
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
+pub fn get_response_class(r_ : i32) -> i32
+{
+  let mut _ref_rc_ : i32 = 0 as i32;
+  callMSK!(MSK_getresponseclass,r_,& mut _ref_rc_);
+  _ref_rc_ as i32
 }
 
 // getversion
@@ -5504,6 +5875,16 @@ pub fn get_version() -> (i32,i32,i32)
   return (_ref_major_ as i32,_ref_minor_ as i32,_ref_revision_ as i32)
 }
 
+// isinfinity
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
+pub fn is_infinity(value_ : f64)
+{
+  callMSK!(MSK_isinfinity,value_ as f64);
+}
+
 // licensecleanup
 #[allow(non_snake_case)]
 #[allow(unused_mut)]
@@ -5512,4 +5893,17 @@ pub fn get_version() -> (i32,i32,i32)
 pub fn licensecleanup()
 {
   callMSK!(MSK_licensecleanup);
+}
+
+// symnamtovalue
+#[allow(non_snake_case)]
+#[allow(unused_mut)]
+#[allow(unused_parens)]
+#[allow(unused_variables)]
+pub fn sym_nam_to_value(name_ : &str) -> String
+{
+  let mut _value__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
+  callMSK!(MSK_symnamtovalue,CString::new(name_).unwrap().as_ptr(),_value__bytes.as_mut_ptr());
+  unsafe { _value__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
+  String::from_utf8_lossy(&_value__bytes[..]).into_owned()
 }

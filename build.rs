@@ -28,7 +28,6 @@ fn getplatformname() -> String {
 
 fn main() {
     // 1. if MOSEK_BINDIR is set, use that
-
     match env::var_os("MOSEK_BINDIR") {
         Some(path) => {
             match path.into_string().ok() {
