@@ -1806,13 +1806,13 @@ pub struct Env
     ptr : * const u8,
 }
 
-pub type CallbackType<H> = fn(&H,i32,&[f64],&[i32],&[i64]) -> bool;
+pub type CallbackType = fn(i32,&[f64],&[i32],&[i64]) -> bool;
 
-pub struct Task<H>
+pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<(H,fn(&H,&String))>; 4 ],
-    valuecb   : Option<(H,CallbackType<H>)>,
+    streamcb  : [ Option<fn(&String)>; 4],
+    valuecb   : Option<CallbackType>,
 }
 
 impl Env
@@ -1835,7 +1835,7 @@ impl Env
         return Env { ptr : env };
     }
 
-    pub fn task<H>(&self) -> Task<H>
+    pub fn task(&self) -> Task
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) }
@@ -1848,7 +1848,7 @@ impl Env
                       valuecb  : None,};
     }
 
-    pub fn task_with_capacity<H>(&self, numcon : i32, numvar : i32) -> Task<H>
+    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Task
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, numcon,numvar, & mut task) }
@@ -2139,57 +2139,56 @@ impl Env
 
 
 
-extern fn stream_callback_proxy<H>(handle : * const libc::c_void, msg : * const libc::c_char)
+extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char)
 {
-    let h = handle as * const (H,fn(&H,&String));
+    let h = handle as * const fn(&String) ;
     unsafe
     {
         let cstr = CStr::from_ptr(msg);
         let cstr_bytes = cstr.to_bytes();
         let s = String::from_utf8_lossy(cstr_bytes).into_owned();
-        (*h).1(&(*h).0,&s);
+        (*h)(&s);
     }
 }
 
 
-extern fn callback_proxy<H>(_       : * const c_void,
-                            handle  : * const libc::c_void,
-                            caller  : i32,
-                            douinf  : * const f64,
-                            intinf  : * const i32,
-                            lintinf : * const i64 ) -> i32
+extern fn callback_proxy(_       : * const c_void,
+                         handle  : * const libc::c_void,
+                         caller  : i32,
+                         douinf  : * const f64,
+                         intinf  : * const i32,
+                         lintinf : * const i64 ) -> i32
 {
-    let h = handle as * const (H,CallbackType<H>);
+    let h = handle as * const  CallbackType ;
     unsafe
     {
-        let r = (*h).1(&(*h).0,
-                       caller,
-                       & std::slice::from_raw_parts(douinf, MSK_DINF_END as usize),
-                       & std::slice::from_raw_parts(intinf, MSK_IINF_END as usize),
-                       & std::slice::from_raw_parts(lintinf, MSK_LIINF_END as usize));
+        let r = (*h)(caller,
+                     & std::slice::from_raw_parts(douinf, MSK_DINF_END as usize),
+                     & std::slice::from_raw_parts(intinf, MSK_IINF_END as usize),
+                     & std::slice::from_raw_parts(lintinf, MSK_LIINF_END as usize));
         return if r { 0 } else { 1 }
     }
 }
 
-impl<H> Task<H>
+impl Task
 {
     // NOTE on callback with handles: 
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
-    pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&H,&String), handle : H)
+    pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&String))
     {
         if whichstream >= 0 && whichstream < 4 // 
         {
-            self.streamcb[whichstream as usize] = Some((handle,func));
+            self.streamcb[whichstream as usize] = Some(func);
             let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
-            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy::<H>);
+            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
         }
     }
 
-    pub fn put_callback(& mut self,func : CallbackType<H>, handle : H)
+    pub fn put_callback(& mut self,func : CallbackType)
     {
-        self.valuecb = Some((handle,func));
+        self.valuecb = Some(func);
         let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
-        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy::<H>, hnd);
+        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
     }
 
     
@@ -5795,7 +5794,7 @@ impl Drop for Env
     }
 }
 
-impl<H> Drop for Task<H>
+impl Drop for Task
 {
     fn drop( & mut self)
     {

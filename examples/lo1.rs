@@ -11,17 +11,6 @@ extern crate mosek;
 
 const INF : f64 = 0.0;
 
-fn stream_func(handle : &(), msg : &String)
-{
-    print!("{}",msg);
-}
-
-fn callback_func(_ : &(), caller : i32, dinf : &[f64], iinf : &[i32], liinf : &[i64]) -> bool
-{
-    println!("caller = {}",caller);
-    true
-}
-
 fn main()
 {
     let numvar = 4;
@@ -54,10 +43,11 @@ fn main()
     /* Create the mosek environment. */
     let env = mosek::Env::new();
     /* Create the optimization task. */
-    let mut task = env.task::<()>();
+    let mut task = env.task();
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func, ());
-    task.put_callback(callback_func,());
+    //task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func);
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
+    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true } );
 
     /* Directs the log task stream to the 'printstr' function. */
     //task.linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
