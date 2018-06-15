@@ -213,7 +213,6 @@ extern
     fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
-    fn MSK_optimize(task_ : * const u8) -> i32;
     fn MSK_optimizermt(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : & mut i32) -> i32;
@@ -1811,7 +1810,7 @@ pub type CallbackType = fn(i32,&[f64],&[i32],&[i64]) -> bool;
 pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<fn(&String)>; 4],
+    streamcb  : [ Option<fn(&String)>; 4 ],
     valuecb   : Option<CallbackType>,
 }
 
@@ -2141,7 +2140,7 @@ impl Env
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char)
 {
-    let h = handle as * const fn(&String) ;
+    let h = handle as * const fn(&String);
     unsafe
     {
         let cstr = CStr::from_ptr(msg);
@@ -2159,7 +2158,7 @@ extern fn callback_proxy(_       : * const c_void,
                          intinf  : * const i32,
                          lintinf : * const i64 ) -> i32
 {
-    let h = handle as * const  CallbackType ;
+    let h = handle as * const CallbackType;
     unsafe
     {
         let r = (*h)(caller,
@@ -4404,16 +4403,6 @@ impl Task
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
     }
     
-    // optimize
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn optimize(&self)
-    {
-      callMSK!(MSK_optimize,self.ptr);
-    }
-    
     // optimizermt
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4441,7 +4430,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize_trm(&self) -> i32
+    pub fn optimize(&self) -> i32
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
