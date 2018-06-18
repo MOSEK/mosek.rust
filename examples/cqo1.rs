@@ -9,11 +9,6 @@ extern crate mosek;
 
 const INF : f64 = 0.0;
 
-fn stream_func(handle : &(), msg : &String)
-{
-    print!("{}",msg);
-}
-
 
 fn main()
 {
@@ -49,9 +44,9 @@ fn main()
     /* Create the mosek environment. */
     let env = mosek::Env::new();
     /* Create the optimization task. */
-    let mut task = env.task::<()>();
+    let mut task = env.task();
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func, ());
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
