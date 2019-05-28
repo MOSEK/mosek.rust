@@ -95,7 +95,7 @@ fn main()
     }
 
 
-    let trmcode = task.optimize();
+    let _trmcode = task.optimize();
 
     /* Run optimizer */
     /* Print a summary containing information

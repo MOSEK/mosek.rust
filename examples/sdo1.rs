@@ -124,7 +124,7 @@ fn main()
                                    & bara_v[3..9]);
     task.put_bara_ij(1, 0, &[a_symmat_idx2][..], &[falpha][..]);
 
-    let trmcode = task.optimize();
+    let _trmcode = task.optimize();
 
     /* Print a summary containing information
      * about the solution for debugging purposes*/
