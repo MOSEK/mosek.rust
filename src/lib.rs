@@ -3,6 +3,8 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
+mod model;
+
 #[link(name = "mosek64")]
 extern
 {
@@ -1489,9 +1491,13 @@ pub const MSK_RES_ERR_SEN_NUMERICAL                              : i32 = 3058;
 pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
 pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
+pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN                        : i32 = 8007;
+pub const MSK_RES_ERR_SERVER_ADDRESS                             : i32 = 8004;
+pub const MSK_RES_ERR_SERVER_CERTIFICATE                         : i32 = 8005;
 pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
 pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
 pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
+pub const MSK_RES_ERR_SERVER_TLS_CLIENT                          : i32 = 8006;
 pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
 pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE                         : i32 = 1202;
 pub const MSK_RES_ERR_SIZE_LICENSE                               : i32 = 1005;
@@ -1573,6 +1579,8 @@ pub const MSK_RES_WRN_EMPTY_NAME                                 : i32 = 502;
 pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO     : i32 = 932;
 pub const MSK_RES_WRN_IGNORE_INTEGER                             : i32 = 250;
 pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800;
+pub const MSK_RES_WRN_INVALID_MPS_NAME                           : i32 = 504;
+pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                       : i32 = 505;
 pub const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62;
 pub const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51;
 pub const MSK_RES_WRN_LARGE_CJ                                   : i32 = 57;
@@ -1580,7 +1588,7 @@ pub const MSK_RES_WRN_LARGE_CON_FX                               : i32 = 54;
 pub const MSK_RES_WRN_LARGE_LO_BOUND                             : i32 = 52;
 pub const MSK_RES_WRN_LARGE_UP_BOUND                             : i32 = 53;
 pub const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500;
-pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 505;
+pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 509;
 pub const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501;
 pub const MSK_RES_WRN_LP_DROP_VARIABLE                           : i32 = 85;
 pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                         : i32 = 80;
@@ -1750,18 +1758,20 @@ pub const MSK_SPAR_READ_MPS_OBJ_NAME         : i32 = 10;
 pub const MSK_SPAR_READ_MPS_RAN_NAME         : i32 = 11;
 pub const MSK_SPAR_READ_MPS_RHS_NAME         : i32 = 12;
 pub const MSK_SPAR_REMOTE_ACCESS_TOKEN       : i32 = 13;
-pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 14;
-pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 15;
-pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 16;
-pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 17;
-pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 18;
-pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 19;
-pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 20;
-pub const MSK_SPAR_STAT_KEY                  : i32 = 21;
-pub const MSK_SPAR_STAT_NAME                 : i32 = 22;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 23;
+pub const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 14;
+pub const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 15;
+pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 16;
+pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
+pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 18;
+pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 19;
+pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 20;
+pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 21;
+pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 22;
+pub const MSK_SPAR_STAT_KEY                  : i32 = 23;
+pub const MSK_SPAR_STAT_NAME                 : i32 = 24;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 25;
 pub const MSK_SPAR_BEGIN : i32 = 0;
-pub const MSK_SPAR_END   : i32 = 24;
+pub const MSK_SPAR_END   : i32 = 26;
 
 // stakey
 pub const MSK_SK_BAS    : i32 = 1;
@@ -1866,7 +1876,7 @@ impl Env
         }
 
         return Task { ptr      : task,
-                      streamcb : [None,None,None,None], 
+                      streamcb : [None,None,None,None],
                       valuecb  : None,};
     }
 
@@ -1883,7 +1893,7 @@ impl Env
                       valuecb  : None, };
     }
 
-    
+
     // axpy
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1895,7 +1905,7 @@ impl Env
       if y_.len() != ((n_) as usize) { panic!("Argument 'y_' is too short in call to 'axpy'") }
       callMSK!(MSK_axpy,self.ptr,n_ as libc::int32_t,alpha_ as f64,x_.as_ptr(),y_.as_mut_ptr());
     }
-    
+
     // checkinall
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1905,7 +1915,7 @@ impl Env
     {
       callMSK!(MSK_checkinall,self.ptr);
     }
-    
+
     // checkinlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1915,7 +1925,7 @@ impl Env
     {
       callMSK!(MSK_checkinlicense,self.ptr,feature_);
     }
-    
+
     // checkmemenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1925,7 +1935,7 @@ impl Env
     {
       callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
     }
-    
+
     // checkoutlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1935,7 +1945,7 @@ impl Env
     {
       callMSK!(MSK_checkoutlicense,self.ptr,feature_);
     }
-    
+
     // checkversion
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1945,7 +1955,7 @@ impl Env
     {
       callMSK!(MSK_checkversion,self.ptr,major_ as libc::int32_t,minor_ as libc::int32_t,revision_ as libc::int32_t);
     }
-    
+
     // dot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1959,7 +1969,7 @@ impl Env
       callMSK!(MSK_dot,self.ptr,n_ as libc::int32_t,x_.as_ptr(),y_.as_ptr(),& mut _ref_xty_);
       _ref_xty_ as f64
     }
-    
+
     // echoenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1969,7 +1979,7 @@ impl Env
     {
       callMSK!(MSK_echoenv,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
     }
-    
+
     // echointro
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1979,7 +1989,7 @@ impl Env
     {
       callMSK!(MSK_echointro,self.ptr,longver_ as libc::int32_t);
     }
-    
+
     // gemm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -1992,7 +2002,7 @@ impl Env
       if c_.len() != ((m_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'gemm'") }
       callMSK!(MSK_gemm,self.ptr,transa_,transb_,m_ as libc::int32_t,n_ as libc::int32_t,k_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),b_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
     }
-    
+
     // gemv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2001,14 +2011,14 @@ impl Env
     pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64])
     {
       if a_.len() != ((n_ * m_) as usize) { panic!("Argument 'a_' is too short in call to 'gemv'") }
-      let tmp_var_3__ = 
+      let tmp_var_3__ =
         if (transa_ == MSK_TRANSPOSE_NO) {
           n_
         }  else {
           m_
         };
       if x_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'x_' is too short in call to 'gemv'") }
-      let tmp_var_9__ = 
+      let tmp_var_9__ =
         if (transa_ == MSK_TRANSPOSE_NO) {
           m_
         }  else {
@@ -2017,7 +2027,7 @@ impl Env
       if y_.len() != ((tmp_var_9__) as usize) { panic!("Argument 'y_' is too short in call to 'gemv'") }
       callMSK!(MSK_gemv,self.ptr,transa_,m_ as libc::int32_t,n_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),x_.as_ptr(),beta_ as f64,y_.as_mut_ptr());
     }
-    
+
     // linkfiletoenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2027,7 +2037,7 @@ impl Env
     {
       callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
     }
-    
+
     // potrf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2038,7 +2048,7 @@ impl Env
       if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'potrf'") }
       callMSK!(MSK_potrf,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr());
     }
-    
+
     // putlicensecode
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2049,7 +2059,7 @@ impl Env
       if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { panic!("Argument 'code_' is too short in call to 'put_license_code'") }
       callMSK!(MSK_putlicensecode,self.ptr,code_.as_ptr());
     }
-    
+
     // putlicensedebug
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2059,7 +2069,7 @@ impl Env
     {
       callMSK!(MSK_putlicensedebug,self.ptr,licdebug_ as libc::int32_t);
     }
-    
+
     // putlicensepath
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2069,7 +2079,7 @@ impl Env
     {
       callMSK!(MSK_putlicensepath,self.ptr,CString::new(licensepath_).unwrap().as_ptr());
     }
-    
+
     // putlicensewait
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2079,7 +2089,7 @@ impl Env
     {
       callMSK!(MSK_putlicensewait,self.ptr,licwait_ as libc::int32_t);
     }
-    
+
     // setupthreads
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2089,7 +2099,7 @@ impl Env
     {
       callMSK!(MSK_setupthreads,self.ptr,numthreads_ as libc::int32_t);
     }
-    
+
     // sparsetriangularsolvedense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2109,7 +2119,7 @@ impl Env
       if b_.len() != ((n_) as usize) { panic!("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'") }
       callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as libc::int32_t,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as libc::int64_t,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
     }
-    
+
     // syeig
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2121,7 +2131,7 @@ impl Env
       if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syeig'") }
       callMSK!(MSK_syeig,self.ptr,uplo_,n_ as libc::int32_t,a_.as_ptr(),w_.as_mut_ptr());
     }
-    
+
     // syevd
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2133,7 +2143,7 @@ impl Env
       if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syevd'") }
       callMSK!(MSK_syevd,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr(),w_.as_mut_ptr());
     }
-    
+
     // syrk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2145,7 +2155,7 @@ impl Env
       if c_.len() != ((n_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'syrk'") }
       callMSK!(MSK_syrk,self.ptr,uplo_,trans_,n_ as libc::int32_t,k_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
     }
-    
+
     // unlinkfuncfromenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2194,11 +2204,11 @@ extern fn callback_proxy(_       : * const c_void,
 
 impl Task
 {
-    // NOTE on callback with handles: 
+    // NOTE on callback with handles:
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
     pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&String))
     {
-        if whichstream >= 0 && whichstream < 4 // 
+        if whichstream >= 0 && whichstream < 4 //
         {
             self.streamcb[whichstream as usize] = Some(func);
             let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
@@ -2213,7 +2223,7 @@ impl Task
         callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
     }
 
-    
+
     // analyzenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2223,7 +2233,7 @@ impl Task
     {
       callMSK!(MSK_analyzenames,self.ptr,whichstream_,nametype_);
     }
-    
+
     // analyzeproblem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2233,7 +2243,7 @@ impl Task
     {
       callMSK!(MSK_analyzeproblem,self.ptr,whichstream_);
     }
-    
+
     // analyzesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2243,7 +2253,7 @@ impl Task
     {
       callMSK!(MSK_analyzesolution,self.ptr,whichstream_,whichsol_);
     }
-    
+
     // appendbarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2254,7 +2264,7 @@ impl Task
       let mut num_ = dim_.len();
       callMSK!(MSK_appendbarvars,self.ptr,num_ as libc::int32_t,dim_.as_ptr());
     }
-    
+
     // appendcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2265,7 +2275,7 @@ impl Task
       let mut nummem_ = submem_.len();
       callMSK!(MSK_appendcone,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
     }
-    
+
     // appendconeseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2275,7 +2285,7 @@ impl Task
     {
       callMSK!(MSK_appendconeseq,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,j_ as libc::int32_t);
     }
-    
+
     // appendconesseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2288,7 +2298,7 @@ impl Task
       if nummem_.len() > num_ { num_ = nummem_.len() };
       callMSK!(MSK_appendconesseq,self.ptr,num_ as libc::int32_t,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_ as libc::int32_t);
     }
-    
+
     // appendcons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2298,7 +2308,7 @@ impl Task
     {
       callMSK!(MSK_appendcons,self.ptr,num_ as libc::int32_t);
     }
-    
+
     // appendsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2313,7 +2323,7 @@ impl Task
       callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as libc::int32_t,nz_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
       _ref_idx_ as i64
     }
-    
+
     // appendsparsesymmatlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2332,7 +2342,7 @@ impl Task
       if idx_.len() != ((num_) as usize) { panic!("Argument 'idx_' is too short in call to 'append_sparse_sym_mat_list'") }
       callMSK!(MSK_appendsparsesymmatlist,self.ptr,num_ as libc::int32_t,dims_.as_ptr(),nz_.as_ptr(),subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),idx_.as_mut_ptr());
     }
-    
+
     // appendvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2342,7 +2352,7 @@ impl Task
     {
       callMSK!(MSK_appendvars,self.ptr,num_ as libc::int32_t);
     }
-    
+
     // asyncgetresult
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2356,7 +2366,7 @@ impl Task
       callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
     }
-    
+
     // asyncoptimize
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2369,7 +2379,7 @@ impl Task
       unsafe { _token__bytes.set_len((33) as usize) };
       String::from_utf8_lossy(&_token__bytes[..]).into_owned()
     }
-    
+
     // asyncpoll
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2383,7 +2393,7 @@ impl Task
       callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
     }
-    
+
     // asyncstop
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2393,7 +2403,7 @@ impl Task
     {
       callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
     }
-    
+
     // basiscond
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2406,7 +2416,7 @@ impl Task
       callMSK!(MSK_basiscond,self.ptr,& mut _ref_nrmbasis_,& mut _ref_nrminvbasis_);
       return (_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64)
     }
-    
+
     // bktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2419,7 +2429,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // checkmemtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2429,7 +2439,7 @@ impl Task
     {
       callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
     }
-    
+
     // chgconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2439,7 +2449,7 @@ impl Task
     {
       callMSK!(MSK_chgconbound,self.ptr,i_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
     }
-    
+
     // chgvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2449,7 +2459,7 @@ impl Task
     {
       callMSK!(MSK_chgvarbound,self.ptr,j_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
     }
-    
+
     // commitchanges
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2459,7 +2469,7 @@ impl Task
     {
       callMSK!(MSK_commitchanges,self.ptr);
     }
-    
+
     // conetypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2472,7 +2482,7 @@ impl Task
       unsafe { _str__bytes.set_len((1024) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // deletesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2482,7 +2492,7 @@ impl Task
     {
       callMSK!(MSK_deletesolution,self.ptr,whichsol_);
     }
-    
+
     // dualsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2497,7 +2507,7 @@ impl Task
       if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'dual_sensitivity'") }
       callMSK!(MSK_dualsensitivity,self.ptr,numj_ as libc::int32_t,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
     }
-    
+
     // echotask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2507,7 +2517,7 @@ impl Task
     {
       callMSK!(MSK_echotask,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
     }
-    
+
     // generateconenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2520,7 +2530,7 @@ impl Task
       if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_cone_names'") }
       callMSK!(MSK_generateconenames,self.ptr,num_ as libc::int32_t,subk_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
     }
-    
+
     // generateconnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2533,7 +2543,7 @@ impl Task
       if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_con_names'") }
       callMSK!(MSK_generateconnames,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
     }
-    
+
     // generatevarnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2546,7 +2556,7 @@ impl Task
       if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_var_names'") }
       callMSK!(MSK_generatevarnames,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
     }
-    
+
     // getacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2562,7 +2572,7 @@ impl Task
       callMSK!(MSK_getacol,self.ptr,j_ as libc::int32_t,& mut _ref_nzj_,subj_.as_mut_ptr(),valj_.as_mut_ptr());
       _ref_nzj_ as i32
     }
-    
+
     // getacolnumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2574,7 +2584,7 @@ impl Task
       callMSK!(MSK_getacolnumnz,self.ptr,i_ as libc::int32_t,& mut _ref_nzj_);
       _ref_nzj_ as i32
     }
-    
+
     // getacolslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2586,7 +2596,7 @@ impl Task
       callMSK!(MSK_getacolslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
       _ref_numnz_ as i64
     }
-    
+
     // getaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2598,7 +2608,7 @@ impl Task
       callMSK!(MSK_getaij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,& mut _ref_aij_);
       _ref_aij_ as f64
     }
-    
+
     // getapiecenumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2610,7 +2620,7 @@ impl Task
       callMSK!(MSK_getapiecenumnz,self.ptr,firsti_ as libc::int32_t,lasti_ as libc::int32_t,firstj_ as libc::int32_t,lastj_ as libc::int32_t,& mut _ref_numnz_);
       _ref_numnz_ as i32
     }
-    
+
     // getarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2626,7 +2636,7 @@ impl Task
       callMSK!(MSK_getarow,self.ptr,i_ as libc::int32_t,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr());
       _ref_nzi_ as i32
     }
-    
+
     // getarownumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2638,7 +2648,7 @@ impl Task
       callMSK!(MSK_getarownumnz,self.ptr,i_ as libc::int32_t,& mut _ref_nzi_);
       _ref_nzi_ as i32
     }
-    
+
     // getarowslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2650,7 +2660,7 @@ impl Task
       callMSK!(MSK_getarowslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
       _ref_numnz_ as i64
     }
-    
+
     // getatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2661,7 +2671,7 @@ impl Task
       if tolzero_.len() != ((1) as usize) { panic!("Argument 'tolzero_' is too short in call to 'get_a_truncate_tol'") }
       callMSK!(MSK_getatruncatetol,self.ptr,tolzero_.as_mut_ptr());
     }
-    
+
     // getbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2680,7 +2690,7 @@ impl Task
       callMSK!(MSK_getbarablocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
       _ref_num_ as i64
     }
-    
+
     // getbaraidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2698,7 +2708,7 @@ impl Task
       callMSK!(MSK_getbaraidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
       return (_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64)
     }
-    
+
     // getbaraidxij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2711,7 +2721,7 @@ impl Task
       callMSK!(MSK_getbaraidxij,self.ptr,idx_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_);
       return (_ref_i_ as i32,_ref_j_ as i32)
     }
-    
+
     // getbaraidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2723,7 +2733,7 @@ impl Task
       callMSK!(MSK_getbaraidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
       _ref_num_ as i64
     }
-    
+
     // getbarasparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2738,7 +2748,7 @@ impl Task
       callMSK!(MSK_getbarasparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxij_.as_mut_ptr());
       _ref_numnz_ as i64
     }
-    
+
     // getbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2756,7 +2766,7 @@ impl Task
       callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr());
       _ref_num_ as i64
     }
-    
+
     // getbarcidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2773,7 +2783,7 @@ impl Task
       callMSK!(MSK_getbarcidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
       return (_ref_j_ as i32,_ref_num_ as i64)
     }
-    
+
     // getbarcidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2785,7 +2795,7 @@ impl Task
       callMSK!(MSK_getbarcidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
       _ref_num_ as i64
     }
-    
+
     // getbarcidxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2797,7 +2807,7 @@ impl Task
       callMSK!(MSK_getbarcidxj,self.ptr,idx_ as libc::int64_t,& mut _ref_j_);
       _ref_j_ as i32
     }
-    
+
     // getbarcsparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2812,7 +2822,7 @@ impl Task
       callMSK!(MSK_getbarcsparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxj_.as_mut_ptr());
       _ref_numnz_ as i64
     }
-    
+
     // getbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2824,7 +2834,7 @@ impl Task
       if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'get_bars_j'") }
       callMSK!(MSK_getbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_mut_ptr());
     }
-    
+
     // getbarsslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2835,7 +2845,7 @@ impl Task
       if barsslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barsslice_' is too short in call to 'get_bars_slice'") }
       callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barsslice_.as_mut_ptr());
     }
-    
+
     // getbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2850,7 +2860,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
-    
+
     // getbarvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2863,7 +2873,7 @@ impl Task
       callMSK!(MSK_getbarvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return (_ref_asgn_ as i32,_ref_index_ as i32)
     }
-    
+
     // getbarvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2875,7 +2885,7 @@ impl Task
       callMSK!(MSK_getbarvarnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2887,7 +2897,7 @@ impl Task
       if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'get_barx_j'") }
       callMSK!(MSK_getbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_mut_ptr());
     }
-    
+
     // getbarxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2898,7 +2908,7 @@ impl Task
       if barxslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barxslice_' is too short in call to 'get_barx_slice'") }
       callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barxslice_.as_mut_ptr());
     }
-    
+
     // getc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2910,7 +2920,7 @@ impl Task
       if c_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'c_' is too short in call to 'get_c'") }
       callMSK!(MSK_getc,self.ptr,c_.as_mut_ptr());
     }
-    
+
     // getcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2922,7 +2932,7 @@ impl Task
       callMSK!(MSK_getcfix,self.ptr,& mut _ref_cfix_);
       _ref_cfix_ as f64
     }
-    
+
     // getcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2934,7 +2944,7 @@ impl Task
       callMSK!(MSK_getcj,self.ptr,j_ as libc::int32_t,& mut _ref_cj_);
       _ref_cj_ as f64
     }
-    
+
     // getclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2946,7 +2956,7 @@ impl Task
       if c_.len() != ((num_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_list'") }
       callMSK!(MSK_getclist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),c_.as_mut_ptr());
     }
-    
+
     // getconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2960,7 +2970,7 @@ impl Task
       callMSK!(MSK_getconbound,self.ptr,i_ as libc::int32_t,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
       return (_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64)
     }
-    
+
     // getconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2973,7 +2983,7 @@ impl Task
       if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_con_bound_slice'") }
       callMSK!(MSK_getconboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
     }
-    
+
     // getcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2989,7 +2999,7 @@ impl Task
       callMSK!(MSK_getcone,self.ptr,k_ as libc::int32_t,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_,submem_.as_mut_ptr());
       return (_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32)
     }
-    
+
     // getconeinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3003,7 +3013,7 @@ impl Task
       callMSK!(MSK_getconeinfo,self.ptr,k_ as libc::int32_t,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_);
       return (_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32)
     }
-    
+
     // getconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3018,7 +3028,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
-    
+
     // getconenameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3031,7 +3041,7 @@ impl Task
       callMSK!(MSK_getconenameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return (_ref_asgn_ as i32,_ref_index_ as i32)
     }
-    
+
     // getconenamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3043,7 +3053,7 @@ impl Task
       callMSK!(MSK_getconenamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3058,7 +3068,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
-    
+
     // getconnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3071,7 +3081,7 @@ impl Task
       callMSK!(MSK_getconnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return (_ref_asgn_ as i32,_ref_index_ as i32)
     }
-    
+
     // getconnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3083,7 +3093,7 @@ impl Task
       callMSK!(MSK_getconnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3094,7 +3104,7 @@ impl Task
       if c_.len() != ((last_ - first_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_slice'") }
       callMSK!(MSK_getcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,c_.as_mut_ptr());
     }
-    
+
     // getdimbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3106,7 +3116,7 @@ impl Task
       callMSK!(MSK_getdimbarvarj,self.ptr,j_ as libc::int32_t,& mut _ref_dimbarvarj_);
       _ref_dimbarvarj_ as i32
     }
-    
+
     // getdouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3118,7 +3128,7 @@ impl Task
       callMSK!(MSK_getdouinf,self.ptr,whichdinf_,& mut _ref_dvalue_);
       _ref_dvalue_ as f64
     }
-    
+
     // getdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3130,7 +3140,7 @@ impl Task
       callMSK!(MSK_getdouparam,self.ptr,param_,& mut _ref_parvalue_);
       _ref_parvalue_ as f64
     }
-    
+
     // getdualobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3142,7 +3152,7 @@ impl Task
       callMSK!(MSK_getdualobj,self.ptr,whichsol_,& mut _ref_dualobj_);
       _ref_dualobj_ as f64
     }
-    
+
     // getdualsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3160,7 +3170,7 @@ impl Task
       callMSK!(MSK_getdualsolutionnorms,self.ptr,whichsol_,& mut _ref_nrmy_,& mut _ref_nrmslc_,& mut _ref_nrmsuc_,& mut _ref_nrmslx_,& mut _ref_nrmsux_,& mut _ref_nrmsnx_,& mut _ref_nrmbars_);
       return (_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64)
     }
-    
+
     // getdviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3172,7 +3182,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_barvar'") }
       callMSK!(MSK_getdviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getdviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3184,7 +3194,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_con'") }
       callMSK!(MSK_getdviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getdviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3196,7 +3206,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_cones'") }
       callMSK!(MSK_getdviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getdviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3208,7 +3218,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_var'") }
       callMSK!(MSK_getdviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getinfindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3220,7 +3230,7 @@ impl Task
       callMSK!(MSK_getinfindex,self.ptr,inftype_,CString::new(infname_).unwrap().as_ptr(),& mut _ref_infindex_);
       _ref_infindex_ as i32
     }
-    
+
     // getinfmax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3231,7 +3241,7 @@ impl Task
       if infmax_.len() != ((MSK_MAX_STR_LEN) as usize) { panic!("Argument 'infmax_' is too short in call to 'get_inf_max'") }
       callMSK!(MSK_getinfmax,self.ptr,inftype_,infmax_.as_mut_ptr());
     }
-    
+
     // getinfname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3244,7 +3254,7 @@ impl Task
       unsafe { _infname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_infname__bytes[..]).into_owned()
     }
-    
+
     // getintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3256,7 +3266,7 @@ impl Task
       callMSK!(MSK_getintinf,self.ptr,whichiinf_,& mut _ref_ivalue_);
       _ref_ivalue_ as i32
     }
-    
+
     // getintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3268,7 +3278,7 @@ impl Task
       callMSK!(MSK_getintparam,self.ptr,param_,& mut _ref_parvalue_);
       _ref_parvalue_ as i32
     }
-    
+
     // getlenbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3280,7 +3290,7 @@ impl Task
       callMSK!(MSK_getlenbarvarj,self.ptr,j_ as libc::int32_t,& mut _ref_lenbarvarj_);
       _ref_lenbarvarj_ as i64
     }
-    
+
     // getlintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3292,7 +3302,7 @@ impl Task
       callMSK!(MSK_getlintinf,self.ptr,whichliinf_,& mut _ref_ivalue_);
       _ref_ivalue_ as i64
     }
-    
+
     // getmaxnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3304,7 +3314,7 @@ impl Task
       callMSK!(MSK_getmaxnamelen,self.ptr,& mut _ref_maxlen_);
       _ref_maxlen_ as i32
     }
-    
+
     // getmaxnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3316,7 +3326,7 @@ impl Task
       callMSK!(MSK_getmaxnumanz64,self.ptr,& mut _ref_maxnumanz_);
       _ref_maxnumanz_ as i64
     }
-    
+
     // getmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3328,7 +3338,7 @@ impl Task
       callMSK!(MSK_getmaxnumbarvar,self.ptr,& mut _ref_maxnumbarvar_);
       _ref_maxnumbarvar_ as i32
     }
-    
+
     // getmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3340,7 +3350,7 @@ impl Task
       callMSK!(MSK_getmaxnumcon,self.ptr,& mut _ref_maxnumcon_);
       _ref_maxnumcon_ as i32
     }
-    
+
     // getmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3352,7 +3362,7 @@ impl Task
       callMSK!(MSK_getmaxnumcone,self.ptr,& mut _ref_maxnumcone_);
       _ref_maxnumcone_ as i32
     }
-    
+
     // getmaxnumqnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3364,7 +3374,7 @@ impl Task
       callMSK!(MSK_getmaxnumqnz64,self.ptr,& mut _ref_maxnumqnz_);
       _ref_maxnumqnz_ as i64
     }
-    
+
     // getmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3376,7 +3386,7 @@ impl Task
       callMSK!(MSK_getmaxnumvar,self.ptr,& mut _ref_maxnumvar_);
       _ref_maxnumvar_ as i32
     }
-    
+
     // getmemusagetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3389,7 +3399,7 @@ impl Task
       callMSK!(MSK_getmemusagetask,self.ptr,& mut _ref_meminuse_,& mut _ref_maxmemuse_);
       return (_ref_meminuse_ as i64,_ref_maxmemuse_ as i64)
     }
-    
+
     // getnadouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3401,7 +3411,7 @@ impl Task
       callMSK!(MSK_getnadouinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_dvalue_);
       _ref_dvalue_ as f64
     }
-    
+
     // getnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3413,7 +3423,7 @@ impl Task
       callMSK!(MSK_getnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
       _ref_parvalue_ as f64
     }
-    
+
     // getnaintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3425,7 +3435,7 @@ impl Task
       callMSK!(MSK_getnaintinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_ivalue_);
       _ref_ivalue_ as i32
     }
-    
+
     // getnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3437,7 +3447,7 @@ impl Task
       callMSK!(MSK_getnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
       _ref_parvalue_ as i32
     }
-    
+
     // getnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3451,7 +3461,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
       return (_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned())
     }
-    
+
     // getnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3463,7 +3473,7 @@ impl Task
       callMSK!(MSK_getnumanz,self.ptr,& mut _ref_numanz_);
       _ref_numanz_ as i32
     }
-    
+
     // getnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3475,7 +3485,7 @@ impl Task
       callMSK!(MSK_getnumanz64,self.ptr,& mut _ref_numanz_);
       _ref_numanz_ as i64
     }
-    
+
     // getnumbarablocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3487,7 +3497,7 @@ impl Task
       callMSK!(MSK_getnumbarablocktriplets,self.ptr,& mut _ref_num_);
       _ref_num_ as i64
     }
-    
+
     // getnumbaranz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3499,7 +3509,7 @@ impl Task
       callMSK!(MSK_getnumbaranz,self.ptr,& mut _ref_nz_);
       _ref_nz_ as i64
     }
-    
+
     // getnumbarcblocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3511,7 +3521,7 @@ impl Task
       callMSK!(MSK_getnumbarcblocktriplets,self.ptr,& mut _ref_num_);
       _ref_num_ as i64
     }
-    
+
     // getnumbarcnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3523,7 +3533,7 @@ impl Task
       callMSK!(MSK_getnumbarcnz,self.ptr,& mut _ref_nz_);
       _ref_nz_ as i64
     }
-    
+
     // getnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3535,7 +3545,7 @@ impl Task
       callMSK!(MSK_getnumbarvar,self.ptr,& mut _ref_numbarvar_);
       _ref_numbarvar_ as i32
     }
-    
+
     // getnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3547,7 +3557,7 @@ impl Task
       callMSK!(MSK_getnumcon,self.ptr,& mut _ref_numcon_);
       _ref_numcon_ as i32
     }
-    
+
     // getnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3559,7 +3569,7 @@ impl Task
       callMSK!(MSK_getnumcone,self.ptr,& mut _ref_numcone_);
       _ref_numcone_ as i32
     }
-    
+
     // getnumconemem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3571,7 +3581,7 @@ impl Task
       callMSK!(MSK_getnumconemem,self.ptr,k_ as libc::int32_t,& mut _ref_nummem_);
       _ref_nummem_ as i32
     }
-    
+
     // getnumintvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3583,7 +3593,7 @@ impl Task
       callMSK!(MSK_getnumintvar,self.ptr,& mut _ref_numintvar_);
       _ref_numintvar_ as i32
     }
-    
+
     // getnumparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3595,7 +3605,7 @@ impl Task
       callMSK!(MSK_getnumparam,self.ptr,partype_,& mut _ref_numparam_);
       _ref_numparam_ as i32
     }
-    
+
     // getnumqconknz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3607,7 +3617,7 @@ impl Task
       callMSK!(MSK_getnumqconknz64,self.ptr,k_ as libc::int32_t,& mut _ref_numqcnz_);
       _ref_numqcnz_ as i64
     }
-    
+
     // getnumqobjnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3619,7 +3629,7 @@ impl Task
       callMSK!(MSK_getnumqobjnz64,self.ptr,& mut _ref_numqonz_);
       _ref_numqonz_ as i64
     }
-    
+
     // getnumsymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3631,7 +3641,7 @@ impl Task
       callMSK!(MSK_getnumsymmat,self.ptr,& mut _ref_num_);
       _ref_num_ as i64
     }
-    
+
     // getnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3643,7 +3653,7 @@ impl Task
       callMSK!(MSK_getnumvar,self.ptr,& mut _ref_numvar_);
       _ref_numvar_ as i32
     }
-    
+
     // getobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3658,7 +3668,7 @@ impl Task
       unsafe { _objname__bytes.set_len((sizeobjname_) as usize) };
       String::from_utf8_lossy(&_objname__bytes[..]).into_owned()
     }
-    
+
     // getobjnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3670,7 +3680,7 @@ impl Task
       callMSK!(MSK_getobjnamelen,self.ptr,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3682,7 +3692,7 @@ impl Task
       callMSK!(MSK_getobjsense,self.ptr,& mut _ref_sense_);
       _ref_sense_ as i32
     }
-    
+
     // getparammax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3694,7 +3704,7 @@ impl Task
       callMSK!(MSK_getparammax,self.ptr,partype_,& mut _ref_parammax_);
       _ref_parammax_ as i32
     }
-    
+
     // getparamname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3707,7 +3717,7 @@ impl Task
       unsafe { _parname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_parname__bytes[..]).into_owned()
     }
-    
+
     // getprimalobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3719,7 +3729,7 @@ impl Task
       callMSK!(MSK_getprimalobj,self.ptr,whichsol_,& mut _ref_primalobj_);
       _ref_primalobj_ as f64
     }
-    
+
     // getprimalsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3733,7 +3743,7 @@ impl Task
       callMSK!(MSK_getprimalsolutionnorms,self.ptr,whichsol_,& mut _ref_nrmxc_,& mut _ref_nrmxx_,& mut _ref_nrmbarx_);
       return (_ref_nrmxc_ as f64,_ref_nrmxx_ as f64,_ref_nrmbarx_ as f64)
     }
-    
+
     // getprobtype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3745,7 +3755,7 @@ impl Task
       callMSK!(MSK_getprobtype,self.ptr,& mut _ref_probtype_);
       _ref_probtype_ as i32
     }
-    
+
     // getprosta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3757,7 +3767,7 @@ impl Task
       callMSK!(MSK_getprosta,self.ptr,whichsol_,& mut _ref_prosta_);
       _ref_prosta_ as i32
     }
-    
+
     // getpviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3769,7 +3779,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_barvar'") }
       callMSK!(MSK_getpviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getpviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3781,7 +3791,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_con'") }
       callMSK!(MSK_getpviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getpviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3793,7 +3803,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_cones'") }
       callMSK!(MSK_getpviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getpviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3805,7 +3815,7 @@ impl Task
       if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_var'") }
       callMSK!(MSK_getpviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
     }
-    
+
     // getqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3817,7 +3827,7 @@ impl Task
       callMSK!(MSK_getqobjij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,& mut _ref_qoij_);
       _ref_qoij_ as f64
     }
-    
+
     // getreducedcosts
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3828,7 +3838,7 @@ impl Task
       if redcosts_.len() != ((last_ - first_) as usize) { panic!("Argument 'redcosts_' is too short in call to 'get_reduced_costs'") }
       callMSK!(MSK_getreducedcosts,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,redcosts_.as_mut_ptr());
     }
-    
+
     // getskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3840,7 +3850,7 @@ impl Task
       if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc'") }
       callMSK!(MSK_getskc,self.ptr,whichsol_,skc_.as_mut_ptr());
     }
-    
+
     // getskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3851,7 +3861,7 @@ impl Task
       if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc_slice'") }
       callMSK!(MSK_getskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_mut_ptr());
     }
-    
+
     // getskn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3863,7 +3873,7 @@ impl Task
       if skn_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skn_' is too short in call to 'get_skn'") }
       callMSK!(MSK_getskn,self.ptr,whichsol_,skn_.as_mut_ptr());
     }
-    
+
     // getskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3875,7 +3885,7 @@ impl Task
       if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx'") }
       callMSK!(MSK_getskx,self.ptr,whichsol_,skx_.as_mut_ptr());
     }
-    
+
     // getskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3886,7 +3896,7 @@ impl Task
       if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx_slice'") }
       callMSK!(MSK_getskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_mut_ptr());
     }
-    
+
     // getslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3898,7 +3908,7 @@ impl Task
       if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc'") }
       callMSK!(MSK_getslc,self.ptr,whichsol_,slc_.as_mut_ptr());
     }
-    
+
     // getslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3909,7 +3919,7 @@ impl Task
       if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc_slice'") }
       callMSK!(MSK_getslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_mut_ptr());
     }
-    
+
     // getslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3921,7 +3931,7 @@ impl Task
       if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx'") }
       callMSK!(MSK_getslx,self.ptr,whichsol_,slx_.as_mut_ptr());
     }
-    
+
     // getslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3932,7 +3942,7 @@ impl Task
       if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx_slice'") }
       callMSK!(MSK_getslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_mut_ptr());
     }
-    
+
     // getsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3944,7 +3954,7 @@ impl Task
       if snx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx'") }
       callMSK!(MSK_getsnx,self.ptr,whichsol_,snx_.as_mut_ptr());
     }
-    
+
     // getsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3955,7 +3965,7 @@ impl Task
       if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx_slice'") }
       callMSK!(MSK_getsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_mut_ptr());
     }
-    
+
     // getsolsta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3967,7 +3977,7 @@ impl Task
       callMSK!(MSK_getsolsta,self.ptr,whichsol_,& mut _ref_solsta_);
       _ref_solsta_ as i32
     }
-    
+
     // getsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4002,7 +4012,7 @@ impl Task
       callMSK!(MSK_getsolution,self.ptr,whichsol_,& mut _ref_prosta_,& mut _ref_solsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr());
       return (_ref_prosta_ as i32,_ref_solsta_ as i32)
     }
-    
+
     // getsolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4024,7 +4034,7 @@ impl Task
       callMSK!(MSK_getsolutioninfo,self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_);
       return (_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64)
     }
-    
+
     // getsolutionslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4035,7 +4045,7 @@ impl Task
       if values_.len() != ((last_ - first_) as usize) { panic!("Argument 'values_' is too short in call to 'get_solution_slice'") }
       callMSK!(MSK_getsolutionslice,self.ptr,whichsol_,solitem_,first_ as libc::int32_t,last_ as libc::int32_t,values_.as_mut_ptr());
     }
-    
+
     // getsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4050,7 +4060,7 @@ impl Task
       if valij_.len() != ((maxlen_) as usize) { panic!("Argument 'valij_' is too short in call to 'get_sparse_sym_mat'") }
       callMSK!(MSK_getsparsesymmat,self.ptr,idx_ as libc::int64_t,maxlen_ as libc::int64_t,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr());
     }
-    
+
     // getstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4066,7 +4076,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((maxlen_) as usize) };
       return (_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned())
     }
-    
+
     // getstrparamlen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4078,7 +4088,7 @@ impl Task
       callMSK!(MSK_getstrparamlen,self.ptr,param_,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4090,7 +4100,7 @@ impl Task
       if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc'") }
       callMSK!(MSK_getsuc,self.ptr,whichsol_,suc_.as_mut_ptr());
     }
-    
+
     // getsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4101,7 +4111,7 @@ impl Task
       if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc_slice'") }
       callMSK!(MSK_getsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_mut_ptr());
     }
-    
+
     // getsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4113,7 +4123,7 @@ impl Task
       if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux'") }
       callMSK!(MSK_getsux,self.ptr,whichsol_,sux_.as_mut_ptr());
     }
-    
+
     // getsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4124,7 +4134,7 @@ impl Task
       if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux_slice'") }
       callMSK!(MSK_getsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_mut_ptr());
     }
-    
+
     // getsymbcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4139,7 +4149,7 @@ impl Task
       unsafe { _name__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return (String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32)
     }
-    
+
     // getsymmatinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4153,7 +4163,7 @@ impl Task
       callMSK!(MSK_getsymmatinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_dim_,& mut _ref_nz_,& mut _ref_type_);
       return (_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32)
     }
-    
+
     // gettaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4168,7 +4178,7 @@ impl Task
       unsafe { _taskname__bytes.set_len((sizetaskname_) as usize) };
       String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()
     }
-    
+
     // gettasknamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4180,7 +4190,7 @@ impl Task
       callMSK!(MSK_gettasknamelen,self.ptr,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4194,7 +4204,7 @@ impl Task
       callMSK!(MSK_getvarbound,self.ptr,i_ as libc::int32_t,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
       return (_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64)
     }
-    
+
     // getvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4207,7 +4217,7 @@ impl Task
       if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_var_bound_slice'") }
       callMSK!(MSK_getvarboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
     }
-    
+
     // getvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4222,7 +4232,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       String::from_utf8_lossy(&_name__bytes[..]).into_owned()
     }
-    
+
     // getvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4235,7 +4245,7 @@ impl Task
       callMSK!(MSK_getvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return (_ref_asgn_ as i32,_ref_index_ as i32)
     }
-    
+
     // getvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4247,7 +4257,7 @@ impl Task
       callMSK!(MSK_getvarnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
       _ref_len_ as i32
     }
-    
+
     // getvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4259,7 +4269,7 @@ impl Task
       callMSK!(MSK_getvartype,self.ptr,j_ as libc::int32_t,& mut _ref_vartype_);
       _ref_vartype_ as i32
     }
-    
+
     // getvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4271,7 +4281,7 @@ impl Task
       if vartype_.len() != ((num_) as usize) { panic!("Argument 'vartype_' is too short in call to 'get_var_type_list'") }
       callMSK!(MSK_getvartypelist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),vartype_.as_mut_ptr());
     }
-    
+
     // getxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4283,7 +4293,7 @@ impl Task
       if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc'") }
       callMSK!(MSK_getxc,self.ptr,whichsol_,xc_.as_mut_ptr());
     }
-    
+
     // getxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4294,7 +4304,7 @@ impl Task
       if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc_slice'") }
       callMSK!(MSK_getxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_mut_ptr());
     }
-    
+
     // getxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4306,7 +4316,7 @@ impl Task
       if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx'") }
       callMSK!(MSK_getxx,self.ptr,whichsol_,xx_.as_mut_ptr());
     }
-    
+
     // getxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4317,7 +4327,7 @@ impl Task
       if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx_slice'") }
       callMSK!(MSK_getxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_mut_ptr());
     }
-    
+
     // gety
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4329,7 +4339,7 @@ impl Task
       if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'get_y'") }
       callMSK!(MSK_gety,self.ptr,whichsol_,y_.as_mut_ptr());
     }
-    
+
     // getyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4340,7 +4350,7 @@ impl Task
       if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'get_y_slice'") }
       callMSK!(MSK_getyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_mut_ptr());
     }
-    
+
     // initbasissolve
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4352,7 +4362,7 @@ impl Task
       if basis_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'basis_' is too short in call to 'init_basis_solve'") }
       callMSK!(MSK_initbasissolve,self.ptr,basis_.as_mut_ptr());
     }
-    
+
     // inputdata64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4371,7 +4381,7 @@ impl Task
       if aptre_.len() > numvar_ { numvar_ = aptre_.len() };
       callMSK!(MSK_inputdata64,self.ptr,maxnumcon_ as libc::int32_t,maxnumvar_ as libc::int32_t,numcon_ as libc::int32_t,numvar_ as libc::int32_t,c_.as_ptr(),cfix_ as f64,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
     }
-    
+
     // isdouparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4383,7 +4393,7 @@ impl Task
       callMSK!(MSK_isdouparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
       _ref_param_ as i32
     }
-    
+
     // isintparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4395,7 +4405,7 @@ impl Task
       callMSK!(MSK_isintparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
       _ref_param_ as i32
     }
-    
+
     // isstrparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4407,7 +4417,7 @@ impl Task
       callMSK!(MSK_isstrparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
       _ref_param_ as i32
     }
-    
+
     // linkfiletotaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4417,7 +4427,7 @@ impl Task
     {
       callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
     }
-    
+
     // onesolutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4427,7 +4437,7 @@ impl Task
     {
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
     }
-    
+
     // optimizermt
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4439,7 +4449,7 @@ impl Task
       callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
       _ref_trmcode_ as i32
     }
-    
+
     // optimizersummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4449,7 +4459,7 @@ impl Task
     {
       callMSK!(MSK_optimizersummary,self.ptr,whichstream_);
     }
-    
+
     // optimizetrm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4461,7 +4471,7 @@ impl Task
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
       _ref_trmcode_ as i32
     }
-    
+
     // primalrepair
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4479,7 +4489,7 @@ impl Task
       if wux_.len() != ((tmp_var_7__) as usize) { panic!("Argument 'wux_' is too short in call to 'primal_repair'") }
       callMSK!(MSK_primalrepair,self.ptr,wlc_.as_ptr(),wuc_.as_ptr(),wlx_.as_ptr(),wux_.as_ptr());
     }
-    
+
     // primalsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4501,7 +4511,7 @@ impl Task
       if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'primal_sensitivity'") }
       callMSK!(MSK_primalsensitivity,self.ptr,numi_ as libc::int32_t,subi_.as_ptr(),marki_.as_ptr(),numj_ as libc::int32_t,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
     }
-    
+
     // printparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4511,7 +4521,7 @@ impl Task
     {
       callMSK!(MSK_printparam,self.ptr);
     }
-    
+
     // probtypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4524,7 +4534,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // prostatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4537,7 +4547,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // putacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4549,7 +4559,7 @@ impl Task
       if valj_.len() > nzj_ { nzj_ = valj_.len() };
       callMSK!(MSK_putacol,self.ptr,j_ as libc::int32_t,nzj_ as libc::int32_t,subj_.as_ptr(),valj_.as_ptr());
     }
-    
+
     // putacollist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4562,7 +4572,7 @@ impl Task
       if ptre_.len() > num_ { num_ = ptre_.len() };
       callMSK!(MSK_putacollist64,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
-    
+
     // putacolslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4572,7 +4582,7 @@ impl Task
     {
       callMSK!(MSK_putacolslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
-    
+
     // putaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4582,7 +4592,7 @@ impl Task
     {
       callMSK!(MSK_putaij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,aij_ as f64);
     }
-    
+
     // putaijlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4595,7 +4605,7 @@ impl Task
       if valij_.len() > num_ { num_ = valij_.len() };
       callMSK!(MSK_putaijlist64,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr());
     }
-    
+
     // putarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4607,7 +4617,7 @@ impl Task
       if vali_.len() > nzi_ { nzi_ = vali_.len() };
       callMSK!(MSK_putarow,self.ptr,i_ as libc::int32_t,nzi_ as libc::int32_t,subi_.as_ptr(),vali_.as_ptr());
     }
-    
+
     // putarowlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4620,7 +4630,7 @@ impl Task
       if ptre_.len() > num_ { num_ = ptre_.len() };
       callMSK!(MSK_putarowlist64,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
-    
+
     // putarowslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4632,7 +4642,7 @@ impl Task
       if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_row_slice'") }
       callMSK!(MSK_putarowslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
     }
-    
+
     // putatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4642,7 +4652,7 @@ impl Task
     {
       callMSK!(MSK_putatruncatetol,self.ptr,tolzero_ as f64);
     }
-    
+
     // putbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4657,7 +4667,7 @@ impl Task
       if valijkl_.len() != ((num_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'put_bara_block_triplet'") }
       callMSK!(MSK_putbarablocktriplet,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valijkl_.as_ptr());
     }
-    
+
     // putbaraij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4669,7 +4679,7 @@ impl Task
       if weights_.len() > num_ { num_ = weights_.len() };
       callMSK!(MSK_putbaraij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
     }
-    
+
     // putbaraijlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4683,7 +4693,7 @@ impl Task
       if alphaptre_.len() > num_ { num_ = alphaptre_.len() };
       callMSK!(MSK_putbaraijlist,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
     }
-    
+
     // putbararowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4702,7 +4712,7 @@ impl Task
       if weights_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'weights_' is too short in call to 'put_bara_row_list'") }
       callMSK!(MSK_putbararowlist,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
     }
-    
+
     // putbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4716,7 +4726,7 @@ impl Task
       if valjkl_.len() != ((num_) as usize) { panic!("Argument 'valjkl_' is too short in call to 'put_barc_block_triplet'") }
       callMSK!(MSK_putbarcblocktriplet,self.ptr,num_ as libc::int64_t,subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valjkl_.as_ptr());
     }
-    
+
     // putbarcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4728,7 +4738,7 @@ impl Task
       if weights_.len() > num_ { num_ = weights_.len() };
       callMSK!(MSK_putbarcj,self.ptr,j_ as libc::int32_t,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
     }
-    
+
     // putbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4740,7 +4750,7 @@ impl Task
       if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'put_bars_j'") }
       callMSK!(MSK_putbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_ptr());
     }
-    
+
     // putbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4750,7 +4760,7 @@ impl Task
     {
       callMSK!(MSK_putbarvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
-    
+
     // putbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4762,7 +4772,7 @@ impl Task
       if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'put_barx_j'") }
       callMSK!(MSK_putbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_ptr());
     }
-    
+
     // putcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4772,7 +4782,7 @@ impl Task
     {
       callMSK!(MSK_putcfix,self.ptr,cfix_ as f64);
     }
-    
+
     // putcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4782,7 +4792,7 @@ impl Task
     {
       callMSK!(MSK_putcj,self.ptr,j_ as libc::int32_t,cj_ as f64);
     }
-    
+
     // putclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4794,7 +4804,7 @@ impl Task
       if val_.len() > num_ { num_ = val_.len() };
       callMSK!(MSK_putclist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),val_.as_ptr());
     }
-    
+
     // putconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4804,7 +4814,7 @@ impl Task
     {
       callMSK!(MSK_putconbound,self.ptr,i_ as libc::int32_t,bkc_,blc_ as f64,buc_ as f64);
     }
-    
+
     // putconboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4818,7 +4828,7 @@ impl Task
       if buc_.len() > num_ { num_ = buc_.len() };
       callMSK!(MSK_putconboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
     }
-    
+
     // putconboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4829,7 +4839,7 @@ impl Task
       let mut num_ = sub_.len();
       callMSK!(MSK_putconboundlistconst,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkc_,blc_ as f64,buc_ as f64);
     }
-    
+
     // putconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4842,7 +4852,7 @@ impl Task
       if buc_.len() != ((last_ - first_) as usize) { panic!("Argument 'buc_' is too short in call to 'put_con_bound_slice'") }
       callMSK!(MSK_putconboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
     }
-    
+
     // putconboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4852,7 +4862,7 @@ impl Task
     {
       callMSK!(MSK_putconboundsliceconst,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkc_,blc_ as f64,buc_ as f64);
     }
-    
+
     // putcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4863,7 +4873,7 @@ impl Task
       let mut nummem_ = submem_.len();
       callMSK!(MSK_putcone,self.ptr,k_ as libc::int32_t,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
     }
-    
+
     // putconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4873,7 +4883,7 @@ impl Task
     {
       callMSK!(MSK_putconename,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
-    
+
     // putconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4883,7 +4893,7 @@ impl Task
     {
       callMSK!(MSK_putconname,self.ptr,i_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
-    
+
     // putconsolutioni
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4893,7 +4903,7 @@ impl Task
     {
       callMSK!(MSK_putconsolutioni,self.ptr,i_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64);
     }
-    
+
     // putcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4904,7 +4914,7 @@ impl Task
       if slice_.len() != ((last_ - first_) as usize) { panic!("Argument 'slice_' is too short in call to 'put_c_slice'") }
       callMSK!(MSK_putcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,slice_.as_ptr());
     }
-    
+
     // putdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4914,7 +4924,7 @@ impl Task
     {
       callMSK!(MSK_putdouparam,self.ptr,param_,parvalue_ as f64);
     }
-    
+
     // putintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4924,7 +4934,7 @@ impl Task
     {
       callMSK!(MSK_putintparam,self.ptr,param_,parvalue_ as libc::int32_t);
     }
-    
+
     // putmaxnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4934,7 +4944,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as libc::int64_t);
     }
-    
+
     // putmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4944,7 +4954,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumbarvar,self.ptr,maxnumbarvar_ as libc::int32_t);
     }
-    
+
     // putmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4954,7 +4964,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumcon,self.ptr,maxnumcon_ as libc::int32_t);
     }
-    
+
     // putmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4964,7 +4974,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumcone,self.ptr,maxnumcone_ as libc::int32_t);
     }
-    
+
     // putmaxnumqnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4974,7 +4984,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as libc::int64_t);
     }
-    
+
     // putmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4984,7 +4994,7 @@ impl Task
     {
       callMSK!(MSK_putmaxnumvar,self.ptr,maxnumvar_ as libc::int32_t);
     }
-    
+
     // putnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4994,7 +5004,7 @@ impl Task
     {
       callMSK!(MSK_putnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as f64);
     }
-    
+
     // putnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5004,7 +5014,7 @@ impl Task
     {
       callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as libc::int32_t);
     }
-    
+
     // putnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5014,7 +5024,7 @@ impl Task
     {
       callMSK!(MSK_putnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
     }
-    
+
     // putobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5024,7 +5034,7 @@ impl Task
     {
       callMSK!(MSK_putobjname,self.ptr,CString::new(objname_).unwrap().as_ptr());
     }
-    
+
     // putobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5034,7 +5044,7 @@ impl Task
     {
       callMSK!(MSK_putobjsense,self.ptr,sense_);
     }
-    
+
     // putparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5044,7 +5054,7 @@ impl Task
     {
       callMSK!(MSK_putparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
     }
-    
+
     // putqcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5057,7 +5067,7 @@ impl Task
       if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
       callMSK!(MSK_putqcon,self.ptr,numqcnz_ as libc::int32_t,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
     }
-    
+
     // putqconk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5070,7 +5080,7 @@ impl Task
       if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
       callMSK!(MSK_putqconk,self.ptr,k_ as libc::int32_t,numqcnz_ as libc::int32_t,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
     }
-    
+
     // putqobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5083,7 +5093,7 @@ impl Task
       if qoval_.len() > numqonz_ { numqonz_ = qoval_.len() };
       callMSK!(MSK_putqobj,self.ptr,numqonz_ as libc::int32_t,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr());
     }
-    
+
     // putqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5093,7 +5103,7 @@ impl Task
     {
       callMSK!(MSK_putqobjij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,qoij_ as f64);
     }
-    
+
     // putskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5105,7 +5115,7 @@ impl Task
       if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc'") }
       callMSK!(MSK_putskc,self.ptr,whichsol_,skc_.as_ptr());
     }
-    
+
     // putskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5116,7 +5126,7 @@ impl Task
       if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc_slice'") }
       callMSK!(MSK_putskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_ptr());
     }
-    
+
     // putskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5128,7 +5138,7 @@ impl Task
       if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx'") }
       callMSK!(MSK_putskx,self.ptr,whichsol_,skx_.as_ptr());
     }
-    
+
     // putskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5139,7 +5149,7 @@ impl Task
       if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx_slice'") }
       callMSK!(MSK_putskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_ptr());
     }
-    
+
     // putslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5151,7 +5161,7 @@ impl Task
       if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc'") }
       callMSK!(MSK_putslc,self.ptr,whichsol_,slc_.as_ptr());
     }
-    
+
     // putslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5162,7 +5172,7 @@ impl Task
       if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc_slice'") }
       callMSK!(MSK_putslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_ptr());
     }
-    
+
     // putslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5174,7 +5184,7 @@ impl Task
       if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx'") }
       callMSK!(MSK_putslx,self.ptr,whichsol_,slx_.as_ptr());
     }
-    
+
     // putslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5185,7 +5195,7 @@ impl Task
       if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx_slice'") }
       callMSK!(MSK_putslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_ptr());
     }
-    
+
     // putsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5197,7 +5207,7 @@ impl Task
       if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_snx'") }
       callMSK!(MSK_putsnx,self.ptr,whichsol_,sux_.as_ptr());
     }
-    
+
     // putsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5208,7 +5218,7 @@ impl Task
       if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'put_snx_slice'") }
       callMSK!(MSK_putsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_ptr());
     }
-    
+
     // putsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5218,7 +5228,7 @@ impl Task
     {
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
     }
-    
+
     // putsolutionyi
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5228,7 +5238,7 @@ impl Task
     {
       callMSK!(MSK_putsolutionyi,self.ptr,i_ as libc::int32_t,whichsol_,y_ as f64);
     }
-    
+
     // putstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5238,7 +5248,7 @@ impl Task
     {
       callMSK!(MSK_putstrparam,self.ptr,param_,CString::new(parvalue_).unwrap().as_ptr());
     }
-    
+
     // putsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5250,7 +5260,7 @@ impl Task
       if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc'") }
       callMSK!(MSK_putsuc,self.ptr,whichsol_,suc_.as_ptr());
     }
-    
+
     // putsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5261,7 +5271,7 @@ impl Task
       if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc_slice'") }
       callMSK!(MSK_putsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_ptr());
     }
-    
+
     // putsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5273,7 +5283,7 @@ impl Task
       if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux'") }
       callMSK!(MSK_putsux,self.ptr,whichsol_,sux_.as_ptr());
     }
-    
+
     // putsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5284,7 +5294,7 @@ impl Task
       if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux_slice'") }
       callMSK!(MSK_putsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_ptr());
     }
-    
+
     // puttaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5294,7 +5304,7 @@ impl Task
     {
       callMSK!(MSK_puttaskname,self.ptr,CString::new(taskname_).unwrap().as_ptr());
     }
-    
+
     // putvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5304,7 +5314,7 @@ impl Task
     {
       callMSK!(MSK_putvarbound,self.ptr,j_ as libc::int32_t,bkx_,blx_ as f64,bux_ as f64);
     }
-    
+
     // putvarboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5318,7 +5328,7 @@ impl Task
       if bux_.len() > num_ { num_ = bux_.len() };
       callMSK!(MSK_putvarboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
     }
-    
+
     // putvarboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5329,7 +5339,7 @@ impl Task
       let mut num_ = sub_.len();
       callMSK!(MSK_putvarboundlistconst,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkx_,blx_ as f64,bux_ as f64);
     }
-    
+
     // putvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5342,7 +5352,7 @@ impl Task
       if bux_.len() != ((last_ - first_) as usize) { panic!("Argument 'bux_' is too short in call to 'put_var_bound_slice'") }
       callMSK!(MSK_putvarboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
     }
-    
+
     // putvarboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5352,7 +5362,7 @@ impl Task
     {
       callMSK!(MSK_putvarboundsliceconst,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkx_,blx_ as f64,bux_ as f64);
     }
-    
+
     // putvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5362,7 +5372,7 @@ impl Task
     {
       callMSK!(MSK_putvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
     }
-    
+
     // putvarsolutionj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5372,7 +5382,7 @@ impl Task
     {
       callMSK!(MSK_putvarsolutionj,self.ptr,j_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
     }
-    
+
     // putvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5382,7 +5392,7 @@ impl Task
     {
       callMSK!(MSK_putvartype,self.ptr,j_ as libc::int32_t,vartype_);
     }
-    
+
     // putvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5394,7 +5404,7 @@ impl Task
       if vartype_.len() > num_ { num_ = vartype_.len() };
       callMSK!(MSK_putvartypelist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),vartype_.as_ptr());
     }
-    
+
     // putxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5406,7 +5416,7 @@ impl Task
       if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc'") }
       callMSK!(MSK_putxc,self.ptr,whichsol_,xc_.as_mut_ptr());
     }
-    
+
     // putxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5417,7 +5427,7 @@ impl Task
       if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc_slice'") }
       callMSK!(MSK_putxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_ptr());
     }
-    
+
     // putxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5429,7 +5439,7 @@ impl Task
       if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx'") }
       callMSK!(MSK_putxx,self.ptr,whichsol_,xx_.as_ptr());
     }
-    
+
     // putxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5440,7 +5450,7 @@ impl Task
       if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx_slice'") }
       callMSK!(MSK_putxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_ptr());
     }
-    
+
     // puty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5452,7 +5462,7 @@ impl Task
       if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'put_y'") }
       callMSK!(MSK_puty,self.ptr,whichsol_,y_.as_ptr());
     }
-    
+
     // putyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5463,7 +5473,7 @@ impl Task
       if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'put_y_slice'") }
       callMSK!(MSK_putyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_ptr());
     }
-    
+
     // readdataautoformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5473,7 +5483,7 @@ impl Task
     {
       callMSK!(MSK_readdataautoformat,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // readdataformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5483,7 +5493,7 @@ impl Task
     {
       callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
     }
-    
+
     // readjsonstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5493,7 +5503,7 @@ impl Task
     {
       callMSK!(MSK_readjsonstring,self.ptr,CString::new(data_).unwrap().as_ptr());
     }
-    
+
     // readlpstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5503,7 +5513,7 @@ impl Task
     {
       callMSK!(MSK_readlpstring,self.ptr,CString::new(data_).unwrap().as_ptr());
     }
-    
+
     // readopfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5513,7 +5523,7 @@ impl Task
     {
       callMSK!(MSK_readopfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
     }
-    
+
     // readparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5523,7 +5533,7 @@ impl Task
     {
       callMSK!(MSK_readparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // readptfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5533,7 +5543,7 @@ impl Task
     {
       callMSK!(MSK_readptfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
     }
-    
+
     // readsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5543,7 +5553,7 @@ impl Task
     {
       callMSK!(MSK_readsolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // readsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5553,7 +5563,7 @@ impl Task
     {
       callMSK!(MSK_readsummary,self.ptr,whichstream_);
     }
-    
+
     // readtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5563,7 +5573,7 @@ impl Task
     {
       callMSK!(MSK_readtask,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // removebarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5574,7 +5584,7 @@ impl Task
       let mut num_ = subset_.len();
       callMSK!(MSK_removebarvars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
-    
+
     // removecones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5585,7 +5595,7 @@ impl Task
       let mut num_ = subset_.len();
       callMSK!(MSK_removecones,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
-    
+
     // removecons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5596,7 +5606,7 @@ impl Task
       let mut num_ = subset_.len();
       callMSK!(MSK_removecons,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
-    
+
     // removevars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5607,7 +5617,7 @@ impl Task
       let mut num_ = subset_.len();
       callMSK!(MSK_removevars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
     }
-    
+
     // resizetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5617,7 +5627,7 @@ impl Task
     {
       callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as libc::int32_t,maxnumvar_ as libc::int32_t,maxnumcone_ as libc::int32_t,maxnumanz_ as libc::int64_t,maxnumqnz_ as libc::int64_t);
     }
-    
+
     // sensitivityreport
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5627,7 +5637,7 @@ impl Task
     {
       callMSK!(MSK_sensitivityreport,self.ptr,whichstream_);
     }
-    
+
     // setdefaults
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5637,7 +5647,7 @@ impl Task
     {
       callMSK!(MSK_setdefaults,self.ptr);
     }
-    
+
     // sktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5650,7 +5660,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // solstatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5663,7 +5673,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       String::from_utf8_lossy(&_str__bytes[..]).into_owned()
     }
-    
+
     // solutiondef
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5675,7 +5685,7 @@ impl Task
       callMSK!(MSK_solutiondef,self.ptr,whichsol_,& mut _ref_isdef_);
       _ref_isdef_ != 0
     }
-    
+
     // solutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5685,7 +5695,7 @@ impl Task
     {
       callMSK!(MSK_solutionsummary,self.ptr,whichstream_);
     }
-    
+
     // solvewithbasis
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5701,7 +5711,7 @@ impl Task
       callMSK!(MSK_solvewithbasis,self.ptr,transp_ as libc::int32_t,& mut _ref_numnz_,sub_.as_mut_ptr(),val_.as_mut_ptr());
       _ref_numnz_ as i32
     }
-    
+
     // strduptask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5711,7 +5721,7 @@ impl Task
     {
       callMSK!(MSK_strduptask,self.ptr,CString::new(str_).unwrap().as_ptr());
     }
-    
+
     // strtoconetype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5723,7 +5733,7 @@ impl Task
       callMSK!(MSK_strtoconetype,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_conetype_);
       _ref_conetype_ as i32
     }
-    
+
     // strtosk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5735,7 +5745,7 @@ impl Task
       callMSK!(MSK_strtosk,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_sk_);
       _ref_sk_ as i32
     }
-    
+
     // toconic
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5745,7 +5755,7 @@ impl Task
     {
       callMSK!(MSK_toconic,self.ptr);
     }
-    
+
     // unlinkfuncfromtaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5755,7 +5765,7 @@ impl Task
     {
       callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream_);
     }
-    
+
     // updatesolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5765,7 +5775,7 @@ impl Task
     {
       callMSK!(MSK_updatesolutioninfo,self.ptr,whichsol_);
     }
-    
+
     // whichparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5778,7 +5788,7 @@ impl Task
       callMSK!(MSK_whichparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_partype_,& mut _ref_param_);
       return (_ref_partype_ as i32,_ref_param_ as i32)
     }
-    
+
     // writedata
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5788,7 +5798,7 @@ impl Task
     {
       callMSK!(MSK_writedata,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // writejsonsol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5798,7 +5808,7 @@ impl Task
     {
       callMSK!(MSK_writejsonsol,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // writeparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5808,7 +5818,7 @@ impl Task
     {
       callMSK!(MSK_writeparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // writesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5818,7 +5828,7 @@ impl Task
     {
       callMSK!(MSK_writesolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
     }
-    
+
     // writetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
