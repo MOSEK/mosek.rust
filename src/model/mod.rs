@@ -5,6 +5,20 @@ pub struct Model {
     numpsdatoms : i64,
 }
 
+/**********************************************************/
+type ConeType = u8;
+pub const CONE_TYPE_SECOND_ORDER         : ConeType = 0;
+pub const CONE_TYPE_ROTATED_SECOND_ORDER : ConeType = 1;
+pub const CONE_TYPE_POWER                : ConeType = 2;
+pub const CONE_TYPE_EXPONENTIAL          : ConeType = 3;
+pub const CONE_TYPE_DUAL_POWER           : ConeType = 4;
+pub const CONE_TYPE_DUAL_EXPONENTIAL     : ConeType = 5;
+
+type BoundKey = u8;
+pub const BOUNDKEY_FR : BoundKey = 0;
+pub const BOUNDKEY_LO : BoundKey = 1;
+pub const BOUNDKEY_UP : BoundKey = 2;
+pub const BOUNDKEY_FX : BoundKey = 3;
 
 /**********************************************************/
 /* Name generators */
@@ -76,25 +90,21 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 /**********************************************************/
 /* Variable and Constraint */
 
-pub struct Variable {
-    idxs : Vec<i64>,
-}
-
-impl Variable {
-    pub fn size(&self) -> usize { return self.idxs.len() }
-}
+pub type Variable   = Vec<u64>;
+pub type Constraint = Vec<u32>;
 
 /**********************************************************/
 /* Domains */
 
 pub trait Domain {
     fn size(&self) -> usize;
-    fn alloc_var_block(&self,&mut Model) -> Variable;
+    fn alloc_var_block(&self,&mut Model,&str) -> Vec<u64>;
+    fn alloc_con_block(&self,&mut Model,&str, ptr : &[usize], subj : &[u64], cof : &[f64]) -> Vec<u32>;
 }
 
 pub struct LinearBound {
     rhs : Vec<f64>,
-    bk  : u8,
+    bk  : BoundKey,
 }
 
 impl LinearBound {
@@ -103,23 +113,128 @@ impl LinearBound {
 
 impl Domain for LinearBound {
     fn size(&self) -> usize { return self.rhs.len() }
-    fn alloc_var_block(&self,m : &mut Model) -> Variable {
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<u64> {
         let bk =
-            match self.bk & 0x03 {
-                0 => super::MSK_BK_FR,
-                1 => super::MSK_BK_LO,
-                2 => super::MSK_BK_UP,
-                _ => super::MSK_BK_FX,
+            match self.bk {
+                BOUNDKEY_FR => super::MSK_BK_FR,
+                BOUNDKEY_LO => super::MSK_BK_LO,
+                BOUNDKEY_UP => super::MSK_BK_UP,
+                BOUNDKEY_FX => super::MSK_BK_FX,
+                _ => super::MSK_BK_FR,
             };
 
-        let idxs32 = m.alloc_vars(self.size() as i32, bk, self.rhs.as_slice());
-        let idxs64 = idxs32.iter().map(|x| *x as i64).collect();
+        let idxs32 = m.alloc_vars(basic_namer(name), bk, self.rhs.as_slice());
+        let idxs64 : Vec<u64> = idxs32.iter().map(|x| *x as u64).collect();
 
+        return idxs64;
+    }
 
+    fn alloc_con_block(&self,m : &mut Model,
+                       name : &str,
+                       ptr  : &[usize],
+                       subj : &[u64],
+                       cof  : &[f64]) -> Vec<u32> {
+        let bk =
+            match self.bk {
+                BOUNDKEY_FR => super::MSK_BK_FR,
+                BOUNDKEY_LO => super::MSK_BK_LO,
+                BOUNDKEY_UP => super::MSK_BK_UP,
+                BOUNDKEY_FX => super::MSK_BK_FX,
+                _ => super::MSK_BK_FR,
+            };
 
-        return Variable{ idxs:idxs64 };
+        let idxs = m.alloc_cons(basic_namer(name),
+                                bk,
+                                self.rhs.as_slice(),
+                                ptr,
+                                subj,
+                                cof);
+        return idxs;
     }
 }
+
+
+
+pub struct VectorCone {
+    ct   : ConeType,
+    num : usize,
+    par  : f64,
+}
+
+impl VectorCone {
+    pub fn size(&self) -> usize { return self.num }
+}
+
+impl Domain for VectorCone {
+    fn size(&self) -> usize { return self.num }
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<u64> {
+        let mut zs : Vec<f64> = Vec::with_capacity(self.num); zs.resize(self.num,0.0);
+        let mut idxs32 = m.alloc_vars(basic_namer(name), super::MSK_BK_FR, zs.as_slice());
+        m.alloc_cone(self.ct, self.par, idxs32.as_mut_slice());
+        let idxs64 = idxs32.iter().map(|x| *x as u64).collect();
+
+        return idxs64
+    }
+
+    fn alloc_con_block(&self,m : &mut Model,
+                       name : &str,
+                       ptr  : &[usize],
+                       subj : &[u64],
+                       cof  : &[f64]) -> Vec<u32> {
+        let nrows = ptr.len()-1;
+        let nnz   = subj.len();
+        let mut zs : Vec<f64> = Vec::with_capacity(self.num); zs.resize(nrows,0.0);
+        let mut slack32 = m.alloc_vars(basic_namer(name), super::MSK_BK_FR, zs.as_slice());
+        m.alloc_cone(self.ct, self.par, slack32.as_mut_slice());
+        let mut sl_ptr  : Vec<usize> = Vec::with_capacity(nrows+1);
+        let mut sl_subj : Vec<u64>   = Vec::with_capacity(nnz+nrows);
+        let mut sl_cof  : Vec<f64>   = Vec::with_capacity(nnz+nrows);
+        sl_ptr.push(0);
+        for i in 0..nnz {
+            for j in ptr[i]..ptr[i+1] {
+                sl_subj.push(subj[i]);
+                sl_cof.push(cof[i]);
+            }
+            sl_subj.push(slack32[i] as u64);
+            sl_cof.push(-1.0);
+            sl_ptr.push(sl_subj.len());
+        }
+
+        let idxs : Vec<u32> = m.alloc_cons(basic_namer(name), super::MSK_BK_FX, zs.as_slice(),
+                                           sl_ptr.as_slice(),sl_subj.as_slice(),sl_cof.as_slice());
+        return idxs
+    }
+}
+
+/**********************************************************/
+/* Expr */
+
+pub trait Expr {
+    fn size(&self) -> usize;
+    fn eval(&self) -> (Vec<usize>,Vec<u64>,Vec<f64>);
+}
+
+pub struct BaseExpr {
+    ptr  : Vec<usize>,
+    subj : Vec<u64>,
+    cof  : Vec<f64>,
+}
+
+impl Expr for BaseExpr {
+    fn size(&self) -> usize { self.ptr.len() - 1 }
+    fn eval(&self) -> (Vec<usize>,Vec<u64>,Vec<f64>) {
+        let mut ptr  : Vec<usize> = Vec::with_capacity(self.ptr.len());
+        let mut subj : Vec<u64> = Vec::with_capacity(self.subj.len());
+        let mut cof  : Vec<f64> = Vec::with_capacity(self.cof.len());
+        ptr.extend_from_slice (self.ptr.as_slice());
+        subj.extend_from_slice(self.subj.as_slice());
+        cof.extend_from_slice (self.cof.as_slice());
+        return (ptr,subj,cof);
+    }
+}
+
+/**********************************************************/
+/* Model */
 
 impl Model {
     pub fn new() -> Model {
@@ -134,7 +249,7 @@ impl Model {
         return Model{ env:env, task:task, slack:slack, numpsdatoms:numpsdatoms };
     }
 
-    fn alloc_vars(&self, n : i32, bk : i32, b : &[f64]) -> Vec<i32> {
+    fn alloc_vars(&self, mut ng : impl NameGenerator, bk : i32, b : &[f64]) -> Vec<i32> {
         let numvar = self.task.get_num_var();
         let n = b.len() as i32;
         self.task.append_vars(n as i32);
@@ -142,21 +257,72 @@ impl Model {
         let first = numvar;
         let last  = numvar+n;
 
-        let idxs           = (first..last).collect();
+        let idxs : Vec<i32>  = (first..last).collect();
+
+        let mut nm = String::with_capacity(50);
+        for i in 0..n as usize {
+            ng.next(& mut nm);
+            self.task.put_var_name(idxs[i],nm.as_str())
+        }
+
         let bks : Vec<i32> = (0..n).map(|_| bk).collect();
         self.task.put_var_bound_slice(numvar,numvar+n,bks.as_slice(),b,b);
         return idxs;
     }
 
-    fn alloc_cone(&self, ct : i32, cp : f64, idxs : &[i32]) -> i32 {
+    fn alloc_cone(&self, ct : ConeType, cpar : f64, idxs : &[i32]) -> i32 {
         let numcone = self.task.get_num_cone();
-        self.task.append_cone(ct,cp,idxs);
+        let nct = match ct {
+            CONE_TYPE_SECOND_ORDER => super::MSK_CT_QUAD,
+            CONE_TYPE_ROTATED_SECOND_ORDER => super::MSK_CT_RQUAD,
+            CONE_TYPE_POWER => super::MSK_CT_PPOW,
+            CONE_TYPE_EXPONENTIAL => super::MSK_CT_PEXP,
+            CONE_TYPE_DUAL_POWER => super::MSK_CT_DPOW,
+            CONE_TYPE_DUAL_EXPONENTIAL => super::MSK_CT_DEXP,
+            _ => super::MSK_CT_ZERO,
+        };
+        self.task.append_cone(nct,cpar,idxs);
         return numcone;
     }
 
-    pub fn variable<Dom:Domain,Ng:NameGenerator>(& mut self,name : Ng,dom : &Dom) -> Variable {
-        let v =  dom.alloc_var_block(self);
-        return v;
+    fn alloc_cons(&self,
+                  mut ng : impl NameGenerator,
+                  bk : i32, b : &[f64],
+                  ptr  : &[usize],
+                  subj : &[u64],
+                  cof  : &[f64] ) -> Vec<u32> {
+        let numvar = self.task.get_num_var();
+        let n = b.len() as i32;
+        self.task.append_vars(n as i32);
+
+        let first = numvar;
+        let last  = numvar+n;
+
+        let idxs : Vec<i32>  = (first..last).collect();
+
+        let mut nm = String::with_capacity(50);
+        for i in 0..n as usize {
+            ng.next(& mut nm);
+            self.task.put_var_name(idxs[i],nm.as_str())
+        }
+
+        let bks : Vec<i32> = (0..n).map(|_| bk).collect();
+        self.task.put_var_bound_slice(numvar,numvar+n,bks.as_slice(),b,b);
+
+        return idxs.iter().map(|v| *v as u32).collect();
     }
 
+    pub fn variable<Dom:Domain>(& mut self,name : &str,dom : &Dom) -> Variable {
+        let idxs = dom.alloc_var_block(self,name);
+        return idxs;
+    }
+
+    pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : impl Expr, dom : &Dom) -> Constraint {
+        let (ptr,subj,cof) = expr.eval();
+        let idxs = dom.alloc_con_block(self,name,
+                                       ptr.as_slice(),
+                                       subj.as_slice(),
+                                       cof.as_slice());
+        return idxs;
+    }
 }
