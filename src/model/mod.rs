@@ -6,7 +6,8 @@ pub struct Model {
 }
 
 
-
+/**********************************************************/
+/* Name generators */
 pub trait IndexGenerator {
     fn next(& mut self, &mut String);
     fn skip(& mut self);
@@ -60,6 +61,21 @@ impl<IdxGen:IndexGenerator> NameGenerator for FlatNamer<IdxGen> {
     }
 }
 
+pub struct NoNamer { }
+impl NameGenerator for NoNamer {
+    fn skip(&mut self) { }
+    fn next(&mut self, buf : & mut String) { buf.clear(); }
+}
+
+pub fn no_namer() -> NoNamer { NoNamer{} }
+
+pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
+    return FlatNamer<FlatIndexer>{ return FlatNamer<FlatIndexer>(name : name, idx : 0) }
+}
+
+/**********************************************************/
+/* Variable and Constraint */
+
 pub struct Variable {
     idxs : Vec<i64>,
 }
@@ -67,6 +83,9 @@ pub struct Variable {
 impl Variable {
     pub fn size(&self) -> usize { return self.idxs.len() }
 }
+
+/**********************************************************/
+/* Domains */
 
 pub trait Domain {
     fn size(&self) -> usize;
@@ -135,7 +154,7 @@ impl Model {
         return numcone;
     }
 
-    pub fn variable<Dom:Domain>(& mut self, dom : &Dom) -> Variable {
+    pub fn variable<Dom:Domain,Ng:NameGenerator>(& mut self,name : Ng,dom : &Dom) -> Variable {
         let v =  dom.alloc_var_block(self);
         return v;
     }
