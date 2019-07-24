@@ -70,7 +70,7 @@ impl NameGenerator for NoNamer {
 pub fn no_namer() -> NoNamer { NoNamer{} }
 
 pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
-    return FlatNamer<FlatIndexer>{ return FlatNamer<FlatIndexer>(name : name, idx : 0) }
+    return FlatNamer{name : name.to_string(), idx : 0};
 }
 
 /**********************************************************/
