@@ -3,7 +3,7 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
-mod model;
+pub mod model;
 
 #[link(name = "mosek64")]
 extern
