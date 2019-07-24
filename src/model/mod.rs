@@ -151,7 +151,7 @@ impl Domain for LinearBound {
                                 ptr,
                                 subj,
                                 cof);
-        return idxs;
+        return idxs.iter().map(|x| *x as u32).collect();
     }
 }
 
@@ -188,7 +188,7 @@ impl Domain for VectorCone {
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
         let idxs = m.alloc_cone_cons(basic_namer(name),
                                      self.ct,
-                                     self.cpar,
+                                     self.par,
                                      zs.as_slice(),
                                      ptr,
                                      subj,
@@ -312,12 +312,12 @@ impl Model {
                        b    : &[f64],
                        ptr  : &[usize],
                        subj : &[u64],
-                       cof  : &[f64] ) -> Vec<u32> {
+                       cof  : &[f64] ) -> Vec<i32> {
         let nrows = ptr.len()-1;
         let nnz   = subj.len();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
 
-        let numlinnz = subj.iter().filter(|v| *v >= 0).count();
+        //let numlinnz : u64 = 0;subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
         let slacks = self.alloc_vars(no_namer(),super::MSK_BK_FR,zs.as_slice());
@@ -333,7 +333,7 @@ impl Model {
             }
             sl_subj.push(slacks[i]);
             sl_cof.push(-1.0);
-            sl_ptr.push(sl_subj.len() as u64);
+            sl_ptr.push(sl_subj.len() as i64);
         }
 
         let (ptrb,_) = sl_ptr.split_at(nrows);
@@ -342,7 +342,11 @@ impl Model {
         let first = self.task.get_num_con();
         let last = first+(nrows as i32);
         let idxs : Vec<i32> = (first..last).collect();
-        self.task.put_a_row_list(idxs,ptrb,ptre,sl_subj,sl_cof);
+        self.task.put_a_row_list(idxs.as_slice(),
+                                 ptrb,
+                                 ptre,
+                                 sl_subj.as_slice(),
+                                 sl_cof.as_slice());
         return idxs;
     }
 
