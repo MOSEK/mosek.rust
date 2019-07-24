@@ -15,12 +15,15 @@ pub const CONE_TYPE_DUAL_POWER           : ConeType = 4;
 pub const CONE_TYPE_DUAL_EXPONENTIAL     : ConeType = 5;
 //pub const CONE_TYPE_PSD                  : ConeType = 6;
 
-
 type BoundKey = u8;
 pub const BOUNDKEY_FR : BoundKey = 0;
 pub const BOUNDKEY_LO : BoundKey = 1;
 pub const BOUNDKEY_UP : BoundKey = 2;
 pub const BOUNDKEY_FX : BoundKey = 3;
+
+type ObjectiveSense = u8;
+pub const OBJECTIVE_SENSE_MIN : ObjectiveSense = 0;
+pub const OBJECTIVE_SENSE_MAX : ObjectiveSense = 1;
 
 /**********************************************************/
 /* Name generators */
@@ -362,5 +365,15 @@ impl Model {
                                        subj.as_slice(),
                                        cof.as_slice());
         return idxs;
+    }
+
+    pub fn objective(& mut self, name : &str, sense : ObjectiveSense, expr : impl Expr) {
+        let (ptr,subj,cof) = expr.eval();
+        //assert expr.size() <= 1
+        let numvar = self.task.get_num_var();
+        let mut c : Vec<f64> = Vec::with_capacity(numvar as usize); c.resize(numvar as usize,0.0);
+        subj.iter().zip(cof.iter()).for_each(|(j,v)| c[*j as usize] = *v);
+        let subj : Vec<i32> = (0..numvar).collect();
+        self.task.put_c_list(subj.as_slice(), c.as_slice());
     }
 }
