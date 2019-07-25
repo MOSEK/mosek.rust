@@ -512,6 +512,32 @@ impl Model {
 
     pub fn solve(& mut self) {
         self.task.optimize();
+
+        let numvar = self.task.get_num_var() as usize;
+        let numcon = self.task.get_num_con() as usize;
+
+        self.itr.resize(numcon,numvar);
+        self.bas.resize(numcon,numvar);
+        self.itg.resize(numcon,numvar);
+
+        if self.task.solution_def(super::MSK_SOL_ITR) {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITR);
+            let mut xx  : Vec<f64> = !vec[0.0; numvar];
+            let mut slx : Vec<f64> = !vec[0.0; numvar];
+            let mut sux : Vec<f64> = !vec[0.0; numvar];
+            let mut snx : Vec<f64> = !vec[0.0; numvar];
+            let mut bkx : Vec<i32> = !vec[super::MSK_SK_UNK; numvar];
+
+            self.task.get_xx(super::MSK_SOL_ITR,  xx.as_mut_slice());
+            self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice());
+            self.task.get_sux(super::MSK_SOL_ITR, sux.as_mut_slice());
+            self.task.get_bkx(super::MSK_SOL_ITR, bkx.as_mut_slice());
+
+            for i in 0..numvar {
+                self.itr.xx[]
+            }
+        }
+
     }
 
 
