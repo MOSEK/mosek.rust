@@ -273,16 +273,16 @@ impl Expr for Vec<f64> {
     }
 }
 
-impl Expr for Vec<& impl Expr> {
+impl Expr for Vec<Box<Expr>> {
     fn len(&self) -> usize { return self.iter().map(|e| e.len()).sum(); }
     fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
         let n = self.len();
         let mut ptr : Vec<usize> = vec![0;n+1];
         let mut elmi = 0;
         let mut subj : Vec<i64> = Vec::new();
-        let mut cof  : Vec<i64> = Vec::new();
+        let mut cof  : Vec<f64> = Vec::new();
         for e in self.iter() {
-            let (eptr,esubj,ecof) = expr.eval();
+            let (eptr,esubj,ecof) = e.eval();
             for i in 0..eptr.len()-1 {
                 ptr[elmi+1] = ptr[elmi] + (eptr[i+1]-eptr[i]);
             }
@@ -290,12 +290,7 @@ impl Expr for Vec<& impl Expr> {
             cof.extend_from_slice(ecof.as_slice());
         }
 
-
-
-        let ptr : Vec<usize> = (0..n+1).collect();
-        return (ptr,
-                vec![0; n],
-                self.as_slice().to_vec());
+        return (ptr, subj, cof);
     }
 }
 
@@ -352,6 +347,88 @@ pub fn expr_dot(c : &[f64], e : & impl Expr) -> BaseExpr {
     return BaseExpr{ ptr  : ptr,
                      subj : esubj,
                      cof  : cof };
+}
+
+pub fn expr_mul(mx : (usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
+    let (dim0,dim1,c) = mx;
+    assert_eq!(dim1,e.len());
+    let (eptr,esubj,ecof) = e.eval();
+    let numnz = e.len();
+
+    let ptr : Vec<usize> = (0..dim0+1).map(|i| i * numnz).collect();
+    let mut subj : Vec<i64> = Vec::new();
+    let mut cof  : Vec<f64> = Vec::new();
+
+    for i in 0..dim0 {
+        subj.extend_from_slice(esubj.as_slice());
+        let base_idx = i * dim1;
+        for j in 0..dim1 {
+            for k in eptr[j]..eptr[j+1] {
+                cof.push(c[base_idx + j] * ecof[k]);
+            }
+        }
+    }
+
+    return BaseExpr{ ptr  : ptr,
+                     subj : esubj,
+                     cof  : cof };
+}
+
+pub fn expr_stack_2(e1 : & impl Expr, e2 : & impl Expr) -> BaseExpr {
+    let (eptr1,esubj1,ecof1) = e1.eval();
+    let (eptr2,esubj2,ecof2) = e2.eval();
+
+    let n1 = eptr1.len()-1;
+    let n2 = eptr2.len()-1;
+    let nnz1 = eptr1[n1];
+
+
+    let mut ptr  : Vec<usize> = Vec::new();
+    let mut subj : Vec<i64>   = Vec::new();
+    let mut cof  : Vec<f64>   = Vec::new();
+
+    ptr.extend_from_slice(eptr1.as_slice());
+    for i in 0..n2 {
+        ptr.push(eptr2[i+1] + nnz1);
+    }
+    subj.extend_from_slice(esubj1.as_slice());
+    subj.extend_from_slice(esubj2.as_slice());
+    cof.extend_from_slice(ecof1.as_slice());
+    cof.extend_from_slice(ecof2.as_slice());
+
+    return BaseExpr{ ptr: ptr, subj : subj, cof :cof };
+}
+
+pub fn expr_stack_3(e1 : & impl Expr, e2 : & impl Expr, e3 : & impl Expr) -> BaseExpr {
+    let (eptr1,esubj1,ecof1) = e1.eval();
+    let (eptr2,esubj2,ecof2) = e2.eval();
+    let (eptr3,esubj3,ecof3) = e3.eval();
+
+    let n1 = eptr1.len()-1;
+    let n2 = eptr2.len()-1;
+    let n3 = eptr3.len()-1;
+    let nnz1 = eptr1[n1];
+    let nnz2 = eptr2[n1];
+
+    let mut ptr  : Vec<usize> = Vec::new();
+    let mut subj : Vec<i64>   = Vec::new();
+    let mut cof  : Vec<f64>   = Vec::new();
+
+    ptr.extend_from_slice(eptr1.as_slice());
+    for i in 0..n2 {
+        ptr.push(eptr2[i+1] + nnz1);
+    }
+    for i in 0..n3 {
+        ptr.push(eptr3[i+1] + nnz1 + nnz2);
+    }
+    subj.extend_from_slice(esubj1.as_slice());
+    subj.extend_from_slice(esubj2.as_slice());
+    subj.extend_from_slice(esubj3.as_slice());
+    cof.extend_from_slice(ecof1.as_slice());
+    cof.extend_from_slice(ecof2.as_slice());
+    cof.extend_from_slice(ecof3.as_slice());
+
+    return BaseExpr{ ptr: ptr, subj : subj, cof :cof };
 }
 
 
