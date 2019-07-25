@@ -273,6 +273,32 @@ impl Expr for Vec<f64> {
     }
 }
 
+impl Expr for Vec<& impl Expr> {
+    fn len(&self) -> usize { return self.iter().map(|e| e.len()).sum(); }
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
+        let n = self.len();
+        let mut ptr : Vec<usize> = vec![0;n+1];
+        let mut elmi = 0;
+        let mut subj : Vec<i64> = Vec::new();
+        let mut cof  : Vec<i64> = Vec::new();
+        for e in self.iter() {
+            let (eptr,esubj,ecof) = expr.eval();
+            for i in 0..eptr.len()-1 {
+                ptr[elmi+1] = ptr[elmi] + (eptr[i+1]-eptr[i]);
+            }
+            subj.extend_from_slice(esubj.as_slice());
+            cof.extend_from_slice(ecof.as_slice());
+        }
+
+
+
+        let ptr : Vec<usize> = (0..n+1).collect();
+        return (ptr,
+                vec![0; n],
+                self.as_slice().to_vec());
+    }
+}
+
 pub struct BaseExpr {
     ptr  : Vec<usize>,
     subj : Vec<i64>,
