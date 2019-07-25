@@ -41,6 +41,7 @@ pub enum SolutionStatus {
     InfeasCertificate,
     IllPosedCertificate,
     Unknown,
+    Undefined,
 }
 
 /**********************************************************/
@@ -264,7 +265,7 @@ pub fn expr(ptr : &[usize], subj : &[i64], cof : &[f64]) -> BaseExpr {
 /**********************************************************/
 /* Model */
 
-pub struct SolutionItem {
+pub struct Solution {
     psta : SolutionStatus,
     dsta : SolutionStatus,
     bkx  : Vec<i32>,
@@ -275,9 +276,9 @@ pub struct SolutionItem {
     sc   : Vec<f64>,
 }
 
-impl SolutionItem {
-    fn new() {
-        return SolutionItem {
+impl Solution {
+    fn new() -> Solution {
+        return Solution {
             psta : SolutionStatus::Unknown,
             dsta : SolutionStatus::Unknown,
             bkx  : Vec::new(),
@@ -287,6 +288,14 @@ impl SolutionItem {
             xc   : Vec::new(),
             sc   : Vec::new(),
         };
+    }
+    fn resize(& mut self, numcon : usize, numvar : usize) {
+        self.bkx.resize(numvar,super::MSK_SK_UNK);
+        self.xx.resize(numvar,0.0);
+        self.sx.resize(numvar,0.0);
+        self.bkc.resize(numcon,super::MSK_SK_UNK);
+        self.xc.resize(numcon,0.0);
+        self.sc.resize(numcon,0.0);
     }
 }
 
@@ -300,31 +309,10 @@ pub struct Model {
     solbound    : SolutionStatusBound,
     expectsol   : SolutionType,
 
-
     // Solutions
-    itr_primal_sta : SolutionStatus,
-    itr_dual_sta   : SolutionStatus,
-    itr_primal_bkx : Vec<i32>,
-    itr_primal_xx  : Vec<f64>,
-    itr_primal_sx  : Vec<f64>,
-    itr_primal_bkc : Vec<i32>,
-    itr_primal_xc  : Vec<f64>,
-    itr_primal_sc  : Vec<f64>,
-
-    bas_primal_sta : SolutionStatus,
-    bas_dual_sta   : SolutionStatus,
-    bas_primal_bkx : Vec<i32>,
-    bas_primal_xx  : Vec<f64>,
-    bas_primal_sx  : Vec<f64>,
-    bas_primal_bkc : Vec<i32>,
-    bas_primal_xc  : Vec<f64>,
-    bas_primal_sc  : Vec<f64>,
-
-    itg_primal_sta : SolutionStatus,
-    itg_primal_bkx : Vec<i32>,
-    itg_primal_xx  : Vec<f64>,
-    itg_primal_bkc : Vec<i32>,
-    itg_primal_xc  : Vec<f64>,
+    itr : Solution,
+    bas : Solution,
+    itg : Solution,
 }
 
 impl Model {
@@ -344,8 +332,13 @@ impl Model {
                       slack       : slack,
                       numpsdatoms : numpsdatoms,
                       solbound    : SolutionStatusBound::Optimal,
-                      expectsol   : SolutionType::Default};
+                      expectsol   : SolutionType::Default,
+
+                      itr : Solution::new(),
+                      bas : Solution::new(),
+                      itg : Solution::new() };
     }
+
     pub fn new() -> Model {
         return Model::new_with_name("");
     }
