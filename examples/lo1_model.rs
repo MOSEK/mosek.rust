@@ -46,5 +46,13 @@ fn main() {
                                vec![1.0].as_slice()),
                           & less_than_scalar(10.0));
 
+    M.objective("obj",
+                ObjectiveSense::Min,
+                expr(vec![0usize, 4].as_slice(),
+                     vec![x[0],x[1],x[2],x[3]].as_slice(),
+                     vec![3.0, 1.0, 5.0, 1.0].as_slice()));
+
+    M.solve();
+
     M.write_task("lo1.ptf");
 }

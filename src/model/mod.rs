@@ -1,9 +1,3 @@
-pub struct Model {
-    env         : super::Env,
-    task        : super::Task,
-    slack       : Vec<i64>,
-    numpsdatoms : i64,
-}
 
 /**********************************************************/
 type ConeType = u8;
@@ -21,9 +15,25 @@ pub const BOUNDKEY_LO : BoundKey = 1;
 pub const BOUNDKEY_UP : BoundKey = 2;
 pub const BOUNDKEY_FX : BoundKey = 3;
 
-type ObjectiveSense = u8;
-pub const OBJECTIVE_SENSE_MIN : ObjectiveSense = 0;
-pub const OBJECTIVE_SENSE_MAX : ObjectiveSense = 1;
+pub enum ObjectiveSense {
+    Min,
+    Max,
+}
+
+pub enum SolutionType {
+    Default,
+    Itr,
+    Bas,
+    Itg,
+}
+
+pub enum SolutionStatusBound {
+    Optimal,
+    Feasible,
+    InfeasCertificate,
+    IllposedCertificate,
+    Any,
+}
 
 /**********************************************************/
 /* Name generators */
@@ -53,7 +63,6 @@ impl IndexGenerator for FlatIndexer {
     }
     fn skip(& mut self) { (*self) += 1; }
 }
-
 
 pub trait NameGenerator {
     fn next(& mut self, &mut String);
@@ -247,6 +256,16 @@ pub fn expr(ptr : &[usize], subj : &[i64], cof : &[f64]) -> BaseExpr {
 /**********************************************************/
 /* Model */
 
+pub struct Model {
+    env         : super::Env,
+    task        : super::Task,
+    slack       : Vec<i64>,
+    numpsdatoms : i64,
+
+    solbound    : SolutionStatusBound,
+    expectsol   : SolutionType,
+}
+
 impl Model {
     pub fn new_with_name(name : &str) -> Model {
         let env = super::Env::new();
@@ -257,8 +276,14 @@ impl Model {
         task.append_vars(1);
         task.put_var_name(0,"1.0");
         task.put_task_name(name);
+        task.put_var_bound(0,super::MSK_BK_FX,1.0,1.0);
 
-        return Model{ env:env, task:task, slack:slack, numpsdatoms:numpsdatoms };
+        return Model{ env         : env,
+                      task        : task,
+                      slack       : slack,
+                      numpsdatoms : numpsdatoms,
+                      solbound    : SolutionStatusBound::Optimal,
+                      expectsol   : SolutionType::Default};
     }
     pub fn new() -> Model {
         return Model::new_with_name("");
@@ -300,7 +325,7 @@ impl Model {
         return numcone;
     }
 
-    fn alloc_cons(&self,
+    fn alloc_cons(&mut self,
                   mut ng : impl NameGenerator,
                   bk   : i32,
                   b    : &[f64],
@@ -308,10 +333,13 @@ impl Model {
                   subj : &[i64],
                   cof  : &[f64] ) -> Vec<i32> {
         assert_eq!(b.len(), ptr.len()-1);
+
         let numcon  = self.task.get_num_con();
         let numrows = b.len();
         let n       = b.len() as i32;
         self.task.append_cons(n as i32);
+
+        self.slack.resize(numcon as usize+numrows,0);
 
         let first = numcon;
         let last  = numcon+n;
@@ -349,7 +377,7 @@ impl Model {
         return idxs;
     }
 
-    fn alloc_cone_cons(&self,
+    fn alloc_cone_cons(& mut self,
                        mut ng : impl NameGenerator,
                        ct   : ConeType,
                        cpar : f64,
@@ -365,6 +393,8 @@ impl Model {
 
         //Following must be rewritten when we introduce PSD items
         let slacks = self.alloc_vars(no_namer(),super::MSK_BK_FR,zs.as_slice());
+        let mut slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
+        self.slack.extend_from_slice(slacksi64.as_slice());
         self.alloc_cone(ct,cpar,slacks.as_slice());
         let mut sl_ptr  : Vec<i64> = Vec::with_capacity(nrows+1);
         let mut sl_subj : Vec<i32> = Vec::with_capacity(nnz+nrows);
@@ -408,7 +438,10 @@ impl Model {
         return idxs;
     }
 
-    pub fn objective(& mut self, name : &str, sense : ObjectiveSense, expr : impl Expr) {
+    pub fn objective(& mut self,
+                     name  : &str,
+                     sense : ObjectiveSense,
+                     expr  : impl Expr) {
         let (ptr,subj,cof) = expr.eval();
         //assert expr.size() <= 1
         let numvar = self.task.get_num_var();
@@ -416,7 +449,20 @@ impl Model {
         subj.iter().zip(cof.iter()).for_each(|(j,v)| c[*j as usize] = *v);
         let subj : Vec<i32> = (0..numvar).collect();
         self.task.put_c_list(subj.as_slice(), c.as_slice());
+
+        match sense {
+            Min => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE),
+            Max => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE),
+        }
     }
+
+    pub fn solve(& mut self) {
+        self.task.optimize();
+    }
+
+
+    pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
+    pub fn expect_solution(&mut self, sol : SolutionType) { self.expectsol = sol; }
 
     pub fn write_task(& self, filename  : &str) {
         self.task.write_data(filename);
