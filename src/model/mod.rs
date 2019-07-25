@@ -35,6 +35,14 @@ pub enum SolutionStatusBound {
     Any,
 }
 
+pub enum SolutionStatus {
+    Optimal,
+    Feasible,
+    InfeasCertificate,
+    IllPosedCertificate,
+    Unknown,
+}
+
 /**********************************************************/
 /* Name generators */
 pub trait IndexGenerator {
@@ -256,6 +264,33 @@ pub fn expr(ptr : &[usize], subj : &[i64], cof : &[f64]) -> BaseExpr {
 /**********************************************************/
 /* Model */
 
+pub struct SolutionItem {
+    psta : SolutionStatus,
+    dsta : SolutionStatus,
+    bkx  : Vec<i32>,
+    xx   : Vec<f64>,
+    sx   : Vec<f64>,
+    bkc  : Vec<i32>,
+    xc   : Vec<f64>,
+    sc   : Vec<f64>,
+}
+
+impl SolutionItem {
+    fn new() {
+        return SolutionItem {
+            psta : SolutionStatus::Unknown,
+            dsta : SolutionStatus::Unknown,
+            bkx  : Vec::new(),
+            xx   : Vec::new(),
+            sx   : Vec::new(),
+            bkc  : Vec::new(),
+            xc   : Vec::new(),
+            sc   : Vec::new(),
+        };
+    }
+}
+
+
 pub struct Model {
     env         : super::Env,
     task        : super::Task,
@@ -264,6 +299,32 @@ pub struct Model {
 
     solbound    : SolutionStatusBound,
     expectsol   : SolutionType,
+
+
+    // Solutions
+    itr_primal_sta : SolutionStatus,
+    itr_dual_sta   : SolutionStatus,
+    itr_primal_bkx : Vec<i32>,
+    itr_primal_xx  : Vec<f64>,
+    itr_primal_sx  : Vec<f64>,
+    itr_primal_bkc : Vec<i32>,
+    itr_primal_xc  : Vec<f64>,
+    itr_primal_sc  : Vec<f64>,
+
+    bas_primal_sta : SolutionStatus,
+    bas_dual_sta   : SolutionStatus,
+    bas_primal_bkx : Vec<i32>,
+    bas_primal_xx  : Vec<f64>,
+    bas_primal_sx  : Vec<f64>,
+    bas_primal_bkc : Vec<i32>,
+    bas_primal_xc  : Vec<f64>,
+    bas_primal_sc  : Vec<f64>,
+
+    itg_primal_sta : SolutionStatus,
+    itg_primal_bkx : Vec<i32>,
+    itg_primal_xx  : Vec<f64>,
+    itg_primal_bkc : Vec<i32>,
+    itg_primal_xc  : Vec<f64>,
 }
 
 impl Model {
