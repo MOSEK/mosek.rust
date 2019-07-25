@@ -1,14 +1,15 @@
 
 /**********************************************************/
-type ConeType = u8;
-pub const CONE_TYPE_SECOND_ORDER         : ConeType = 0;
-pub const CONE_TYPE_ROTATED_SECOND_ORDER : ConeType = 1;
-pub const CONE_TYPE_POWER                : ConeType = 2;
-pub const CONE_TYPE_EXPONENTIAL          : ConeType = 3;
-pub const CONE_TYPE_DUAL_POWER           : ConeType = 4;
-pub const CONE_TYPE_DUAL_EXPONENTIAL     : ConeType = 5;
-//pub const CONE_TYPE_PSD                  : ConeType = 6;
-
+#[derive(Clone)]
+pub enum ConeType {
+     SecondOrder,
+     RotatedSecondOrder,
+     Power,
+     Exponential,
+     DualPower,
+     DualExponential,
+     Psd,
+}
 type BoundKey = u8;
 pub const BOUNDKEY_FR : BoundKey = 0;
 pub const BOUNDKEY_LO : BoundKey = 1;
@@ -42,6 +43,15 @@ pub enum SolutionStatus {
     IllPosedCertificate,
     Unknown,
     Undefined,
+}
+
+pub enum StatusKey {
+    Basic,
+    SuperBasic,
+    Fixed,
+    Infinite,
+    AtBound,
+    Unknown,
 }
 
 /**********************************************************/
@@ -112,9 +122,21 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 
 /**********************************************************/
 /* Variable and Constraint */
-
 pub type Variable   = Vec<i64>;
 pub type Constraint = Vec<u32>;
+
+impl Expr for Variable {
+    fn len(&self) -> usize { return self.len(); }
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
+        let n   = self.len();
+        let ptr : Vec<usize> = (0..n+1).collect();
+        let subj = self.as_slice().to_vec();
+        let cof  = vec![1.0; n];
+
+        return (ptr,subj,cof);
+    }
+}
+
 
 /**********************************************************/
 /* Domains */
@@ -139,16 +161,7 @@ impl LinearBound {
 impl Domain for LinearBound {
     fn size(&self) -> usize { return self.rhs.len() }
     fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
-        let bk =
-            match self.bk {
-                BOUNDKEY_FR => super::MSK_BK_FR,
-                BOUNDKEY_LO => super::MSK_BK_LO,
-                BOUNDKEY_UP => super::MSK_BK_UP,
-                BOUNDKEY_FX => super::MSK_BK_FX,
-                _ => super::MSK_BK_FR,
-            };
-
-        let idxs32 = m.alloc_vars(basic_namer(name), bk, self.rhs.as_slice());
+        let idxs32 = m.alloc_vars(basic_namer(name), self.bk, self.rhs.as_slice());
         let idxs64 : Vec<i64> = idxs32.iter().map(|x| *x as i64).collect();
 
         return idxs64;
@@ -194,8 +207,8 @@ impl Domain for VectorCone {
     fn size(&self) -> usize { return self.num }
     fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
         let mut zs : Vec<f64> = Vec::with_capacity(self.num); zs.resize(self.num,0.0);
-        let mut idxs32 = m.alloc_vars(basic_namer(name), super::MSK_BK_FR, zs.as_slice());
-        m.alloc_cone(self.ct, self.par, idxs32.as_mut_slice());
+        let mut idxs32 = m.alloc_vars(basic_namer(name), BOUNDKEY_FR, zs.as_slice());
+        m.alloc_cone(self.ct.clone(), self.par, idxs32.as_mut_slice());
         let idxs64 = idxs32.iter().map(|x| *x as i64).collect();
 
         return idxs64
@@ -210,7 +223,7 @@ impl Domain for VectorCone {
         let nrows = self.size();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
         let idxs = m.alloc_cone_cons(basic_namer(name),
-                                     self.ct,
+                                     self.ct.clone(),
                                      self.par,
                                      zs.as_slice(),
                                      ptr,
@@ -229,12 +242,35 @@ pub fn equal_to_scalar    (b : f64) -> LinearBound { return LinearBound{rhs : ve
 pub fn greater_than_scalar(b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_LO }; }
 pub fn less_than_scalar   (b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_UP }; }
 
+pub fn in_second_order_cone(n : usize) -> VectorCone { return VectorCone{ct:ConeType::SecondOrder, num:n, par:0.0} }
+pub fn in_rotated_second_order_cone(n : usize) -> VectorCone { return VectorCone{ct:ConeType::RotatedSecondOrder, num:n, par:0.0} }
+
 /**********************************************************/
 /* Expr */
 
 pub trait Expr {
-    fn size(&self) -> usize;
+    fn len(&self) -> usize;
     fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>);
+}
+
+impl Expr for f64 {
+    fn len(&self) -> usize { return 1; }
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
+        return (vec![0usize,1],
+                vec![0i64],
+                vec![*self])
+    }
+}
+
+impl Expr for Vec<f64> {
+    fn len(&self) -> usize { return self.len(); }
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
+        let n = self.len();
+        let ptr : Vec<usize> = (0..n+1).collect();
+        return (ptr,
+                vec![0; n],
+                self.as_slice().to_vec());
+    }
 }
 
 pub struct BaseExpr {
@@ -244,7 +280,7 @@ pub struct BaseExpr {
 }
 
 impl Expr for BaseExpr {
-    fn size(&self) -> usize { self.ptr.len() - 1 }
+    fn len(&self) -> usize { self.ptr.len() - 1 }
     fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
         let mut ptr  : Vec<usize> = Vec::with_capacity(self.ptr.len());
         let mut subj : Vec<i64> = Vec::with_capacity(self.subj.len());
@@ -262,16 +298,47 @@ pub fn expr(ptr : &[usize], subj : &[i64], cof : &[f64]) -> BaseExpr {
                      cof : cof.to_vec() };
 }
 
+pub fn expr_sum(e : & impl Expr) -> BaseExpr {
+    let (eptr,esubj,ecof) = e.eval();
+
+    let n = eptr.len()-1;
+    let ptr : Vec<usize> = vec![0,eptr[n]];
+
+    return BaseExpr{ ptr  : ptr,
+                     subj : esubj,
+                     cof  : ecof };
+}
+
+pub fn expr_dot(c : &[f64], e : & impl Expr) -> BaseExpr {
+    assert_eq!(c.len(),e.len());
+    let (eptr,esubj,ecof) = e.eval();
+
+    let n = eptr.len()-1;
+    let nnz = eptr[n];
+    let ptr : Vec<usize> = vec![0,nnz];
+    let mut cof : Vec<f64> = vec![0.0;nnz];
+    for i in 0..n {
+        for j in eptr[i]..eptr[i+1] {
+            cof[j] = ecof[j] * c[i];
+        }
+    }
+
+    return BaseExpr{ ptr  : ptr,
+                     subj : esubj,
+                     cof  : cof };
+}
+
+
 /**********************************************************/
 /* Model */
 
 pub struct Solution {
     psta : SolutionStatus,
     dsta : SolutionStatus,
-    bkx  : Vec<i32>,
+    skx  : Vec<i32>,
     xx   : Vec<f64>,
     sx   : Vec<f64>,
-    bkc  : Vec<i32>,
+    skc  : Vec<i32>,
     xc   : Vec<f64>,
     sc   : Vec<f64>,
 }
@@ -281,19 +348,19 @@ impl Solution {
         return Solution {
             psta : SolutionStatus::Unknown,
             dsta : SolutionStatus::Unknown,
-            bkx  : Vec::new(),
+            skx  : Vec::new(),
             xx   : Vec::new(),
             sx   : Vec::new(),
-            bkc  : Vec::new(),
+            skc  : Vec::new(),
             xc   : Vec::new(),
             sc   : Vec::new(),
         };
     }
     fn resize(& mut self, numcon : usize, numvar : usize) {
-        self.bkx.resize(numvar,super::MSK_SK_UNK);
+        self.skx.resize(numvar,super::MSK_SK_UNK);
         self.xx.resize(numvar,0.0);
         self.sx.resize(numvar,0.0);
-        self.bkc.resize(numcon,super::MSK_SK_UNK);
+        self.skc.resize(numcon,super::MSK_SK_UNK);
         self.xc.resize(numcon,0.0);
         self.sc.resize(numcon,0.0);
     }
@@ -304,6 +371,7 @@ pub struct Model {
     env         : super::Env,
     task        : super::Task,
     slack       : Vec<i64>,
+    bkx         : Vec<BoundKey>,
     numpsdatoms : i64,
 
     solbound    : SolutionStatusBound,
@@ -330,6 +398,7 @@ impl Model {
         return Model{ env         : env,
                       task        : task,
                       slack       : slack,
+                      bkx         : vec![BOUNDKEY_FX],
                       numpsdatoms : numpsdatoms,
                       solbound    : SolutionStatusBound::Optimal,
                       expectsol   : SolutionType::Default,
@@ -343,10 +412,20 @@ impl Model {
         return Model::new_with_name("");
     }
 
-    fn alloc_vars(&self, mut ng : impl NameGenerator, bk : i32, b : &[f64]) -> Vec<i32> {
+    fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Vec<i32> {
         let numvar = self.task.get_num_var();
         let n = b.len() as i32;
         self.task.append_vars(n as i32);
+
+        let bk : i32 =
+            match boundkey {
+                BOUNDKEY_FR => super::MSK_BK_FR,
+                BOUNDKEY_LO => super::MSK_BK_LO,
+                BOUNDKEY_UP => super::MSK_BK_UP,
+                BOUNDKEY_FX => super::MSK_BK_FX,
+                _           => super::MSK_BK_FR,
+            };
+
 
         let first = numvar;
         let last  = numvar+n;
@@ -359,8 +438,9 @@ impl Model {
             self.task.put_var_name(idxs[i],nm.as_str())
         }
 
-        let bks : Vec<i32> = (0..n).map(|_| bk).collect();
+        let bks : Vec<i32> = vec![bk; n as usize];
         self.task.put_var_bound_slice(numvar,numvar+n,bks.as_slice(),b,b);
+        self.bkx.resize(last as usize, boundkey);
         return idxs;
     }
 
@@ -446,7 +526,7 @@ impl Model {
         //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
-        let slacks = self.alloc_vars(no_namer(),super::MSK_BK_FR,zs.as_slice());
+        let slacks = self.alloc_vars(no_namer(),BOUNDKEY_FR,zs.as_slice());
         let mut slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
         self.slack.extend_from_slice(slacksi64.as_slice());
         self.alloc_cone(ct,cpar,slacks.as_slice());
@@ -483,7 +563,7 @@ impl Model {
         return idxs;
     }
 
-    pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : impl Expr, dom : &Dom) -> Constraint {
+    pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : & impl Expr, dom : &Dom) -> Constraint {
         let (ptr,subj,cof) = expr.eval();
         let idxs = dom.alloc_con_block(self,name,
                                        ptr.as_slice(),
@@ -522,24 +602,36 @@ impl Model {
 
         if self.task.solution_def(super::MSK_SOL_ITR) {
             let solsta = self.task.get_sol_sta(super::MSK_SOL_ITR);
-            let mut xx  : Vec<f64> = !vec[0.0; numvar];
-            let mut slx : Vec<f64> = !vec[0.0; numvar];
-            let mut sux : Vec<f64> = !vec[0.0; numvar];
-            let mut snx : Vec<f64> = !vec[0.0; numvar];
-            let mut bkx : Vec<i32> = !vec[super::MSK_SK_UNK; numvar];
+            let mut slx : Vec<f64> = vec![0.0; numvar];
+            let mut sux : Vec<f64> = vec![0.0; numvar];
+            let mut snx : Vec<f64> = vec![0.0; numvar];
+            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
+            let mut slc : Vec<f64> = vec![0.0; numcon];
+            let mut suc : Vec<f64> = vec![0.0; numcon];
+            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
 
-            self.task.get_xx(super::MSK_SOL_ITR,  xx.as_mut_slice());
+            self.task.get_xx (super::MSK_SOL_ITR, self.itr.xx.as_mut_slice());
             self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice());
             self.task.get_sux(super::MSK_SOL_ITR, sux.as_mut_slice());
-            self.task.get_bkx(super::MSK_SOL_ITR, bkx.as_mut_slice());
+            self.task.get_skx(super::MSK_SOL_ITR, self.itr.skx.as_mut_slice());
+            self.task.get_xc (super::MSK_SOL_ITR, self.itr.xc.as_mut_slice());
+            self.task.get_slc(super::MSK_SOL_ITR, slc.as_mut_slice());
+            self.task.get_suc(super::MSK_SOL_ITR, suc.as_mut_slice());
+            self.task.get_skc(super::MSK_SOL_ITR, self.itr.skc.as_mut_slice());
 
             for i in 0..numvar {
-                self.itr.xx[]
+                self.itr.sx[i] = slx[i] - sux[i] + snx[i];
+            }
+
+            for i in 0..numcon {
+                if self.slack[i] == 0 {
+                    self.itr.sc[i] = slc[i] - suc[i];
+                } else {
+                    self.itr.sc[i] = snx[(self.slack[i]-1) as usize];
+                }
             }
         }
-
     }
-
 
     pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
     pub fn expect_solution(&mut self, sol : SolutionType) { self.expectsol = sol; }
