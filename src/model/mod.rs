@@ -95,16 +95,18 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 /**********************************************************/
 /* Variable and Constraint */
 
-pub type Variable   = Vec<u64>;
+pub type Variable   = Vec<i64>;
 pub type Constraint = Vec<u32>;
 
 /**********************************************************/
 /* Domains */
 
+fn zerosf64(n : usize) -> Vec<f64> { let mut r : Vec<f64> = Vec::with_capacity(n); r.resize(n,0.0); return r; }
+
 pub trait Domain {
     fn size(&self) -> usize;
-    fn alloc_var_block(&self,&mut Model,&str) -> Vec<u64>;
-    fn alloc_con_block(&self,&mut Model,&str, ptr : &[usize], subj : &[u64], cof : &[f64]) -> Vec<u32>;
+    fn alloc_var_block(&self,&mut Model,&str) -> Vec<i64>;
+    fn alloc_con_block(&self,&mut Model,&str, ptr : &[usize], subj : &[i64], cof : &[f64]) -> Vec<u32>;
 }
 
 pub struct LinearBound {
@@ -118,7 +120,7 @@ impl LinearBound {
 
 impl Domain for LinearBound {
     fn size(&self) -> usize { return self.rhs.len() }
-    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<u64> {
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
         let bk =
             match self.bk {
                 BOUNDKEY_FR => super::MSK_BK_FR,
@@ -129,7 +131,7 @@ impl Domain for LinearBound {
             };
 
         let idxs32 = m.alloc_vars(basic_namer(name), bk, self.rhs.as_slice());
-        let idxs64 : Vec<u64> = idxs32.iter().map(|x| *x as u64).collect();
+        let idxs64 : Vec<i64> = idxs32.iter().map(|x| *x as i64).collect();
 
         return idxs64;
     }
@@ -137,7 +139,7 @@ impl Domain for LinearBound {
     fn alloc_con_block(&self,m : &mut Model,
                        name : &str,
                        ptr  : &[usize],
-                       subj : &[u64],
+                       subj : &[i64],
                        cof  : &[f64]) -> Vec<u32> {
         let bk =
             match self.bk {
@@ -172,11 +174,11 @@ impl VectorCone {
 
 impl Domain for VectorCone {
     fn size(&self) -> usize { return self.num }
-    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<u64> {
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
         let mut zs : Vec<f64> = Vec::with_capacity(self.num); zs.resize(self.num,0.0);
         let mut idxs32 = m.alloc_vars(basic_namer(name), super::MSK_BK_FR, zs.as_slice());
         m.alloc_cone(self.ct, self.par, idxs32.as_mut_slice());
-        let idxs64 = idxs32.iter().map(|x| *x as u64).collect();
+        let idxs64 = idxs32.iter().map(|x| *x as i64).collect();
 
         return idxs64
     }
@@ -185,7 +187,7 @@ impl Domain for VectorCone {
                        m    : &mut Model,
                        name : &str,
                        ptr  : &[usize],
-                       subj : &[u64],
+                       subj : &[i64],
                        cof  : &[f64]) -> Vec<u32> {
         let nrows = self.size();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
@@ -200,25 +202,34 @@ impl Domain for VectorCone {
     }
 }
 
+pub fn unbounded   (num : usize)  -> LinearBound { return LinearBound{rhs : zerosf64(num), bk : BOUNDKEY_FR }; }
+pub fn equal_to    (b : Vec<f64>) -> LinearBound { return LinearBound{rhs : b,             bk : BOUNDKEY_FX }; }
+pub fn greater_than(b : Vec<f64>) -> LinearBound { return LinearBound{rhs : b,             bk : BOUNDKEY_LO }; }
+pub fn less_than   (b : Vec<f64>) -> LinearBound { return LinearBound{rhs : b,             bk : BOUNDKEY_UP }; }
+
+pub fn equal_to_scalar    (b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_FX }; }
+pub fn greater_than_scalar(b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_LO }; }
+pub fn less_than_scalar   (b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_UP }; }
+
 /**********************************************************/
 /* Expr */
 
 pub trait Expr {
     fn size(&self) -> usize;
-    fn eval(&self) -> (Vec<usize>,Vec<u64>,Vec<f64>);
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>);
 }
 
 pub struct BaseExpr {
     ptr  : Vec<usize>,
-    subj : Vec<u64>,
+    subj : Vec<i64>,
     cof  : Vec<f64>,
 }
 
 impl Expr for BaseExpr {
     fn size(&self) -> usize { self.ptr.len() - 1 }
-    fn eval(&self) -> (Vec<usize>,Vec<u64>,Vec<f64>) {
+    fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
         let mut ptr  : Vec<usize> = Vec::with_capacity(self.ptr.len());
-        let mut subj : Vec<u64> = Vec::with_capacity(self.subj.len());
+        let mut subj : Vec<i64> = Vec::with_capacity(self.subj.len());
         let mut cof  : Vec<f64> = Vec::with_capacity(self.cof.len());
         ptr.extend_from_slice (self.ptr.as_slice());
         subj.extend_from_slice(self.subj.as_slice());
@@ -227,11 +238,17 @@ impl Expr for BaseExpr {
     }
 }
 
+pub fn expr(ptr : &[usize], subj : &[i64], cof : &[f64]) -> BaseExpr {
+    return BaseExpr{ ptr : ptr.to_vec(),
+                     subj : subj.to_vec(),
+                     cof : cof.to_vec() };
+}
+
 /**********************************************************/
 /* Model */
 
 impl Model {
-    pub fn new() -> Model {
+    pub fn new_with_name(name : &str) -> Model {
         let env = super::Env::new();
         let task = env.task();  //
         let slack = Vec::with_capacity(0);
@@ -239,8 +256,12 @@ impl Model {
 
         task.append_vars(1);
         task.put_var_name(0,"1.0");
+        task.put_task_name(name);
 
         return Model{ env:env, task:task, slack:slack, numpsdatoms:numpsdatoms };
+    }
+    pub fn new() -> Model {
+        return Model::new_with_name("");
     }
 
     fn alloc_vars(&self, mut ng : impl NameGenerator, bk : i32, b : &[f64]) -> Vec<i32> {
@@ -284,11 +305,12 @@ impl Model {
                   bk   : i32,
                   b    : &[f64],
                   ptr  : &[usize],
-                  subj : &[u64],
+                  subj : &[i64],
                   cof  : &[f64] ) -> Vec<i32> {
-        // assert b.len() == ptr.len()-1
-        let numcon = self.task.get_num_con();
-        let n      = b.len() as i32;
+        assert_eq!(b.len(), ptr.len()-1);
+        let numcon  = self.task.get_num_con();
+        let numrows = b.len();
+        let n       = b.len() as i32;
         self.task.append_cons(n as i32);
 
         let first = numcon;
@@ -302,8 +324,27 @@ impl Model {
             self.task.put_con_name(idxs[i],nm.as_str())
         }
 
-        let bks : Vec<i32> = (0..n).map(|_| bk).collect();
+        let bks : Vec<i32> = vec![bk; numrows];
         self.task.put_con_bound_slice(first,last,bks.as_slice(),b,b);
+
+
+        let mut sl_ptr  : Vec<i64> = ptr.iter().map(|v| *v as i64).collect();
+        let mut sl_subj : Vec<i32> = subj.iter().map(|v| *v as i32).collect();
+
+        let (ptrb,_) = sl_ptr.split_at(numrows);
+        let (_,ptre) = sl_ptr.split_at(1);
+
+        println!("-------------");
+        println!("ptr  = {:?}",ptr);
+        println!("ptrb = {:?}",ptrb);
+        println!("ptre = {:?}",ptre);
+        println!("subj = {:?}",sl_subj);
+        println!("cof  = {:?}",cof);
+        self.task.put_a_row_list(idxs.as_slice(),
+                                 ptrb,
+                                 ptre,
+                                 sl_subj.as_slice(),
+                                 cof);
 
         return idxs;
     }
@@ -314,13 +355,13 @@ impl Model {
                        cpar : f64,
                        b    : &[f64],
                        ptr  : &[usize],
-                       subj : &[u64],
+                       subj : &[i64],
                        cof  : &[f64] ) -> Vec<i32> {
         let nrows = ptr.len()-1;
         let nnz   = subj.len();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
 
-        //let numlinnz : u64 = 0;subj.iter().filter(|v| v >= 0).count();
+        //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
         let slacks = self.alloc_vars(no_namer(),super::MSK_BK_FR,zs.as_slice());
@@ -375,5 +416,9 @@ impl Model {
         subj.iter().zip(cof.iter()).for_each(|(j,v)| c[*j as usize] = *v);
         let subj : Vec<i32> = (0..numvar).collect();
         self.task.put_c_list(subj.as_slice(), c.as_slice());
+    }
+
+    pub fn write_task(& self, filename  : &str) {
+        self.task.write_data(filename);
     }
 }
