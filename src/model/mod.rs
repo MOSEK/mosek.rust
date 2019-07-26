@@ -349,8 +349,11 @@ pub fn expr_dot(c : &[f64], e : & impl Expr) -> BaseExpr {
                      cof  : cof };
 }
 
-pub fn expr_mul(mx : (usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
-    let (dim0,dim1,c) = mx;
+pub fn expr_mul(mx : &(usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
+    let (dim0_,dim1_,c) = mx;
+    let dim0 : usize = *dim0_;
+    let dim1 : usize = *dim1_;
+
     assert_eq!(dim1,e.len());
     let (eptr,esubj,ecof) = e.eval();
     let numnz = e.len();
@@ -487,7 +490,7 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new_with_name(name : &str) -> Model {
+    pub fn with_name(name : &str) -> Model {
         let env = super::Env::new();
         let task = env.task();  //
         let slack = Vec::with_capacity(0);
@@ -512,7 +515,7 @@ impl Model {
     }
 
     pub fn new() -> Model {
-        return Model::new_with_name("");
+        return Model::with_name("");
     }
 
     fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Vec<i32> {
@@ -550,12 +553,12 @@ impl Model {
     fn alloc_cone(&self, ct : ConeType, cpar : f64, idxs : &[i32]) -> i32 {
         let numcone = self.task.get_num_cone();
         let nct = match ct {
-            CONE_TYPE_SECOND_ORDER => super::MSK_CT_QUAD,
-            CONE_TYPE_ROTATED_SECOND_ORDER => super::MSK_CT_RQUAD,
-            CONE_TYPE_POWER => super::MSK_CT_PPOW,
-            CONE_TYPE_EXPONENTIAL => super::MSK_CT_PEXP,
-            CONE_TYPE_DUAL_POWER => super::MSK_CT_DPOW,
-            CONE_TYPE_DUAL_EXPONENTIAL => super::MSK_CT_DEXP,
+            SecondOrder => super::MSK_CT_QUAD,
+            RotatedSecond_Order => super::MSK_CT_RQUAD,
+            Power => super::MSK_CT_PPOW,
+            Exponential => super::MSK_CT_PEXP,
+            DualPower => super::MSK_CT_DPOW,
+            DualExponential => super::MSK_CT_DEXP,
             _ => super::MSK_CT_ZERO,
         };
         self.task.append_cone(nct,cpar,idxs);
@@ -678,7 +681,7 @@ impl Model {
     pub fn objective(& mut self,
                      name  : &str,
                      sense : ObjectiveSense,
-                     expr  : impl Expr) {
+                     expr  : & impl Expr) {
         let (ptr,subj,cof) = expr.eval();
         //assert expr.size() <= 1
         let numvar = self.task.get_num_var();
