@@ -181,6 +181,13 @@ impl Domain for LinearBound {
                 _ => super::MSK_BK_FR,
             };
 
+
+        println!("---------- Domain::alloc");
+        println!("bk = {:?}",bk);
+        println!("b    = {:?}",self.rhs);
+        println!("ptr  = {:?}",ptr);
+        println!("subj = {:?}",subj);
+        println!("cof  = {:?}",cof);
         let idxs = m.alloc_cons(basic_namer(name),
                                 bk,
                                 self.rhs.as_slice(),
@@ -372,8 +379,13 @@ pub fn expr_mul(mx : &(usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
         }
     }
 
+    println!("-------- expr_mul:");
+    println!("ptr  = {:?}",ptr);
+    println!("subj = {:?}, len = {:?}",subj,subj.len());
+    println!("cof  = {:?}, len = {:?}",cof,cof.len());
+
     return BaseExpr{ ptr  : ptr,
-                     subj : esubj,
+                     subj : subj,
                      cof  : cof };
 }
 
@@ -424,6 +436,12 @@ pub fn expr_stack_3(e1 : & impl Expr, e2 : & impl Expr, e3 : & impl Expr) -> Bas
     for i in 0..n3 {
         ptr.push(eptr3[i+1] + nnz1 + nnz2);
     }
+    println!("-------- expr_stack_3:");
+    println!("subj1 : {:?}, cof1 : {:?}",esubj1.len(),ecof1.len());
+    println!("subj2 : {:?}, cof2 : {:?}",esubj2.len(),ecof2.len());
+    println!("subj3 : {:?}, cof3 : {:?}",esubj3.len(),ecof3.len());
+
+
     subj.extend_from_slice(esubj1.as_slice());
     subj.extend_from_slice(esubj2.as_slice());
     subj.extend_from_slice(esubj3.as_slice());
@@ -431,6 +449,9 @@ pub fn expr_stack_3(e1 : & impl Expr, e2 : & impl Expr, e3 : & impl Expr) -> Bas
     cof.extend_from_slice(ecof2.as_slice());
     cof.extend_from_slice(ecof3.as_slice());
 
+    println!("ptr  = {:?}",ptr);
+    println!("subj = {:?}, len = {:?}",subj,subj.len());
+    println!("cof  = {:?}, len = {:?}",cof,cof.len());
     return BaseExpr{ ptr: ptr, subj : subj, cof :cof };
 }
 
@@ -492,7 +513,7 @@ pub struct Model {
 impl Model {
     pub fn with_name(name : &str) -> Model {
         let env = super::Env::new();
-        let task = env.task();  //
+        let mut task = env.task();  //
         let slack = Vec::with_capacity(0);
         let numpsdatoms : i64 = 0;
 
@@ -500,6 +521,15 @@ impl Model {
         task.put_var_name(0,"1.0");
         task.put_task_name(name);
         task.put_var_bound(0,super::MSK_BK_FX,1.0,1.0);
+
+        task.put_task_name(name);
+        if name.len() > 0 {
+            let mut filename = name.to_string(); filename.push_str(".log");
+
+            task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0);
+        }
+
+        //task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg));
 
         return Model{ env         : env,
                       task        : task,
@@ -517,6 +547,7 @@ impl Model {
     pub fn new() -> Model {
         return Model::with_name("");
     }
+
 
     fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Vec<i32> {
         let numvar = self.task.get_num_var();
@@ -608,6 +639,7 @@ impl Model {
         println!("ptre = {:?}",ptre);
         println!("subj = {:?}",sl_subj);
         println!("cof  = {:?}",cof);
+        println!("numvar = {:?}",self.task.get_num_var());
         self.task.put_a_row_list(idxs.as_slice(),
                                  ptrb,
                                  ptre,
@@ -629,6 +661,13 @@ impl Model {
         let nnz   = subj.len();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
 
+
+        println!("---------- Model::alloc_cone_cons");
+        println!("b    = {:?}",b);
+        println!("ptr  = {:?}",ptr);
+        println!("subj = {:?}",subj);
+        println!("cof  = {:?}",cof);
+
         //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
@@ -640,10 +679,15 @@ impl Model {
         let mut sl_subj : Vec<i32> = Vec::with_capacity(nnz+nrows);
         let mut sl_cof  : Vec<f64> = Vec::with_capacity(nnz+nrows);
         sl_ptr.push(0);
-        for i in 0..nnz {
+
+        let mut perm : Vec<usize> = (0..nnz).collect();
+        for i in 0..nrows {
+            // sort row
+            perm[ptr[i]..ptr[i+1]].sort_by(|i0,i1| subj[*i0].cmp(&subj[*i1]));
+
             for j in ptr[i]..ptr[i+1] {
-                sl_subj.push(subj[j] as i32);
-                sl_cof.push(cof[j]);
+                sl_subj.push(subj[perm[j]] as i32);
+                sl_cof.push(cof[perm[j]]);
             }
             sl_subj.push(slacks[i]);
             sl_cof.push(-1.0);
@@ -656,6 +700,15 @@ impl Model {
         let first = self.task.get_num_con();
         let last = first+(nrows as i32);
         let idxs : Vec<i32> = (first..last).collect();
+
+        self.task.append_cons(nrows as i32);
+
+        println!("---------- put_a_row_list");
+        println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
+        println!("ptre    ({:?}) = {:?}",ptre.len(),ptre);
+        println!("sl_subj ({:?}) = {:?}",sl_subj.len(),sl_subj);
+        println!("sl_cof  ({:?}) = {:?}",sl_cof.len(),sl_cof);
+        println!("numvar = {:?}",self.task.get_num_var());
         self.task.put_a_row_list(idxs.as_slice(),
                                  ptrb,
                                  ptre,
@@ -746,3 +799,4 @@ impl Model {
         self.task.write_data(filename);
     }
 }
+/**********************************************************/
