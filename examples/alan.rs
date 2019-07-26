@@ -55,9 +55,6 @@ fn main() {
     M.constraint("dmean",
                  &expr_dot(mean.as_slice(), &x),
                  &greater_than_scalar(target));
-    //let es : Vec<Box<Expr>> = vec![Box::new(0.5), Box::new(t), Box::new(expr_mul(U,x)) ];
-    //M.constraint("t > ||Ux||_2", &es), in_rotated_second_order_cone());
-    //    M.constraint("t > ||Ux||_2", &expr_vstack(0.5, t, expr_mul(U, x)), in_rotated_second_order_cone());
     M.constraint("t > ||Ux||_2",
                  &expr_stack_3(&0.5, &t, &expr_mul(&U, &x)),
                  &in_rotated_second_order_cone(4));

@@ -1,4 +1,3 @@
-
 /**********************************************************/
 #[derive(Clone)]
 pub enum ConeType {
@@ -36,6 +35,7 @@ pub enum SolutionStatusBound {
     Any,
 }
 
+#[derive(PartialEq)]
 pub enum SolutionStatus {
     Optimal,
     Feasible,
@@ -43,6 +43,23 @@ pub enum SolutionStatus {
     IllPosedCertificate,
     Unknown,
     Undefined,
+}
+
+fn convert_solution_status(sta : i32) -> (SolutionStatus,SolutionStatus) {
+    match sta {
+        MSK_SOL_STA_UNKNOWN            => (SolutionStatus::Unknown,SolutionStatus::Unknown),
+        MSK_SOL_STA_OPTIMAL            => (SolutionStatus::Optimal,SolutionStatus::Optimal),
+        MSK_SOL_STA_PRIM_FEAS          => (SolutionStatus::Feasible,SolutionStatus::Unknown),
+        MSK_SOL_STA_DUAL_FEAS          => (SolutionStatus::Unknown,SolutionStatus::Feasible),
+        MSK_SOL_STA_PRIM_AND_DUAL_FEAS => (SolutionStatus::Feasible,SolutionStatus::Feasible),
+
+        MSK_SOL_STA_PRIM_ILLPOSED_CER  => (SolutionStatus::Unknown,SolutionStatus::IllPosedCertificate),
+        MSK_SOL_STA_PRIM_INFEAS_CER    => (SolutionStatus::Unknown,SolutionStatus::InfeasCertificate),
+        MSK_SOL_STA_DUAL_ILLPOSED_CER  => (SolutionStatus::IllPosedCertificate,SolutionStatus::Unknown),
+        MSK_SOL_STA_DUAL_INFEAS_CER    => (SolutionStatus::InfeasCertificate,SolutionStatus::Unknown),
+        MSK_SOL_STA_INTEGER_OPTIMAL    => (SolutionStatus::Optimal,SolutionStatus::Undefined),
+        _                              => (SolutionStatus::Unknown,SolutionStatus::Unknown),
+    }
 }
 
 pub enum StatusKey {
@@ -124,6 +141,13 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 /* Variable and Constraint */
 pub type Variable   = Vec<i64>;
 pub type Constraint = Vec<u32>;
+
+//pub trait ModelItem {
+//    fn level(&self, &Model, &mut [f64]) -> {
+//
+//    }
+//}
+
 
 impl Expr for Variable {
     fn len(&self) -> usize { return self.len(); }
@@ -483,6 +507,41 @@ impl Solution {
             sc   : Vec::new(),
         };
     }
+
+    fn variable_level(&self, idxs : &Variable, vals : &mut [f64]) {
+        for i in idxs.iter().map(|i| *i as usize) {
+            vals[i] = self.xx[i];
+        }
+    }
+
+    fn variable_dual(&self, idxs : &Variable, vals : &mut [f64]) {
+        for i in idxs.iter().map(|i| *i as usize) {
+            vals[i] = self.sx[i];
+        }
+    }
+
+    fn constraint_level(&self, idxs : &Constraint, vals : &mut [f64]) {
+        for i in idxs.iter().map(|i| *i as usize) {
+            vals[i] = self.xc[i];
+        }
+    }
+
+    fn constraint_dual(&self, idxs : &Constraint, vals : &mut [f64]) {
+        for i in idxs.iter().map(|i| *i as usize) {
+            vals[i] = self.sc[i];
+        }
+    }
+
+    fn undefine(& mut self) {
+        self.psta = SolutionStatus::Undefined;
+        self.dsta = SolutionStatus::Undefined;
+    }
+
+    fn touch(& mut self) {
+        self.psta = SolutionStatus::Unknown;
+        self.dsta = SolutionStatus::Unknown;
+    }
+
     fn resize(& mut self, numcon : usize, numvar : usize) {
         self.skx.resize(numvar,super::MSK_SK_UNK);
         self.xx.resize(numvar,0.0);
@@ -505,9 +564,9 @@ pub struct Model {
     expectsol   : SolutionType,
 
     // Solutions
-    itr : Solution,
-    bas : Solution,
-    itg : Solution,
+    itr         : Solution,
+    bas         : Solution,
+    itg         : Solution,
 }
 
 impl Model {
@@ -772,11 +831,16 @@ impl Model {
             self.task.get_xx (super::MSK_SOL_ITR, self.itr.xx.as_mut_slice());
             self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice());
             self.task.get_sux(super::MSK_SOL_ITR, sux.as_mut_slice());
+            self.task.get_snx(super::MSK_SOL_ITR, snx.as_mut_slice());
             self.task.get_skx(super::MSK_SOL_ITR, self.itr.skx.as_mut_slice());
             self.task.get_xc (super::MSK_SOL_ITR, self.itr.xc.as_mut_slice());
             self.task.get_slc(super::MSK_SOL_ITR, slc.as_mut_slice());
             self.task.get_suc(super::MSK_SOL_ITR, suc.as_mut_slice());
             self.task.get_skc(super::MSK_SOL_ITR, self.itr.skc.as_mut_slice());
+
+            let (psta,dsta) = convert_solution_status(solsta);
+            self.itr.psta = psta;
+            self.itr.dsta = dsta;
 
             for i in 0..numvar {
                 self.itr.sx[i] = slx[i] - sux[i] + snx[i];
@@ -790,6 +854,110 @@ impl Model {
                 }
             }
         }
+        else {
+            self.itr.undefine();
+        }
+
+        if self.task.solution_def(super::MSK_SOL_BAS) {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_BAS);
+            let mut slx : Vec<f64> = vec![0.0; numvar];
+            let mut sux : Vec<f64> = vec![0.0; numvar];
+            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
+            let mut slc : Vec<f64> = vec![0.0; numcon];
+            let mut suc : Vec<f64> = vec![0.0; numcon];
+            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
+
+            self.task.get_xx (super::MSK_SOL_BAS, self.bas.xx.as_mut_slice());
+            self.task.get_slx(super::MSK_SOL_BAS, slx.as_mut_slice());
+            self.task.get_sux(super::MSK_SOL_BAS, sux.as_mut_slice());
+            self.task.get_skx(super::MSK_SOL_BAS, self.bas.skx.as_mut_slice());
+            self.task.get_xc (super::MSK_SOL_BAS, self.bas.xc.as_mut_slice());
+            self.task.get_slc(super::MSK_SOL_BAS, slc.as_mut_slice());
+            self.task.get_suc(super::MSK_SOL_BAS, suc.as_mut_slice());
+            self.task.get_skc(super::MSK_SOL_BAS, self.bas.skc.as_mut_slice());
+
+            for i in 0..numvar {
+                self.bas.sx[i] = slx[i] - sux[i];
+            }
+
+            for i in 0..numcon {
+                self.bas.sc[i] = slc[i] - suc[i];
+            }
+        }
+        else {
+            self.bas.undefine();
+        }
+
+        if self.task.solution_def(super::MSK_SOL_ITG) {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITG);
+            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
+            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
+            let mut xc  : Vec<f64> = vec![0.0; numcon];
+
+            self.task.get_xx (super::MSK_SOL_ITG, self.itg.xx.as_mut_slice());
+            self.task.get_skx(super::MSK_SOL_ITG, self.itg.skx.as_mut_slice());
+            self.task.get_xc (super::MSK_SOL_ITG, xc.as_mut_slice());
+            self.task.get_skc(super::MSK_SOL_ITG, self.itg.skc.as_mut_slice());
+
+            for i in 0..numcon {
+                if self.slack[i] == 0 {
+                    self.itg.xc[i] = xc[i];
+                } else {
+                    self.itg.xc[i] = self.itg.xx[(self.slack[i]-1) as usize];
+                }
+            }
+        }
+        else {
+            self.itg.undefine();
+        }
+    }
+
+
+    pub fn solution_status(&self) -> (SolutionStatus,SolutionStatus) {
+        return
+            match self.expectsol {
+                Default =>
+                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { (self.itg.psta,self.itg.dsta) }
+                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { (self.bas.psta,self.bas.dsta) }
+                    else  { return (self.itr.psta,self.itr.dsta) },
+                Itr => { (self.itr.psta,self.itr.dsta) },
+                Bas => { (self.bas.psta,self.bas.dsta) },
+                Itg => { (self.itg.psta,self.itg.dsta) },
+            }
+    }
+
+    fn validate_expect_solution(&self) -> bool {
+        let sol =
+            match self.expectsol {
+                Default =>
+                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { &self.itg }
+                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { &self.bas }
+                    else  { &self.itr },
+                Itr => { &self.itr },
+                Bas => { &self.bas },
+                Itg => { &self.itg },
+            };
+        return
+            match self.solbound {
+                Optimal             => sol.psta == SolutionStatus::Optimal,
+                Feasible            => sol.psta == SolutionStatus::Optimal || sol.psta == SolutionStatus::Feasible,
+                InfeasCertificate   => sol.psta == SolutionStatus::InfeasCertificate,
+                IllposedCertificate => sol.psta == SolutionStatus::IllPosedCertificate,
+                Any                 => sol.psta != SolutionStatus::Undefined,
+            };
+    }
+
+    pub fn variable_level(&self,x : &Variable, res : & mut [f64]) -> Option<String> {
+        return
+            match self.expectsol {
+                Default =>
+                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { )
+                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { (self.bas.psta,self.bas.dsta) }
+                    else  { (self.itr.psta,self.itr.dsta) },
+                Itr => { (self.itr.psta,self.itr.dsta) },
+                Bas => { (self.bas.psta,self.bas.dsta) },
+                Itg => { (self.itg.psta,self.itg.dsta) },
+            }
     }
 
     pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
