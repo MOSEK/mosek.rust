@@ -3,8 +3,6 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
-pub mod model;
-
 #[link(name = "mosek64")]
 extern
 {
@@ -24,292 +22,292 @@ extern
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
-    fn MSK_appendbarvars(task_ : * const u8,num_ : libc::int32_t,dim_ : * const libc::int32_t) -> i32;
-    fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : libc::int32_t,submem_ : * const libc::int32_t) -> i32;
-    fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : libc::int32_t,j_ : libc::int32_t) -> i32;
-    fn MSK_appendconesseq(task_ : * const u8,num_ : libc::int32_t,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const libc::int32_t,j_ : libc::int32_t) -> i32;
-    fn MSK_appendcons(task_ : * const u8,num_ : libc::int32_t) -> i32;
-    fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : libc::int32_t,nz_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64,idx_ : & mut libc::int64_t) -> i32;
-    fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : libc::int32_t,dims_ : * const libc::int32_t,nz_ : * const libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64,idx_ : * mut libc::int64_t) -> i32;
-    fn MSK_appendvars(task_ : * const u8,num_ : libc::int32_t) -> i32;
-    fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut libc::int32_t,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_appendbarvars(task_ : * const u8,num_ : i32,dim_ : * const i32) -> i32;
+    fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> i32;
+    fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
+    fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
+    fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut libc::int64_t) -> i32;
+    fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut libc::int64_t) -> i32;
+    fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
+    fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
     fn MSK_asyncoptimize(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const u8) -> i32;
-    fn MSK_asyncpoll(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut libc::int32_t,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncpoll(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
     fn MSK_asyncstop(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
-    fn MSK_axpy(env_ : * const u8,n_ : libc::int32_t,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
+    fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
     fn MSK_bktostr(task_ : * const u8,bk_ : i32,str_ : * const u8) -> i32;
     fn MSK_callbackcodetostr(code_ : i32,callbackcodestr_ : * const u8) -> i32;
     fn MSK_checkinall(env_ : * const u8) -> i32;
     fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
-    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : libc::int32_t) -> i32;
-    fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : libc::int32_t) -> i32;
+    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
+    fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
     fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
-    fn MSK_checkversion(env_ : * const u8,major_ : libc::int32_t,minor_ : libc::int32_t,revision_ : libc::int32_t) -> i32;
-    fn MSK_chgconbound(task_ : * const u8,i_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
-    fn MSK_chgvarbound(task_ : * const u8,j_ : libc::int32_t,lower_ : libc::int32_t,finite_ : libc::int32_t,value_ : f64) -> i32;
+    fn MSK_checkversion(env_ : * const u8,major_ : i32,minor_ : i32,revision_ : i32) -> i32;
+    fn MSK_chgconbound(task_ : * const u8,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
+    fn MSK_chgvarbound(task_ : * const u8,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
     fn MSK_commitchanges(task_ : * const u8) -> i32;
     fn MSK_conetypetostr(task_ : * const u8,ct_ : i32,str_ : * const u8) -> i32;
     fn MSK_deletesolution(task_ : * const u8,whichsol_ : i32) -> i32;
-    fn MSK_dot(env_ : * const u8,n_ : libc::int32_t,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
-    fn MSK_dualsensitivity(task_ : * const u8,numj_ : libc::int32_t,subj_ : * const libc::int32_t,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    fn MSK_dot(env_ : * const u8,n_ : i32,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
+    fn MSK_dualsensitivity(task_ : * const u8,numj_ : i32,subj_ : * const i32,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
     fn MSK_echoenv(env_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
-    fn MSK_echointro(env_ : * const u8,longver_ : libc::int32_t) -> i32;
+    fn MSK_echointro(env_ : * const u8,longver_ : i32) -> i32;
     fn MSK_echotask(task_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
-    fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
-    fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : libc::int32_t,n_ : libc::int32_t,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
-    fn MSK_generateconenames(task_ : * const u8,num_ : libc::int32_t,subk_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
-    fn MSK_generateconnames(task_ : * const u8,num_ : libc::int32_t,subi_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
-    fn MSK_generatevarnames(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,fmt_ : * const libc::c_char,ndims_ : libc::int32_t,dims_ : * const libc::int32_t,sp_ : * const libc::int64_t) -> i32;
-    fn MSK_getacol(task_ : * const u8,j_ : libc::int32_t,nzj_ : & mut libc::int32_t,subj_ : * mut libc::int32_t,valj_ : * mut f64) -> i32;
-    fn MSK_getacolnumnz(task_ : * const u8,i_ : libc::int32_t,nzj_ : & mut libc::int32_t) -> i32;
-    fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,numnz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getaij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,aij_ : & mut f64) -> i32;
-    fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : libc::int32_t,lasti_ : libc::int32_t,firstj_ : libc::int32_t,lastj_ : libc::int32_t,numnz_ : & mut libc::int32_t) -> i32;
-    fn MSK_getarow(task_ : * const u8,i_ : libc::int32_t,nzi_ : & mut libc::int32_t,subi_ : * mut libc::int32_t,vali_ : * mut f64) -> i32;
-    fn MSK_getarownumnz(task_ : * const u8,i_ : libc::int32_t,nzi_ : & mut libc::int32_t) -> i32;
-    fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
+    fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
+    fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
+    fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
+    fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
+    fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
+    fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
+    fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
+    fn MSK_getarow(task_ : * const u8,i_ : i32,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
+    fn MSK_getarownumnz(task_ : * const u8,i_ : i32,nzi_ : & mut i32) -> i32;
+    fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut libc::int64_t) -> i32;
     fn MSK_getatruncatetol(task_ : * const u8,tolzero_ : * mut f64) -> i32;
-    fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subi_ : * mut libc::int32_t,subj_ : * mut libc::int32_t,subk_ : * mut libc::int32_t,subl_ : * mut libc::int32_t,valijkl_ : * mut f64) -> i32;
-    fn MSK_getbaraidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,i_ : & mut libc::int32_t,j_ : & mut libc::int32_t,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
-    fn MSK_getbaraidxij(task_ : * const u8,idx_ : libc::int64_t,i_ : & mut libc::int32_t,j_ : & mut libc::int32_t) -> i32;
+    fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subi_ : * mut i32,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valijkl_ : * mut f64) -> i32;
+    fn MSK_getbaraidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,i_ : & mut i32,j_ : & mut i32,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
+    fn MSK_getbaraidxij(task_ : * const u8,idx_ : libc::int64_t,i_ : & mut i32,j_ : & mut i32) -> i32;
     fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxij_ : * mut libc::int64_t) -> i32;
-    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subj_ : * mut libc::int32_t,subk_ : * mut libc::int32_t,subl_ : * mut libc::int32_t,valjkl_ : * mut f64) -> i32;
-    fn MSK_getbarcidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,j_ : & mut libc::int32_t,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
+    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valjkl_ : * mut f64) -> i32;
+    fn MSK_getbarcidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,j_ : & mut i32,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
     fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getbarcidxj(task_ : * const u8,idx_ : libc::int64_t,j_ : & mut libc::int32_t) -> i32;
+    fn MSK_getbarcidxj(task_ : * const u8,idx_ : libc::int64_t,j_ : & mut i32) -> i32;
     fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxj_ : * mut libc::int64_t) -> i32;
-    fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barsj_ : * mut f64) -> i32;
-    fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slicesize_ : libc::int64_t,barsslice_ : * mut f64) -> i32;
-    fn MSK_getbarvarname(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
-    fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
-    fn MSK_getbarvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barxj_ : * mut f64) -> i32;
-    fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slicesize_ : libc::int64_t,barxslice_ : * mut f64) -> i32;
+    fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * mut f64) -> i32;
+    fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : libc::int64_t,barsslice_ : * mut f64) -> i32;
+    fn MSK_getbarvarname(task_ : * const u8,i_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    fn MSK_getbarvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * mut f64) -> i32;
+    fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : libc::int64_t,barxslice_ : * mut f64) -> i32;
     fn MSK_getbuildinfo(buildstate_ : * const u8,builddate_ : * const u8) -> i32;
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
-    fn MSK_getcj(task_ : * const u8,j_ : libc::int32_t,cj_ : & mut f64) -> i32;
-    fn MSK_getclist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,c_ : * mut f64) -> i32;
+    fn MSK_getcj(task_ : * const u8,j_ : i32,cj_ : & mut f64) -> i32;
+    fn MSK_getclist(task_ : * const u8,num_ : i32,subj_ : * const i32,c_ : * mut f64) -> i32;
     fn MSK_getcodedesc(code_ : i32,symname_ : * const u8,str_ : * const u8) -> i32;
-    fn MSK_getconbound(task_ : * const u8,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
-    fn MSK_getconboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
-    fn MSK_getcone(task_ : * const u8,k_ : libc::int32_t,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut libc::int32_t,submem_ : * mut libc::int32_t) -> i32;
-    fn MSK_getconeinfo(task_ : * const u8,k_ : libc::int32_t,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconename(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
-    fn MSK_getconenameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconenamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconname(task_ : * const u8,i_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
-    fn MSK_getconnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
-    fn MSK_getconnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getcslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,c_ : * mut f64) -> i32;
-    fn MSK_getdimbarvarj(task_ : * const u8,j_ : libc::int32_t,dimbarvarj_ : & mut libc::int32_t) -> i32;
+    fn MSK_getconbound(task_ : * const u8,i_ : i32,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    fn MSK_getconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    fn MSK_getcone(task_ : * const u8,k_ : i32,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut i32,submem_ : * mut i32) -> i32;
+    fn MSK_getconeinfo(task_ : * const u8,k_ : i32,ct_ : & mut i32,conepar_ : & mut f64,nummem_ : & mut i32) -> i32;
+    fn MSK_getconename(task_ : * const u8,i_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getconenameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    fn MSK_getconenamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getconname(task_ : * const u8,i_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getconnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    fn MSK_getconnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getcslice(task_ : * const u8,first_ : i32,last_ : i32,c_ : * mut f64) -> i32;
+    fn MSK_getdimbarvarj(task_ : * const u8,j_ : i32,dimbarvarj_ : & mut i32) -> i32;
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
     fn MSK_getdualsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmy_ : & mut f64,nrmslc_ : & mut f64,nrmsuc_ : & mut f64,nrmslx_ : & mut f64,nrmsux_ : & mut f64,nrmsnx_ : & mut f64,nrmbars_ : & mut f64) -> i32;
-    fn MSK_getdviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getdviolcon(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getdviolcones(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getdviolvar(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getinfindex(task_ : * const u8,inftype_ : i32,infname_ : * const libc::c_char,infindex_ : & mut libc::int32_t) -> i32;
-    fn MSK_getinfmax(task_ : * const u8,inftype_ : i32,infmax_ : * mut libc::int32_t) -> i32;
-    fn MSK_getinfname(task_ : * const u8,inftype_ : i32,whichinf_ : libc::int32_t,infname_ : * const u8) -> i32;
-    fn MSK_getintinf(task_ : * const u8,whichiinf_ : i32,ivalue_ : & mut libc::int32_t) -> i32;
-    fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut libc::int32_t) -> i32;
-    fn MSK_getlenbarvarj(task_ : * const u8,j_ : libc::int32_t,lenbarvarj_ : & mut libc::int64_t) -> i32;
+    fn MSK_getdviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getdviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getdviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getdviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getinfindex(task_ : * const u8,inftype_ : i32,infname_ : * const libc::c_char,infindex_ : & mut i32) -> i32;
+    fn MSK_getinfmax(task_ : * const u8,inftype_ : i32,infmax_ : * mut i32) -> i32;
+    fn MSK_getinfname(task_ : * const u8,inftype_ : i32,whichinf_ : i32,infname_ : * const u8) -> i32;
+    fn MSK_getintinf(task_ : * const u8,whichiinf_ : i32,ivalue_ : & mut i32) -> i32;
+    fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut i32) -> i32;
+    fn MSK_getlenbarvarj(task_ : * const u8,j_ : i32,lenbarvarj_ : & mut libc::int64_t) -> i32;
     fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut libc::int64_t) -> i32;
-    fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut libc::int32_t) -> i32;
+    fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut i32) -> i32;
     fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut libc::int32_t) -> i32;
-    fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut libc::int32_t) -> i32;
-    fn MSK_getmaxnumcone(task_ : * const u8,maxnumcone_ : & mut libc::int32_t) -> i32;
+    fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut i32) -> i32;
+    fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut i32) -> i32;
+    fn MSK_getmaxnumcone(task_ : * const u8,maxnumcone_ : & mut i32) -> i32;
     fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut libc::int32_t) -> i32;
+    fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut i32) -> i32;
     fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut libc::int64_t,maxmemuse_ : & mut libc::int64_t) -> i32;
     fn MSK_getnadouinf(task_ : * const u8,infitemname_ : * const libc::c_char,dvalue_ : & mut f64) -> i32;
     fn MSK_getnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut f64) -> i32;
-    fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : libc::int32_t,len_ : & mut libc::int32_t,parvalue_ : * const u8) -> i32;
-    fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut libc::int32_t) -> i32;
+    fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut i32) -> i32;
+    fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut i32) -> i32;
+    fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
+    fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut i32) -> i32;
     fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumbaranz(task_ : * const u8,nz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumbarcblocktriplets(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumbarcnz(task_ : * const u8,nz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumbarvar(task_ : * const u8,numbarvar_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumconemem(task_ : * const u8,k_ : libc::int32_t,nummem_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut libc::int32_t) -> i32;
-    fn MSK_getnumqconknz64(task_ : * const u8,k_ : libc::int32_t,numqcnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getnumbarvar(task_ : * const u8,numbarvar_ : & mut i32) -> i32;
+    fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut i32) -> i32;
+    fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut i32) -> i32;
+    fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
+    fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
+    fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
+    fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut libc::int64_t) -> i32;
     fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut libc::int32_t) -> i32;
-    fn MSK_getobjname(task_ : * const u8,sizeobjname_ : libc::int32_t,objname_ : * const u8) -> i32;
-    fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut libc::int32_t) -> i32;
+    fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut i32) -> i32;
+    fn MSK_getobjname(task_ : * const u8,sizeobjname_ : i32,objname_ : * const u8) -> i32;
+    fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut i32) -> i32;
     fn MSK_getobjsense(task_ : * const u8,sense_ : & mut i32) -> i32;
-    fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut libc::int32_t) -> i32;
-    fn MSK_getparamname(task_ : * const u8,partype_ : i32,param_ : libc::int32_t,parname_ : * const u8) -> i32;
+    fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut i32) -> i32;
+    fn MSK_getparamname(task_ : * const u8,partype_ : i32,param_ : i32,parname_ : * const u8) -> i32;
     fn MSK_getprimalobj(task_ : * const u8,whichsol_ : i32,primalobj_ : & mut f64) -> i32;
     fn MSK_getprimalsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmxc_ : & mut f64,nrmxx_ : & mut f64,nrmbarx_ : & mut f64) -> i32;
     fn MSK_getprobtype(task_ : * const u8,probtype_ : & mut i32) -> i32;
     fn MSK_getprosta(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32) -> i32;
-    fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : libc::int32_t,sub_ : * const libc::int32_t,viol_ : * mut f64) -> i32;
-    fn MSK_getqobjij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,qoij_ : & mut f64) -> i32;
-    fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,redcosts_ : * mut f64) -> i32;
+    fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : & mut f64) -> i32;
+    fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : * mut f64) -> i32;
     fn MSK_getresponseclass(r_ : i32,rc_ : & mut i32) -> i32;
     fn MSK_getskc(task_ : * const u8,whichsol_ : i32,skc_ : * mut i32) -> i32;
-    fn MSK_getskcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,skc_ : * mut i32) -> i32;
+    fn MSK_getskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * mut i32) -> i32;
     fn MSK_getskn(task_ : * const u8,whichsol_ : i32,skn_ : * mut i32) -> i32;
     fn MSK_getskx(task_ : * const u8,whichsol_ : i32,skx_ : * mut i32) -> i32;
-    fn MSK_getskxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,skx_ : * mut i32) -> i32;
+    fn MSK_getskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * mut i32) -> i32;
     fn MSK_getslc(task_ : * const u8,whichsol_ : i32,slc_ : * mut f64) -> i32;
-    fn MSK_getslcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slc_ : * mut f64) -> i32;
+    fn MSK_getslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * mut f64) -> i32;
     fn MSK_getslx(task_ : * const u8,whichsol_ : i32,slx_ : * mut f64) -> i32;
-    fn MSK_getslxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slx_ : * mut f64) -> i32;
+    fn MSK_getslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * mut f64) -> i32;
     fn MSK_getsnx(task_ : * const u8,whichsol_ : i32,snx_ : * mut f64) -> i32;
-    fn MSK_getsnxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,snx_ : * mut f64) -> i32;
+    fn MSK_getsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * mut f64) -> i32;
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solsta_ : & mut i32) -> i32;
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
-    fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,values_ : * mut f64) -> i32;
-    fn MSK_getsparsesymmat(task_ : * const u8,idx_ : libc::int64_t,maxlen_ : libc::int64_t,subi_ : * mut libc::int32_t,subj_ : * mut libc::int32_t,valij_ : * mut f64) -> i32;
-    fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : libc::int32_t,len_ : & mut libc::int32_t,parvalue_ : * const u8) -> i32;
-    fn MSK_getstrparamlen(task_ : * const u8,param_ : i32,len_ : & mut libc::int32_t) -> i32;
+    fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
+    fn MSK_getsparsesymmat(task_ : * const u8,idx_ : libc::int64_t,maxlen_ : libc::int64_t,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
+    fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
+    fn MSK_getstrparamlen(task_ : * const u8,param_ : i32,len_ : & mut i32) -> i32;
     fn MSK_getsuc(task_ : * const u8,whichsol_ : i32,suc_ : * mut f64) -> i32;
-    fn MSK_getsucslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,suc_ : * mut f64) -> i32;
+    fn MSK_getsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * mut f64) -> i32;
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
-    fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,sux_ : * mut f64) -> i32;
-    fn MSK_getsymbcon(task_ : * const u8,i_ : libc::int32_t,sizevalue_ : libc::int32_t,name_ : * const u8,value_ : & mut libc::int32_t) -> i32;
-    fn MSK_getsymmatinfo(task_ : * const u8,idx_ : libc::int64_t,dim_ : & mut libc::int32_t,nz_ : & mut libc::int64_t,type_ : & mut i32) -> i32;
-    fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : libc::int32_t,taskname_ : * const u8) -> i32;
-    fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getvarbound(task_ : * const u8,i_ : libc::int32_t,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
-    fn MSK_getvarboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
-    fn MSK_getvarname(task_ : * const u8,j_ : libc::int32_t,sizename_ : libc::int32_t,name_ : * const u8) -> i32;
-    fn MSK_getvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut libc::int32_t,index_ : & mut libc::int32_t) -> i32;
-    fn MSK_getvarnamelen(task_ : * const u8,i_ : libc::int32_t,len_ : & mut libc::int32_t) -> i32;
-    fn MSK_getvartype(task_ : * const u8,j_ : libc::int32_t,vartype_ : & mut i32) -> i32;
-    fn MSK_getvartypelist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,vartype_ : * mut i32) -> i32;
-    fn MSK_getversion(major_ : & mut libc::int32_t,minor_ : & mut libc::int32_t,revision_ : & mut libc::int32_t) -> i32;
+    fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * mut f64) -> i32;
+    fn MSK_getsymbcon(task_ : * const u8,i_ : i32,sizevalue_ : i32,name_ : * const u8,value_ : & mut i32) -> i32;
+    fn MSK_getsymmatinfo(task_ : * const u8,idx_ : libc::int64_t,dim_ : & mut i32,nz_ : & mut libc::int64_t,type_ : & mut i32) -> i32;
+    fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : i32,taskname_ : * const u8) -> i32;
+    fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut i32) -> i32;
+    fn MSK_getvarbound(task_ : * const u8,i_ : i32,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    fn MSK_getvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    fn MSK_getvarname(task_ : * const u8,j_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    fn MSK_getvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getvartype(task_ : * const u8,j_ : i32,vartype_ : & mut i32) -> i32;
+    fn MSK_getvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * mut i32) -> i32;
+    fn MSK_getversion(major_ : & mut i32,minor_ : & mut i32,revision_ : & mut i32) -> i32;
     fn MSK_getxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
-    fn MSK_getxcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,xc_ : * mut f64) -> i32;
+    fn MSK_getxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * mut f64) -> i32;
     fn MSK_getxx(task_ : * const u8,whichsol_ : i32,xx_ : * mut f64) -> i32;
-    fn MSK_getxxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,xx_ : * mut f64) -> i32;
+    fn MSK_getxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * mut f64) -> i32;
     fn MSK_gety(task_ : * const u8,whichsol_ : i32,y_ : * mut f64) -> i32;
-    fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,y_ : * mut f64) -> i32;
-    fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut libc::int32_t) -> i32;
-    fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : libc::int32_t,maxnumvar_ : libc::int32_t,numcon_ : libc::int32_t,numvar_ : libc::int32_t,c_ : * const f64,cfix_ : f64,aptrb_ : * const libc::int64_t,aptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * mut f64) -> i32;
+    fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut i32) -> i32;
+    fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const libc::int64_t,aptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
     fn MSK_isinfinity(value_ : f64) -> i32;
     fn MSK_isintparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
     fn MSK_isstrparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
     fn MSK_licensecleanup() -> i32;
-    fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
-    fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : libc::int32_t) -> i32;
+    fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
+    fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
     fn MSK_optimizermt(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : & mut i32) -> i32;
-    fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64) -> i32;
+    fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
     fn MSK_primalrepair(task_ : * const u8,wlc_ : * const f64,wuc_ : * const f64,wlx_ : * const f64,wux_ : * const f64) -> i32;
-    fn MSK_primalsensitivity(task_ : * const u8,numi_ : libc::int32_t,subi_ : * const libc::int32_t,marki_ : * const i32,numj_ : libc::int32_t,subj_ : * const libc::int32_t,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    fn MSK_primalsensitivity(task_ : * const u8,numi_ : i32,subi_ : * const i32,marki_ : * const i32,numj_ : i32,subj_ : * const i32,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
     fn MSK_printparam(task_ : * const u8) -> i32;
     fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str_ : * const u8) -> i32;
     fn MSK_prostatostr(task_ : * const u8,prosta_ : i32,str_ : * const u8) -> i32;
-    fn MSK_putacol(task_ : * const u8,j_ : libc::int32_t,nzj_ : libc::int32_t,subj_ : * const libc::int32_t,valj_ : * const f64) -> i32;
-    fn MSK_putacollist64(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
-    fn MSK_putacolslice64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
-    fn MSK_putaij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,aij_ : f64) -> i32;
-    fn MSK_putaijlist64(task_ : * const u8,num_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,valij_ : * const f64) -> i32;
-    fn MSK_putarow(task_ : * const u8,i_ : libc::int32_t,nzi_ : libc::int32_t,subi_ : * const libc::int32_t,vali_ : * const f64) -> i32;
-    fn MSK_putarowlist64(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
-    fn MSK_putarowslice64(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const libc::int32_t,aval_ : * const f64) -> i32;
+    fn MSK_putacol(task_ : * const u8,j_ : i32,nzj_ : i32,subj_ : * const i32,valj_ : * const f64) -> i32;
+    fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
+    fn MSK_putaijlist64(task_ : * const u8,num_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    fn MSK_putarow(task_ : * const u8,i_ : i32,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
+    fn MSK_putarowlist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putarowslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putatruncatetol(task_ : * const u8,tolzero_ : f64) -> i32;
-    fn MSK_putbarablocktriplet(task_ : * const u8,num_ : libc::int64_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,subk_ : * const libc::int32_t,subl_ : * const libc::int32_t,valijkl_ : * const f64) -> i32;
-    fn MSK_putbaraij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbaraijlist(task_ : * const u8,num_ : libc::int32_t,subi_ : * const libc::int32_t,subj_ : * const libc::int32_t,alphaptrb_ : * const libc::int64_t,alphaptre_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbararowlist(task_ : * const u8,num_ : libc::int32_t,subi_ : * const libc::int32_t,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,subj_ : * const libc::int32_t,nummat_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : libc::int64_t,subj_ : * const libc::int32_t,subk_ : * const libc::int32_t,subl_ : * const libc::int32_t,valjkl_ : * const f64) -> i32;
-    fn MSK_putbarcj(task_ : * const u8,j_ : libc::int32_t,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barsj_ : * const f64) -> i32;
-    fn MSK_putbarvarname(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
-    fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : libc::int32_t,barxj_ : * const f64) -> i32;
+    fn MSK_putbarablocktriplet(task_ : * const u8,num_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valijkl_ : * const f64) -> i32;
+    fn MSK_putbaraij(task_ : * const u8,i_ : i32,j_ : i32,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
+    fn MSK_putbaraijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,alphaptrb_ : * const libc::int64_t,alphaptre_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
+    fn MSK_putbararowlist(task_ : * const u8,num_ : i32,subi_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,subj_ : * const i32,nummat_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
+    fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : libc::int64_t,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valjkl_ : * const f64) -> i32;
+    fn MSK_putbarcj(task_ : * const u8,j_ : i32,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
+    fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * const f64) -> i32;
+    fn MSK_putbarvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * const f64) -> i32;
     fn MSK_putcfix(task_ : * const u8,cfix_ : f64) -> i32;
-    fn MSK_putcj(task_ : * const u8,j_ : libc::int32_t,cj_ : f64) -> i32;
-    fn MSK_putclist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,val_ : * const f64) -> i32;
-    fn MSK_putconbound(task_ : * const u8,i_ : libc::int32_t,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
-    fn MSK_putconboundlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
-    fn MSK_putconboundlistconst(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
-    fn MSK_putconboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
-    fn MSK_putconboundsliceconst(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
-    fn MSK_putcone(task_ : * const u8,k_ : libc::int32_t,ct_ : i32,conepar_ : f64,nummem_ : libc::int32_t,submem_ : * const libc::int32_t) -> i32;
-    fn MSK_putconename(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
-    fn MSK_putconname(task_ : * const u8,i_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
-    fn MSK_putconsolutioni(task_ : * const u8,i_ : libc::int32_t,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
-    fn MSK_putcslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,slice_ : * const f64) -> i32;
+    fn MSK_putcj(task_ : * const u8,j_ : i32,cj_ : f64) -> i32;
+    fn MSK_putclist(task_ : * const u8,num_ : i32,subj_ : * const i32,val_ : * const f64) -> i32;
+    fn MSK_putconbound(task_ : * const u8,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    fn MSK_putconboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    fn MSK_putconboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    fn MSK_putconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    fn MSK_putconboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    fn MSK_putcone(task_ : * const u8,k_ : i32,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    fn MSK_putconename(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    fn MSK_putconname(task_ : * const u8,i_ : i32,name_ : * const libc::c_char) -> i32;
+    fn MSK_putconsolutioni(task_ : * const u8,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
+    fn MSK_putcslice(task_ : * const u8,first_ : i32,last_ : i32,slice_ : * const f64) -> i32;
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
-    fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : libc::int32_t) -> i32;
-    fn MSK_putlicensecode(env_ : * const u8,code_ : * const libc::int32_t) -> i32;
-    fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : libc::int32_t) -> i32;
+    fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
+    fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
+    fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
-    fn MSK_putlicensewait(env_ : * const u8,licwait_ : libc::int32_t) -> i32;
+    fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
     fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : libc::int64_t) -> i32;
-    fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : libc::int32_t) -> i32;
-    fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : libc::int32_t) -> i32;
-    fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : libc::int32_t) -> i32;
+    fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : i32) -> i32;
+    fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : i32) -> i32;
+    fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : i32) -> i32;
     fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : libc::int64_t) -> i32;
-    fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : libc::int32_t) -> i32;
+    fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : i32) -> i32;
     fn MSK_putnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : f64) -> i32;
-    fn MSK_putnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : libc::int32_t) -> i32;
+    fn MSK_putnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : i32) -> i32;
     fn MSK_putnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putobjname(task_ : * const u8,objname_ : * const libc::c_char) -> i32;
     fn MSK_putobjsense(task_ : * const u8,sense_ : i32) -> i32;
     fn MSK_putparam(task_ : * const u8,parname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
-    fn MSK_putqcon(task_ : * const u8,numqcnz_ : libc::int32_t,qcsubk_ : * const libc::int32_t,qcsubi_ : * const libc::int32_t,qcsubj_ : * const libc::int32_t,qcval_ : * const f64) -> i32;
-    fn MSK_putqconk(task_ : * const u8,k_ : libc::int32_t,numqcnz_ : libc::int32_t,qcsubi_ : * const libc::int32_t,qcsubj_ : * const libc::int32_t,qcval_ : * const f64) -> i32;
-    fn MSK_putqobj(task_ : * const u8,numqonz_ : libc::int32_t,qosubi_ : * const libc::int32_t,qosubj_ : * const libc::int32_t,qoval_ : * const f64) -> i32;
-    fn MSK_putqobjij(task_ : * const u8,i_ : libc::int32_t,j_ : libc::int32_t,qoij_ : f64) -> i32;
+    fn MSK_putqcon(task_ : * const u8,numqcnz_ : i32,qcsubk_ : * const i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    fn MSK_putqconk(task_ : * const u8,k_ : i32,numqcnz_ : i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    fn MSK_putqobj(task_ : * const u8,numqonz_ : i32,qosubi_ : * const i32,qosubj_ : * const i32,qoval_ : * const f64) -> i32;
+    fn MSK_putqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : f64) -> i32;
     fn MSK_putskc(task_ : * const u8,whichsol_ : i32,skc_ : * const i32) -> i32;
-    fn MSK_putskcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,skc_ : * const i32) -> i32;
+    fn MSK_putskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * const i32) -> i32;
     fn MSK_putskx(task_ : * const u8,whichsol_ : i32,skx_ : * const i32) -> i32;
-    fn MSK_putskxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,skx_ : * const i32) -> i32;
+    fn MSK_putskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * const i32) -> i32;
     fn MSK_putslc(task_ : * const u8,whichsol_ : i32,slc_ : * const f64) -> i32;
-    fn MSK_putslcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slc_ : * const f64) -> i32;
+    fn MSK_putslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * const f64) -> i32;
     fn MSK_putslx(task_ : * const u8,whichsol_ : i32,slx_ : * const f64) -> i32;
-    fn MSK_putslxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,slx_ : * const f64) -> i32;
+    fn MSK_putslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * const f64) -> i32;
     fn MSK_putsnx(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
-    fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,snx_ : * const f64) -> i32;
+    fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * const f64) -> i32;
     fn MSK_putsolution(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64) -> i32;
-    fn MSK_putsolutionyi(task_ : * const u8,i_ : libc::int32_t,whichsol_ : i32,y_ : f64) -> i32;
+    fn MSK_putsolutionyi(task_ : * const u8,i_ : i32,whichsol_ : i32,y_ : f64) -> i32;
     fn MSK_putstrparam(task_ : * const u8,param_ : i32,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putsuc(task_ : * const u8,whichsol_ : i32,suc_ : * const f64) -> i32;
-    fn MSK_putsucslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,suc_ : * const f64) -> i32;
+    fn MSK_putsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * const f64) -> i32;
     fn MSK_putsux(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
-    fn MSK_putsuxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,sux_ : * const f64) -> i32;
+    fn MSK_putsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * const f64) -> i32;
     fn MSK_puttaskname(task_ : * const u8,taskname_ : * const libc::c_char) -> i32;
-    fn MSK_putvarbound(task_ : * const u8,j_ : libc::int32_t,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
-    fn MSK_putvarboundlist(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
-    fn MSK_putvarboundlistconst(task_ : * const u8,num_ : libc::int32_t,sub_ : * const libc::int32_t,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
-    fn MSK_putvarboundslice(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
-    fn MSK_putvarboundsliceconst(task_ : * const u8,first_ : libc::int32_t,last_ : libc::int32_t,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
-    fn MSK_putvarname(task_ : * const u8,j_ : libc::int32_t,name_ : * const libc::c_char) -> i32;
-    fn MSK_putvarsolutionj(task_ : * const u8,j_ : libc::int32_t,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
-    fn MSK_putvartype(task_ : * const u8,j_ : libc::int32_t,vartype_ : i32) -> i32;
-    fn MSK_putvartypelist(task_ : * const u8,num_ : libc::int32_t,subj_ : * const libc::int32_t,vartype_ : * const i32) -> i32;
+    fn MSK_putvarbound(task_ : * const u8,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    fn MSK_putvarboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    fn MSK_putvarboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    fn MSK_putvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    fn MSK_putvarboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    fn MSK_putvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    fn MSK_putvarsolutionj(task_ : * const u8,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
+    fn MSK_putvartype(task_ : * const u8,j_ : i32,vartype_ : i32) -> i32;
+    fn MSK_putvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * const i32) -> i32;
     fn MSK_putxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
-    fn MSK_putxcslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,xc_ : * const f64) -> i32;
+    fn MSK_putxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * const f64) -> i32;
     fn MSK_putxx(task_ : * const u8,whichsol_ : i32,xx_ : * const f64) -> i32;
-    fn MSK_putxxslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,xx_ : * const f64) -> i32;
+    fn MSK_putxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * const f64) -> i32;
     fn MSK_puty(task_ : * const u8,whichsol_ : i32,y_ : * const f64) -> i32;
-    fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : libc::int32_t,last_ : libc::int32_t,y_ : * const f64) -> i32;
+    fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * const f64) -> i32;
     fn MSK_readdataautoformat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readdataformat(task_ : * const u8,filename_ : * const libc::c_char,format_ : i32,compress_ : i32) -> i32;
     fn MSK_readjsonstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
@@ -320,32 +318,32 @@ extern
     fn MSK_readsolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
     fn MSK_readsummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_readtask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
-    fn MSK_removebarvars(task_ : * const u8,num_ : libc::int32_t,subset_ : * const libc::int32_t) -> i32;
-    fn MSK_removecones(task_ : * const u8,num_ : libc::int32_t,subset_ : * const libc::int32_t) -> i32;
-    fn MSK_removecons(task_ : * const u8,num_ : libc::int32_t,subset_ : * const libc::int32_t) -> i32;
-    fn MSK_removevars(task_ : * const u8,num_ : libc::int32_t,subset_ : * const libc::int32_t) -> i32;
-    fn MSK_resizetask(task_ : * const u8,maxnumcon_ : libc::int32_t,maxnumvar_ : libc::int32_t,maxnumcone_ : libc::int32_t,maxnumanz_ : libc::int64_t,maxnumqnz_ : libc::int64_t) -> i32;
+    fn MSK_removebarvars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    fn MSK_removecones(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    fn MSK_removecons(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    fn MSK_removevars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : libc::int64_t,maxnumqnz_ : libc::int64_t) -> i32;
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_setdefaults(task_ : * const u8) -> i32;
-    fn MSK_setupthreads(env_ : * const u8,numthreads_ : libc::int32_t) -> i32;
+    fn MSK_setupthreads(env_ : * const u8,numthreads_ : i32) -> i32;
     fn MSK_sktostr(task_ : * const u8,sk_ : i32,str_ : * const u8) -> i32;
     fn MSK_solstatostr(task_ : * const u8,solsta_ : i32,str_ : * const u8) -> i32;
-    fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut libc::int32_t) -> i32;
+    fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut i32) -> i32;
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
-    fn MSK_solvewithbasis(task_ : * const u8,transp_ : libc::int32_t,numnz_ : & mut libc::int32_t,sub_ : * mut libc::int32_t,val_ : * mut f64) -> i32;
-    fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : libc::int32_t,lnzc_ : * const libc::int32_t,lptrc_ : * const libc::int64_t,lensubnval_ : libc::int64_t,lsubc_ : * const libc::int32_t,lvalc_ : * const f64,b_ : * mut f64) -> i32;
+    fn MSK_solvewithbasis(task_ : * const u8,transp_ : i32,numnz_ : & mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const libc::int64_t,lensubnval_ : libc::int64_t,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
     fn MSK_strduptask(task_ : * const u8,str_ : * const libc::c_char) -> i32;
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : & mut i32) -> i32;
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : & mut i32) -> i32;
-    fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * const f64,w_ : * mut f64) -> i32;
-    fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : libc::int32_t,a_ : * mut f64,w_ : * mut f64) -> i32;
+    fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * const f64,w_ : * mut f64) -> i32;
+    fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64,w_ : * mut f64) -> i32;
     fn MSK_symnamtovalue(name_ : * const libc::c_char,value_ : * const u8) -> i32;
-    fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : libc::int32_t,k_ : libc::int32_t,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_toconic(task_ : * const u8) -> i32;
     fn MSK_unlinkfuncfromenvstream(env_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_unlinkfuncfromtaskstream(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
-    fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : & mut i32,param_ : & mut libc::int32_t) -> i32;
+    fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : & mut i32,param_ : & mut i32) -> i32;
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writejsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writeparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
@@ -360,7 +358,8 @@ macro_rules! callMSK
             let res = unsafe { $n ( $( $a,)* ) };
             if 0 != res
             {
-                panic!(format!("Fail in call: {}",stringify!($n)));
+                return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
+                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     };
@@ -369,11 +368,11 @@ macro_rules! callMSK
             let res = unsafe { $n () };
             if 0 != res
             {
-                panic!(format!("Fail in call: {}",stringify!($n)));
+                return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
+                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     }
-
 }
 
 // basindtype
@@ -1849,321 +1848,339 @@ pub struct Task
 
 impl Env
 {
-    pub fn new() -> Env
-    {
+    pub fn new() -> Option<Env> {
         let mut env : * const u8 = std::ptr::null();
         let res = unsafe { MSK_makeenv(& mut env, std::ptr::null()) };
-        if res != 0 { panic!("Failed: MSK_getversion"); }
+        if res != 0 { return None; }
 
-        return Env { ptr : env };
+        return Some(Env { ptr : env });
     }
 
-    pub fn new_mem_debug(dbgfile : &str) -> Env
-    {
+    pub fn new_mem_debug(dbgfile : &str) -> Option<Env> {
         let mut env : * const u8 = std::ptr::null();
         let res = unsafe { MSK_makeenv(& mut env, CString::new(dbgfile).unwrap().as_ptr()) };
-        if res != 0 { panic!("Failed: MSK_makeenv"); }
+        if res != 0 { return None; }
 
-        return Env { ptr : env };
+        return Some(Env { ptr : env });
     }
 
-    pub fn task(&self) -> Task
-    {
+    pub fn task(&self) -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
-        if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) }
-        {
-            panic!("Failed: MSK_maketask");
+        if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) } {
+            return None;
         }
 
-        return Task { ptr      : task,
-                      streamcb : [None,None,None,None],
-                      valuecb  : None,};
+        return Some(Task { ptr      : task,
+                           streamcb : [None,None,None,None],
+                           valuecb  : None,});
     }
 
-    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Task
+    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Option<Task>
     {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, numcon,numvar, & mut task) }
         {
-            panic!("Failed: MSK_maketask");
+            return None;
         }
 
-        return Task { ptr      : task,
-                      streamcb : [None,None,None,None],
-                      valuecb  : None, };
+        return Some(Task { ptr      : task,
+                           streamcb : [None,None,None,None],
+                           valuecb  : None, });
     }
 
-
+    
     // axpy
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : & [f64],y_ : & mut [f64])
+    pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : & [f64],y_ : & mut [f64]) -> Result<(),String>
     {
-      if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'axpy'") }
-      if y_.len() != ((n_) as usize) { panic!("Argument 'y_' is too short in call to 'axpy'") }
-      callMSK!(MSK_axpy,self.ptr,n_ as libc::int32_t,alpha_ as f64,x_.as_ptr(),y_.as_mut_ptr());
+      if x_.len() != ((n_) as usize) { return Result::Err("Argument 'x_' is too short in call to 'axpy'".to_string()) }
+      if y_.len() != ((n_) as usize) { return Result::Err("Argument 'y_' is too short in call to 'axpy'".to_string()) }
+      callMSK!(MSK_axpy,self.ptr,n_ as i32,alpha_ as f64,x_.as_ptr(),y_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // checkinall
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_in_all(&self)
+    pub fn check_in_all(&self) -> Result<(),String>
     {
       callMSK!(MSK_checkinall,self.ptr);
+      return Result::Ok(())
     }
-
+    
     // checkinlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_in_license(&self,feature_ : i32)
+    pub fn check_in_license(&self,feature_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkinlicense,self.ptr,feature_);
+      return Result::Ok(())
     }
-
+    
     // checkmemenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_mem(&self,file_ : &str,line_ : i32)
+    pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
+      callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
+      return Result::Ok(())
     }
-
+    
     // checkoutlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn checkout_license(&self,feature_ : i32)
+    pub fn checkout_license(&self,feature_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkoutlicense,self.ptr,feature_);
+      return Result::Ok(())
     }
-
+    
     // checkversion
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_version(&self,major_ : i32,minor_ : i32,revision_ : i32)
+    pub fn check_version(&self,major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_checkversion,self.ptr,major_ as libc::int32_t,minor_ as libc::int32_t,revision_ as libc::int32_t);
+      callMSK!(MSK_checkversion,self.ptr,major_ as i32,minor_ as i32,revision_ as i32);
+      return Result::Ok(())
     }
-
+    
     // dot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn dot(&self,n_ : i32,x_ : & [f64],y_ : & [f64]) -> f64
+    pub fn dot(&self,n_ : i32,x_ : & [f64],y_ : & [f64]) -> Result<f64,String>
     {
-      if x_.len() != ((n_) as usize) { panic!("Argument 'x_' is too short in call to 'dot'") }
-      if y_.len() != ((n_) as usize) { panic!("Argument 'y_' is too short in call to 'dot'") }
+      if x_.len() != ((n_) as usize) { return Result::Err("Argument 'x_' is too short in call to 'dot'".to_string()) }
+      if y_.len() != ((n_) as usize) { return Result::Err("Argument 'y_' is too short in call to 'dot'".to_string()) }
       let mut _ref_xty_ : f64 = 0 as f64;
-      callMSK!(MSK_dot,self.ptr,n_ as libc::int32_t,x_.as_ptr(),y_.as_ptr(),& mut _ref_xty_);
-      _ref_xty_ as f64
+      callMSK!(MSK_dot,self.ptr,n_ as i32,x_.as_ptr(),y_.as_ptr(),& mut _ref_xty_);
+      return Result::Ok((_ref_xty_ as f64))
     }
-
+    
     // echoenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn echo_env(&self,whichstream_ : i32,format_ : &str)
+    pub fn echo_env(&self,whichstream_ : i32,format_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_echoenv,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // echointro
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn echo_intro(&self,longver_ : i32)
+    pub fn echo_intro(&self,longver_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_echointro,self.ptr,longver_ as libc::int32_t);
+      callMSK!(MSK_echointro,self.ptr,longver_ as i32);
+      return Result::Ok(())
     }
-
+    
     // gemm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],b_ : & [f64],beta_ : f64,c_ : & mut [f64])
+    pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],b_ : & [f64],beta_ : f64,c_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((m_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'gemm'") }
-      if b_.len() != ((k_ * n_) as usize) { panic!("Argument 'b_' is too short in call to 'gemm'") }
-      if c_.len() != ((m_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'gemm'") }
-      callMSK!(MSK_gemm,self.ptr,transa_,transb_,m_ as libc::int32_t,n_ as libc::int32_t,k_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),b_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
+      if a_.len() != ((m_ * k_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'gemm'".to_string()) }
+      if b_.len() != ((k_ * n_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'gemm'".to_string()) }
+      if c_.len() != ((m_ * n_) as usize) { return Result::Err("Argument 'c_' is too short in call to 'gemm'".to_string()) }
+      callMSK!(MSK_gemm,self.ptr,transa_,transb_,m_ as i32,n_ as i32,k_ as i32,alpha_ as f64,a_.as_ptr(),b_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // gemv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64])
+    pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((n_ * m_) as usize) { panic!("Argument 'a_' is too short in call to 'gemv'") }
-      let tmp_var_3__ =
+      if a_.len() != ((n_ * m_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'gemv'".to_string()) }
+      let tmp_var_3__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           n_
         }  else {
           m_
         };
-      if x_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'x_' is too short in call to 'gemv'") }
-      let tmp_var_9__ =
+      if x_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'x_' is too short in call to 'gemv'".to_string()) }
+      let tmp_var_9__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           m_
         }  else {
           n_
         };
-      if y_.len() != ((tmp_var_9__) as usize) { panic!("Argument 'y_' is too short in call to 'gemv'") }
-      callMSK!(MSK_gemv,self.ptr,transa_,m_ as libc::int32_t,n_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),x_.as_ptr(),beta_ as f64,y_.as_mut_ptr());
+      if y_.len() != ((tmp_var_9__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'gemv'".to_string()) }
+      callMSK!(MSK_gemv,self.ptr,transa_,m_ as i32,n_ as i32,alpha_ as f64,a_.as_ptr(),x_.as_ptr(),beta_ as f64,y_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // linkfiletoenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn link_file_to_env_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
+    pub fn link_file_to_env_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
+      callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
+      return Result::Ok(())
     }
-
+    
     // potrf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64])
+    pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'potrf'") }
-      callMSK!(MSK_potrf,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr());
+      if a_.len() != ((n_ * n_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'potrf'".to_string()) }
+      callMSK!(MSK_potrf,self.ptr,uplo_,n_ as i32,a_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // putlicensecode
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_code(&self,code_ : & [i32])
+    pub fn put_license_code(&self,code_ : & [i32]) -> Result<(),String>
     {
-      if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { panic!("Argument 'code_' is too short in call to 'put_license_code'") }
+      if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { return Result::Err("Argument 'code_' is too short in call to 'put_license_code'".to_string()) }
       callMSK!(MSK_putlicensecode,self.ptr,code_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putlicensedebug
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_debug(&self,licdebug_ : i32)
+    pub fn put_license_debug(&self,licdebug_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putlicensedebug,self.ptr,licdebug_ as libc::int32_t);
+      callMSK!(MSK_putlicensedebug,self.ptr,licdebug_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putlicensepath
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_path(&self,licensepath_ : &str)
+    pub fn put_license_path(&self,licensepath_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putlicensepath,self.ptr,CString::new(licensepath_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putlicensewait
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_wait(&self,licwait_ : i32)
+    pub fn put_license_wait(&self,licwait_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putlicensewait,self.ptr,licwait_ as libc::int32_t);
+      callMSK!(MSK_putlicensewait,self.ptr,licwait_ as i32);
+      return Result::Ok(())
     }
-
+    
     // setupthreads
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn setup_threads(&self,numthreads_ : i32)
+    pub fn setup_threads(&self,numthreads_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_setupthreads,self.ptr,numthreads_ as libc::int32_t);
+      callMSK!(MSK_setupthreads,self.ptr,numthreads_ as i32);
+      return Result::Ok(())
     }
-
+    
     // sparsetriangularsolvedense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : & [i32],lptrc_ : & [i64],lsubc_ : & [i32],lvalc_ : & [f64],b_ : & mut [f64])
+    pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : & [i32],lptrc_ : & [i64],lsubc_ : & [i32],lvalc_ : & [f64],b_ : & mut [f64]) -> Result<(),String>
     {
       let mut n_ = b_.len();
       if lnzc_.len() > n_ { n_ = lnzc_.len() };
       if lptrc_.len() > n_ { n_ = lptrc_.len() };
-      if lnzc_.len() != ((n_) as usize) { panic!("Argument 'lnzc_' is too short in call to 'sparse_triangular_solve_dense'") }
-      if lptrc_.len() != ((n_) as usize) { panic!("Argument 'lptrc_' is too short in call to 'sparse_triangular_solve_dense'") }
+      if lnzc_.len() != ((n_) as usize) { return Result::Err("Argument 'lnzc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
+      if lptrc_.len() != ((n_) as usize) { return Result::Err("Argument 'lptrc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       let mut lensubnval_ = lsubc_.len();
       if lvalc_.len() > lensubnval_ { lensubnval_ = lvalc_.len() };
-      if lsubc_.len() != ((lensubnval_) as usize) { panic!("Argument 'lsubc_' is too short in call to 'sparse_triangular_solve_dense'") }
-      if lvalc_.len() != ((lensubnval_) as usize) { panic!("Argument 'lvalc_' is too short in call to 'sparse_triangular_solve_dense'") }
-      if b_.len() != ((n_) as usize) { panic!("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'") }
-      callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as libc::int32_t,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as libc::int64_t,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
+      if lsubc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lsubc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
+      if lvalc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lvalc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
+      if b_.len() != ((n_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
+      callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as i32,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as libc::int64_t,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // syeig
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : & [f64],w_ : & mut [f64])
+    pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : & [f64],w_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syeig'") }
-      if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syeig'") }
-      callMSK!(MSK_syeig,self.ptr,uplo_,n_ as libc::int32_t,a_.as_ptr(),w_.as_mut_ptr());
+      if a_.len() != ((n_ * n_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'syeig'".to_string()) }
+      if w_.len() != ((n_) as usize) { return Result::Err("Argument 'w_' is too short in call to 'syeig'".to_string()) }
+      callMSK!(MSK_syeig,self.ptr,uplo_,n_ as i32,a_.as_ptr(),w_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // syevd
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64],w_ : & mut [f64])
+    pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : & mut [f64],w_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((n_ * n_) as usize) { panic!("Argument 'a_' is too short in call to 'syevd'") }
-      if w_.len() != ((n_) as usize) { panic!("Argument 'w_' is too short in call to 'syevd'") }
-      callMSK!(MSK_syevd,self.ptr,uplo_,n_ as libc::int32_t,a_.as_mut_ptr(),w_.as_mut_ptr());
+      if a_.len() != ((n_ * n_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'syevd'".to_string()) }
+      if w_.len() != ((n_) as usize) { return Result::Err("Argument 'w_' is too short in call to 'syevd'".to_string()) }
+      callMSK!(MSK_syevd,self.ptr,uplo_,n_ as i32,a_.as_mut_ptr(),w_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // syrk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],beta_ : f64,c_ : & mut [f64])
+    pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : & [f64],beta_ : f64,c_ : & mut [f64]) -> Result<(),String>
     {
-      if a_.len() != ((n_ * k_) as usize) { panic!("Argument 'a_' is too short in call to 'syrk'") }
-      if c_.len() != ((n_ * n_) as usize) { panic!("Argument 'c_' is too short in call to 'syrk'") }
-      callMSK!(MSK_syrk,self.ptr,uplo_,trans_,n_ as libc::int32_t,k_ as libc::int32_t,alpha_ as f64,a_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
+      if a_.len() != ((n_ * k_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'syrk'".to_string()) }
+      if c_.len() != ((n_ * n_) as usize) { return Result::Err("Argument 'c_' is too short in call to 'syrk'".to_string()) }
+      callMSK!(MSK_syrk,self.ptr,uplo_,trans_,n_ as i32,k_ as i32,alpha_ as f64,a_.as_ptr(),beta_ as f64,c_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // unlinkfuncfromenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn unlink_func_from_stream(&self,whichstream_ : i32)
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_unlinkfuncfromenvstream,self.ptr,whichstream_);
+      return Result::Ok(())
     }
 
 }
@@ -2206,7 +2223,7 @@ impl Task
 {
     // NOTE on callback with handles:
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
-    pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&String))
+    pub fn put_stream_callback(& mut self,whichstream : i32, func : fn(&String)) -> Result<(),String>
     {
         if whichstream >= 0 && whichstream < 4 //
         {
@@ -2214,951 +2231,983 @@ impl Task
             let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
             callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
         }
+        return Ok(());
     }
 
-    pub fn put_callback(& mut self,func : CallbackType)
+    pub fn put_callback(& mut self,func : CallbackType) -> Result<(),String>
     {
         self.valuecb = Some(func);
         let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
         callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
+        return Ok(());
     }
 
-
+    
     // analyzenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn analyze_names(&self,whichstream_ : i32,nametype_ : i32)
+    pub fn analyze_names(&self,whichstream_ : i32,nametype_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_analyzenames,self.ptr,whichstream_,nametype_);
+      return Result::Ok(())
     }
-
+    
     // analyzeproblem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn analyze_problem(&self,whichstream_ : i32)
+    pub fn analyze_problem(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_analyzeproblem,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // analyzesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn analyze_solution(&self,whichstream_ : i32,whichsol_ : i32)
+    pub fn analyze_solution(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_analyzesolution,self.ptr,whichstream_,whichsol_);
+      return Result::Ok(())
     }
-
+    
     // appendbarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_barvars(&self,dim_ : & [i32])
+    pub fn append_barvars(&self,dim_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = dim_.len();
-      callMSK!(MSK_appendbarvars,self.ptr,num_ as libc::int32_t,dim_.as_ptr());
+      callMSK!(MSK_appendbarvars,self.ptr,num_ as i32,dim_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // appendcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & [i32])
+    pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
     {
       let mut nummem_ = submem_.len();
-      callMSK!(MSK_appendcone,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
+      callMSK!(MSK_appendcone,self.ptr,ct_,conepar_ as f64,nummem_ as i32,submem_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // appendconeseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cone_seq(&self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32)
+    pub fn append_cone_seq(&self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_appendconeseq,self.ptr,ct_,conepar_ as f64,nummem_ as libc::int32_t,j_ as libc::int32_t);
+      callMSK!(MSK_appendconeseq,self.ptr,ct_,conepar_ as f64,nummem_ as i32,j_ as i32);
+      return Result::Ok(())
     }
-
+    
     // appendconesseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cones_seq(&self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32)
+    pub fn append_cones_seq(&self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32) -> Result<(),String>
     {
       let mut num_ = ct_.len();
       if conepar_.len() > num_ { num_ = conepar_.len() };
       if nummem_.len() > num_ { num_ = nummem_.len() };
-      callMSK!(MSK_appendconesseq,self.ptr,num_ as libc::int32_t,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_ as libc::int32_t);
+      callMSK!(MSK_appendconesseq,self.ptr,num_ as i32,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_ as i32);
+      return Result::Ok(())
     }
-
+    
     // appendcons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cons(&self,num_ : i32)
+    pub fn append_cons(&self,num_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_appendcons,self.ptr,num_ as libc::int32_t);
+      callMSK!(MSK_appendcons,self.ptr,num_ as i32);
+      return Result::Ok(())
     }
-
+    
     // appendsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> i64
+    pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<i64,String>
     {
       let mut nz_ = subi_.len();
       if subj_.len() > nz_ { nz_ = subj_.len() };
       if valij_.len() > nz_ { nz_ = valij_.len() };
       let mut _ref_idx_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as libc::int32_t,nz_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
-      _ref_idx_ as i64
+      callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as i32,nz_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
+      return Result::Ok((_ref_idx_ as i64))
     }
-
+    
     // appendsparsesymmatlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_sparse_sym_mat_list(&self,dims_ : & [i32],nz_ : & [i64],subi_ : & [i32],subj_ : & [i32],valij_ : & [f64],idx_ : & mut [i64])
+    pub fn append_sparse_sym_mat_list(&self,dims_ : & [i32],nz_ : & [i64],subi_ : & [i32],subj_ : & [i32],valij_ : & [f64],idx_ : & mut [i64]) -> Result<(),String>
     {
       let mut num_ = dims_.len();
       if nz_.len() > num_ { num_ = nz_.len() };
       let tmp_var_0__ = nz_.iter().fold(0,|res,v| res + v);
-      if subi_.len() != ((tmp_var_0__) as usize) { panic!("Argument 'subi_' is too short in call to 'append_sparse_sym_mat_list'") }
+      if subi_.len() != ((tmp_var_0__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'append_sparse_sym_mat_list'".to_string()) }
       let tmp_var_2__ = nz_.iter().fold(0,|res,v| res + v);
-      if subj_.len() != ((tmp_var_2__) as usize) { panic!("Argument 'subj_' is too short in call to 'append_sparse_sym_mat_list'") }
+      if subj_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'append_sparse_sym_mat_list'".to_string()) }
       let tmp_var_4__ = nz_.iter().fold(0,|res,v| res + v);
-      if valij_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'valij_' is too short in call to 'append_sparse_sym_mat_list'") }
-      if idx_.len() != ((num_) as usize) { panic!("Argument 'idx_' is too short in call to 'append_sparse_sym_mat_list'") }
-      callMSK!(MSK_appendsparsesymmatlist,self.ptr,num_ as libc::int32_t,dims_.as_ptr(),nz_.as_ptr(),subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),idx_.as_mut_ptr());
+      if valij_.len() != ((tmp_var_4__) as usize) { return Result::Err("Argument 'valij_' is too short in call to 'append_sparse_sym_mat_list'".to_string()) }
+      if idx_.len() != ((num_) as usize) { return Result::Err("Argument 'idx_' is too short in call to 'append_sparse_sym_mat_list'".to_string()) }
+      callMSK!(MSK_appendsparsesymmatlist,self.ptr,num_ as i32,dims_.as_ptr(),nz_.as_ptr(),subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),idx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // appendvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_vars(&self,num_ : i32)
+    pub fn append_vars(&self,num_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_appendvars,self.ptr,num_ as libc::int32_t);
+      callMSK!(MSK_appendvars,self.ptr,num_ as i32);
+      return Result::Ok(())
     }
-
+    
     // asyncgetresult
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> (bool,i32,i32)
+    pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
-      let mut _ref_respavailable_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
       callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
-      return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
+      return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
-
+    
     // asyncoptimize
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_optimize(&self,server_ : &str,port_ : &str) -> String
+    pub fn async_optimize(&self,server_ : &str,port_ : &str) -> Result<String,String>
     {
       let mut _token__bytes = Vec::with_capacity(33 as usize);
       callMSK!(MSK_asyncoptimize,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
       unsafe { _token__bytes.set_len((33) as usize) };
-      String::from_utf8_lossy(&_token__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()))
     }
-
+    
     // asyncpoll
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> (bool,i32,i32)
+    pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
-      let mut _ref_respavailable_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
       callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
-      return (_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32)
+      return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
-
+    
     // asyncstop
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str)
+    pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // basiscond
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn basis_cond(&self) -> (f64,f64)
+    pub fn basis_cond(&self) -> Result<(f64,f64),String>
     {
       let mut _ref_nrmbasis_ : f64 = 0 as f64;
       let mut _ref_nrminvbasis_ : f64 = 0 as f64;
       callMSK!(MSK_basiscond,self.ptr,& mut _ref_nrmbasis_,& mut _ref_nrminvbasis_);
-      return (_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64)
+      return Result::Ok((_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64))
     }
-
+    
     // bktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn bk_to_str(&self,bk_ : i32) -> String
+    pub fn bk_to_str(&self,bk_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_bktostr,self.ptr,bk_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // checkmemtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_mem(&self,file_ : &str,line_ : i32)
+    pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as libc::int32_t);
+      callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
+      return Result::Ok(())
     }
-
+    
     // chgconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn chg_con_bound(&self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
+    pub fn chg_con_bound(&self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_chgconbound,self.ptr,i_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
+      callMSK!(MSK_chgconbound,self.ptr,i_ as i32,lower_ as i32,finite_ as i32,value_ as f64);
+      return Result::Ok(())
     }
-
+    
     // chgvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn chg_var_bound(&self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64)
+    pub fn chg_var_bound(&self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_chgvarbound,self.ptr,j_ as libc::int32_t,lower_ as libc::int32_t,finite_ as libc::int32_t,value_ as f64);
+      callMSK!(MSK_chgvarbound,self.ptr,j_ as i32,lower_ as i32,finite_ as i32,value_ as f64);
+      return Result::Ok(())
     }
-
+    
     // commitchanges
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn commit_changes(&self)
+    pub fn commit_changes(&self) -> Result<(),String>
     {
       callMSK!(MSK_commitchanges,self.ptr);
+      return Result::Ok(())
     }
-
+    
     // conetypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn cone_type_to_str(&self,ct_ : i32) -> String
+    pub fn cone_type_to_str(&self,ct_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(1024 as usize);
       callMSK!(MSK_conetypetostr,self.ptr,ct_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((1024) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // deletesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn delete_solution(&self,whichsol_ : i32)
+    pub fn delete_solution(&self,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_deletesolution,self.ptr,whichsol_);
+      return Result::Ok(())
     }
-
+    
     // dualsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn dual_sensitivity(&self,subj_ : & [i32],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
+    pub fn dual_sensitivity(&self,subj_ : & [i32],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64]) -> Result<(),String>
     {
       let mut numj_ = subj_.len();
-      if leftpricej_.len() != ((numj_) as usize) { panic!("Argument 'leftpricej_' is too short in call to 'dual_sensitivity'") }
-      if rightpricej_.len() != ((numj_) as usize) { panic!("Argument 'rightpricej_' is too short in call to 'dual_sensitivity'") }
-      if leftrangej_.len() != ((numj_) as usize) { panic!("Argument 'leftrangej_' is too short in call to 'dual_sensitivity'") }
-      if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'dual_sensitivity'") }
-      callMSK!(MSK_dualsensitivity,self.ptr,numj_ as libc::int32_t,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
+      if leftpricej_.len() != ((numj_) as usize) { return Result::Err("Argument 'leftpricej_' is too short in call to 'dual_sensitivity'".to_string()) }
+      if rightpricej_.len() != ((numj_) as usize) { return Result::Err("Argument 'rightpricej_' is too short in call to 'dual_sensitivity'".to_string()) }
+      if leftrangej_.len() != ((numj_) as usize) { return Result::Err("Argument 'leftrangej_' is too short in call to 'dual_sensitivity'".to_string()) }
+      if rightrangej_.len() != ((numj_) as usize) { return Result::Err("Argument 'rightrangej_' is too short in call to 'dual_sensitivity'".to_string()) }
+      callMSK!(MSK_dualsensitivity,self.ptr,numj_ as i32,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // echotask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn echo_task(&self,whichstream_ : i32,format_ : &str)
+    pub fn echo_task(&self,whichstream_ : i32,format_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_echotask,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // generateconenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_cone_names(&self,subk_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64])
+    pub fn generate_cone_names(&self,subk_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subk_.len();
       let mut ndims_ = dims_.len();
-      if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_cone_names'") }
-      callMSK!(MSK_generateconenames,self.ptr,num_ as libc::int32_t,subk_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
+      if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_cone_names'".to_string()) }
+      callMSK!(MSK_generateconenames,self.ptr,num_ as i32,subk_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // generateconnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_con_names(&self,subi_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64])
+    pub fn generate_con_names(&self,subi_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       let mut ndims_ = dims_.len();
-      if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_con_names'") }
-      callMSK!(MSK_generateconnames,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
+      if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_con_names'".to_string()) }
+      callMSK!(MSK_generateconnames,self.ptr,num_ as i32,subi_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // generatevarnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_var_names(&self,subj_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64])
+    pub fn generate_var_names(&self,subj_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       let mut ndims_ = dims_.len();
-      if sp_.len() != ((num_) as usize) { panic!("Argument 'sp_' is too short in call to 'generate_var_names'") }
-      callMSK!(MSK_generatevarnames,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as libc::int32_t,dims_.as_ptr(),sp_.as_ptr());
+      if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_var_names'".to_string()) }
+      callMSK!(MSK_generatevarnames,self.ptr,num_ as i32,subj_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // getacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_col(&self,j_ : i32,subj_ : & mut [i32],valj_ : & mut [f64]) -> i32
+    pub fn get_a_col(&self,j_ : i32,subj_ : & mut [i32],valj_ : & mut [f64]) -> Result<i32,String>
     {
-      let mut _ref_nzj_ : libc::int32_t = 0 as libc::int32_t;
-      let tmp_var_1__ = self.get_a_col_num_nz(j_);
-      if subj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'subj_' is too short in call to 'get_a_col'") }
-      let tmp_var_4__ = self.get_a_col_num_nz(j_);
-      if valj_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'valj_' is too short in call to 'get_a_col'") }
-      callMSK!(MSK_getacol,self.ptr,j_ as libc::int32_t,& mut _ref_nzj_,subj_.as_mut_ptr(),valj_.as_mut_ptr());
-      _ref_nzj_ as i32
+      let mut _ref_nzj_ : i32 = 0 as i32;
+      let tmp_var_1__ = self.get_a_col_num_nz(j_)?;
+      if subj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_a_col'".to_string()) }
+      let tmp_var_4__ = self.get_a_col_num_nz(j_)?;
+      if valj_.len() != ((tmp_var_4__) as usize) { return Result::Err("Argument 'valj_' is too short in call to 'get_a_col'".to_string()) }
+      callMSK!(MSK_getacol,self.ptr,j_ as i32,& mut _ref_nzj_,subj_.as_mut_ptr(),valj_.as_mut_ptr());
+      return Result::Ok((_ref_nzj_ as i32))
     }
-
+    
     // getacolnumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_col_num_nz(&self,i_ : i32) -> i32
+    pub fn get_a_col_num_nz(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_nzj_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getacolnumnz,self.ptr,i_ as libc::int32_t,& mut _ref_nzj_);
-      _ref_nzj_ as i32
+      let mut _ref_nzj_ : i32 = 0 as i32;
+      callMSK!(MSK_getacolnumnz,self.ptr,i_ as i32,& mut _ref_nzj_);
+      return Result::Ok((_ref_nzj_ as i32))
     }
-
+    
     // getacolslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> i64
+    pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String>
     {
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getacolslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
-      _ref_numnz_ as i64
+      callMSK!(MSK_getacolslicenumnz64,self.ptr,first_ as i32,last_ as i32,& mut _ref_numnz_);
+      return Result::Ok((_ref_numnz_ as i64))
     }
-
+    
     // getaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_aij(&self,i_ : i32,j_ : i32) -> f64
+    pub fn get_aij(&self,i_ : i32,j_ : i32) -> Result<f64,String>
     {
       let mut _ref_aij_ : f64 = 0 as f64;
-      callMSK!(MSK_getaij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,& mut _ref_aij_);
-      _ref_aij_ as f64
+      callMSK!(MSK_getaij,self.ptr,i_ as i32,j_ as i32,& mut _ref_aij_);
+      return Result::Ok((_ref_aij_ as f64))
     }
-
+    
     // getapiecenumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_piece_num_nz(&self,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32) -> i32
+    pub fn get_a_piece_num_nz(&self,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32) -> Result<i32,String>
     {
-      let mut _ref_numnz_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getapiecenumnz,self.ptr,firsti_ as libc::int32_t,lasti_ as libc::int32_t,firstj_ as libc::int32_t,lastj_ as libc::int32_t,& mut _ref_numnz_);
-      _ref_numnz_ as i32
+      let mut _ref_numnz_ : i32 = 0 as i32;
+      callMSK!(MSK_getapiecenumnz,self.ptr,firsti_ as i32,lasti_ as i32,firstj_ as i32,lastj_ as i32,& mut _ref_numnz_);
+      return Result::Ok((_ref_numnz_ as i32))
     }
-
+    
     // getarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_row(&self,i_ : i32,subi_ : & mut [i32],vali_ : & mut [f64]) -> i32
+    pub fn get_a_row(&self,i_ : i32,subi_ : & mut [i32],vali_ : & mut [f64]) -> Result<i32,String>
     {
-      let mut _ref_nzi_ : libc::int32_t = 0 as libc::int32_t;
-      let tmp_var_1__ = self.get_a_row_num_nz(i_);
-      if subi_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'subi_' is too short in call to 'get_a_row'") }
-      let tmp_var_4__ = self.get_a_row_num_nz(i_);
-      if vali_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'vali_' is too short in call to 'get_a_row'") }
-      callMSK!(MSK_getarow,self.ptr,i_ as libc::int32_t,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr());
-      _ref_nzi_ as i32
+      let mut _ref_nzi_ : i32 = 0 as i32;
+      let tmp_var_1__ = self.get_a_row_num_nz(i_)?;
+      if subi_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_a_row'".to_string()) }
+      let tmp_var_4__ = self.get_a_row_num_nz(i_)?;
+      if vali_.len() != ((tmp_var_4__) as usize) { return Result::Err("Argument 'vali_' is too short in call to 'get_a_row'".to_string()) }
+      callMSK!(MSK_getarow,self.ptr,i_ as i32,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr());
+      return Result::Ok((_ref_nzi_ as i32))
     }
-
+    
     // getarownumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_row_num_nz(&self,i_ : i32) -> i32
+    pub fn get_a_row_num_nz(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_nzi_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getarownumnz,self.ptr,i_ as libc::int32_t,& mut _ref_nzi_);
-      _ref_nzi_ as i32
+      let mut _ref_nzi_ : i32 = 0 as i32;
+      callMSK!(MSK_getarownumnz,self.ptr,i_ as i32,& mut _ref_nzi_);
+      return Result::Ok((_ref_nzi_ as i32))
     }
-
+    
     // getarowslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> i64
+    pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String>
     {
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getarowslicenumnz64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,& mut _ref_numnz_);
-      _ref_numnz_ as i64
+      callMSK!(MSK_getarowslicenumnz64,self.ptr,first_ as i32,last_ as i32,& mut _ref_numnz_);
+      return Result::Ok((_ref_numnz_ as i64))
     }
-
+    
     // getatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_a_truncate_tol(&self,tolzero_ : & mut [f64])
+    pub fn get_a_truncate_tol(&self,tolzero_ : & mut [f64]) -> Result<(),String>
     {
-      if tolzero_.len() != ((1) as usize) { panic!("Argument 'tolzero_' is too short in call to 'get_a_truncate_tol'") }
+      if tolzero_.len() != ((1) as usize) { return Result::Err("Argument 'tolzero_' is too short in call to 'get_a_truncate_tol'".to_string()) }
       callMSK!(MSK_getatruncatetol,self.ptr,tolzero_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bara_block_triplet(&self,subi_ : & mut [i32],subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> i64
+    pub fn get_bara_block_triplet(&self,subi_ : & mut [i32],subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valijkl_ : & mut [f64]) -> Result<i64,String>
     {
-      let tmp_var_1__ = self.get_num_bara_block_triplets();
+      let tmp_var_1__ = self.get_num_bara_block_triplets()?;
       let maxnum_ = tmp_var_1__;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if subi_.len() != ((maxnum_) as usize) { panic!("Argument 'subi_' is too short in call to 'get_bara_block_triplet'") }
-      if subj_.len() != ((maxnum_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_bara_block_triplet'") }
-      if subk_.len() != ((maxnum_) as usize) { panic!("Argument 'subk_' is too short in call to 'get_bara_block_triplet'") }
-      if subl_.len() != ((maxnum_) as usize) { panic!("Argument 'subl_' is too short in call to 'get_bara_block_triplet'") }
-      if valijkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'get_bara_block_triplet'") }
+      if subi_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_bara_block_triplet'".to_string()) }
+      if subj_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_bara_block_triplet'".to_string()) }
+      if subk_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'get_bara_block_triplet'".to_string()) }
+      if subl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'get_bara_block_triplet'".to_string()) }
+      if valijkl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'valijkl_' is too short in call to 'get_bara_block_triplet'".to_string()) }
       callMSK!(MSK_getbarablocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getbaraidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bara_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i32,i64)
+    pub fn get_bara_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> Result<(i32,i32,i64),String>
     {
-      let tmp_var_1__ = self.get_bara_idx_info(idx_);
+      let tmp_var_1__ = self.get_bara_idx_info(idx_)?;
       let maxnum_ = tmp_var_1__;
-      let mut _ref_i_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_i_ : i32 = 0 as i32;
+      let mut _ref_j_ : i32 = 0 as i32;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if sub_.len() != ((maxnum_) as usize) { panic!("Argument 'sub_' is too short in call to 'get_bara_idx'") }
-      if weights_.len() != ((maxnum_) as usize) { panic!("Argument 'weights_' is too short in call to 'get_bara_idx'") }
+      if sub_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'sub_' is too short in call to 'get_bara_idx'".to_string()) }
+      if weights_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'weights_' is too short in call to 'get_bara_idx'".to_string()) }
       callMSK!(MSK_getbaraidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
-      return (_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64)
+      return Result::Ok((_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64))
     }
-
+    
     // getbaraidxij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bara_idx_i_j(&self,idx_ : i64) -> (i32,i32)
+    pub fn get_bara_idx_i_j(&self,idx_ : i64) -> Result<(i32,i32),String>
     {
-      let mut _ref_i_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_i_ : i32 = 0 as i32;
+      let mut _ref_j_ : i32 = 0 as i32;
       callMSK!(MSK_getbaraidxij,self.ptr,idx_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_);
-      return (_ref_i_ as i32,_ref_j_ as i32)
+      return Result::Ok((_ref_i_ as i32,_ref_j_ as i32))
     }
-
+    
     // getbaraidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bara_idx_info(&self,idx_ : i64) -> i64
+    pub fn get_bara_idx_info(&self,idx_ : i64) -> Result<i64,String>
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getbaraidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getbarasparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bara_sparsity(&self,idxij_ : & mut [i64]) -> i64
+    pub fn get_bara_sparsity(&self,idxij_ : & mut [i64]) -> Result<i64,String>
     {
-      let tmp_var_1__ = self.get_num_bara_nz();
+      let tmp_var_1__ = self.get_num_bara_nz()?;
       let maxnumnz_ = tmp_var_1__;
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      if idxij_.len() != ((maxnumnz_) as usize) { panic!("Argument 'idxij_' is too short in call to 'get_bara_sparsity'") }
+      if idxij_.len() != ((maxnumnz_) as usize) { return Result::Err("Argument 'idxij_' is too short in call to 'get_bara_sparsity'".to_string()) }
       callMSK!(MSK_getbarasparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxij_.as_mut_ptr());
-      _ref_numnz_ as i64
+      return Result::Ok((_ref_numnz_ as i64))
     }
-
+    
     // getbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valjkl_ : & mut [f64]) -> i64
+    pub fn get_barc_block_triplet(&self,subj_ : & mut [i32],subk_ : & mut [i32],subl_ : & mut [i32],valjkl_ : & mut [f64]) -> Result<i64,String>
     {
-      let tmp_var_1__ = self.get_num_barc_block_triplets();
+      let tmp_var_1__ = self.get_num_barc_block_triplets()?;
       let maxnum_ = tmp_var_1__;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if subj_.len() != ((maxnum_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_barc_block_triplet'") }
-      if subk_.len() != ((maxnum_) as usize) { panic!("Argument 'subk_' is too short in call to 'get_barc_block_triplet'") }
-      if subl_.len() != ((maxnum_) as usize) { panic!("Argument 'subl_' is too short in call to 'get_barc_block_triplet'") }
-      if valjkl_.len() != ((maxnum_) as usize) { panic!("Argument 'valjkl_' is too short in call to 'get_barc_block_triplet'") }
+      if subj_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_barc_block_triplet'".to_string()) }
+      if subk_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'get_barc_block_triplet'".to_string()) }
+      if subl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'get_barc_block_triplet'".to_string()) }
+      if valjkl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'valjkl_' is too short in call to 'get_barc_block_triplet'".to_string()) }
       callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr());
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getbarcidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> (i32,i64)
+    pub fn get_barc_idx(&self,idx_ : i64,sub_ : & mut [i64],weights_ : & mut [f64]) -> Result<(i32,i64),String>
     {
-      let tmp_var_1__ = self.get_barc_idx_info(idx_);
+      let tmp_var_1__ = self.get_barc_idx_info(idx_)?;
       let maxnum_ = tmp_var_1__;
-      let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_j_ : i32 = 0 as i32;
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      if sub_.len() != ((maxnum_) as usize) { panic!("Argument 'sub_' is too short in call to 'get_barc_idx'") }
-      if weights_.len() != ((maxnum_) as usize) { panic!("Argument 'weights_' is too short in call to 'get_barc_idx'") }
+      if sub_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'sub_' is too short in call to 'get_barc_idx'".to_string()) }
+      if weights_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'weights_' is too short in call to 'get_barc_idx'".to_string()) }
       callMSK!(MSK_getbarcidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
-      return (_ref_j_ as i32,_ref_num_ as i64)
+      return Result::Ok((_ref_j_ as i32,_ref_num_ as i64))
     }
-
+    
     // getbarcidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_idx_info(&self,idx_ : i64) -> i64
+    pub fn get_barc_idx_info(&self,idx_ : i64) -> Result<i64,String>
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getbarcidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getbarcidxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_idx_j(&self,idx_ : i64) -> i32
+    pub fn get_barc_idx_j(&self,idx_ : i64) -> Result<i32,String>
     {
-      let mut _ref_j_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_j_ : i32 = 0 as i32;
       callMSK!(MSK_getbarcidxj,self.ptr,idx_ as libc::int64_t,& mut _ref_j_);
-      _ref_j_ as i32
+      return Result::Ok((_ref_j_ as i32))
     }
-
+    
     // getbarcsparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barc_sparsity(&self,idxj_ : & mut [i64]) -> i64
+    pub fn get_barc_sparsity(&self,idxj_ : & mut [i64]) -> Result<i64,String>
     {
-      let tmp_var_1__ = self.get_num_barc_nz();
+      let tmp_var_1__ = self.get_num_barc_nz()?;
       let maxnumnz_ = tmp_var_1__;
       let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
-      if idxj_.len() != ((maxnumnz_) as usize) { panic!("Argument 'idxj_' is too short in call to 'get_barc_sparsity'") }
+      if idxj_.len() != ((maxnumnz_) as usize) { return Result::Err("Argument 'idxj_' is too short in call to 'get_barc_sparsity'".to_string()) }
       callMSK!(MSK_getbarcsparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxj_.as_mut_ptr());
-      _ref_numnz_ as i64
+      return Result::Ok((_ref_numnz_ as i64))
     }
-
+    
     // getbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & mut [f64])
+    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'get_bars_j'") }
-      callMSK!(MSK_getbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_mut_ptr());
+      let tmp_var_1__ = self.get_len_barvar_j(j_)?;
+      if barsj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barsj_' is too short in call to 'get_bars_j'".to_string()) }
+      callMSK!(MSK_getbarsj,self.ptr,whichsol_,j_ as i32,barsj_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getbarsslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : & mut [f64])
+    pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : & mut [f64]) -> Result<(),String>
     {
-      if barsslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barsslice_' is too short in call to 'get_bars_slice'") }
-      callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barsslice_.as_mut_ptr());
+      if barsslice_.len() != ((slicesize_) as usize) { return Result::Err("Argument 'barsslice_' is too short in call to 'get_bars_slice'".to_string()) }
+      callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as libc::int64_t,barsslice_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barvar_name(&self,i_ : i32) -> String
+    pub fn get_barvar_name(&self,i_ : i32) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_barvar_name_len(i_);
+      let tmp_var_3__ = self.get_barvar_name_len(i_)?;
       let sizename_ = 1 + tmp_var_3__;
       let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
-      callMSK!(MSK_getbarvarname,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      callMSK!(MSK_getbarvarname,self.ptr,i_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr());
       unsafe { _name__bytes.set_len((sizename_) as usize) };
-      String::from_utf8_lossy(&_name__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()))
     }
-
+    
     // getbarvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barvar_name_index(&self,somename_ : &str) -> (i32,i32)
+    pub fn get_barvar_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
-      let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_index_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_asgn_ : i32 = 0 as i32;
+      let mut _ref_index_ : i32 = 0 as i32;
       callMSK!(MSK_getbarvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
-      return (_ref_asgn_ as i32,_ref_index_ as i32)
+      return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
-
+    
     // getbarvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barvar_name_len(&self,i_ : i32) -> i32
+    pub fn get_barvar_name_len(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getbarvarnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
-      _ref_len_ as i32
+      let mut _ref_len_ : i32 = 0 as i32;
+      callMSK!(MSK_getbarvarnamelen,self.ptr,i_ as i32,& mut _ref_len_);
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & mut [f64])
+    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'get_barx_j'") }
-      callMSK!(MSK_getbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_mut_ptr());
+      let tmp_var_1__ = self.get_len_barvar_j(j_)?;
+      if barxj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barxj_' is too short in call to 'get_barx_j'".to_string()) }
+      callMSK!(MSK_getbarxj,self.ptr,whichsol_,j_ as i32,barxj_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getbarxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : & mut [f64])
+    pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : & mut [f64]) -> Result<(),String>
     {
-      if barxslice_.len() != ((slicesize_) as usize) { panic!("Argument 'barxslice_' is too short in call to 'get_barx_slice'") }
-      callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slicesize_ as libc::int64_t,barxslice_.as_mut_ptr());
+      if barxslice_.len() != ((slicesize_) as usize) { return Result::Err("Argument 'barxslice_' is too short in call to 'get_barx_slice'".to_string()) }
+      callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as libc::int64_t,barxslice_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_c(&self,c_ : & mut [f64])
+    pub fn get_c(&self,c_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if c_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'c_' is too short in call to 'get_c'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if c_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'c_' is too short in call to 'get_c'".to_string()) }
       callMSK!(MSK_getc,self.ptr,c_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cfix(&self) -> f64
+    pub fn get_cfix(&self) -> Result<f64,String>
     {
       let mut _ref_cfix_ : f64 = 0 as f64;
       callMSK!(MSK_getcfix,self.ptr,& mut _ref_cfix_);
-      _ref_cfix_ as f64
+      return Result::Ok((_ref_cfix_ as f64))
     }
-
+    
     // getcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_c_j(&self,j_ : i32) -> f64
+    pub fn get_c_j(&self,j_ : i32) -> Result<f64,String>
     {
       let mut _ref_cj_ : f64 = 0 as f64;
-      callMSK!(MSK_getcj,self.ptr,j_ as libc::int32_t,& mut _ref_cj_);
-      _ref_cj_ as f64
+      callMSK!(MSK_getcj,self.ptr,j_ as i32,& mut _ref_cj_);
+      return Result::Ok((_ref_cj_ as f64))
     }
-
+    
     // getclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_c_list(&self,subj_ : & [i32],c_ : & mut [f64])
+    pub fn get_c_list(&self,subj_ : & [i32],c_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
-      if c_.len() != ((num_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_list'") }
-      callMSK!(MSK_getclist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),c_.as_mut_ptr());
+      if c_.len() != ((num_) as usize) { return Result::Err("Argument 'c_' is too short in call to 'get_c_list'".to_string()) }
+      callMSK!(MSK_getclist,self.ptr,num_ as i32,subj_.as_ptr(),c_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_con_bound(&self,i_ : i32) -> (i32,f64,f64)
+    pub fn get_con_bound(&self,i_ : i32) -> Result<(i32,f64,f64),String>
     {
       let mut _ref_bk_ : i32 = 0 as i32;
       let mut _ref_bl_ : f64 = 0 as f64;
       let mut _ref_bu_ : f64 = 0 as f64;
-      callMSK!(MSK_getconbound,self.ptr,i_ as libc::int32_t,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
-      return (_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64)
+      callMSK!(MSK_getconbound,self.ptr,i_ as i32,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
+      return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64))
     }
-
+    
     // getconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
+    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64]) -> Result<(),String>
     {
-      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_con_bound_slice'") }
-      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_con_bound_slice'") }
-      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_con_bound_slice'") }
-      callMSK!(MSK_getconboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
+      if bk_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bk_' is too short in call to 'get_con_bound_slice'".to_string()) }
+      if bl_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bl_' is too short in call to 'get_con_bound_slice'".to_string()) }
+      if bu_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bu_' is too short in call to 'get_con_bound_slice'".to_string()) }
+      callMSK!(MSK_getconboundslice,self.ptr,first_ as i32,last_ as i32,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone(&self,k_ : i32,submem_ : & mut [i32]) -> (i32,f64,i32)
+    pub fn get_cone(&self,k_ : i32,submem_ : & mut [i32]) -> Result<(i32,f64,i32),String>
     {
       let mut _ref_ct_ : i32 = 0 as i32;
       let mut _ref_conepar_ : f64 = 0 as f64;
-      let mut _ref_nummem_ : libc::int32_t = 0 as libc::int32_t;
-      let tmp_var_1__ = self.get_cone_info(k_).2;
-      if submem_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'submem_' is too short in call to 'get_cone'") }
-      callMSK!(MSK_getcone,self.ptr,k_ as libc::int32_t,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_,submem_.as_mut_ptr());
-      return (_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32)
+      let mut _ref_nummem_ : i32 = 0 as i32;
+      let tmp_var_1__ = self.get_cone_info(k_)?.2;
+      if submem_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'submem_' is too short in call to 'get_cone'".to_string()) }
+      callMSK!(MSK_getcone,self.ptr,k_ as i32,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_,submem_.as_mut_ptr());
+      return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32))
     }
-
+    
     // getconeinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone_info(&self,k_ : i32) -> (i32,f64,i32)
+    pub fn get_cone_info(&self,k_ : i32) -> Result<(i32,f64,i32),String>
     {
       let mut _ref_ct_ : i32 = 0 as i32;
       let mut _ref_conepar_ : f64 = 0 as f64;
-      let mut _ref_nummem_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getconeinfo,self.ptr,k_ as libc::int32_t,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_);
-      return (_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32)
+      let mut _ref_nummem_ : i32 = 0 as i32;
+      callMSK!(MSK_getconeinfo,self.ptr,k_ as i32,& mut _ref_ct_,& mut _ref_conepar_,& mut _ref_nummem_);
+      return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32))
     }
-
+    
     // getconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone_name(&self,i_ : i32) -> String
+    pub fn get_cone_name(&self,i_ : i32) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_cone_name_len(i_);
+      let tmp_var_3__ = self.get_cone_name_len(i_)?;
       let sizename_ = 1 + tmp_var_3__;
       let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
-      callMSK!(MSK_getconename,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      callMSK!(MSK_getconename,self.ptr,i_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr());
       unsafe { _name__bytes.set_len((sizename_) as usize) };
-      String::from_utf8_lossy(&_name__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()))
     }
-
+    
     // getconenameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone_name_index(&self,somename_ : &str) -> (i32,i32)
+    pub fn get_cone_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
-      let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_index_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_asgn_ : i32 = 0 as i32;
+      let mut _ref_index_ : i32 = 0 as i32;
       callMSK!(MSK_getconenameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
-      return (_ref_asgn_ as i32,_ref_index_ as i32)
+      return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
-
+    
     // getconenamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone_name_len(&self,i_ : i32) -> i32
+    pub fn get_cone_name_len(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getconenamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
-      _ref_len_ as i32
+      let mut _ref_len_ : i32 = 0 as i32;
+      callMSK!(MSK_getconenamelen,self.ptr,i_ as i32,& mut _ref_len_);
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_con_name(&self,i_ : i32) -> String
+    pub fn get_con_name(&self,i_ : i32) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_con_name_len(i_);
+      let tmp_var_3__ = self.get_con_name_len(i_)?;
       let sizename_ = 1 + tmp_var_3__;
       let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
-      callMSK!(MSK_getconname,self.ptr,i_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      callMSK!(MSK_getconname,self.ptr,i_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr());
       unsafe { _name__bytes.set_len((sizename_) as usize) };
-      String::from_utf8_lossy(&_name__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()))
     }
-
+    
     // getconnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_con_name_index(&self,somename_ : &str) -> (i32,i32)
+    pub fn get_con_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
-      let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_index_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_asgn_ : i32 = 0 as i32;
+      let mut _ref_index_ : i32 = 0 as i32;
       callMSK!(MSK_getconnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
-      return (_ref_asgn_ as i32,_ref_index_ as i32)
+      return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
-
+    
     // getconnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_con_name_len(&self,i_ : i32) -> i32
+    pub fn get_con_name_len(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getconnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
-      _ref_len_ as i32
+      let mut _ref_len_ : i32 = 0 as i32;
+      callMSK!(MSK_getconnamelen,self.ptr,i_ as i32,& mut _ref_len_);
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : & mut [f64])
+    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : & mut [f64]) -> Result<(),String>
     {
-      if c_.len() != ((last_ - first_) as usize) { panic!("Argument 'c_' is too short in call to 'get_c_slice'") }
-      callMSK!(MSK_getcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,c_.as_mut_ptr());
+      if c_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'c_' is too short in call to 'get_c_slice'".to_string()) }
+      callMSK!(MSK_getcslice,self.ptr,first_ as i32,last_ as i32,c_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getdimbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dim_barvar_j(&self,j_ : i32) -> i32
+    pub fn get_dim_barvar_j(&self,j_ : i32) -> Result<i32,String>
     {
-      let mut _ref_dimbarvarj_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getdimbarvarj,self.ptr,j_ as libc::int32_t,& mut _ref_dimbarvarj_);
-      _ref_dimbarvarj_ as i32
+      let mut _ref_dimbarvarj_ : i32 = 0 as i32;
+      callMSK!(MSK_getdimbarvarj,self.ptr,j_ as i32,& mut _ref_dimbarvarj_);
+      return Result::Ok((_ref_dimbarvarj_ as i32))
     }
-
+    
     // getdouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dou_inf(&self,whichdinf_ : i32) -> f64
+    pub fn get_dou_inf(&self,whichdinf_ : i32) -> Result<f64,String>
     {
       let mut _ref_dvalue_ : f64 = 0 as f64;
       callMSK!(MSK_getdouinf,self.ptr,whichdinf_,& mut _ref_dvalue_);
-      _ref_dvalue_ as f64
+      return Result::Ok((_ref_dvalue_ as f64))
     }
-
+    
     // getdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dou_param(&self,param_ : i32) -> f64
+    pub fn get_dou_param(&self,param_ : i32) -> Result<f64,String>
     {
       let mut _ref_parvalue_ : f64 = 0 as f64;
       callMSK!(MSK_getdouparam,self.ptr,param_,& mut _ref_parvalue_);
-      _ref_parvalue_ as f64
+      return Result::Ok((_ref_parvalue_ as f64))
     }
-
+    
     // getdualobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dual_obj(&self,whichsol_ : i32) -> f64
+    pub fn get_dual_obj(&self,whichsol_ : i32) -> Result<f64,String>
     {
       let mut _ref_dualobj_ : f64 = 0 as f64;
       callMSK!(MSK_getdualobj,self.ptr,whichsol_,& mut _ref_dualobj_);
-      _ref_dualobj_ as f64
+      return Result::Ok((_ref_dualobj_ as f64))
     }
-
+    
     // getdualsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dual_solution_norms(&self,whichsol_ : i32) -> (f64,f64,f64,f64,f64,f64,f64)
+    pub fn get_dual_solution_norms(&self,whichsol_ : i32) -> Result<(f64,f64,f64,f64,f64,f64,f64),String>
     {
       let mut _ref_nrmy_ : f64 = 0 as f64;
       let mut _ref_nrmslc_ : f64 = 0 as f64;
@@ -3168,857 +3217,878 @@ impl Task
       let mut _ref_nrmsnx_ : f64 = 0 as f64;
       let mut _ref_nrmbars_ : f64 = 0 as f64;
       callMSK!(MSK_getdualsolutionnorms,self.ptr,whichsol_,& mut _ref_nrmy_,& mut _ref_nrmslc_,& mut _ref_nrmsuc_,& mut _ref_nrmslx_,& mut _ref_nrmsux_,& mut _ref_nrmsnx_,& mut _ref_nrmbars_);
-      return (_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64)
+      return Result::Ok((_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64))
     }
-
+    
     // getdviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_barvar'") }
-      callMSK!(MSK_getdviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_dviol_barvar'".to_string()) }
+      callMSK!(MSK_getdviolbarvar,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getdviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_con'") }
-      callMSK!(MSK_getdviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_dviol_con'".to_string()) }
+      callMSK!(MSK_getdviolcon,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getdviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_cones'") }
-      callMSK!(MSK_getdviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_dviol_cones'".to_string()) }
+      callMSK!(MSK_getdviolcones,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getdviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_dviol_var'") }
-      callMSK!(MSK_getdviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_dviol_var'".to_string()) }
+      callMSK!(MSK_getdviolvar,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getinfindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str) -> i32
+    pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str) -> Result<i32,String>
     {
-      let mut _ref_infindex_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_infindex_ : i32 = 0 as i32;
       callMSK!(MSK_getinfindex,self.ptr,inftype_,CString::new(infname_).unwrap().as_ptr(),& mut _ref_infindex_);
-      _ref_infindex_ as i32
+      return Result::Ok((_ref_infindex_ as i32))
     }
-
+    
     // getinfmax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : & mut [i32])
+    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : & mut [i32]) -> Result<(),String>
     {
-      if infmax_.len() != ((MSK_MAX_STR_LEN) as usize) { panic!("Argument 'infmax_' is too short in call to 'get_inf_max'") }
+      if infmax_.len() != ((MSK_MAX_STR_LEN) as usize) { return Result::Err("Argument 'infmax_' is too short in call to 'get_inf_max'".to_string()) }
       callMSK!(MSK_getinfmax,self.ptr,inftype_,infmax_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getinfname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_inf_name(&self,inftype_ : i32,whichinf_ : i32) -> String
+    pub fn get_inf_name(&self,inftype_ : i32,whichinf_ : i32) -> Result<String,String>
     {
       let mut _infname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
-      callMSK!(MSK_getinfname,self.ptr,inftype_,whichinf_ as libc::int32_t,_infname__bytes.as_mut_ptr());
+      callMSK!(MSK_getinfname,self.ptr,inftype_,whichinf_ as i32,_infname__bytes.as_mut_ptr());
       unsafe { _infname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_infname__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_infname__bytes[..]).into_owned()))
     }
-
+    
     // getintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_int_inf(&self,whichiinf_ : i32) -> i32
+    pub fn get_int_inf(&self,whichiinf_ : i32) -> Result<i32,String>
     {
-      let mut _ref_ivalue_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_ivalue_ : i32 = 0 as i32;
       callMSK!(MSK_getintinf,self.ptr,whichiinf_,& mut _ref_ivalue_);
-      _ref_ivalue_ as i32
+      return Result::Ok((_ref_ivalue_ as i32))
     }
-
+    
     // getintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_int_param(&self,param_ : i32) -> i32
+    pub fn get_int_param(&self,param_ : i32) -> Result<i32,String>
     {
-      let mut _ref_parvalue_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_parvalue_ : i32 = 0 as i32;
       callMSK!(MSK_getintparam,self.ptr,param_,& mut _ref_parvalue_);
-      _ref_parvalue_ as i32
+      return Result::Ok((_ref_parvalue_ as i32))
     }
-
+    
     // getlenbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_len_barvar_j(&self,j_ : i32) -> i64
+    pub fn get_len_barvar_j(&self,j_ : i32) -> Result<i64,String>
     {
       let mut _ref_lenbarvarj_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getlenbarvarj,self.ptr,j_ as libc::int32_t,& mut _ref_lenbarvarj_);
-      _ref_lenbarvarj_ as i64
+      callMSK!(MSK_getlenbarvarj,self.ptr,j_ as i32,& mut _ref_lenbarvarj_);
+      return Result::Ok((_ref_lenbarvarj_ as i64))
     }
-
+    
     // getlintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_lint_inf(&self,whichliinf_ : i32) -> i64
+    pub fn get_lint_inf(&self,whichliinf_ : i32) -> Result<i64,String>
     {
       let mut _ref_ivalue_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getlintinf,self.ptr,whichliinf_,& mut _ref_ivalue_);
-      _ref_ivalue_ as i64
+      return Result::Ok((_ref_ivalue_ as i64))
     }
-
+    
     // getmaxnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_name_len(&self) -> i32
+    pub fn get_max_name_len(&self) -> Result<i32,String>
     {
-      let mut _ref_maxlen_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_maxlen_ : i32 = 0 as i32;
       callMSK!(MSK_getmaxnamelen,self.ptr,& mut _ref_maxlen_);
-      _ref_maxlen_ as i32
+      return Result::Ok((_ref_maxlen_ as i32))
     }
-
+    
     // getmaxnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_a_nz(&self) -> i64
+    pub fn get_max_num_a_nz(&self) -> Result<i64,String>
     {
       let mut _ref_maxnumanz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getmaxnumanz64,self.ptr,& mut _ref_maxnumanz_);
-      _ref_maxnumanz_ as i64
+      return Result::Ok((_ref_maxnumanz_ as i64))
     }
-
+    
     // getmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_barvar(&self) -> i32
+    pub fn get_max_num_barvar(&self) -> Result<i32,String>
     {
-      let mut _ref_maxnumbarvar_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_maxnumbarvar_ : i32 = 0 as i32;
       callMSK!(MSK_getmaxnumbarvar,self.ptr,& mut _ref_maxnumbarvar_);
-      _ref_maxnumbarvar_ as i32
+      return Result::Ok((_ref_maxnumbarvar_ as i32))
     }
-
+    
     // getmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_con(&self) -> i32
+    pub fn get_max_num_con(&self) -> Result<i32,String>
     {
-      let mut _ref_maxnumcon_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_maxnumcon_ : i32 = 0 as i32;
       callMSK!(MSK_getmaxnumcon,self.ptr,& mut _ref_maxnumcon_);
-      _ref_maxnumcon_ as i32
+      return Result::Ok((_ref_maxnumcon_ as i32))
     }
-
+    
     // getmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_cone(&self) -> i32
+    pub fn get_max_num_cone(&self) -> Result<i32,String>
     {
-      let mut _ref_maxnumcone_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_maxnumcone_ : i32 = 0 as i32;
       callMSK!(MSK_getmaxnumcone,self.ptr,& mut _ref_maxnumcone_);
-      _ref_maxnumcone_ as i32
+      return Result::Ok((_ref_maxnumcone_ as i32))
     }
-
+    
     // getmaxnumqnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_q_nz(&self) -> i64
+    pub fn get_max_num_q_nz(&self) -> Result<i64,String>
     {
       let mut _ref_maxnumqnz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getmaxnumqnz64,self.ptr,& mut _ref_maxnumqnz_);
-      _ref_maxnumqnz_ as i64
+      return Result::Ok((_ref_maxnumqnz_ as i64))
     }
-
+    
     // getmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_max_num_var(&self) -> i32
+    pub fn get_max_num_var(&self) -> Result<i32,String>
     {
-      let mut _ref_maxnumvar_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_maxnumvar_ : i32 = 0 as i32;
       callMSK!(MSK_getmaxnumvar,self.ptr,& mut _ref_maxnumvar_);
-      _ref_maxnumvar_ as i32
+      return Result::Ok((_ref_maxnumvar_ as i32))
     }
-
+    
     // getmemusagetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_mem_usage(&self) -> (i64,i64)
+    pub fn get_mem_usage(&self) -> Result<(i64,i64),String>
     {
       let mut _ref_meminuse_ : libc::int64_t = 0 as libc::int64_t;
       let mut _ref_maxmemuse_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getmemusagetask,self.ptr,& mut _ref_meminuse_,& mut _ref_maxmemuse_);
-      return (_ref_meminuse_ as i64,_ref_maxmemuse_ as i64)
+      return Result::Ok((_ref_meminuse_ as i64,_ref_maxmemuse_ as i64))
     }
-
+    
     // getnadouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_na_dou_inf(&self,infitemname_ : &str) -> f64
+    pub fn get_na_dou_inf(&self,infitemname_ : &str) -> Result<f64,String>
     {
       let mut _ref_dvalue_ : f64 = 0 as f64;
       callMSK!(MSK_getnadouinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_dvalue_);
-      _ref_dvalue_ as f64
+      return Result::Ok((_ref_dvalue_ as f64))
     }
-
+    
     // getnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_na_dou_param(&self,paramname_ : &str) -> f64
+    pub fn get_na_dou_param(&self,paramname_ : &str) -> Result<f64,String>
     {
       let mut _ref_parvalue_ : f64 = 0 as f64;
       callMSK!(MSK_getnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
-      _ref_parvalue_ as f64
+      return Result::Ok((_ref_parvalue_ as f64))
     }
-
+    
     // getnaintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_na_int_inf(&self,infitemname_ : &str) -> i32
+    pub fn get_na_int_inf(&self,infitemname_ : &str) -> Result<i32,String>
     {
-      let mut _ref_ivalue_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_ivalue_ : i32 = 0 as i32;
       callMSK!(MSK_getnaintinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_ivalue_);
-      _ref_ivalue_ as i32
+      return Result::Ok((_ref_ivalue_ as i32))
     }
-
+    
     // getnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_na_int_param(&self,paramname_ : &str) -> i32
+    pub fn get_na_int_param(&self,paramname_ : &str) -> Result<i32,String>
     {
-      let mut _ref_parvalue_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_parvalue_ : i32 = 0 as i32;
       callMSK!(MSK_getnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
-      _ref_parvalue_ as i32
+      return Result::Ok((_ref_parvalue_ as i32))
     }
-
+    
     // getnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32) -> (i32,String)
+    pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32) -> Result<(i32,String),String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_len_ : i32 = 0 as i32;
       let mut _parvalue__bytes = Vec::with_capacity(sizeparamname_ as usize);
-      callMSK!(MSK_getnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),sizeparamname_ as libc::int32_t,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
+      callMSK!(MSK_getnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),sizeparamname_ as i32,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
       unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
-      return (_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned())
+      return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()))
     }
-
+    
     // getnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_a_nz(&self) -> i32
+    pub fn get_num_a_nz(&self) -> Result<i32,String>
     {
-      let mut _ref_numanz_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numanz_ : i32 = 0 as i32;
       callMSK!(MSK_getnumanz,self.ptr,& mut _ref_numanz_);
-      _ref_numanz_ as i32
+      return Result::Ok((_ref_numanz_ as i32))
     }
-
+    
     // getnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_a_nz_64(&self) -> i64
+    pub fn get_num_a_nz_64(&self) -> Result<i64,String>
     {
       let mut _ref_numanz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumanz64,self.ptr,& mut _ref_numanz_);
-      _ref_numanz_ as i64
+      return Result::Ok((_ref_numanz_ as i64))
     }
-
+    
     // getnumbarablocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_bara_block_triplets(&self) -> i64
+    pub fn get_num_bara_block_triplets(&self) -> Result<i64,String>
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumbarablocktriplets,self.ptr,& mut _ref_num_);
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getnumbaranz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_bara_nz(&self) -> i64
+    pub fn get_num_bara_nz(&self) -> Result<i64,String>
     {
       let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumbaranz,self.ptr,& mut _ref_nz_);
-      _ref_nz_ as i64
+      return Result::Ok((_ref_nz_ as i64))
     }
-
+    
     // getnumbarcblocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_barc_block_triplets(&self) -> i64
+    pub fn get_num_barc_block_triplets(&self) -> Result<i64,String>
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumbarcblocktriplets,self.ptr,& mut _ref_num_);
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getnumbarcnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_barc_nz(&self) -> i64
+    pub fn get_num_barc_nz(&self) -> Result<i64,String>
     {
       let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumbarcnz,self.ptr,& mut _ref_nz_);
-      _ref_nz_ as i64
+      return Result::Ok((_ref_nz_ as i64))
     }
-
+    
     // getnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_barvar(&self) -> i32
+    pub fn get_num_barvar(&self) -> Result<i32,String>
     {
-      let mut _ref_numbarvar_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numbarvar_ : i32 = 0 as i32;
       callMSK!(MSK_getnumbarvar,self.ptr,& mut _ref_numbarvar_);
-      _ref_numbarvar_ as i32
+      return Result::Ok((_ref_numbarvar_ as i32))
     }
-
+    
     // getnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_con(&self) -> i32
+    pub fn get_num_con(&self) -> Result<i32,String>
     {
-      let mut _ref_numcon_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numcon_ : i32 = 0 as i32;
       callMSK!(MSK_getnumcon,self.ptr,& mut _ref_numcon_);
-      _ref_numcon_ as i32
+      return Result::Ok((_ref_numcon_ as i32))
     }
-
+    
     // getnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_cone(&self) -> i32
+    pub fn get_num_cone(&self) -> Result<i32,String>
     {
-      let mut _ref_numcone_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numcone_ : i32 = 0 as i32;
       callMSK!(MSK_getnumcone,self.ptr,& mut _ref_numcone_);
-      _ref_numcone_ as i32
+      return Result::Ok((_ref_numcone_ as i32))
     }
-
+    
     // getnumconemem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_cone_mem(&self,k_ : i32) -> i32
+    pub fn get_num_cone_mem(&self,k_ : i32) -> Result<i32,String>
     {
-      let mut _ref_nummem_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getnumconemem,self.ptr,k_ as libc::int32_t,& mut _ref_nummem_);
-      _ref_nummem_ as i32
+      let mut _ref_nummem_ : i32 = 0 as i32;
+      callMSK!(MSK_getnumconemem,self.ptr,k_ as i32,& mut _ref_nummem_);
+      return Result::Ok((_ref_nummem_ as i32))
     }
-
+    
     // getnumintvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_int_var(&self) -> i32
+    pub fn get_num_int_var(&self) -> Result<i32,String>
     {
-      let mut _ref_numintvar_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numintvar_ : i32 = 0 as i32;
       callMSK!(MSK_getnumintvar,self.ptr,& mut _ref_numintvar_);
-      _ref_numintvar_ as i32
+      return Result::Ok((_ref_numintvar_ as i32))
     }
-
+    
     // getnumparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_param(&self,partype_ : i32) -> i32
+    pub fn get_num_param(&self,partype_ : i32) -> Result<i32,String>
     {
-      let mut _ref_numparam_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numparam_ : i32 = 0 as i32;
       callMSK!(MSK_getnumparam,self.ptr,partype_,& mut _ref_numparam_);
-      _ref_numparam_ as i32
+      return Result::Ok((_ref_numparam_ as i32))
     }
-
+    
     // getnumqconknz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_q_con_k_nz(&self,k_ : i32) -> i64
+    pub fn get_num_q_con_k_nz(&self,k_ : i32) -> Result<i64,String>
     {
       let mut _ref_numqcnz_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getnumqconknz64,self.ptr,k_ as libc::int32_t,& mut _ref_numqcnz_);
-      _ref_numqcnz_ as i64
+      callMSK!(MSK_getnumqconknz64,self.ptr,k_ as i32,& mut _ref_numqcnz_);
+      return Result::Ok((_ref_numqcnz_ as i64))
     }
-
+    
     // getnumqobjnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_q_obj_nz(&self) -> i64
+    pub fn get_num_q_obj_nz(&self) -> Result<i64,String>
     {
       let mut _ref_numqonz_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumqobjnz64,self.ptr,& mut _ref_numqonz_);
-      _ref_numqonz_ as i64
+      return Result::Ok((_ref_numqonz_ as i64))
     }
-
+    
     // getnumsymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_sym_mat(&self) -> i64
+    pub fn get_num_sym_mat(&self) -> Result<i64,String>
     {
       let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
       callMSK!(MSK_getnumsymmat,self.ptr,& mut _ref_num_);
-      _ref_num_ as i64
+      return Result::Ok((_ref_num_ as i64))
     }
-
+    
     // getnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_num_var(&self) -> i32
+    pub fn get_num_var(&self) -> Result<i32,String>
     {
-      let mut _ref_numvar_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_numvar_ : i32 = 0 as i32;
       callMSK!(MSK_getnumvar,self.ptr,& mut _ref_numvar_);
-      _ref_numvar_ as i32
+      return Result::Ok((_ref_numvar_ as i32))
     }
-
+    
     // getobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_obj_name(&self) -> String
+    pub fn get_obj_name(&self) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_obj_name_len();
+      let tmp_var_3__ = self.get_obj_name_len()?;
       let sizeobjname_ = 1 + tmp_var_3__;
       let mut _objname__bytes = Vec::with_capacity(sizeobjname_ as usize);
-      callMSK!(MSK_getobjname,self.ptr,sizeobjname_ as libc::int32_t,_objname__bytes.as_mut_ptr());
+      callMSK!(MSK_getobjname,self.ptr,sizeobjname_ as i32,_objname__bytes.as_mut_ptr());
       unsafe { _objname__bytes.set_len((sizeobjname_) as usize) };
-      String::from_utf8_lossy(&_objname__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_objname__bytes[..]).into_owned()))
     }
-
+    
     // getobjnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_obj_name_len(&self) -> i32
+    pub fn get_obj_name_len(&self) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_len_ : i32 = 0 as i32;
       callMSK!(MSK_getobjnamelen,self.ptr,& mut _ref_len_);
-      _ref_len_ as i32
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_obj_sense(&self) -> i32
+    pub fn get_obj_sense(&self) -> Result<i32,String>
     {
       let mut _ref_sense_ : i32 = 0 as i32;
       callMSK!(MSK_getobjsense,self.ptr,& mut _ref_sense_);
-      _ref_sense_ as i32
+      return Result::Ok((_ref_sense_ as i32))
     }
-
+    
     // getparammax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_param_max(&self,partype_ : i32) -> i32
+    pub fn get_param_max(&self,partype_ : i32) -> Result<i32,String>
     {
-      let mut _ref_parammax_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_parammax_ : i32 = 0 as i32;
       callMSK!(MSK_getparammax,self.ptr,partype_,& mut _ref_parammax_);
-      _ref_parammax_ as i32
+      return Result::Ok((_ref_parammax_ as i32))
     }
-
+    
     // getparamname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_param_name(&self,partype_ : i32,param_ : i32) -> String
+    pub fn get_param_name(&self,partype_ : i32,param_ : i32) -> Result<String,String>
     {
       let mut _parname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
-      callMSK!(MSK_getparamname,self.ptr,partype_,param_ as libc::int32_t,_parname__bytes.as_mut_ptr());
+      callMSK!(MSK_getparamname,self.ptr,partype_,param_ as i32,_parname__bytes.as_mut_ptr());
       unsafe { _parname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_parname__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_parname__bytes[..]).into_owned()))
     }
-
+    
     // getprimalobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_primal_obj(&self,whichsol_ : i32) -> f64
+    pub fn get_primal_obj(&self,whichsol_ : i32) -> Result<f64,String>
     {
       let mut _ref_primalobj_ : f64 = 0 as f64;
       callMSK!(MSK_getprimalobj,self.ptr,whichsol_,& mut _ref_primalobj_);
-      _ref_primalobj_ as f64
+      return Result::Ok((_ref_primalobj_ as f64))
     }
-
+    
     // getprimalsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_primal_solution_norms(&self,whichsol_ : i32) -> (f64,f64,f64)
+    pub fn get_primal_solution_norms(&self,whichsol_ : i32) -> Result<(f64,f64,f64),String>
     {
       let mut _ref_nrmxc_ : f64 = 0 as f64;
       let mut _ref_nrmxx_ : f64 = 0 as f64;
       let mut _ref_nrmbarx_ : f64 = 0 as f64;
       callMSK!(MSK_getprimalsolutionnorms,self.ptr,whichsol_,& mut _ref_nrmxc_,& mut _ref_nrmxx_,& mut _ref_nrmbarx_);
-      return (_ref_nrmxc_ as f64,_ref_nrmxx_ as f64,_ref_nrmbarx_ as f64)
+      return Result::Ok((_ref_nrmxc_ as f64,_ref_nrmxx_ as f64,_ref_nrmbarx_ as f64))
     }
-
+    
     // getprobtype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_prob_type(&self) -> i32
+    pub fn get_prob_type(&self) -> Result<i32,String>
     {
       let mut _ref_probtype_ : i32 = 0 as i32;
       callMSK!(MSK_getprobtype,self.ptr,& mut _ref_probtype_);
-      _ref_probtype_ as i32
+      return Result::Ok((_ref_probtype_ as i32))
     }
-
+    
     // getprosta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_pro_sta(&self,whichsol_ : i32) -> i32
+    pub fn get_pro_sta(&self,whichsol_ : i32) -> Result<i32,String>
     {
       let mut _ref_prosta_ : i32 = 0 as i32;
       callMSK!(MSK_getprosta,self.ptr,whichsol_,& mut _ref_prosta_);
-      _ref_prosta_ as i32
+      return Result::Ok((_ref_prosta_ as i32))
     }
-
+    
     // getpviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_barvar'") }
-      callMSK!(MSK_getpviolbarvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_barvar'".to_string()) }
+      callMSK!(MSK_getpviolbarvar,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getpviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_con'") }
-      callMSK!(MSK_getpviolcon,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_con'".to_string()) }
+      callMSK!(MSK_getpviolcon,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getpviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_cones'") }
-      callMSK!(MSK_getpviolcones,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_cones'".to_string()) }
+      callMSK!(MSK_getpviolcones,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getpviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64])
+    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : & [i32],viol_ : & mut [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if viol_.len() != ((num_) as usize) { panic!("Argument 'viol_' is too short in call to 'get_pviol_var'") }
-      callMSK!(MSK_getpviolvar,self.ptr,whichsol_,num_ as libc::int32_t,sub_.as_ptr(),viol_.as_mut_ptr());
+      if viol_.len() != ((num_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_var'".to_string()) }
+      callMSK!(MSK_getpviolvar,self.ptr,whichsol_,num_ as i32,sub_.as_ptr(),viol_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_q_obj_i_j(&self,i_ : i32,j_ : i32) -> f64
+    pub fn get_q_obj_i_j(&self,i_ : i32,j_ : i32) -> Result<f64,String>
     {
       let mut _ref_qoij_ : f64 = 0 as f64;
-      callMSK!(MSK_getqobjij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,& mut _ref_qoij_);
-      _ref_qoij_ as f64
+      callMSK!(MSK_getqobjij,self.ptr,i_ as i32,j_ as i32,& mut _ref_qoij_);
+      return Result::Ok((_ref_qoij_ as f64))
     }
-
+    
     // getreducedcosts
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : & mut [f64])
+    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : & mut [f64]) -> Result<(),String>
     {
-      if redcosts_.len() != ((last_ - first_) as usize) { panic!("Argument 'redcosts_' is too short in call to 'get_reduced_costs'") }
-      callMSK!(MSK_getreducedcosts,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,redcosts_.as_mut_ptr());
+      if redcosts_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'redcosts_' is too short in call to 'get_reduced_costs'".to_string()) }
+      callMSK!(MSK_getreducedcosts,self.ptr,whichsol_,first_ as i32,last_ as i32,redcosts_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_skc(&self,whichsol_ : i32,skc_ : & mut [i32])
+    pub fn get_skc(&self,whichsol_ : i32,skc_ : & mut [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if skc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'get_skc'".to_string()) }
       callMSK!(MSK_getskc,self.ptr,whichsol_,skc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & mut [i32])
+    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & mut [i32]) -> Result<(),String>
     {
-      if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'get_skc_slice'") }
-      callMSK!(MSK_getskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_mut_ptr());
+      if skc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'get_skc_slice'".to_string()) }
+      callMSK!(MSK_getskcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getskn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_skn(&self,whichsol_ : i32,skn_ : & mut [i32])
+    pub fn get_skn(&self,whichsol_ : i32,skn_ : & mut [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_cone();
-      if skn_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skn_' is too short in call to 'get_skn'") }
+      let tmp_var_1__ = self.get_num_cone()?;
+      if skn_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skn_' is too short in call to 'get_skn'".to_string()) }
       callMSK!(MSK_getskn,self.ptr,whichsol_,skn_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_skx(&self,whichsol_ : i32,skx_ : & mut [i32])
+    pub fn get_skx(&self,whichsol_ : i32,skx_ : & mut [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if skx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'get_skx'".to_string()) }
       callMSK!(MSK_getskx,self.ptr,whichsol_,skx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & mut [i32])
+    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & mut [i32]) -> Result<(),String>
     {
-      if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'get_skx_slice'") }
-      callMSK!(MSK_getskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_mut_ptr());
+      if skx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'get_skx_slice'".to_string()) }
+      callMSK!(MSK_getskxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_slc(&self,whichsol_ : i32,slc_ : & mut [f64])
+    pub fn get_slc(&self,whichsol_ : i32,slc_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if slc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'get_slc'".to_string()) }
       callMSK!(MSK_getslc,self.ptr,whichsol_,slc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & mut [f64])
+    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & mut [f64]) -> Result<(),String>
     {
-      if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'get_slc_slice'") }
-      callMSK!(MSK_getslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_mut_ptr());
+      if slc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'get_slc_slice'".to_string()) }
+      callMSK!(MSK_getslcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_slx(&self,whichsol_ : i32,slx_ : & mut [f64])
+    pub fn get_slx(&self,whichsol_ : i32,slx_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if slx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'get_slx'".to_string()) }
       callMSK!(MSK_getslx,self.ptr,whichsol_,slx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & mut [f64])
+    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & mut [f64]) -> Result<(),String>
     {
-      if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'get_slx_slice'") }
-      callMSK!(MSK_getslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_mut_ptr());
+      if slx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'get_slx_slice'".to_string()) }
+      callMSK!(MSK_getslxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_snx(&self,whichsol_ : i32,snx_ : & mut [f64])
+    pub fn get_snx(&self,whichsol_ : i32,snx_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if snx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if snx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'get_snx'".to_string()) }
       callMSK!(MSK_getsnx,self.ptr,whichsol_,snx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & mut [f64])
+    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & mut [f64]) -> Result<(),String>
     {
-      if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'get_snx_slice'") }
-      callMSK!(MSK_getsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_mut_ptr());
+      if snx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'get_snx_slice'".to_string()) }
+      callMSK!(MSK_getsnxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,snx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsolsta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_sol_sta(&self,whichsol_ : i32) -> i32
+    pub fn get_sol_sta(&self,whichsol_ : i32) -> Result<i32,String>
     {
       let mut _ref_solsta_ : i32 = 0 as i32;
       callMSK!(MSK_getsolsta,self.ptr,whichsol_,& mut _ref_solsta_);
-      _ref_solsta_ as i32
+      return Result::Ok((_ref_solsta_ as i32))
     }
-
+    
     // getsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_solution(&self,whichsol_ : i32,skc_ : & mut [i32],skx_ : & mut [i32],skn_ : & mut [i32],xc_ : & mut [f64],xx_ : & mut [f64],y_ : & mut [f64],slc_ : & mut [f64],suc_ : & mut [f64],slx_ : & mut [f64],sux_ : & mut [f64],snx_ : & mut [f64]) -> (i32,i32)
+    pub fn get_solution(&self,whichsol_ : i32,skc_ : & mut [i32],skx_ : & mut [i32],skn_ : & mut [i32],xc_ : & mut [f64],xx_ : & mut [f64],y_ : & mut [f64],slc_ : & mut [f64],suc_ : & mut [f64],slx_ : & mut [f64],sux_ : & mut [f64],snx_ : & mut [f64]) -> Result<(i32,i32),String>
     {
       let mut _ref_prosta_ : i32 = 0 as i32;
       let mut _ref_solsta_ : i32 = 0 as i32;
-      let tmp_var_1__ = self.get_num_con();
-      if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'get_solution'") }
-      let tmp_var_3__ = self.get_num_var();
-      if skx_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'skx_' is too short in call to 'get_solution'") }
-      let tmp_var_5__ = self.get_num_cone();
-      if skn_.len() != ((tmp_var_5__) as usize) { panic!("Argument 'skn_' is too short in call to 'get_solution'") }
-      let tmp_var_7__ = self.get_num_con();
-      if xc_.len() != ((tmp_var_7__) as usize) { panic!("Argument 'xc_' is too short in call to 'get_solution'") }
-      let tmp_var_9__ = self.get_num_var();
-      if xx_.len() != ((tmp_var_9__) as usize) { panic!("Argument 'xx_' is too short in call to 'get_solution'") }
-      let tmp_var_11__ = self.get_num_con();
-      if y_.len() != ((tmp_var_11__) as usize) { panic!("Argument 'y_' is too short in call to 'get_solution'") }
-      let tmp_var_13__ = self.get_num_con();
-      if slc_.len() != ((tmp_var_13__) as usize) { panic!("Argument 'slc_' is too short in call to 'get_solution'") }
-      let tmp_var_15__ = self.get_num_con();
-      if suc_.len() != ((tmp_var_15__) as usize) { panic!("Argument 'suc_' is too short in call to 'get_solution'") }
-      let tmp_var_17__ = self.get_num_var();
-      if slx_.len() != ((tmp_var_17__) as usize) { panic!("Argument 'slx_' is too short in call to 'get_solution'") }
-      let tmp_var_19__ = self.get_num_var();
-      if sux_.len() != ((tmp_var_19__) as usize) { panic!("Argument 'sux_' is too short in call to 'get_solution'") }
-      let tmp_var_21__ = self.get_num_var();
-      if snx_.len() != ((tmp_var_21__) as usize) { panic!("Argument 'snx_' is too short in call to 'get_solution'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if skc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_3__ = self.get_num_var()?;
+      if skx_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_5__ = self.get_num_cone()?;
+      if skn_.len() != ((tmp_var_5__) as usize) { return Result::Err("Argument 'skn_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_7__ = self.get_num_con()?;
+      if xc_.len() != ((tmp_var_7__) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_9__ = self.get_num_var()?;
+      if xx_.len() != ((tmp_var_9__) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_11__ = self.get_num_con()?;
+      if y_.len() != ((tmp_var_11__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_13__ = self.get_num_con()?;
+      if slc_.len() != ((tmp_var_13__) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_15__ = self.get_num_con()?;
+      if suc_.len() != ((tmp_var_15__) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_17__ = self.get_num_var()?;
+      if slx_.len() != ((tmp_var_17__) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_19__ = self.get_num_var()?;
+      if sux_.len() != ((tmp_var_19__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'get_solution'".to_string()) }
+      let tmp_var_21__ = self.get_num_var()?;
+      if snx_.len() != ((tmp_var_21__) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'get_solution'".to_string()) }
       callMSK!(MSK_getsolution,self.ptr,whichsol_,& mut _ref_prosta_,& mut _ref_solsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr());
-      return (_ref_prosta_ as i32,_ref_solsta_ as i32)
+      return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32))
     }
-
+    
     // getsolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_solution_info(&self,whichsol_ : i32) -> (f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64)
+    pub fn get_solution_info(&self,whichsol_ : i32) -> Result<(f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64),String>
     {
       let mut _ref_pobj_ : f64 = 0 as f64;
       let mut _ref_pviolcon_ : f64 = 0 as f64;
@@ -4032,343 +4102,358 @@ impl Task
       let mut _ref_dviolbarvar_ : f64 = 0 as f64;
       let mut _ref_dviolcone_ : f64 = 0 as f64;
       callMSK!(MSK_getsolutioninfo,self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_);
-      return (_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64)
+      return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64))
     }
-
+    
     // getsolutionslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : & mut [f64])
+    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : & mut [f64]) -> Result<(),String>
     {
-      if values_.len() != ((last_ - first_) as usize) { panic!("Argument 'values_' is too short in call to 'get_solution_slice'") }
-      callMSK!(MSK_getsolutionslice,self.ptr,whichsol_,solitem_,first_ as libc::int32_t,last_ as libc::int32_t,values_.as_mut_ptr());
+      if values_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'values_' is too short in call to 'get_solution_slice'".to_string()) }
+      callMSK!(MSK_getsolutionslice,self.ptr,whichsol_,solitem_,first_ as i32,last_ as i32,values_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : & mut [i32],subj_ : & mut [i32],valij_ : & mut [f64])
+    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : & mut [i32],subj_ : & mut [i32],valij_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_sym_mat_info(idx_).1;
+      let tmp_var_1__ = self.get_sym_mat_info(idx_)?.1;
       let maxlen_ = tmp_var_1__;
-      if subi_.len() != ((maxlen_) as usize) { panic!("Argument 'subi_' is too short in call to 'get_sparse_sym_mat'") }
-      if subj_.len() != ((maxlen_) as usize) { panic!("Argument 'subj_' is too short in call to 'get_sparse_sym_mat'") }
-      if valij_.len() != ((maxlen_) as usize) { panic!("Argument 'valij_' is too short in call to 'get_sparse_sym_mat'") }
+      if subi_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
+      if subj_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
+      if valij_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'valij_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
       callMSK!(MSK_getsparsesymmat,self.ptr,idx_ as libc::int64_t,maxlen_ as libc::int64_t,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_str_param(&self,param_ : i32) -> (i32,String)
+    pub fn get_str_param(&self,param_ : i32) -> Result<(i32,String),String>
     {
-      let tmp_var_3__ = self.get_str_param_len(param_);
+      let tmp_var_3__ = self.get_str_param_len(param_)?;
       let maxlen_ = 1 + tmp_var_3__;
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_len_ : i32 = 0 as i32;
       let mut _parvalue__bytes = Vec::with_capacity(maxlen_ as usize);
-      callMSK!(MSK_getstrparam,self.ptr,param_,maxlen_ as libc::int32_t,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
+      callMSK!(MSK_getstrparam,self.ptr,param_,maxlen_ as i32,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
       unsafe { _parvalue__bytes.set_len((maxlen_) as usize) };
-      return (_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned())
+      return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()))
     }
-
+    
     // getstrparamlen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_str_param_len(&self,param_ : i32) -> i32
+    pub fn get_str_param_len(&self,param_ : i32) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_len_ : i32 = 0 as i32;
       callMSK!(MSK_getstrparamlen,self.ptr,param_,& mut _ref_len_);
-      _ref_len_ as i32
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_suc(&self,whichsol_ : i32,suc_ : & mut [f64])
+    pub fn get_suc(&self,whichsol_ : i32,suc_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if suc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'get_suc'".to_string()) }
       callMSK!(MSK_getsuc,self.ptr,whichsol_,suc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & mut [f64])
+    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & mut [f64]) -> Result<(),String>
     {
-      if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'get_suc_slice'") }
-      callMSK!(MSK_getsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_mut_ptr());
+      if suc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'get_suc_slice'".to_string()) }
+      callMSK!(MSK_getsucslice,self.ptr,whichsol_,first_ as i32,last_ as i32,suc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_sux(&self,whichsol_ : i32,sux_ : & mut [f64])
+    pub fn get_sux(&self,whichsol_ : i32,sux_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if sux_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'get_sux'".to_string()) }
       callMSK!(MSK_getsux,self.ptr,whichsol_,sux_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & mut [f64])
+    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & mut [f64]) -> Result<(),String>
     {
-      if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'get_sux_slice'") }
-      callMSK!(MSK_getsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_mut_ptr());
+      if sux_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'get_sux_slice'".to_string()) }
+      callMSK!(MSK_getsuxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,sux_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getsymbcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_symb_con(&self,i_ : i32) -> (String,i32)
+    pub fn get_symb_con(&self,i_ : i32) -> Result<(String,i32),String>
     {
       let sizevalue_ = MSK_MAX_STR_LEN;
       let mut _name__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
-      let mut _ref_value_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getsymbcon,self.ptr,i_ as libc::int32_t,sizevalue_ as libc::int32_t,_name__bytes.as_mut_ptr(),& mut _ref_value_);
+      let mut _ref_value_ : i32 = 0 as i32;
+      callMSK!(MSK_getsymbcon,self.ptr,i_ as i32,sizevalue_ as i32,_name__bytes.as_mut_ptr(),& mut _ref_value_);
       unsafe { _name__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      return (String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32)
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32))
     }
-
+    
     // getsymmatinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_sym_mat_info(&self,idx_ : i64) -> (i32,i64,i32)
+    pub fn get_sym_mat_info(&self,idx_ : i64) -> Result<(i32,i64,i32),String>
     {
-      let mut _ref_dim_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_dim_ : i32 = 0 as i32;
       let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
       let mut _ref_type_ : i32 = 0 as i32;
       callMSK!(MSK_getsymmatinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_dim_,& mut _ref_nz_,& mut _ref_type_);
-      return (_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32)
+      return Result::Ok((_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32))
     }
-
+    
     // gettaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_task_name(&self) -> String
+    pub fn get_task_name(&self) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_task_name_len();
+      let tmp_var_3__ = self.get_task_name_len()?;
       let sizetaskname_ = 1 + tmp_var_3__;
       let mut _taskname__bytes = Vec::with_capacity(sizetaskname_ as usize);
-      callMSK!(MSK_gettaskname,self.ptr,sizetaskname_ as libc::int32_t,_taskname__bytes.as_mut_ptr());
+      callMSK!(MSK_gettaskname,self.ptr,sizetaskname_ as i32,_taskname__bytes.as_mut_ptr());
       unsafe { _taskname__bytes.set_len((sizetaskname_) as usize) };
-      String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()))
     }
-
+    
     // gettasknamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_task_name_len(&self) -> i32
+    pub fn get_task_name_len(&self) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_len_ : i32 = 0 as i32;
       callMSK!(MSK_gettasknamelen,self.ptr,& mut _ref_len_);
-      _ref_len_ as i32
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_bound(&self,i_ : i32) -> (i32,f64,f64)
+    pub fn get_var_bound(&self,i_ : i32) -> Result<(i32,f64,f64),String>
     {
       let mut _ref_bk_ : i32 = 0 as i32;
       let mut _ref_bl_ : f64 = 0 as f64;
       let mut _ref_bu_ : f64 = 0 as f64;
-      callMSK!(MSK_getvarbound,self.ptr,i_ as libc::int32_t,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
-      return (_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64)
+      callMSK!(MSK_getvarbound,self.ptr,i_ as i32,& mut _ref_bk_,& mut _ref_bl_,& mut _ref_bu_);
+      return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64))
     }
-
+    
     // getvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64])
+    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : & mut [i32],bl_ : & mut [f64],bu_ : & mut [f64]) -> Result<(),String>
     {
-      if bk_.len() != ((last_ - first_) as usize) { panic!("Argument 'bk_' is too short in call to 'get_var_bound_slice'") }
-      if bl_.len() != ((last_ - first_) as usize) { panic!("Argument 'bl_' is too short in call to 'get_var_bound_slice'") }
-      if bu_.len() != ((last_ - first_) as usize) { panic!("Argument 'bu_' is too short in call to 'get_var_bound_slice'") }
-      callMSK!(MSK_getvarboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
+      if bk_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bk_' is too short in call to 'get_var_bound_slice'".to_string()) }
+      if bl_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bl_' is too short in call to 'get_var_bound_slice'".to_string()) }
+      if bu_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bu_' is too short in call to 'get_var_bound_slice'".to_string()) }
+      callMSK!(MSK_getvarboundslice,self.ptr,first_ as i32,last_ as i32,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_name(&self,j_ : i32) -> String
+    pub fn get_var_name(&self,j_ : i32) -> Result<String,String>
     {
-      let tmp_var_3__ = self.get_var_name_len(j_);
+      let tmp_var_3__ = self.get_var_name_len(j_)?;
       let sizename_ = 1 + tmp_var_3__;
       let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
-      callMSK!(MSK_getvarname,self.ptr,j_ as libc::int32_t,sizename_ as libc::int32_t,_name__bytes.as_mut_ptr());
+      callMSK!(MSK_getvarname,self.ptr,j_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr());
       unsafe { _name__bytes.set_len((sizename_) as usize) };
-      String::from_utf8_lossy(&_name__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()))
     }
-
+    
     // getvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_name_index(&self,somename_ : &str) -> (i32,i32)
+    pub fn get_var_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
-      let mut _ref_asgn_ : libc::int32_t = 0 as libc::int32_t;
-      let mut _ref_index_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_asgn_ : i32 = 0 as i32;
+      let mut _ref_index_ : i32 = 0 as i32;
       callMSK!(MSK_getvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
-      return (_ref_asgn_ as i32,_ref_index_ as i32)
+      return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
-
+    
     // getvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_name_len(&self,i_ : i32) -> i32
+    pub fn get_var_name_len(&self,i_ : i32) -> Result<i32,String>
     {
-      let mut _ref_len_ : libc::int32_t = 0 as libc::int32_t;
-      callMSK!(MSK_getvarnamelen,self.ptr,i_ as libc::int32_t,& mut _ref_len_);
-      _ref_len_ as i32
+      let mut _ref_len_ : i32 = 0 as i32;
+      callMSK!(MSK_getvarnamelen,self.ptr,i_ as i32,& mut _ref_len_);
+      return Result::Ok((_ref_len_ as i32))
     }
-
+    
     // getvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_type(&self,j_ : i32) -> i32
+    pub fn get_var_type(&self,j_ : i32) -> Result<i32,String>
     {
       let mut _ref_vartype_ : i32 = 0 as i32;
-      callMSK!(MSK_getvartype,self.ptr,j_ as libc::int32_t,& mut _ref_vartype_);
-      _ref_vartype_ as i32
+      callMSK!(MSK_getvartype,self.ptr,j_ as i32,& mut _ref_vartype_);
+      return Result::Ok((_ref_vartype_ as i32))
     }
-
+    
     // getvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_var_type_list(&self,subj_ : & [i32],vartype_ : & mut [i32])
+    pub fn get_var_type_list(&self,subj_ : & [i32],vartype_ : & mut [i32]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
-      if vartype_.len() != ((num_) as usize) { panic!("Argument 'vartype_' is too short in call to 'get_var_type_list'") }
-      callMSK!(MSK_getvartypelist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),vartype_.as_mut_ptr());
+      if vartype_.len() != ((num_) as usize) { return Result::Err("Argument 'vartype_' is too short in call to 'get_var_type_list'".to_string()) }
+      callMSK!(MSK_getvartypelist,self.ptr,num_ as i32,subj_.as_ptr(),vartype_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
+    pub fn get_xc(&self,whichsol_ : i32,xc_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if xc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'get_xc'".to_string()) }
       callMSK!(MSK_getxc,self.ptr,whichsol_,xc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & mut [f64])
+    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & mut [f64]) -> Result<(),String>
     {
-      if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'get_xc_slice'") }
-      callMSK!(MSK_getxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_mut_ptr());
+      if xc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'get_xc_slice'".to_string()) }
+      callMSK!(MSK_getxcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_xx(&self,whichsol_ : i32,xx_ : & mut [f64])
+    pub fn get_xx(&self,whichsol_ : i32,xx_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if xx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'get_xx'".to_string()) }
       callMSK!(MSK_getxx,self.ptr,whichsol_,xx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & mut [f64])
+    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & mut [f64]) -> Result<(),String>
     {
-      if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'get_xx_slice'") }
-      callMSK!(MSK_getxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_mut_ptr());
+      if xx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'get_xx_slice'".to_string()) }
+      callMSK!(MSK_getxxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xx_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // gety
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_y(&self,whichsol_ : i32,y_ : & mut [f64])
+    pub fn get_y(&self,whichsol_ : i32,y_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'get_y'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if y_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'get_y'".to_string()) }
       callMSK!(MSK_gety,self.ptr,whichsol_,y_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // getyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & mut [f64])
+    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & mut [f64]) -> Result<(),String>
     {
-      if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'get_y_slice'") }
-      callMSK!(MSK_getyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_mut_ptr());
+      if y_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'y_' is too short in call to 'get_y_slice'".to_string()) }
+      callMSK!(MSK_getyslice,self.ptr,whichsol_,first_ as i32,last_ as i32,y_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // initbasissolve
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn init_basis_solve(&self,basis_ : & mut [i32])
+    pub fn init_basis_solve(&self,basis_ : & mut [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if basis_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'basis_' is too short in call to 'init_basis_solve'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if basis_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'basis_' is too short in call to 'init_basis_solve'".to_string()) }
       callMSK!(MSK_initbasissolve,self.ptr,basis_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // inputdata64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
+    pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut numcon_ = buc_.len();
       if blc_.len() > numcon_ { numcon_ = blc_.len() };
@@ -4379,1464 +4464,1580 @@ impl Task
       if bkx_.len() > numvar_ { numvar_ = bkx_.len() };
       if aptrb_.len() > numvar_ { numvar_ = aptrb_.len() };
       if aptre_.len() > numvar_ { numvar_ = aptre_.len() };
-      callMSK!(MSK_inputdata64,self.ptr,maxnumcon_ as libc::int32_t,maxnumvar_ as libc::int32_t,numcon_ as libc::int32_t,numvar_ as libc::int32_t,c_.as_ptr(),cfix_ as f64,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      callMSK!(MSK_inputdata64,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,numcon_ as i32,numvar_ as i32,c_.as_ptr(),cfix_ as f64,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // isdouparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn is_dou_par_name(&self,parname_ : &str) -> i32
+    pub fn is_dou_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
       let mut _ref_param_ : i32 = 0 as i32;
       callMSK!(MSK_isdouparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
-      _ref_param_ as i32
+      return Result::Ok((_ref_param_ as i32))
     }
-
+    
     // isintparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn is_int_par_name(&self,parname_ : &str) -> i32
+    pub fn is_int_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
       let mut _ref_param_ : i32 = 0 as i32;
       callMSK!(MSK_isintparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
-      _ref_param_ as i32
+      return Result::Ok((_ref_param_ as i32))
     }
-
+    
     // isstrparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn is_str_par_name(&self,parname_ : &str) -> i32
+    pub fn is_str_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
       let mut _ref_param_ : i32 = 0 as i32;
       callMSK!(MSK_isstrparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
-      _ref_param_ as i32
+      return Result::Ok((_ref_param_ as i32))
     }
-
+    
     // linkfiletotaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn link_file_to_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32)
+    pub fn link_file_to_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as libc::int32_t);
+      callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
+      return Result::Ok(())
     }
-
+    
     // onesolutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32)
+    pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
+      return Result::Ok(())
     }
-
+    
     // optimizermt
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> i32
+    pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> Result<i32,String>
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
-      _ref_trmcode_ as i32
+      return Result::Ok((_ref_trmcode_ as i32))
     }
-
+    
     // optimizersummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimizer_summary(&self,whichstream_ : i32)
+    pub fn optimizer_summary(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_optimizersummary,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // optimizetrm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize(&self) -> i32
+    pub fn optimize(&self) -> Result<i32,String>
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
-      _ref_trmcode_ as i32
+      return Result::Ok((_ref_trmcode_ as i32))
     }
-
+    
     // primalrepair
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn primal_repair(&self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64])
+    pub fn primal_repair(&self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if wlc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'wlc_' is too short in call to 'primal_repair'") }
-      let tmp_var_3__ = self.get_num_con();
-      if wuc_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'wuc_' is too short in call to 'primal_repair'") }
-      let tmp_var_5__ = self.get_num_var();
-      if wlx_.len() != ((tmp_var_5__) as usize) { panic!("Argument 'wlx_' is too short in call to 'primal_repair'") }
-      let tmp_var_7__ = self.get_num_var();
-      if wux_.len() != ((tmp_var_7__) as usize) { panic!("Argument 'wux_' is too short in call to 'primal_repair'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if wlc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'wlc_' is too short in call to 'primal_repair'".to_string()) }
+      let tmp_var_3__ = self.get_num_con()?;
+      if wuc_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'wuc_' is too short in call to 'primal_repair'".to_string()) }
+      let tmp_var_5__ = self.get_num_var()?;
+      if wlx_.len() != ((tmp_var_5__) as usize) { return Result::Err("Argument 'wlx_' is too short in call to 'primal_repair'".to_string()) }
+      let tmp_var_7__ = self.get_num_var()?;
+      if wux_.len() != ((tmp_var_7__) as usize) { return Result::Err("Argument 'wux_' is too short in call to 'primal_repair'".to_string()) }
       callMSK!(MSK_primalrepair,self.ptr,wlc_.as_ptr(),wuc_.as_ptr(),wlx_.as_ptr(),wux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // primalsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn primal_sensitivity(&self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64])
+    pub fn primal_sensitivity(&self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64]) -> Result<(),String>
     {
       let mut numi_ = subi_.len();
       if marki_.len() > numi_ { numi_ = marki_.len() };
       let mut numj_ = subj_.len();
       if markj_.len() > numj_ { numj_ = markj_.len() };
-      if leftpricei_.len() != ((numi_) as usize) { panic!("Argument 'leftpricei_' is too short in call to 'primal_sensitivity'") }
-      if rightpricei_.len() != ((numi_) as usize) { panic!("Argument 'rightpricei_' is too short in call to 'primal_sensitivity'") }
-      if leftrangei_.len() != ((numi_) as usize) { panic!("Argument 'leftrangei_' is too short in call to 'primal_sensitivity'") }
-      if rightrangei_.len() != ((numi_) as usize) { panic!("Argument 'rightrangei_' is too short in call to 'primal_sensitivity'") }
-      if leftpricej_.len() != ((numj_) as usize) { panic!("Argument 'leftpricej_' is too short in call to 'primal_sensitivity'") }
-      if rightpricej_.len() != ((numj_) as usize) { panic!("Argument 'rightpricej_' is too short in call to 'primal_sensitivity'") }
-      if leftrangej_.len() != ((numj_) as usize) { panic!("Argument 'leftrangej_' is too short in call to 'primal_sensitivity'") }
-      if rightrangej_.len() != ((numj_) as usize) { panic!("Argument 'rightrangej_' is too short in call to 'primal_sensitivity'") }
-      callMSK!(MSK_primalsensitivity,self.ptr,numi_ as libc::int32_t,subi_.as_ptr(),marki_.as_ptr(),numj_ as libc::int32_t,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
+      if leftpricei_.len() != ((numi_) as usize) { return Result::Err("Argument 'leftpricei_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if rightpricei_.len() != ((numi_) as usize) { return Result::Err("Argument 'rightpricei_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if leftrangei_.len() != ((numi_) as usize) { return Result::Err("Argument 'leftrangei_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if rightrangei_.len() != ((numi_) as usize) { return Result::Err("Argument 'rightrangei_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if leftpricej_.len() != ((numj_) as usize) { return Result::Err("Argument 'leftpricej_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if rightpricej_.len() != ((numj_) as usize) { return Result::Err("Argument 'rightpricej_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if leftrangej_.len() != ((numj_) as usize) { return Result::Err("Argument 'leftrangej_' is too short in call to 'primal_sensitivity'".to_string()) }
+      if rightrangej_.len() != ((numj_) as usize) { return Result::Err("Argument 'rightrangej_' is too short in call to 'primal_sensitivity'".to_string()) }
+      callMSK!(MSK_primalsensitivity,self.ptr,numi_ as i32,subi_.as_ptr(),marki_.as_ptr(),numj_ as i32,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // printparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn print_param(&self)
+    pub fn print_param(&self) -> Result<(),String>
     {
       callMSK!(MSK_printparam,self.ptr);
+      return Result::Ok(())
     }
-
+    
     // probtypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn prob_type_to_str(&self,probtype_ : i32) -> String
+    pub fn prob_type_to_str(&self,probtype_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_probtypetostr,self.ptr,probtype_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // prostatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn pro_sta_to_str(&self,prosta_ : i32) -> String
+    pub fn pro_sta_to_str(&self,prosta_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_prostatostr,self.ptr,prosta_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // putacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col(&self,j_ : i32,subj_ : & [i32],valj_ : & [f64])
+    pub fn put_a_col(&self,j_ : i32,subj_ : & [i32],valj_ : & [f64]) -> Result<(),String>
     {
       let mut nzj_ = subj_.len();
       if valj_.len() > nzj_ { nzj_ = valj_.len() };
-      callMSK!(MSK_putacol,self.ptr,j_ as libc::int32_t,nzj_ as libc::int32_t,subj_.as_ptr(),valj_.as_ptr());
+      callMSK!(MSK_putacol,self.ptr,j_ as i32,nzj_ as i32,subj_.as_ptr(),valj_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putacollist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
-      callMSK!(MSK_putacollist64,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      callMSK!(MSK_putacollist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putacolslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
-      callMSK!(MSK_putacolslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      callMSK!(MSK_putacolslice64,self.ptr,first_ as i32,last_ as i32,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_aij(&self,i_ : i32,j_ : i32,aij_ : f64)
+    pub fn put_aij(&self,i_ : i32,j_ : i32,aij_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putaij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,aij_ as f64);
+      callMSK!(MSK_putaij,self.ptr,i_ as i32,j_ as i32,aij_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putaijlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_aij_list(&self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64])
+    pub fn put_aij_list(&self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if subj_.len() > num_ { num_ = subj_.len() };
       if valij_.len() > num_ { num_ = valij_.len() };
       callMSK!(MSK_putaijlist64,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row(&self,i_ : i32,subi_ : & [i32],vali_ : & [f64])
+    pub fn put_a_row(&self,i_ : i32,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
     {
       let mut nzi_ = subi_.len();
       if vali_.len() > nzi_ { nzi_ = vali_.len() };
-      callMSK!(MSK_putarow,self.ptr,i_ as libc::int32_t,nzi_ as libc::int32_t,subi_.as_ptr(),vali_.as_ptr());
+      callMSK!(MSK_putarow,self.ptr,i_ as i32,nzi_ as i32,subi_.as_ptr(),vali_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putarowlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_row_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
-      callMSK!(MSK_putarowlist64,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      callMSK!(MSK_putarowlist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putarowslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64])
+    pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
-      if ptrb_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptrb_' is too short in call to 'put_a_row_slice'") }
-      if ptre_.len() != ((last_ - first_) as usize) { panic!("Argument 'ptre_' is too short in call to 'put_a_row_slice'") }
-      callMSK!(MSK_putarowslice64,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      if ptrb_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'ptrb_' is too short in call to 'put_a_row_slice'".to_string()) }
+      if ptre_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'ptre_' is too short in call to 'put_a_row_slice'".to_string()) }
+      callMSK!(MSK_putarowslice64,self.ptr,first_ as i32,last_ as i32,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_truncate_tol(&self,tolzero_ : f64)
+    pub fn put_a_truncate_tol(&self,tolzero_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putatruncatetol,self.ptr,tolzero_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64])
+    pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64]) -> Result<(),String>
     {
-      if subi_.len() != ((num_) as usize) { panic!("Argument 'subi_' is too short in call to 'put_bara_block_triplet'") }
-      if subj_.len() != ((num_) as usize) { panic!("Argument 'subj_' is too short in call to 'put_bara_block_triplet'") }
-      if subk_.len() != ((num_) as usize) { panic!("Argument 'subk_' is too short in call to 'put_bara_block_triplet'") }
-      if subl_.len() != ((num_) as usize) { panic!("Argument 'subl_' is too short in call to 'put_bara_block_triplet'") }
-      if valijkl_.len() != ((num_) as usize) { panic!("Argument 'valijkl_' is too short in call to 'put_bara_block_triplet'") }
+      if subi_.len() != ((num_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'put_bara_block_triplet'".to_string()) }
+      if subj_.len() != ((num_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'put_bara_block_triplet'".to_string()) }
+      if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_bara_block_triplet'".to_string()) }
+      if subl_.len() != ((num_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'put_bara_block_triplet'".to_string()) }
+      if valijkl_.len() != ((num_) as usize) { return Result::Err("Argument 'valijkl_' is too short in call to 'put_bara_block_triplet'".to_string()) }
       callMSK!(MSK_putbarablocktriplet,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valijkl_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbaraij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_ij(&self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64])
+    pub fn put_bara_ij(&self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
-      callMSK!(MSK_putbaraij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      callMSK!(MSK_putbaraij,self.ptr,i_ as i32,j_ as i32,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbaraijlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_ij_list(&self,subi_ : & [i32],subj_ : & [i32],alphaptrb_ : & [i64],alphaptre_ : & [i64],matidx_ : & [i64],weights_ : & [f64])
+    pub fn put_bara_ij_list(&self,subi_ : & [i32],subj_ : & [i32],alphaptrb_ : & [i64],alphaptre_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if subj_.len() > num_ { num_ = subj_.len() };
       if alphaptrb_.len() > num_ { num_ = alphaptrb_.len() };
       if alphaptre_.len() > num_ { num_ = alphaptre_.len() };
-      callMSK!(MSK_putbaraijlist,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
+      callMSK!(MSK_putbaraijlist,self.ptr,num_ as i32,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbararowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_row_list(&self,subi_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],subj_ : & [i32],nummat_ : & [i64],matidx_ : & [i64],weights_ : & [f64])
+    pub fn put_bara_row_list(&self,subi_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],subj_ : & [i32],nummat_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
       let tmp_var_0__ = subj_.len();
-      if nummat_.len() != ((tmp_var_0__) as usize) { panic!("Argument 'nummat_' is too short in call to 'put_bara_row_list'") }
+      if nummat_.len() != ((tmp_var_0__) as usize) { return Result::Err("Argument 'nummat_' is too short in call to 'put_bara_row_list'".to_string()) }
       let tmp_var_2__ = nummat_.iter().fold(0,|res,v| res + v);
-      if matidx_.len() != ((tmp_var_2__) as usize) { panic!("Argument 'matidx_' is too short in call to 'put_bara_row_list'") }
+      if matidx_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'matidx_' is too short in call to 'put_bara_row_list'".to_string()) }
       let tmp_var_4__ = nummat_.iter().fold(0,|res,v| res + v);
-      if weights_.len() != ((tmp_var_4__) as usize) { panic!("Argument 'weights_' is too short in call to 'put_bara_row_list'") }
-      callMSK!(MSK_putbararowlist,self.ptr,num_ as libc::int32_t,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
+      if weights_.len() != ((tmp_var_4__) as usize) { return Result::Err("Argument 'weights_' is too short in call to 'put_bara_row_list'".to_string()) }
+      callMSK!(MSK_putbararowlist,self.ptr,num_ as i32,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64])
+    pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64]) -> Result<(),String>
     {
-      if subj_.len() != ((num_) as usize) { panic!("Argument 'subj_' is too short in call to 'put_barc_block_triplet'") }
-      if subk_.len() != ((num_) as usize) { panic!("Argument 'subk_' is too short in call to 'put_barc_block_triplet'") }
-      if subl_.len() != ((num_) as usize) { panic!("Argument 'subl_' is too short in call to 'put_barc_block_triplet'") }
-      if valjkl_.len() != ((num_) as usize) { panic!("Argument 'valjkl_' is too short in call to 'put_barc_block_triplet'") }
+      if subj_.len() != ((num_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'put_barc_block_triplet'".to_string()) }
+      if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_barc_block_triplet'".to_string()) }
+      if subl_.len() != ((num_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'put_barc_block_triplet'".to_string()) }
+      if valjkl_.len() != ((num_) as usize) { return Result::Err("Argument 'valjkl_' is too short in call to 'put_barc_block_triplet'".to_string()) }
       callMSK!(MSK_putbarcblocktriplet,self.ptr,num_ as libc::int64_t,subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valjkl_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbarcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barc_j(&self,j_ : i32,sub_ : & [i64],weights_ : & [f64])
+    pub fn put_barc_j(&self,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
-      callMSK!(MSK_putbarcj,self.ptr,j_ as libc::int32_t,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      callMSK!(MSK_putbarcj,self.ptr,j_ as i32,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & [f64])
+    pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barsj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barsj_' is too short in call to 'put_bars_j'") }
-      callMSK!(MSK_putbarsj,self.ptr,whichsol_,j_ as libc::int32_t,barsj_.as_ptr());
+      let tmp_var_1__ = self.get_len_barvar_j(j_)?;
+      if barsj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barsj_' is too short in call to 'put_bars_j'".to_string()) }
+      callMSK!(MSK_putbarsj,self.ptr,whichsol_,j_ as i32,barsj_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barvar_name(&self,j_ : i32,name_ : &str)
+    pub fn put_barvar_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putbarvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
+      callMSK!(MSK_putbarvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & [f64])
+    pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_len_barvar_j(j_);
-      if barxj_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'barxj_' is too short in call to 'put_barx_j'") }
-      callMSK!(MSK_putbarxj,self.ptr,whichsol_,j_ as libc::int32_t,barxj_.as_ptr());
+      let tmp_var_1__ = self.get_len_barvar_j(j_)?;
+      if barxj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barxj_' is too short in call to 'put_barx_j'".to_string()) }
+      callMSK!(MSK_putbarxj,self.ptr,whichsol_,j_ as i32,barxj_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cfix(&self,cfix_ : f64)
+    pub fn put_cfix(&self,cfix_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putcfix,self.ptr,cfix_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_j(&self,j_ : i32,cj_ : f64)
+    pub fn put_c_j(&self,j_ : i32,cj_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putcj,self.ptr,j_ as libc::int32_t,cj_ as f64);
+      callMSK!(MSK_putcj,self.ptr,j_ as i32,cj_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_list(&self,subj_ : & [i32],val_ : & [f64])
+    pub fn put_c_list(&self,subj_ : & [i32],val_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       if val_.len() > num_ { num_ = val_.len() };
-      callMSK!(MSK_putclist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),val_.as_ptr());
+      callMSK!(MSK_putclist,self.ptr,num_ as i32,subj_.as_ptr(),val_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound(&self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64)
+    pub fn put_con_bound(&self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putconbound,self.ptr,i_ as libc::int32_t,bkc_,blc_ as f64,buc_ as f64);
+      callMSK!(MSK_putconbound,self.ptr,i_ as i32,bkc_,blc_ as f64,buc_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putconboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64])
+    pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if bkc_.len() > num_ { num_ = bkc_.len() };
       if blc_.len() > num_ { num_ = blc_.len() };
       if buc_.len() > num_ { num_ = buc_.len() };
-      callMSK!(MSK_putconboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
+      callMSK!(MSK_putconboundlist,self.ptr,num_ as i32,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_list_const(&self,sub_ : & [i32],bkc_ : i32,blc_ : f64,buc_ : f64)
+    pub fn put_con_bound_list_const(&self,sub_ : & [i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      callMSK!(MSK_putconboundlistconst,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkc_,blc_ as f64,buc_ as f64);
+      callMSK!(MSK_putconboundlistconst,self.ptr,num_ as i32,sub_.as_ptr(),bkc_,blc_ as f64,buc_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64])
+    pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
     {
-      if bkc_.len() != ((last_ - first_) as usize) { panic!("Argument 'bkc_' is too short in call to 'put_con_bound_slice'") }
-      if blc_.len() != ((last_ - first_) as usize) { panic!("Argument 'blc_' is too short in call to 'put_con_bound_slice'") }
-      if buc_.len() != ((last_ - first_) as usize) { panic!("Argument 'buc_' is too short in call to 'put_con_bound_slice'") }
-      callMSK!(MSK_putconboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
+      if bkc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bkc_' is too short in call to 'put_con_bound_slice'".to_string()) }
+      if blc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'blc_' is too short in call to 'put_con_bound_slice'".to_string()) }
+      if buc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'buc_' is too short in call to 'put_con_bound_slice'".to_string()) }
+      callMSK!(MSK_putconboundslice,self.ptr,first_ as i32,last_ as i32,bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_slice_const(&self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64)
+    pub fn put_con_bound_slice_const(&self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putconboundsliceconst,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkc_,blc_ as f64,buc_ as f64);
+      callMSK!(MSK_putconboundsliceconst,self.ptr,first_ as i32,last_ as i32,bkc_,blc_ as f64,buc_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32])
+    pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
     {
       let mut nummem_ = submem_.len();
-      callMSK!(MSK_putcone,self.ptr,k_ as libc::int32_t,ct_,conepar_ as f64,nummem_ as libc::int32_t,submem_.as_ptr());
+      callMSK!(MSK_putcone,self.ptr,k_ as i32,ct_,conepar_ as f64,nummem_ as i32,submem_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cone_name(&self,j_ : i32,name_ : &str)
+    pub fn put_cone_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putconename,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
+      callMSK!(MSK_putconename,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_name(&self,i_ : i32,name_ : &str)
+    pub fn put_con_name(&self,i_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putconname,self.ptr,i_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
+      callMSK!(MSK_putconname,self.ptr,i_ as i32,CString::new(name_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putconsolutioni
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_solution_i(&self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64)
+    pub fn put_con_solution_i(&self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putconsolutioni,self.ptr,i_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64);
+      callMSK!(MSK_putconsolutioni,self.ptr,i_ as i32,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & [f64])
+    pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & [f64]) -> Result<(),String>
     {
-      if slice_.len() != ((last_ - first_) as usize) { panic!("Argument 'slice_' is too short in call to 'put_c_slice'") }
-      callMSK!(MSK_putcslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,slice_.as_ptr());
+      if slice_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slice_' is too short in call to 'put_c_slice'".to_string()) }
+      callMSK!(MSK_putcslice,self.ptr,first_ as i32,last_ as i32,slice_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_dou_param(&self,param_ : i32,parvalue_ : f64)
+    pub fn put_dou_param(&self,param_ : i32,parvalue_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putdouparam,self.ptr,param_,parvalue_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_int_param(&self,param_ : i32,parvalue_ : i32)
+    pub fn put_int_param(&self,param_ : i32,parvalue_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putintparam,self.ptr,param_,parvalue_ as libc::int32_t);
+      callMSK!(MSK_putintparam,self.ptr,param_,parvalue_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_a_nz(&self,maxnumanz_ : i64)
+    pub fn put_max_num_a_nz(&self,maxnumanz_ : i64) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as libc::int64_t);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_barvar(&self,maxnumbarvar_ : i32)
+    pub fn put_max_num_barvar(&self,maxnumbarvar_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumbarvar,self.ptr,maxnumbarvar_ as libc::int32_t);
+      callMSK!(MSK_putmaxnumbarvar,self.ptr,maxnumbarvar_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_con(&self,maxnumcon_ : i32)
+    pub fn put_max_num_con(&self,maxnumcon_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumcon,self.ptr,maxnumcon_ as libc::int32_t);
+      callMSK!(MSK_putmaxnumcon,self.ptr,maxnumcon_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_cone(&self,maxnumcone_ : i32)
+    pub fn put_max_num_cone(&self,maxnumcone_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumcone,self.ptr,maxnumcone_ as libc::int32_t);
+      callMSK!(MSK_putmaxnumcone,self.ptr,maxnumcone_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumqnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_q_nz(&self,maxnumqnz_ : i64)
+    pub fn put_max_num_q_nz(&self,maxnumqnz_ : i64) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as libc::int64_t);
+      return Result::Ok(())
     }
-
+    
     // putmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_var(&self,maxnumvar_ : i32)
+    pub fn put_max_num_var(&self,maxnumvar_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumvar,self.ptr,maxnumvar_ as libc::int32_t);
+      callMSK!(MSK_putmaxnumvar,self.ptr,maxnumvar_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_dou_param(&self,paramname_ : &str,parvalue_ : f64)
+    pub fn put_na_dou_param(&self,paramname_ : &str,parvalue_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_int_param(&self,paramname_ : &str,parvalue_ : i32)
+    pub fn put_na_int_param(&self,paramname_ : &str,parvalue_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as libc::int32_t);
+      callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as i32);
+      return Result::Ok(())
     }
-
+    
     // putnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_str_param(&self,paramname_ : &str,parvalue_ : &str)
+    pub fn put_na_str_param(&self,paramname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_obj_name(&self,objname_ : &str)
+    pub fn put_obj_name(&self,objname_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putobjname,self.ptr,CString::new(objname_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_obj_sense(&self,sense_ : i32)
+    pub fn put_obj_sense(&self,sense_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putobjsense,self.ptr,sense_);
+      return Result::Ok(())
     }
-
+    
     // putparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_param(&self,parname_ : &str,parvalue_ : &str)
+    pub fn put_param(&self,parname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putqcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_con(&self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
+    pub fn put_q_con(&self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
       if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
-      callMSK!(MSK_putqcon,self.ptr,numqcnz_ as libc::int32_t,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
+      callMSK!(MSK_putqcon,self.ptr,numqcnz_ as i32,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putqconk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64])
+    pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
       if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
-      callMSK!(MSK_putqconk,self.ptr,k_ as libc::int32_t,numqcnz_ as libc::int32_t,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
+      callMSK!(MSK_putqconk,self.ptr,k_ as i32,numqcnz_ as i32,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putqobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_obj(&self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64])
+    pub fn put_q_obj(&self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64]) -> Result<(),String>
     {
       let mut numqonz_ = qosubi_.len();
       if qosubj_.len() > numqonz_ { numqonz_ = qosubj_.len() };
       if qoval_.len() > numqonz_ { numqonz_ = qoval_.len() };
-      callMSK!(MSK_putqobj,self.ptr,numqonz_ as libc::int32_t,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr());
+      callMSK!(MSK_putqobj,self.ptr,numqonz_ as i32,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : f64)
+    pub fn put_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putqobjij,self.ptr,i_ as libc::int32_t,j_ as libc::int32_t,qoij_ as f64);
+      callMSK!(MSK_putqobjij,self.ptr,i_ as i32,j_ as i32,qoij_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skc(&self,whichsol_ : i32,skc_ : & [i32])
+    pub fn put_skc(&self,whichsol_ : i32,skc_ : & [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if skc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if skc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'put_skc'".to_string()) }
       callMSK!(MSK_putskc,self.ptr,whichsol_,skc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32])
+    pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32]) -> Result<(),String>
     {
-      if skc_.len() != ((last_ - first_) as usize) { panic!("Argument 'skc_' is too short in call to 'put_skc_slice'") }
-      callMSK!(MSK_putskcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skc_.as_ptr());
+      if skc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'put_skc_slice'".to_string()) }
+      callMSK!(MSK_putskcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skx(&self,whichsol_ : i32,skx_ : & [i32])
+    pub fn put_skx(&self,whichsol_ : i32,skx_ : & [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if skx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if skx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'put_skx'".to_string()) }
       callMSK!(MSK_putskx,self.ptr,whichsol_,skx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32])
+    pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32]) -> Result<(),String>
     {
-      if skx_.len() != ((last_ - first_) as usize) { panic!("Argument 'skx_' is too short in call to 'put_skx_slice'") }
-      callMSK!(MSK_putskxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,skx_.as_ptr());
+      if skx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'put_skx_slice'".to_string()) }
+      callMSK!(MSK_putskxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slc(&self,whichsol_ : i32,slc_ : & [f64])
+    pub fn put_slc(&self,whichsol_ : i32,slc_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if slc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if slc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'put_slc'".to_string()) }
       callMSK!(MSK_putslc,self.ptr,whichsol_,slc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64])
+    pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64]) -> Result<(),String>
     {
-      if slc_.len() != ((last_ - first_) as usize) { panic!("Argument 'slc_' is too short in call to 'put_slc_slice'") }
-      callMSK!(MSK_putslcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slc_.as_ptr());
+      if slc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'put_slc_slice'".to_string()) }
+      callMSK!(MSK_putslcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slx(&self,whichsol_ : i32,slx_ : & [f64])
+    pub fn put_slx(&self,whichsol_ : i32,slx_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if slx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if slx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'put_slx'".to_string()) }
       callMSK!(MSK_putslx,self.ptr,whichsol_,slx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64])
+    pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64]) -> Result<(),String>
     {
-      if slx_.len() != ((last_ - first_) as usize) { panic!("Argument 'slx_' is too short in call to 'put_slx_slice'") }
-      callMSK!(MSK_putslxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,slx_.as_ptr());
+      if slx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'put_slx_slice'".to_string()) }
+      callMSK!(MSK_putslxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_snx(&self,whichsol_ : i32,sux_ : & [f64])
+    pub fn put_snx(&self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_snx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if sux_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_snx'".to_string()) }
       callMSK!(MSK_putsnx,self.ptr,whichsol_,sux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64])
+    pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64]) -> Result<(),String>
     {
-      if snx_.len() != ((last_ - first_) as usize) { panic!("Argument 'snx_' is too short in call to 'put_snx_slice'") }
-      callMSK!(MSK_putsnxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,snx_.as_ptr());
+      if snx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'put_snx_slice'".to_string()) }
+      callMSK!(MSK_putsnxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,snx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_solution(&self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64])
+    pub fn put_solution(&self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64]) -> Result<(),String>
     {
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsolutionyi
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_solution_y_i(&self,i_ : i32,whichsol_ : i32,y_ : f64)
+    pub fn put_solution_y_i(&self,i_ : i32,whichsol_ : i32,y_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putsolutionyi,self.ptr,i_ as libc::int32_t,whichsol_,y_ as f64);
+      callMSK!(MSK_putsolutionyi,self.ptr,i_ as i32,whichsol_,y_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_str_param(&self,param_ : i32,parvalue_ : &str)
+    pub fn put_str_param(&self,param_ : i32,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putstrparam,self.ptr,param_,CString::new(parvalue_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_suc(&self,whichsol_ : i32,suc_ : & [f64])
+    pub fn put_suc(&self,whichsol_ : i32,suc_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if suc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if suc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'put_suc'".to_string()) }
       callMSK!(MSK_putsuc,self.ptr,whichsol_,suc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64])
+    pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64]) -> Result<(),String>
     {
-      if suc_.len() != ((last_ - first_) as usize) { panic!("Argument 'suc_' is too short in call to 'put_suc_slice'") }
-      callMSK!(MSK_putsucslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,suc_.as_ptr());
+      if suc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'put_suc_slice'".to_string()) }
+      callMSK!(MSK_putsucslice,self.ptr,whichsol_,first_ as i32,last_ as i32,suc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_sux(&self,whichsol_ : i32,sux_ : & [f64])
+    pub fn put_sux(&self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if sux_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if sux_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_sux'".to_string()) }
       callMSK!(MSK_putsux,self.ptr,whichsol_,sux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64])
+    pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
-      if sux_.len() != ((last_ - first_) as usize) { panic!("Argument 'sux_' is too short in call to 'put_sux_slice'") }
-      callMSK!(MSK_putsuxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,sux_.as_ptr());
+      if sux_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_sux_slice'".to_string()) }
+      callMSK!(MSK_putsuxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,sux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // puttaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_task_name(&self,taskname_ : &str)
+    pub fn put_task_name(&self,taskname_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_puttaskname,self.ptr,CString::new(taskname_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound(&self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64)
+    pub fn put_var_bound(&self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putvarbound,self.ptr,j_ as libc::int32_t,bkx_,blx_ as f64,bux_ as f64);
+      callMSK!(MSK_putvarbound,self.ptr,j_ as i32,bkx_,blx_ as f64,bux_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putvarboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_list(&self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
+    pub fn put_var_bound_list(&self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if bkx_.len() > num_ { num_ = bkx_.len() };
       if blx_.len() > num_ { num_ = blx_.len() };
       if bux_.len() > num_ { num_ = bux_.len() };
-      callMSK!(MSK_putvarboundlist,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      callMSK!(MSK_putvarboundlist,self.ptr,num_ as i32,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putvarboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_list_const(&self,sub_ : & [i32],bkx_ : i32,blx_ : f64,bux_ : f64)
+    pub fn put_var_bound_list_const(&self,sub_ : & [i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      callMSK!(MSK_putvarboundlistconst,self.ptr,num_ as libc::int32_t,sub_.as_ptr(),bkx_,blx_ as f64,bux_ as f64);
+      callMSK!(MSK_putvarboundlistconst,self.ptr,num_ as i32,sub_.as_ptr(),bkx_,blx_ as f64,bux_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64])
+    pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
-      if bkx_.len() != ((last_ - first_) as usize) { panic!("Argument 'bkx_' is too short in call to 'put_var_bound_slice'") }
-      if blx_.len() != ((last_ - first_) as usize) { panic!("Argument 'blx_' is too short in call to 'put_var_bound_slice'") }
-      if bux_.len() != ((last_ - first_) as usize) { panic!("Argument 'bux_' is too short in call to 'put_var_bound_slice'") }
-      callMSK!(MSK_putvarboundslice,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      if bkx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bkx_' is too short in call to 'put_var_bound_slice'".to_string()) }
+      if blx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'blx_' is too short in call to 'put_var_bound_slice'".to_string()) }
+      if bux_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bux_' is too short in call to 'put_var_bound_slice'".to_string()) }
+      callMSK!(MSK_putvarboundslice,self.ptr,first_ as i32,last_ as i32,bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putvarboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_slice_const(&self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64)
+    pub fn put_var_bound_slice_const(&self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putvarboundsliceconst,self.ptr,first_ as libc::int32_t,last_ as libc::int32_t,bkx_,blx_ as f64,bux_ as f64);
+      callMSK!(MSK_putvarboundsliceconst,self.ptr,first_ as i32,last_ as i32,bkx_,blx_ as f64,bux_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_name(&self,j_ : i32,name_ : &str)
+    pub fn put_var_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putvarname,self.ptr,j_ as libc::int32_t,CString::new(name_).unwrap().as_ptr());
+      callMSK!(MSK_putvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putvarsolutionj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_solution_j(&self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64)
+    pub fn put_var_solution_j(&self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putvarsolutionj,self.ptr,j_ as libc::int32_t,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
+      callMSK!(MSK_putvarsolutionj,self.ptr,j_ as i32,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
+      return Result::Ok(())
     }
-
+    
     // putvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_type(&self,j_ : i32,vartype_ : i32)
+    pub fn put_var_type(&self,j_ : i32,vartype_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putvartype,self.ptr,j_ as libc::int32_t,vartype_);
+      callMSK!(MSK_putvartype,self.ptr,j_ as i32,vartype_);
+      return Result::Ok(())
     }
-
+    
     // putvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_type_list(&self,subj_ : & [i32],vartype_ : & [i32])
+    pub fn put_var_type_list(&self,subj_ : & [i32],vartype_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       if vartype_.len() > num_ { num_ = vartype_.len() };
-      callMSK!(MSK_putvartypelist,self.ptr,num_ as libc::int32_t,subj_.as_ptr(),vartype_.as_ptr());
+      callMSK!(MSK_putvartypelist,self.ptr,num_ as i32,subj_.as_ptr(),vartype_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut [f64])
+    pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if xc_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if xc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'put_xc'".to_string()) }
       callMSK!(MSK_putxc,self.ptr,whichsol_,xc_.as_mut_ptr());
+      return Result::Ok(())
     }
-
+    
     // putxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64])
+    pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64]) -> Result<(),String>
     {
-      if xc_.len() != ((last_ - first_) as usize) { panic!("Argument 'xc_' is too short in call to 'put_xc_slice'") }
-      callMSK!(MSK_putxcslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xc_.as_ptr());
+      if xc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'put_xc_slice'".to_string()) }
+      callMSK!(MSK_putxcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xc_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xx(&self,whichsol_ : i32,xx_ : & [f64])
+    pub fn put_xx(&self,whichsol_ : i32,xx_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_var();
-      if xx_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx'") }
+      let tmp_var_1__ = self.get_num_var()?;
+      if xx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'put_xx'".to_string()) }
       callMSK!(MSK_putxx,self.ptr,whichsol_,xx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64])
+    pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64]) -> Result<(),String>
     {
-      if xx_.len() != ((last_ - first_) as usize) { panic!("Argument 'xx_' is too short in call to 'put_xx_slice'") }
-      callMSK!(MSK_putxxslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,xx_.as_ptr());
+      if xx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'put_xx_slice'".to_string()) }
+      callMSK!(MSK_putxxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xx_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // puty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_y(&self,whichsol_ : i32,y_ : & [f64])
+    pub fn put_y(&self,whichsol_ : i32,y_ : & [f64]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con();
-      if y_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'y_' is too short in call to 'put_y'") }
+      let tmp_var_1__ = self.get_num_con()?;
+      if y_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'put_y'".to_string()) }
       callMSK!(MSK_puty,self.ptr,whichsol_,y_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // putyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64])
+    pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64]) -> Result<(),String>
     {
-      if y_.len() != ((last_ - first_) as usize) { panic!("Argument 'y_' is too short in call to 'put_y_slice'") }
-      callMSK!(MSK_putyslice,self.ptr,whichsol_,first_ as libc::int32_t,last_ as libc::int32_t,y_.as_ptr());
+      if y_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'y_' is too short in call to 'put_y_slice'".to_string()) }
+      callMSK!(MSK_putyslice,self.ptr,whichsol_,first_ as i32,last_ as i32,y_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readdataautoformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_data(&self,filename_ : &str)
+    pub fn read_data(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readdataautoformat,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readdataformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32)
+    pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
+      return Result::Ok(())
     }
-
+    
     // readjsonstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_json_string(&self,data_ : &str)
+    pub fn read_json_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readjsonstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readlpstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_lp_string(&self,data_ : &str)
+    pub fn read_lp_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readlpstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readopfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_opf_string(&self,data_ : &str)
+    pub fn read_opf_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readopfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_param_file(&self,filename_ : &str)
+    pub fn read_param_file(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readptfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_ptf_string(&self,data_ : &str)
+    pub fn read_ptf_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readptfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_solution(&self,whichsol_ : i32,filename_ : &str)
+    pub fn read_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readsolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // readsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_summary(&self,whichstream_ : i32)
+    pub fn read_summary(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_readsummary,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // readtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_task(&self,filename_ : &str)
+    pub fn read_task(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readtask,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // removebarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_barvars(&self,subset_ : & [i32])
+    pub fn remove_barvars(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
-      callMSK!(MSK_removebarvars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
+      callMSK!(MSK_removebarvars,self.ptr,num_ as i32,subset_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // removecones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_cones(&self,subset_ : & [i32])
+    pub fn remove_cones(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
-      callMSK!(MSK_removecones,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
+      callMSK!(MSK_removecones,self.ptr,num_ as i32,subset_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // removecons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_cons(&self,subset_ : & [i32])
+    pub fn remove_cons(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
-      callMSK!(MSK_removecons,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
+      callMSK!(MSK_removecons,self.ptr,num_ as i32,subset_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // removevars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_vars(&self,subset_ : & [i32])
+    pub fn remove_vars(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
-      callMSK!(MSK_removevars,self.ptr,num_ as libc::int32_t,subset_.as_ptr());
+      callMSK!(MSK_removevars,self.ptr,num_ as i32,subset_.as_ptr());
+      return Result::Ok(())
     }
-
+    
     // resizetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn resize_task(&self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64)
+    pub fn resize_task(&self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String>
     {
-      callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as libc::int32_t,maxnumvar_ as libc::int32_t,maxnumcone_ as libc::int32_t,maxnumanz_ as libc::int64_t,maxnumqnz_ as libc::int64_t);
+      callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,maxnumcone_ as i32,maxnumanz_ as libc::int64_t,maxnumqnz_ as libc::int64_t);
+      return Result::Ok(())
     }
-
+    
     // sensitivityreport
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn sensitivity_report(&self,whichstream_ : i32)
+    pub fn sensitivity_report(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_sensitivityreport,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // setdefaults
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn set_defaults(&self)
+    pub fn set_defaults(&self) -> Result<(),String>
     {
       callMSK!(MSK_setdefaults,self.ptr);
+      return Result::Ok(())
     }
-
+    
     // sktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn sk_to_str(&self,sk_ : i32) -> String
+    pub fn sk_to_str(&self,sk_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_sktostr,self.ptr,sk_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // solstatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn sol_sta_to_str(&self,solsta_ : i32) -> String
+    pub fn sol_sta_to_str(&self,solsta_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_solstatostr,self.ptr,solsta_,_str__bytes.as_mut_ptr());
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-      String::from_utf8_lossy(&_str__bytes[..]).into_owned()
+      return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
     }
-
+    
     // solutiondef
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn solution_def(&self,whichsol_ : i32) -> bool
+    pub fn solution_def(&self,whichsol_ : i32) -> Result<bool,String>
     {
-      let mut _ref_isdef_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_isdef_ : i32 = 0 as i32;
       callMSK!(MSK_solutiondef,self.ptr,whichsol_,& mut _ref_isdef_);
-      _ref_isdef_ != 0
+      return Result::Ok((_ref_isdef_ != 0))
     }
-
+    
     // solutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn solution_summary(&self,whichstream_ : i32)
+    pub fn solution_summary(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_solutionsummary,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // solvewithbasis
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> i32
+    pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> Result<i32,String>
     {
       let mut _ref_numnz_ = numnz_;
-      let tmp_var_1__ = self.get_num_con();
-      if sub_.len() != ((tmp_var_1__) as usize) { panic!("Argument 'sub_' is too short in call to 'solve_with_basis'") }
-      let tmp_var_3__ = self.get_num_con();
-      if val_.len() != ((tmp_var_3__) as usize) { panic!("Argument 'val_' is too short in call to 'solve_with_basis'") }
-      callMSK!(MSK_solvewithbasis,self.ptr,transp_ as libc::int32_t,& mut _ref_numnz_,sub_.as_mut_ptr(),val_.as_mut_ptr());
-      _ref_numnz_ as i32
+      let tmp_var_1__ = self.get_num_con()?;
+      if sub_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sub_' is too short in call to 'solve_with_basis'".to_string()) }
+      let tmp_var_3__ = self.get_num_con()?;
+      if val_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'val_' is too short in call to 'solve_with_basis'".to_string()) }
+      callMSK!(MSK_solvewithbasis,self.ptr,transp_ as i32,& mut _ref_numnz_,sub_.as_mut_ptr(),val_.as_mut_ptr());
+      return Result::Ok((_ref_numnz_ as i32))
     }
-
+    
     // strduptask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn str_dup_task(&self,str_ : &str)
+    pub fn str_dup_task(&self,str_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_strduptask,self.ptr,CString::new(str_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // strtoconetype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn str_to_cone_type(&self,str_ : &str) -> i32
+    pub fn str_to_cone_type(&self,str_ : &str) -> Result<i32,String>
     {
       let mut _ref_conetype_ : i32 = 0 as i32;
       callMSK!(MSK_strtoconetype,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_conetype_);
-      _ref_conetype_ as i32
+      return Result::Ok((_ref_conetype_ as i32))
     }
-
+    
     // strtosk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn str_to_sk(&self,str_ : &str) -> i32
+    pub fn str_to_sk(&self,str_ : &str) -> Result<i32,String>
     {
       let mut _ref_sk_ : i32 = 0 as i32;
       callMSK!(MSK_strtosk,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_sk_);
-      _ref_sk_ as i32
+      return Result::Ok((_ref_sk_ as i32))
     }
-
+    
     // toconic
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn toconic(&self)
+    pub fn toconic(&self) -> Result<(),String>
     {
       callMSK!(MSK_toconic,self.ptr);
+      return Result::Ok(())
     }
-
+    
     // unlinkfuncfromtaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn unlink_func_from_stream(&self,whichstream_ : i32)
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream_);
+      return Result::Ok(())
     }
-
+    
     // updatesolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn update_solution_info(&self,whichsol_ : i32)
+    pub fn update_solution_info(&self,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_updatesolutioninfo,self.ptr,whichsol_);
+      return Result::Ok(())
     }
-
+    
     // whichparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn which_param(&self,parname_ : &str) -> (i32,i32)
+    pub fn which_param(&self,parname_ : &str) -> Result<(i32,i32),String>
     {
       let mut _ref_partype_ : i32 = 0 as i32;
-      let mut _ref_param_ : libc::int32_t = 0 as libc::int32_t;
+      let mut _ref_param_ : i32 = 0 as i32;
       callMSK!(MSK_whichparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_partype_,& mut _ref_param_);
-      return (_ref_partype_ as i32,_ref_param_ as i32)
+      return Result::Ok((_ref_partype_ as i32,_ref_param_ as i32))
     }
-
+    
     // writedata
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn write_data(&self,filename_ : &str)
+    pub fn write_data(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_writedata,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // writejsonsol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn write_json_sol(&self,filename_ : &str)
+    pub fn write_json_sol(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_writejsonsol,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // writeparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn write_param_file(&self,filename_ : &str)
+    pub fn write_param_file(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_writeparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // writesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn write_solution(&self,whichsol_ : i32,filename_ : &str)
+    pub fn write_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_writesolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
-
+    
     // writetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn write_task(&self,filename_ : &str)
+    pub fn write_task(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_writetask,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      return Result::Ok(())
     }
 }
 
@@ -5865,12 +6066,12 @@ impl Drop for Task
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn callback_code_to_str(code_ : i32) -> String
+pub fn callback_code_to_str(code_ : i32) -> Result<String,String>
 {
   let mut _callbackcodestr__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   callMSK!(MSK_callbackcodetostr,code_,_callbackcodestr__bytes.as_mut_ptr());
   unsafe { _callbackcodestr__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-  String::from_utf8_lossy(&_callbackcodestr__bytes[..]).into_owned()
+  return Result::Ok((String::from_utf8_lossy(&_callbackcodestr__bytes[..]).into_owned()))
 }
 
 // getbuildinfo
@@ -5878,14 +6079,14 @@ pub fn callback_code_to_str(code_ : i32) -> String
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn get_build_info() -> (String,String)
+pub fn get_build_info() -> Result<(String,String),String>
 {
   let mut _buildstate__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   let mut _builddate__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   callMSK!(MSK_getbuildinfo,_buildstate__bytes.as_mut_ptr(),_builddate__bytes.as_mut_ptr());
   unsafe { _buildstate__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
   unsafe { _builddate__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-  return (String::from_utf8_lossy(&_buildstate__bytes[..]).into_owned(),String::from_utf8_lossy(&_builddate__bytes[..]).into_owned())
+  return Result::Ok((String::from_utf8_lossy(&_buildstate__bytes[..]).into_owned(),String::from_utf8_lossy(&_builddate__bytes[..]).into_owned()))
 }
 
 // getcodedesc
@@ -5893,14 +6094,14 @@ pub fn get_build_info() -> (String,String)
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn get_code_desc(code_ : i32) -> (String,String)
+pub fn get_code_desc(code_ : i32) -> Result<(String,String),String>
 {
   let mut _symname__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   callMSK!(MSK_getcodedesc,code_,_symname__bytes.as_mut_ptr(),_str__bytes.as_mut_ptr());
   unsafe { _symname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
   unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-  return (String::from_utf8_lossy(&_symname__bytes[..]).into_owned(),String::from_utf8_lossy(&_str__bytes[..]).into_owned())
+  return Result::Ok((String::from_utf8_lossy(&_symname__bytes[..]).into_owned(),String::from_utf8_lossy(&_str__bytes[..]).into_owned()))
 }
 
 // getresponseclass
@@ -5908,11 +6109,11 @@ pub fn get_code_desc(code_ : i32) -> (String,String)
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn get_response_class(r_ : i32) -> i32
+pub fn get_response_class(r_ : i32) -> Result<i32,String>
 {
   let mut _ref_rc_ : i32 = 0 as i32;
   callMSK!(MSK_getresponseclass,r_,& mut _ref_rc_);
-  _ref_rc_ as i32
+  return Result::Ok((_ref_rc_ as i32))
 }
 
 // getversion
@@ -5920,13 +6121,13 @@ pub fn get_response_class(r_ : i32) -> i32
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn get_version() -> (i32,i32,i32)
+pub fn get_version() -> Result<(i32,i32,i32),String>
 {
-  let mut _ref_major_ : libc::int32_t = 0 as libc::int32_t;
-  let mut _ref_minor_ : libc::int32_t = 0 as libc::int32_t;
-  let mut _ref_revision_ : libc::int32_t = 0 as libc::int32_t;
+  let mut _ref_major_ : i32 = 0 as i32;
+  let mut _ref_minor_ : i32 = 0 as i32;
+  let mut _ref_revision_ : i32 = 0 as i32;
   callMSK!(MSK_getversion,& mut _ref_major_,& mut _ref_minor_,& mut _ref_revision_);
-  return (_ref_major_ as i32,_ref_minor_ as i32,_ref_revision_ as i32)
+  return Result::Ok((_ref_major_ as i32,_ref_minor_ as i32,_ref_revision_ as i32))
 }
 
 // isinfinity
@@ -5934,9 +6135,10 @@ pub fn get_version() -> (i32,i32,i32)
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn is_infinity(value_ : f64)
+pub fn is_infinity(value_ : f64) -> Result<(),String>
 {
   callMSK!(MSK_isinfinity,value_ as f64);
+  return Result::Ok(())
 }
 
 // licensecleanup
@@ -5944,9 +6146,10 @@ pub fn is_infinity(value_ : f64)
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn licensecleanup()
+pub fn licensecleanup() -> Result<(),String>
 {
   callMSK!(MSK_licensecleanup);
+  return Result::Ok(())
 }
 
 // symnamtovalue
@@ -5954,10 +6157,10 @@ pub fn licensecleanup()
 #[allow(unused_mut)]
 #[allow(unused_parens)]
 #[allow(unused_variables)]
-pub fn sym_nam_to_value(name_ : &str) -> String
+pub fn sym_nam_to_value(name_ : &str) -> Result<String,String>
 {
   let mut _value__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
   callMSK!(MSK_symnamtovalue,CString::new(name_).unwrap().as_ptr(),_value__bytes.as_mut_ptr());
   unsafe { _value__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
-  String::from_utf8_lossy(&_value__bytes[..]).into_owned()
+  return Result::Ok((String::from_utf8_lossy(&_value__bytes[..]).into_owned()))
 }
