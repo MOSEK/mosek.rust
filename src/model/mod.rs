@@ -169,8 +169,8 @@ fn zerosf64(n : usize) -> Vec<f64> { let mut r : Vec<f64> = Vec::with_capacity(n
 
 pub trait Domain {
     fn size(&self) -> usize;
-    fn alloc_var_block(&self,&mut Model,&str) -> Vec<i64>;
-    fn alloc_con_block(&self,&mut Model,&str, ptr : &[usize], subj : &[i64], cof : &[f64]) -> Vec<u32>;
+    fn alloc_var_block(&self,&mut Model,&str) -> Result<Vec<i64>,String>;
+    fn alloc_con_block(&self,&mut Model,&str, ptr : &[usize], subj : &[i64], cof : &[f64]) -> Result<Vec<u32>,String>;
 }
 
 pub struct LinearBound {
@@ -184,18 +184,18 @@ impl LinearBound {
 
 impl Domain for LinearBound {
     fn size(&self) -> usize { return self.rhs.len() }
-    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
-        let idxs32 = m.alloc_vars(basic_namer(name), self.bk, self.rhs.as_slice());
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Result<Vec<i64>,String> {
+        let idxs32 = m.alloc_vars(basic_namer(name), self.bk, self.rhs.as_slice())?;
         let idxs64 : Vec<i64> = idxs32.iter().map(|x| *x as i64).collect();
 
-        return idxs64;
+        return Ok(idxs64);
     }
 
     fn alloc_con_block(&self,m : &mut Model,
                        name : &str,
                        ptr  : &[usize],
                        subj : &[i64],
-                       cof  : &[f64]) -> Vec<u32> {
+                       cof  : &[f64]) -> Result<Vec<u32>,String> {
         let bk =
             match self.bk {
                 BOUNDKEY_FR => super::MSK_BK_FR,
@@ -217,8 +217,8 @@ impl Domain for LinearBound {
                                 self.rhs.as_slice(),
                                 ptr,
                                 subj,
-                                cof);
-        return idxs.iter().map(|x| *x as u32).collect();
+                                cof)?;
+        return Ok(idxs.iter().map(|x| *x as u32).collect());
     }
 }
 
@@ -236,13 +236,13 @@ impl VectorCone {
 
 impl Domain for VectorCone {
     fn size(&self) -> usize { return self.num }
-    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Vec<i64> {
+    fn alloc_var_block(&self,m : &mut Model,name : &str) -> Result<Vec<i64>,String> {
         let mut zs : Vec<f64> = Vec::with_capacity(self.num); zs.resize(self.num,0.0);
-        let mut idxs32 = m.alloc_vars(basic_namer(name), BOUNDKEY_FR, zs.as_slice());
-        m.alloc_cone(self.ct.clone(), self.par, idxs32.as_mut_slice());
+        let mut idxs32 = m.alloc_vars(basic_namer(name), BOUNDKEY_FR, zs.as_slice())?;
+        m.alloc_cone(self.ct.clone(), self.par, idxs32.as_mut_slice())?;
         let idxs64 = idxs32.iter().map(|x| *x as i64).collect();
 
-        return idxs64
+        return Ok(idxs64);
     }
 
     fn alloc_con_block(&self,
@@ -250,7 +250,7 @@ impl Domain for VectorCone {
                        name : &str,
                        ptr  : &[usize],
                        subj : &[i64],
-                       cof  : &[f64]) -> Vec<u32> {
+                       cof  : &[f64]) -> Result<Vec<u32>,String> {
         let nrows = self.size();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
         let idxs = m.alloc_cone_cons(basic_namer(name),
@@ -259,8 +259,8 @@ impl Domain for VectorCone {
                                      zs.as_slice(),
                                      ptr,
                                      subj,
-                                     cof);
-        return idxs.iter().map(|x| *x as u32).collect();
+                                     cof)?;
+        return Ok(idxs.iter().map(|x| *x as u32).collect());
     }
 }
 
@@ -570,48 +570,54 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn with_name(name : &str) -> Model {
-        let env = super::Env::new();
-        let mut task = env.task();  //
+    pub fn with_name(name : &str) -> Result<Model,String> {
+        let env = match super::Env::new() {
+            Some(e) => e,
+            None => return Err("Failed to create env".to_string()),
+        };
+        let mut task = match env.task() {
+            Some(t) => t,
+            None => return Err("Failed to create task".to_string()),
+        };
         let slack = Vec::with_capacity(0);
         let numpsdatoms : i64 = 0;
 
-        task.append_vars(1);
-        task.put_var_name(0,"1.0");
-        task.put_task_name(name);
-        task.put_var_bound(0,super::MSK_BK_FX,1.0,1.0);
+        task.append_vars(1)?;
+        task.put_var_name(0,"1.0")?;
+        task.put_task_name(name)?;
+        task.put_var_bound(0,super::MSK_BK_FX,1.0,1.0)?;
 
-        task.put_task_name(name);
+        task.put_task_name(name)?;
         if name.len() > 0 {
             let mut filename = name.to_string(); filename.push_str(".log");
 
-            task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0);
+            task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0)?;
         }
 
         //task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg));
 
-        return Model{ env         : env,
-                      task        : task,
-                      slack       : slack,
-                      bkx         : vec![BOUNDKEY_FX],
-                      numpsdatoms : numpsdatoms,
-                      solbound    : SolutionStatusBound::Optimal,
-                      expectsol   : SolutionType::Default,
+        return Ok(Model{ env         : env,
+                         task        : task,
+                         slack       : slack,
+                         bkx         : vec![BOUNDKEY_FX],
+                         numpsdatoms : numpsdatoms,
+                         solbound    : SolutionStatusBound::Optimal,
+                         expectsol   : SolutionType::Default,
 
-                      itr : Solution::new(),
-                      bas : Solution::new(),
-                      itg : Solution::new() };
+                         itr : Solution::new(),
+                         bas : Solution::new(),
+                         itg : Solution::new() });
     }
 
-    pub fn new() -> Model {
-        return Model::with_name("");
+    pub fn new() -> Result<Model,String> {
+        Model::with_name("")
     }
 
 
-    fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Vec<i32> {
-        let numvar = self.task.get_num_var();
+    fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Result<Vec<i32>,String> {
+        let numvar = self.task.get_num_var()?;
         let n = b.len() as i32;
-        self.task.append_vars(n as i32);
+        self.task.append_vars(n as i32)?;
 
         let bk : i32 =
             match boundkey {
@@ -631,17 +637,17 @@ impl Model {
         let mut nm = String::with_capacity(50);
         for i in 0..n as usize {
             ng.next(& mut nm);
-            self.task.put_var_name(idxs[i],nm.as_str())
+            self.task.put_var_name(idxs[i],nm.as_str())?;
         }
 
         let bks : Vec<i32> = vec![bk; n as usize];
-        self.task.put_var_bound_slice(numvar,numvar+n,bks.as_slice(),b,b);
+        self.task.put_var_bound_slice(numvar,numvar+n,bks.as_slice(),b,b)?;
         self.bkx.resize(last as usize, boundkey);
-        return idxs;
+        return Ok(idxs);
     }
 
-    fn alloc_cone(&self, ct : ConeType, cpar : f64, idxs : &[i32]) -> i32 {
-        let numcone = self.task.get_num_cone();
+    fn alloc_cone(&self, ct : ConeType, cpar : f64, idxs : &[i32]) -> Result<i32,String> {
+        let numcone = self.task.get_num_cone()?;
         let nct = match ct {
             SecondOrder => super::MSK_CT_QUAD,
             RotatedSecond_Order => super::MSK_CT_RQUAD,
@@ -651,8 +657,8 @@ impl Model {
             DualExponential => super::MSK_CT_DEXP,
             _ => super::MSK_CT_ZERO,
         };
-        self.task.append_cone(nct,cpar,idxs);
-        return numcone;
+        self.task.append_cone(nct,cpar,idxs)?;
+        return Ok(numcone);
     }
 
     fn alloc_cons(&mut self,
@@ -661,13 +667,13 @@ impl Model {
                   b    : &[f64],
                   ptr  : &[usize],
                   subj : &[i64],
-                  cof  : &[f64] ) -> Vec<i32> {
+                  cof  : &[f64] ) -> Result<Vec<i32>,String> {
         assert_eq!(b.len(), ptr.len()-1);
 
-        let numcon  = self.task.get_num_con();
+        let numcon  = self.task.get_num_con()?;
         let numrows = b.len();
         let n       = b.len() as i32;
-        self.task.append_cons(n as i32);
+        self.task.append_cons(n as i32)?;
 
         self.slack.resize(numcon as usize+numrows,0);
 
@@ -679,11 +685,11 @@ impl Model {
         let mut nm = String::with_capacity(50);
         for i in 0..n as usize {
             ng.next(& mut nm);
-            self.task.put_con_name(idxs[i],nm.as_str())
+            self.task.put_con_name(idxs[i],nm.as_str())?;
         }
 
         let bks : Vec<i32> = vec![bk; numrows];
-        self.task.put_con_bound_slice(first,last,bks.as_slice(),b,b);
+        self.task.put_con_bound_slice(first,last,bks.as_slice(),b,b)?;
 
 
         let mut sl_ptr  : Vec<i64> = ptr.iter().map(|v| *v as i64).collect();
@@ -703,9 +709,9 @@ impl Model {
                                  ptrb,
                                  ptre,
                                  sl_subj.as_slice(),
-                                 cof);
+                                 cof)?;
 
-        return idxs;
+        return Ok(idxs);
     }
 
     fn alloc_cone_cons(& mut self,
@@ -715,7 +721,7 @@ impl Model {
                        b    : &[f64],
                        ptr  : &[usize],
                        subj : &[i64],
-                       cof  : &[f64] ) -> Vec<i32> {
+                       cof  : &[f64] ) -> Result<Vec<i32>,String> {
         let nrows = ptr.len()-1;
         let nnz   = subj.len();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
@@ -730,10 +736,10 @@ impl Model {
         //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
-        let slacks = self.alloc_vars(no_namer(),BOUNDKEY_FR,zs.as_slice());
+        let slacks = self.alloc_vars(no_namer(),BOUNDKEY_FR,zs.as_slice())?;
         let mut slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
         self.slack.extend_from_slice(slacksi64.as_slice());
-        self.alloc_cone(ct,cpar,slacks.as_slice());
+        self.alloc_cone(ct,cpar,slacks.as_slice())?;
         let mut sl_ptr  : Vec<i64> = Vec::with_capacity(nrows+1);
         let mut sl_subj : Vec<i32> = Vec::with_capacity(nnz+nrows);
         let mut sl_cof  : Vec<f64> = Vec::with_capacity(nnz+nrows);
@@ -756,70 +762,68 @@ impl Model {
         let (ptrb,_) = sl_ptr.split_at(nrows);
         let (_,ptre) = sl_ptr.split_at(1);
 
-        let first = self.task.get_num_con();
+        let first = self.task.get_num_con()?;
         let last = first+(nrows as i32);
         let idxs : Vec<i32> = (first..last).collect();
 
-        self.task.append_cons(nrows as i32);
+        self.task.append_cons(nrows as i32)?;
 
         println!("---------- put_a_row_list");
         println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
         println!("ptre    ({:?}) = {:?}",ptre.len(),ptre);
         println!("sl_subj ({:?}) = {:?}",sl_subj.len(),sl_subj);
         println!("sl_cof  ({:?}) = {:?}",sl_cof.len(),sl_cof);
-        println!("numvar = {:?}",self.task.get_num_var());
+        println!("numvar = {:?}",self.task.get_num_var()?);
         self.task.put_a_row_list(idxs.as_slice(),
                                  ptrb,
                                  ptre,
                                  sl_subj.as_slice(),
-                                 sl_cof.as_slice());
-        return idxs;
+                                 sl_cof.as_slice())?;
+        return Ok(idxs);
     }
 
-    pub fn variable<Dom:Domain>(& mut self,name : &str,dom : &Dom) -> Variable {
-        let idxs = dom.alloc_var_block(self,name);
-        return idxs;
+    pub fn variable<Dom:Domain>(& mut self,name : &str,dom : &Dom) -> Result<Variable,String> {
+        return dom.alloc_var_block(self,name)
     }
 
-    pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : & impl Expr, dom : &Dom) -> Constraint {
+    pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : & impl Expr, dom : &Dom) -> Result<Constraint,String> {
         let (ptr,subj,cof) = expr.eval();
-        let idxs = dom.alloc_con_block(self,name,
-                                       ptr.as_slice(),
-                                       subj.as_slice(),
-                                       cof.as_slice());
-        return idxs;
+        return dom.alloc_con_block(self,name,
+                                   ptr.as_slice(),
+                                   subj.as_slice(),
+                                   cof.as_slice());
     }
 
     pub fn objective(& mut self,
                      name  : &str,
                      sense : ObjectiveSense,
-                     expr  : & impl Expr) {
+                     expr  : & impl Expr) -> Result<(),String> {
         let (ptr,subj,cof) = expr.eval();
-        //assert expr.size() <= 1
-        let numvar = self.task.get_num_var();
+        let numvar = self.task.get_num_var()?;
         let mut c : Vec<f64> = Vec::with_capacity(numvar as usize); c.resize(numvar as usize,0.0);
         subj.iter().zip(cof.iter()).for_each(|(j,v)| c[*j as usize] = *v);
         let subj : Vec<i32> = (0..numvar).collect();
-        self.task.put_c_list(subj.as_slice(), c.as_slice());
+        self.task.put_c_list(subj.as_slice(), c.as_slice())?;
 
         match sense {
-            Min => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE),
-            Max => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE),
+            Min => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE)?,
+            Max => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE)?,
         }
+        Ok(())
     }
 
-    pub fn solve(& mut self) {
+    pub fn solve(& mut self) -> Result<(),String> {
         self.task.optimize();
 
-        let numvar = self.task.get_num_var() as usize;
-        let numcon = self.task.get_num_con() as usize;
+        let numvar = self.task.get_num_var()? as usize;
+        let numcon = self.task.get_num_con()? as usize;
 
         self.itr.resize(numcon,numvar);
         self.bas.resize(numcon,numvar);
         self.itg.resize(numcon,numvar);
 
-        if self.task.solution_def(super::MSK_SOL_ITR) {
-            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITR);
+        if self.task.solution_def(super::MSK_SOL_ITR)? {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITR)?;
             let mut slx : Vec<f64> = vec![0.0; numvar];
             let mut sux : Vec<f64> = vec![0.0; numvar];
             let mut snx : Vec<f64> = vec![0.0; numvar];
@@ -828,15 +832,15 @@ impl Model {
             let mut suc : Vec<f64> = vec![0.0; numcon];
             let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
 
-            self.task.get_xx (super::MSK_SOL_ITR, self.itr.xx.as_mut_slice());
-            self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice());
-            self.task.get_sux(super::MSK_SOL_ITR, sux.as_mut_slice());
-            self.task.get_snx(super::MSK_SOL_ITR, snx.as_mut_slice());
-            self.task.get_skx(super::MSK_SOL_ITR, self.itr.skx.as_mut_slice());
-            self.task.get_xc (super::MSK_SOL_ITR, self.itr.xc.as_mut_slice());
-            self.task.get_slc(super::MSK_SOL_ITR, slc.as_mut_slice());
-            self.task.get_suc(super::MSK_SOL_ITR, suc.as_mut_slice());
-            self.task.get_skc(super::MSK_SOL_ITR, self.itr.skc.as_mut_slice());
+            self.task.get_xx (super::MSK_SOL_ITR, self.itr.xx.as_mut_slice())?;
+            self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice())?;
+            self.task.get_sux(super::MSK_SOL_ITR, sux.as_mut_slice())?;
+            self.task.get_snx(super::MSK_SOL_ITR, snx.as_mut_slice())?;
+            self.task.get_skx(super::MSK_SOL_ITR, self.itr.skx.as_mut_slice())?;
+            self.task.get_xc (super::MSK_SOL_ITR, self.itr.xc.as_mut_slice())?;
+            self.task.get_slc(super::MSK_SOL_ITR, slc.as_mut_slice())?;
+            self.task.get_suc(super::MSK_SOL_ITR, suc.as_mut_slice())?;
+            self.task.get_skc(super::MSK_SOL_ITR, self.itr.skc.as_mut_slice())?;
 
             let (psta,dsta) = convert_solution_status(solsta);
             self.itr.psta = psta;
@@ -858,8 +862,8 @@ impl Model {
             self.itr.undefine();
         }
 
-        if self.task.solution_def(super::MSK_SOL_BAS) {
-            let solsta = self.task.get_sol_sta(super::MSK_SOL_BAS);
+        if self.task.solution_def(super::MSK_SOL_BAS)? {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_BAS)?;
             let mut slx : Vec<f64> = vec![0.0; numvar];
             let mut sux : Vec<f64> = vec![0.0; numvar];
             let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
@@ -867,14 +871,14 @@ impl Model {
             let mut suc : Vec<f64> = vec![0.0; numcon];
             let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
 
-            self.task.get_xx (super::MSK_SOL_BAS, self.bas.xx.as_mut_slice());
-            self.task.get_slx(super::MSK_SOL_BAS, slx.as_mut_slice());
-            self.task.get_sux(super::MSK_SOL_BAS, sux.as_mut_slice());
-            self.task.get_skx(super::MSK_SOL_BAS, self.bas.skx.as_mut_slice());
-            self.task.get_xc (super::MSK_SOL_BAS, self.bas.xc.as_mut_slice());
-            self.task.get_slc(super::MSK_SOL_BAS, slc.as_mut_slice());
-            self.task.get_suc(super::MSK_SOL_BAS, suc.as_mut_slice());
-            self.task.get_skc(super::MSK_SOL_BAS, self.bas.skc.as_mut_slice());
+            self.task.get_xx (super::MSK_SOL_BAS, self.bas.xx.as_mut_slice())?;
+            self.task.get_slx(super::MSK_SOL_BAS, slx.as_mut_slice())?;
+            self.task.get_sux(super::MSK_SOL_BAS, sux.as_mut_slice())?;
+            self.task.get_skx(super::MSK_SOL_BAS, self.bas.skx.as_mut_slice())?;
+            self.task.get_xc (super::MSK_SOL_BAS, self.bas.xc.as_mut_slice())?;
+            self.task.get_slc(super::MSK_SOL_BAS, slc.as_mut_slice())?;
+            self.task.get_suc(super::MSK_SOL_BAS, suc.as_mut_slice())?;
+            self.task.get_skc(super::MSK_SOL_BAS, self.bas.skc.as_mut_slice())?;
 
             for i in 0..numvar {
                 self.bas.sx[i] = slx[i] - sux[i];
@@ -888,16 +892,16 @@ impl Model {
             self.bas.undefine();
         }
 
-        if self.task.solution_def(super::MSK_SOL_ITG) {
-            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITG);
+        if self.task.solution_def(super::MSK_SOL_ITG)? {
+            let solsta = self.task.get_sol_sta(super::MSK_SOL_ITG)?;
             let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
             let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
             let mut xc  : Vec<f64> = vec![0.0; numcon];
 
-            self.task.get_xx (super::MSK_SOL_ITG, self.itg.xx.as_mut_slice());
-            self.task.get_skx(super::MSK_SOL_ITG, self.itg.skx.as_mut_slice());
-            self.task.get_xc (super::MSK_SOL_ITG, xc.as_mut_slice());
-            self.task.get_skc(super::MSK_SOL_ITG, self.itg.skc.as_mut_slice());
+            self.task.get_xx (super::MSK_SOL_ITG, self.itg.xx.as_mut_slice())?;
+            self.task.get_skx(super::MSK_SOL_ITG, self.itg.skx.as_mut_slice())?;
+            self.task.get_xc (super::MSK_SOL_ITG, xc.as_mut_slice())?;
+            self.task.get_skc(super::MSK_SOL_ITG, self.itg.skc.as_mut_slice())?;
 
             for i in 0..numcon {
                 if self.slack[i] == 0 {
@@ -910,8 +914,9 @@ impl Model {
         else {
             self.itg.undefine();
         }
+        Ok(())
     }
-    
+
     fn fetch_expected_solution<'a>(& 'a self) -> Option<&'a Solution> {
         return
             match &self.expectsol {
@@ -933,7 +938,7 @@ impl Model {
                 Some(ref sol) => (sol.psta,sol.dsta)
             }
     }
-    
+
     fn check_solution_bound(&self,solsta : SolutionStatus) -> bool {
         return
             match &self.solbound {
@@ -952,8 +957,8 @@ impl Model {
     pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
     pub fn expect_solution(&mut self, sol : SolutionType) { self.expectsol = sol; }
 
-    pub fn write_task(& self, filename  : &str) {
-        self.task.write_data(filename);
+    pub fn write_task(& self, filename  : &str) -> Result<(),String> {
+        self.task.write_data(filename)
     }
 }
 /**********************************************************/

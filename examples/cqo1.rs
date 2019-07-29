@@ -1,4 +1,4 @@
-/* 
+/*
    Copyright: MOSEK ApS
 
    Purpose:   To demonstrate how to solve a small conic quadratic
@@ -10,7 +10,7 @@ extern crate mosek;
 const INF : f64 = 0.0;
 
 
-fn main()
+fn main() -> Result<(),String>
 {
     let numvar  : usize = 6;
     let numcon  : usize = 1;
@@ -42,36 +42,42 @@ fn main()
     let coneptre = vec![3,6];
 
     /* Create the mosek environment. */
-    let env = mosek::Env::new();
+    let env = match mosek::Env::new() {
+        Some(e) => e,
+        None => return Err("Failed to create env".to_string()),
+        };
     /* Create the optimization task. */
-    let mut task = env.task();
+    let mut task = match env.task() {
+        Some(e) => e,
+        None => return Err("Failed to create task".to_string()),
+        };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
-    task.append_cons(numcon as i32);
+    task.append_cons(numcon as i32)?;
 
     /* Append 'numvar' variables.
      * The variables will initially be fixed at zero (x=0). */
-    task.append_vars(numvar as i32);
+    task.append_vars(numvar as i32)?;
 
     for j in 0..numvar
     {
         /* Set the linear term c_j in the objective.*/
-        task.put_c_j(j as i32,c[j]);
+        task.put_c_j(j as i32,c[j])?;
 
         /* Set the bounds on variable j.
          * blx[j] <= x_j <= bux[j] */
         task.put_var_bound( j as i32,    /* Index of variable.*/
                             bkx[j],      /* Bound key.*/
                             blx[j],      /* Numerical value of lower bound.*/
-                            bux[j]);     /* Numerical value of upper bound.*/
+                            bux[j])?;     /* Numerical value of upper bound.*/
 
         /* Input column j of A */
         task.put_a_col( j as i32,                      /* Variable (column) index.*/
                         &asub[aptrb[j]..aptre[j]],     /* Pointer to row indexes of column j.*/
-                        &aval[aptrb[j]..aptre[j]]);    /* Pointer to Values of column j.*/
+                        &aval[aptrb[j]..aptre[j]])?;    /* Pointer to Values of column j.*/
 
     }
 
@@ -82,7 +88,7 @@ fn main()
         task.put_con_bound( i as i32,    /* Index of constraint.*/
                             bkc[i],      /* Bound key.*/
                             blc[i],      /* Numerical value of lower bound.*/
-                            buc[i]);     /* Numerical value of upper bound.*/
+                            buc[i])?;     /* Numerical value of upper bound.*/
     }
 
     /* Append the first cone. */
@@ -90,19 +96,19 @@ fn main()
     {
         task.append_cone(conetp[i],
                          0.0, /* For future use only, can be set to 0.0 */
-                         & conesub[coneptrb[i]..coneptre[i]]);
+                         & conesub[coneptrb[i]..coneptre[i]])?;
     }
 
     /* Run optimizer */
-    let trmcode = task.optimize();
+    let trmcode = task.optimize()?;
 
     /* Print a summary containing information
      * about the solution for debugging purposes*/
-    task.solution_summary (mosek::MSK_STREAM_MSG);
+    task.solution_summary (mosek::MSK_STREAM_MSG)?;
 
 
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR);
+    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
 
     match solsta
     {
@@ -110,7 +116,7 @@ fn main()
         {
             let mut xx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
             task.get_xx(mosek::MSK_SOL_ITR,    /* Request the basic solution. */
-                        & mut xx[..]);
+                        & mut xx[..])?;
             println!("Optimal primal solution");
             for j in 0..numvar as usize
             {
@@ -137,4 +143,5 @@ fn main()
             println!("Other solution status.");
         }
     }
+    Ok(())
 } /* main */

@@ -21,7 +21,7 @@ const NUMANZ    : usize = 3;   /* Number of non-zeros in A            */
 const NUMBARVAR : usize = 1;   /* Number of semidefinite variables    */
 
 
-fn main()
+fn main() -> Result<(),String>
 {
     let DIMBARVAR = vec![3];         /* Dimension of semidefinite cone */
     let LENBARVAR = vec![3*(3+1)/2]; /* Number of scalar SD variables  */
@@ -48,89 +48,95 @@ fn main()
 
 
     /* Create the mosek environment. */
-    let env = mosek::Env::new();
+    let env = match mosek::Env::new() {
+        Some(e) => e,
+        None => return Err("Failed to create env".to_string()),
+        };
     /* Create the optimization task. */
-    let mut task = env.task();
+    let mut task = match env.task() {
+        Some(e) => e,
+        None => return Err("Failed to create task".to_string()),
+        };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
 
     /* Append 'NUMCON' empty constraints.
      * The constraints will initially have no bounds. */
-    task.append_cons(NUMCON as i32);
+    task.append_cons(NUMCON as i32)?;
 
     /* Append 'NUMVAR' variables.
      * The variables will initially be fixed at zero (x=0). */
-    task.append_vars(NUMVAR as i32);
+    task.append_vars(NUMVAR as i32)?;
 
     /* Append 'NUMBARVAR' semidefinite variables. */
-    task.append_barvars(&DIMBARVAR[..]);
+    task.append_barvars(&DIMBARVAR[..])?;
 
     /* Optionally add a constant term to the objective. */
-    task.put_cfix(0.0);
+    task.put_cfix(0.0)?;
 
     /* Set the linear term c_j in the objective.*/
-    task.put_c_j(0,1.0);
+    task.put_c_j(0,1.0)?;
 
     for j in 0..NUMVAR
     {
         task.put_var_bound(j as i32,
                            mosek::MSK_BK_FR,
                            -INF,
-                           INF);
+                           INF)?;
     }
 
     /* Set the linear term barc_j in the objective.*/
     let c_symmat_idx = task.append_sparse_sym_mat(DIMBARVAR[0],
                                                   & barc_i,
                                                   & barc_j,
-                                                  & barc_v);
+                                                  & barc_v)?;
 
-    task.put_barc_j(0, &[c_symmat_idx][..], &[falpha][..]);
+    task.put_barc_j(0, &[c_symmat_idx][..], &[falpha][..])?;
 
     for i in 0..NUMCON
     {
         /* Input A row by row */
         task.put_a_row(i as i32,
                        & asub[aptrb[i]..aptre[i]],
-                       & aval[aptrb[i]..aptre[i]]);
+                       & aval[aptrb[i]..aptre[i]])?;
 
         /* Set the bounds on constraints.
          * for i=1, ...,NUMCON : blc[i] <= constraint i <= buc[i] */
         task.put_con_bound(i as i32,    /* Index of constraint.*/
                            bkc[i],      /* Bound key.*/
                            blc[i],      /* Numerical value of lower bound.*/
-                           buc[i]);     /* Numerical value of upper bound.*/
+                           buc[i])?;     /* Numerical value of upper bound.*/
     }
 
     /* Append the conic quadratic cone */
     task.append_cone(mosek::MSK_CT_QUAD,
                      0.0,
-                     & conesub);
+                     & conesub)?;
 
     /* Add the first row of barA */
     let a_symmat_idx1 =
         task.append_sparse_sym_mat(DIMBARVAR[0],
                                    & bara_i[..3],
                                    & bara_j[..3],
-                                   & bara_v[..3]);
+                                   & bara_v[..3])?;
 
-    task.put_bara_ij(0, 0, &[a_symmat_idx1][..], &[falpha][..]);
+    task.put_bara_ij(0, 0, &[a_symmat_idx1][..], &[falpha][..])?;
 
     /* Add the second row of barA */
     let a_symmat_idx2 =
         task.append_sparse_sym_mat(DIMBARVAR[0],
                                    & bara_i[3..9],
                                    & bara_j[3..9],
-                                   & bara_v[3..9]);
-    task.put_bara_ij(1, 0, &[a_symmat_idx2][..], &[falpha][..]);
+                                   & bara_v[3..9])?;
+    task.put_bara_ij(1, 0, &[a_symmat_idx2][..], &[falpha][..])?;
 
-    let _trmcode = task.optimize();
+    let _trmcode = task.optimize()?;
 
     /* Print a summary containing information
      * about the solution for debugging purposes*/
-    task.solution_summary (mosek::MSK_STREAM_MSG);
+    task.solution_summary (mosek::MSK_STREAM_MSG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR);
+    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
 
     match solsta
     {
@@ -139,10 +145,10 @@ fn main()
             let mut xx = vec![0.0,0.0,0.0];
             let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
             task.get_xx(mosek::MSK_SOL_ITR,    /* Request the basic solution. */
-                        & mut xx[..]);
+                        & mut xx[..])?;
             task.get_barx_j(mosek::MSK_SOL_ITR,    /* Request the interior solution. */
                             0,
-                            & mut barx[..]);
+                            & mut barx[..])?;
             println!("Optimal primal solution");
             for j in 0..NUMVAR as usize
             {
@@ -159,7 +165,7 @@ fn main()
           }
 
         mosek::MSK_SOL_STA_DUAL_INFEAS_CER       |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       => 
+        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }
@@ -177,4 +183,5 @@ fn main()
             println!("Other solution status.");
         }
     }
+    Ok(())
 } /* main */

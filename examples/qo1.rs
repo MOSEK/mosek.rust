@@ -13,8 +13,7 @@ const INF : f64 = 0.0;
 const NUMCON : usize = 1;   /* Number of constraints.             */
 const NUMVAR : usize = 3;   /* Number of variables.               */
 
-fn main()
-{
+fn main() -> Result<(),String> {
     let c = vec![ 0.0,-1.0,0.0 ];
 
     let bkc = vec![ mosek::MSK_BK_LO ];
@@ -42,38 +41,44 @@ fn main()
 
 
     /* Create the mosek environment. */
-    let env = mosek::Env::new();
+    let env = match mosek::Env::new() {
+        Some(e) => e,
+        None => return Err("Failed to create env".to_string()),
+        };
     /* Create the optimization task. */
-    let mut task = env.task();
+    let mut task = match env.task() {
+        Some(e) => e,
+        None => return Err("Failed to create task".to_string()),
+        };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
 
     //r = MSK_linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
-    task.append_cons(NUMCON as i32);
+    task.append_cons(NUMCON as i32)?;
 
     /* Append 'NUMVAR' variables.
      * The variables will initially be fixed at zero (x=0). */
-    task.append_vars(NUMVAR as i32);
+    task.append_vars(NUMVAR as i32)?;
 
     /* Optionally add a constant term to the objective. */
-    task.put_cfix(0.0);
+    task.put_cfix(0.0)?;
 
-    for j in 0..NUMVAR 
+    for j in 0..NUMVAR
     {
         /* Set the linear term c_j in the objective.*/
-        task.put_c_j(j as i32,c[j]);
+        task.put_c_j(j as i32,c[j])?;
 
         /* Set the bounds on variable j.
          * blx[j] <= x_j <= bux[j] */
         task.put_var_bound(j as i32, /* Index of variable.*/
                            bkx[j],   /* Bound key.*/
                            blx[j],   /* Numerical value of lower bound.*/
-                           bux[j]);  /* Numerical value of upper bound.*/
+                           bux[j])?;  /* Numerical value of upper bound.*/
         /* Input column j of A */
         task.put_a_col(j as i32,                  /* Variable (column) index.*/
                        &asub[aptrb[j]..aptre[j]],  /* Pointer to row indexes of column j.*/
-                       &aval[aptrb[j]..aptre[j]]); /* Pointer to Values of column j.*/
+                       &aval[aptrb[j]..aptre[j]])?; /* Pointer to Values of column j.*/
     }
     /* Set the bounds on constraints.
      * for i=1, ...,NUMCON : blc[i] <= constraint i <= buc[i] */
@@ -82,7 +87,7 @@ fn main()
         task.put_con_bound(i as i32,    /* Index of constraint.*/
                            bkc[i],      /* Bound key.*/
                            blc[i],      /* Numerical value of lower bound.*/
-                           buc[i]);     /* Numerical value of upper bound.*/
+                           buc[i])?;     /* Numerical value of upper bound.*/
 
         /*
          * The lower triangular part of the Q
@@ -91,18 +96,18 @@ fn main()
 
         /* Input the Q for the objective. */
 
-        task.put_q_obj(&qsubi,&qsubj,&qval);
+        task.put_q_obj(&qsubi,&qsubj,&qval)?;
     }
 
 
-    let _trmcode = task.optimize();
+    let _trmcode = task.optimize()?;
 
     /* Run optimizer */
     /* Print a summary containing information
     about the solution for debugging purposes*/
-    task.solution_summary (mosek::MSK_STREAM_MSG);
+    task.solution_summary(mosek::MSK_STREAM_MSG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR);
+    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
 
     match solsta
     {
@@ -110,7 +115,7 @@ fn main()
         {
             let mut xx = vec![0.0, 0.0, 0.0];
             task.get_xx(mosek::MSK_SOL_ITR,    /* Request the interior solution. */
-                        & mut xx[..]);
+                        & mut xx[..])?;
 
             println!("Optimal primal solution");
             for j in 0..NUMVAR
@@ -134,4 +139,5 @@ fn main()
             println!("Other solution status.");
         }
     }
+    return Ok(());
 } /* main */

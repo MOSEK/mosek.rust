@@ -2,7 +2,7 @@
   Copyright: MOSEK ApS
 
   Purpose:   To demonstrate how to solve a small linear
-             optimization problem using the MOSEK C API, 
+             optimization problem using the MOSEK C API,
              and handle the solver result and the problem
              solution.
 */
@@ -41,41 +41,47 @@ fn main() -> Result<(),String>
     let bux = vec![ INF,      10.0,       INF,       INF       ];
 
     /* Create the mosek environment. */
-    let env = mosek::Env::new();
+    let env = match mosek::Env::new() {
+        Some(e) => e,
+        None => return Err("Failed to create env".to_string()),
+        };
     /* Create the optimization task. */
-    let mut task = env.task();
+    let mut task = match env.task() {
+        Some(e) => e,
+        None => return Err("Failed to create task".to_string()),
+        };
 
     //task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func);
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
-    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true });
+    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
     /* Directs the log task stream to the 'printstr' function. */
     //task.linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
-    task.append_cons(numcon as i32);
+    task.append_cons(numcon as i32)?;
 
     /* Append 'numvar' variables.
      * The variables will initially be fixed at zero (x=0). */
-    task.append_vars(numvar as i32);
+    task.append_vars(numvar as i32)?;
 
     for j in 0..numvar
     {
         /* Set the linear term c_j in the objective.*/
-        task.put_c_j(j as i32,c[j]);
+        task.put_c_j(j as i32,c[j])?;
 
         /* Set the bounds on variable j.
          * blx[j] <= x_j <= bux[j] */
         task.put_var_bound(j as i32,    /* Index of variable.*/
                            bkx[j],      /* Bound key.*/
                            blx[j],      /* Numerical value of lower bound.*/
-                           bux[j]);     /* Numerical value of upper bound.*/
+                           bux[j])?;     /* Numerical value of upper bound.*/
 
         /* Input column j of A */
         task.put_a_col(j as i32,          /* Variable (column) index.*/
                        & asub[aptrb[j]..aptre[j]],     /* Pointer to row indexes of column j.*/
-                       & aval[aptrb[j]..aptre[j]]);    /* Pointer to Values of column j.*/
+                       & aval[aptrb[j]..aptre[j]])?;    /* Pointer to Values of column j.*/
     }
 
     /* Set the bounds on constraints.
@@ -85,21 +91,21 @@ fn main() -> Result<(),String>
       task.put_con_bound(i as i32,    /* Index of constraint.*/
                          bkc[i],      /* Bound key.*/
                          blc[i],      /* Numerical value of lower bound.*/
-                         buc[i]);     /* Numerical value of upper bound.*/
+                         buc[i])?;     /* Numerical value of upper bound.*/
     }
 
     /* Maximize objective function. */
     task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE);
 
       /* Run optimizer */
-    let _trmcode = task.optimize();
+    let _trmcode = task.optimize()?;
 
     /* Print a summary containing information
      * about the solution for debugging purposes. */
 
-    task.solution_summary(mosek::MSK_STREAM_LOG);
+    task.solution_summary(mosek::MSK_STREAM_LOG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_BAS);
+    let solsta = task.get_sol_sta(mosek::MSK_SOL_BAS)?;
 
     match solsta
     {
@@ -107,7 +113,7 @@ fn main() -> Result<(),String>
         {
             let mut xx = vec![0.0,0.0,0.0,0.0];
             task.get_xx(mosek::MSK_SOL_BAS,    /* Request the basic solution. */
-                        & mut xx[..]);
+                        & mut xx[..])?;
             println!("Optimal primal solution");
             for j in 0..numvar as usize
             {
@@ -116,7 +122,7 @@ fn main() -> Result<(),String>
           }
 
         mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER => 
+        mosek::MSK_SOL_STA_PRIM_INFEAS_CER =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }

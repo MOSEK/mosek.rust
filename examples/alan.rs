@@ -23,7 +23,7 @@ use mosek::model::*;
 //  We use the form Q = U^T * U, where U is a Cholesky factor of Q.
 //
 
-fn main() {
+fn main() -> Result<(),String> {
     /////////////////////////////////////////////////////////////////////
     // Problem data.
     // Security names
@@ -41,34 +41,36 @@ fn main() {
                              0.0       ,  1.93649167,  0.90369611, 0.0,
                              0.0       ,  0.0       ,  2.98886824, 0.0,
                              0.0       ,  0.0       ,  0.0       , 0.0 ]);
-    let mut M = Model::with_name("alan");
+    let mut M = Model::with_name("alan")?;
 
-    let x = M.variable("x", &greater_than(vec![0.0; numsec]));
-    let t = M.variable("t", &greater_than_scalar(0.0));
-    M.objective("minvar", ObjectiveSense::Min, &t);
+    let x = M.variable("x", &greater_than(vec![0.0; numsec]))?;
+    let t = M.variable("t", &greater_than_scalar(0.0))?;
+    M.objective("minvar", ObjectiveSense::Min, &t)?;
 
     // sum securities to 1.0
     M.constraint("wealth",
                  &expr_sum(&x),
-                 &equal_to_scalar(1.0));
+                 &equal_to_scalar(1.0))?;
     // define target expected return
     M.constraint("dmean",
                  &expr_dot(mean.as_slice(), &x),
-                 &greater_than_scalar(target));
+                 &greater_than_scalar(target))?;
     M.constraint("t > ||Ux||_2",
                  &expr_stack_3(&0.5, &t, &expr_mul(&U, &x)),
-                 &in_rotated_second_order_cone(4));
+                 &in_rotated_second_order_cone(4))?;
 
     //M.setLogHandler(new java.io.PrintWriter(System.out));
 
     println!("Solve...");
-    M.solve();
+    M.solve()?;
 
-    M.write_task("alan.ptf");
+    M.write_task("alan.ptf")?;
     println!("... Solved.");
 
     //let mut solx = vec![0.0; numsec];
     //M.level(x,solx.as_mut_vec());
 
     //println!("Solution = {:?}", solx);
+
+    Ok(())
 }
