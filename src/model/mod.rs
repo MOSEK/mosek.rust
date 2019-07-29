@@ -607,7 +607,7 @@ impl Model {
             task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0)?;
         }
 
-        //task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg));
+        task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg));
 
         return Ok(Model{ env         : env,
                          task        : task,
