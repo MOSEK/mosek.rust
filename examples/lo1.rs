@@ -11,7 +11,7 @@ extern crate mosek;
 
 const INF : f64 = 0.0;
 
-fn main()
+fn main() -> Result<(),String>
 {
     let numvar = 4;
     let numcon = 3;
@@ -47,7 +47,7 @@ fn main()
 
     //task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func);
     task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg));
-    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true } );
+    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true });
 
     /* Directs the log task stream to the 'printstr' function. */
     //task.linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
@@ -134,4 +134,5 @@ fn main()
             println!("Other solution status.");
         }
     }
+    return Result::Ok(());
 }

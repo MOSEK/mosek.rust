@@ -35,7 +35,7 @@ pub enum SolutionStatusBound {
     Any,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq,Clone,Copy)]
 pub enum SolutionStatus {
     Optimal,
     Feasible,
@@ -911,53 +911,42 @@ impl Model {
             self.itg.undefine();
         }
     }
-
+    
+    fn fetch_expected_solution<'a>(& 'a self) -> Option<&'a Solution> {
+        return
+            match &self.expectsol {
+                Default => {
+                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { Some(&self.itg) }
+                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { Some(&self.bas) }
+                    else if self.itr.psta != SolutionStatus::Undefined || self.itr.dsta != SolutionStatus::Undefined { Some(&self.itr) }
+                    else { Option::None }  },
+                Itr => if self.itr.psta != SolutionStatus::Undefined || self.itr.dsta != SolutionStatus::Undefined { Some(&self.itr) } else { Option::None } ,
+                Bas => if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { Some(&self.bas) } else { Option::None } ,
+                Itg => if self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { Some(&self.itg) } else { Option::None } ,
+            };
+    }
 
     pub fn solution_status(&self) -> (SolutionStatus,SolutionStatus) {
         return
-            match self.expectsol {
-                Default =>
-                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { (self.itg.psta,self.itg.dsta) }
-                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { (self.bas.psta,self.bas.dsta) }
-                    else  { return (self.itr.psta,self.itr.dsta) },
-                Itr => { (self.itr.psta,self.itr.dsta) },
-                Bas => { (self.bas.psta,self.bas.dsta) },
-                Itg => { (self.itg.psta,self.itg.dsta) },
+            match self.fetch_expected_solution() {
+                None      => (SolutionStatus::Undefined,SolutionStatus::Undefined),
+                Some(ref sol) => (sol.psta,sol.dsta)
             }
     }
-
-    fn validate_expect_solution(&self) -> bool {
-        let sol =
-            match self.expectsol {
-                Default =>
-                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { &self.itg }
-                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { &self.bas }
-                    else  { &self.itr },
-                Itr => { &self.itr },
-                Bas => { &self.bas },
-                Itg => { &self.itg },
-            };
+    
+    fn check_solution_bound(&self,solsta : SolutionStatus) -> bool {
         return
-            match self.solbound {
-                Optimal             => sol.psta == SolutionStatus::Optimal,
-                Feasible            => sol.psta == SolutionStatus::Optimal || sol.psta == SolutionStatus::Feasible,
-                InfeasCertificate   => sol.psta == SolutionStatus::InfeasCertificate,
-                IllposedCertificate => sol.psta == SolutionStatus::IllPosedCertificate,
-                Any                 => sol.psta != SolutionStatus::Undefined,
+            match &self.solbound {
+                Optimal             => solsta == SolutionStatus::Optimal,
+                Feasible            => solsta == SolutionStatus::Optimal || solsta == SolutionStatus::Feasible,
+                InfeasCertificate   => solsta == SolutionStatus::InfeasCertificate,
+                IllposedCertificate => solsta == SolutionStatus::IllPosedCertificate,
+                Any                 => solsta != SolutionStatus::Undefined,
             };
     }
 
     pub fn variable_level(&self,x : &Variable, res : & mut [f64]) -> Option<String> {
-        return
-            match self.expectsol {
-                Default =>
-                    if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { )
-                    else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { (self.bas.psta,self.bas.dsta) }
-                    else  { (self.itr.psta,self.itr.dsta) },
-                Itr => { (self.itr.psta,self.itr.dsta) },
-                Bas => { (self.bas.psta,self.bas.dsta) },
-                Itg => { (self.itg.psta,self.itg.dsta) },
-            }
+        return Option::None;
     }
 
     pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
