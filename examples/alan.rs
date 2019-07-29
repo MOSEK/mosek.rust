@@ -67,10 +67,10 @@ fn main() -> Result<(),String> {
     M.write_task("alan.ptf")?;
     println!("... Solved.");
 
-    //let mut solx = vec![0.0; numsec];
-    //M.level(x,solx.as_mut_vec());
+    let mut solx = vec![0.0; numsec];
+    M.level(&x,solx.as_mut_slice())?;
 
-    //println!("Solution = {:?}", solx);
+    println!("Solution = {:?}", solx);
 
     Ok(())
 }

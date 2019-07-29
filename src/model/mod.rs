@@ -47,18 +47,18 @@ pub enum SolutionStatus {
 
 fn convert_solution_status(sta : i32) -> (SolutionStatus,SolutionStatus) {
     match sta {
-        MSK_SOL_STA_UNKNOWN            => (SolutionStatus::Unknown,SolutionStatus::Unknown),
-        MSK_SOL_STA_OPTIMAL            => (SolutionStatus::Optimal,SolutionStatus::Optimal),
-        MSK_SOL_STA_PRIM_FEAS          => (SolutionStatus::Feasible,SolutionStatus::Unknown),
-        MSK_SOL_STA_DUAL_FEAS          => (SolutionStatus::Unknown,SolutionStatus::Feasible),
-        MSK_SOL_STA_PRIM_AND_DUAL_FEAS => (SolutionStatus::Feasible,SolutionStatus::Feasible),
+        super::MSK_SOL_STA_UNKNOWN            => (SolutionStatus::Unknown,SolutionStatus::Unknown),
+        super::MSK_SOL_STA_OPTIMAL            => (SolutionStatus::Optimal,SolutionStatus::Optimal),
+        super::MSK_SOL_STA_PRIM_FEAS          => (SolutionStatus::Feasible,SolutionStatus::Unknown),
+        super::MSK_SOL_STA_DUAL_FEAS          => (SolutionStatus::Unknown,SolutionStatus::Feasible),
+        super::MSK_SOL_STA_PRIM_AND_DUAL_FEAS => (SolutionStatus::Feasible,SolutionStatus::Feasible),
 
-        MSK_SOL_STA_PRIM_ILLPOSED_CER  => (SolutionStatus::Unknown,SolutionStatus::IllPosedCertificate),
-        MSK_SOL_STA_PRIM_INFEAS_CER    => (SolutionStatus::Unknown,SolutionStatus::InfeasCertificate),
-        MSK_SOL_STA_DUAL_ILLPOSED_CER  => (SolutionStatus::IllPosedCertificate,SolutionStatus::Unknown),
-        MSK_SOL_STA_DUAL_INFEAS_CER    => (SolutionStatus::InfeasCertificate,SolutionStatus::Unknown),
-        MSK_SOL_STA_INTEGER_OPTIMAL    => (SolutionStatus::Optimal,SolutionStatus::Undefined),
-        _                              => (SolutionStatus::Unknown,SolutionStatus::Unknown),
+        super::MSK_SOL_STA_PRIM_ILLPOSED_CER  => (SolutionStatus::Unknown,SolutionStatus::IllPosedCertificate),
+        super::MSK_SOL_STA_PRIM_INFEAS_CER    => (SolutionStatus::Unknown,SolutionStatus::InfeasCertificate),
+        super::MSK_SOL_STA_DUAL_ILLPOSED_CER  => (SolutionStatus::IllPosedCertificate,SolutionStatus::Unknown),
+        super::MSK_SOL_STA_DUAL_INFEAS_CER    => (SolutionStatus::InfeasCertificate,SolutionStatus::Unknown),
+        super::MSK_SOL_STA_INTEGER_OPTIMAL    => (SolutionStatus::Optimal,SolutionStatus::Undefined),
+        _                                     => (SolutionStatus::Unknown,SolutionStatus::Unknown),
     }
 }
 
@@ -139,22 +139,33 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 
 /**********************************************************/
 /* Variable and Constraint */
-pub type Variable   = Vec<i64>;
-pub type Constraint = Vec<u32>;
+pub struct Variable { idxs : Vec<i64> }
+pub struct Constraint { idxs : Vec<u32> }
 
-//pub trait ModelItem {
-//    fn level(&self, &Model, &mut [f64]) -> {
-//
-//    }
-//}
+pub trait ModelItem {
+    fn level(&self, &Model, &mut [f64]) -> Result<(),String>;
+    fn dual (&self, &Model, &mut [f64]) -> Result<(),String>;
+}
 
+
+impl Variable { pub fn len(&self) -> usize { self.idxs.len() } }
+impl Constraint { pub fn len(&self) -> usize { self.idxs.len() } }
+impl ModelItem for Variable {
+    fn level(&self, m : &Model, res : &mut[f64]) -> Result<(),String> { m.variable_level(self, res) }
+    fn dual (&self, m : &Model, res : &mut[f64]) -> Result<(),String> { m.variable_dual (self, res) }
+}
+
+impl ModelItem for Constraint {
+    fn level(&self, m : &Model, res : &mut[f64]) -> Result<(),String> { m.constraint_level(self, res) }
+    fn dual (&self, m : &Model, res : &mut[f64]) -> Result<(),String> { m.constraint_dual (self, res) }
+}
 
 impl Expr for Variable {
-    fn len(&self) -> usize { return self.len(); }
+    fn len(&self) -> usize { return self.idxs.len(); }
     fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
         let n   = self.len();
         let ptr : Vec<usize> = (0..n+1).collect();
-        let subj = self.as_slice().to_vec();
+        let subj = self.idxs.as_slice().to_vec();
         let cof  = vec![1.0; n];
 
         return (ptr,subj,cof);
@@ -206,12 +217,12 @@ impl Domain for LinearBound {
             };
 
 
-        println!("---------- Domain::alloc");
-        println!("bk = {:?}",bk);
-        println!("b    = {:?}",self.rhs);
-        println!("ptr  = {:?}",ptr);
-        println!("subj = {:?}",subj);
-        println!("cof  = {:?}",cof);
+        //println!("---------- Domain::alloc");
+        //println!("bk = {:?}",bk);
+        //println!("b    = {:?}",self.rhs);
+        //println!("ptr  = {:?}",ptr);
+        //println!("subj = {:?}",subj);
+        //println!("cof  = {:?}",cof);
         let idxs = m.alloc_cons(basic_namer(name),
                                 bk,
                                 self.rhs.as_slice(),
@@ -308,14 +319,16 @@ impl Expr for Vec<Box<Expr>> {
     fn len(&self) -> usize { return self.iter().map(|e| e.len()).sum(); }
     fn eval(&self) -> (Vec<usize>,Vec<i64>,Vec<f64>) {
         let n = self.len();
-        let mut ptr : Vec<usize> = vec![0;n+1];
         let mut elmi = 0;
+        let mut ptr : Vec<usize> = vec![0;n+1];
         let mut subj : Vec<i64> = Vec::new();
         let mut cof  : Vec<f64> = Vec::new();
         for e in self.iter() {
             let (eptr,esubj,ecof) = e.eval();
             for i in 0..eptr.len()-1 {
                 ptr[elmi+1] = ptr[elmi] + (eptr[i+1]-eptr[i]);
+                elmi += 1;
+
             }
             subj.extend_from_slice(esubj.as_slice());
             cof.extend_from_slice(ecof.as_slice());
@@ -403,10 +416,10 @@ pub fn expr_mul(mx : &(usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
         }
     }
 
-    println!("-------- expr_mul:");
-    println!("ptr  = {:?}",ptr);
-    println!("subj = {:?}, len = {:?}",subj,subj.len());
-    println!("cof  = {:?}, len = {:?}",cof,cof.len());
+    //println!("-------- expr_mul:");
+    //println!("ptr  = {:?}",ptr);
+    //println!("subj = {:?}, len = {:?}",subj,subj.len());
+    //println!("cof  = {:?}, len = {:?}",cof,cof.len());
 
     return BaseExpr{ ptr  : ptr,
                      subj : subj,
@@ -460,10 +473,10 @@ pub fn expr_stack_3(e1 : & impl Expr, e2 : & impl Expr, e3 : & impl Expr) -> Bas
     for i in 0..n3 {
         ptr.push(eptr3[i+1] + nnz1 + nnz2);
     }
-    println!("-------- expr_stack_3:");
-    println!("subj1 : {:?}, cof1 : {:?}",esubj1.len(),ecof1.len());
-    println!("subj2 : {:?}, cof2 : {:?}",esubj2.len(),ecof2.len());
-    println!("subj3 : {:?}, cof3 : {:?}",esubj3.len(),ecof3.len());
+    //println!("-------- expr_stack_3:");
+    //println!("subj1 : {:?}, cof1 : {:?}",esubj1.len(),ecof1.len());
+    //println!("subj2 : {:?}, cof2 : {:?}",esubj2.len(),ecof2.len());
+    //println!("subj3 : {:?}, cof3 : {:?}",esubj3.len(),ecof3.len());
 
 
     subj.extend_from_slice(esubj1.as_slice());
@@ -473,9 +486,9 @@ pub fn expr_stack_3(e1 : & impl Expr, e2 : & impl Expr, e3 : & impl Expr) -> Bas
     cof.extend_from_slice(ecof2.as_slice());
     cof.extend_from_slice(ecof3.as_slice());
 
-    println!("ptr  = {:?}",ptr);
-    println!("subj = {:?}, len = {:?}",subj,subj.len());
-    println!("cof  = {:?}, len = {:?}",cof,cof.len());
+    //println!("ptr  = {:?}",ptr);
+    //println!("subj = {:?}, len = {:?}",subj,subj.len());
+    //println!("cof  = {:?}, len = {:?}",cof,cof.len());
     return BaseExpr{ ptr: ptr, subj : subj, cof :cof };
 }
 
@@ -507,8 +520,8 @@ impl Solution {
             sc   : Vec::new(),
         };
     }
-
-    fn variable_level(&self, idxs : &Variable, vals : &mut [f64]) {
+/*
+    fn variable_level(&self, x : &Variable, vals : &mut [f64]) {
         for i in idxs.iter().map(|i| *i as usize) {
             vals[i] = self.xx[i];
         }
@@ -531,7 +544,7 @@ impl Solution {
             vals[i] = self.sc[i];
         }
     }
-
+*/
     fn undefine(& mut self) {
         self.psta = SolutionStatus::Undefined;
         self.dsta = SolutionStatus::Undefined;
@@ -618,6 +631,7 @@ impl Model {
         let numvar = self.task.get_num_var()?;
         let n = b.len() as i32;
         self.task.append_vars(n as i32)?;
+        self.itr.touch(); self.itg.touch(); self.bas.touch();
 
         let bk : i32 =
             match boundkey {
@@ -646,18 +660,19 @@ impl Model {
         return Ok(idxs);
     }
 
-    fn alloc_cone(&self, ct : ConeType, cpar : f64, idxs : &[i32]) -> Result<i32,String> {
+    fn alloc_cone(& mut self, ct : ConeType, cpar : f64, idxs : &[i32]) -> Result<i32,String> {
         let numcone = self.task.get_num_cone()?;
         let nct = match ct {
-            SecondOrder => super::MSK_CT_QUAD,
-            RotatedSecond_Order => super::MSK_CT_RQUAD,
-            Power => super::MSK_CT_PPOW,
-            Exponential => super::MSK_CT_PEXP,
-            DualPower => super::MSK_CT_DPOW,
-            DualExponential => super::MSK_CT_DEXP,
-            _ => super::MSK_CT_ZERO,
+            ConeType::SecondOrder        => super::MSK_CT_QUAD,
+            ConeType::RotatedSecondOrder => super::MSK_CT_RQUAD,
+            ConeType::Power              => super::MSK_CT_PPOW,
+            ConeType::Exponential        => super::MSK_CT_PEXP,
+            ConeType::DualPower          => super::MSK_CT_DPOW,
+            ConeType::DualExponential    => super::MSK_CT_DEXP,
+            _                            => super::MSK_CT_ZERO,
         };
         self.task.append_cone(nct,cpar,idxs)?;
+        self.itr.touch(); self.itg.touch(); self.bas.touch();
         return Ok(numcone);
     }
 
@@ -674,6 +689,7 @@ impl Model {
         let numrows = b.len();
         let n       = b.len() as i32;
         self.task.append_cons(n as i32)?;
+        self.itr.touch(); self.itg.touch(); self.bas.touch();
 
         self.slack.resize(numcon as usize+numrows,0);
 
@@ -698,13 +714,13 @@ impl Model {
         let (ptrb,_) = sl_ptr.split_at(numrows);
         let (_,ptre) = sl_ptr.split_at(1);
 
-        println!("-------------");
-        println!("ptr  = {:?}",ptr);
-        println!("ptrb = {:?}",ptrb);
-        println!("ptre = {:?}",ptre);
-        println!("subj = {:?}",sl_subj);
-        println!("cof  = {:?}",cof);
-        println!("numvar = {:?}",self.task.get_num_var());
+        //println!("-------------");
+        //println!("ptr  = {:?}",ptr);
+        //println!("ptrb = {:?}",ptrb);
+        //println!("ptre = {:?}",ptre);
+        //println!("subj = {:?}",sl_subj);
+        //println!("cof  = {:?}",cof);
+        //println!("numvar = {:?}",self.task.get_num_var());
         self.task.put_a_row_list(idxs.as_slice(),
                                  ptrb,
                                  ptre,
@@ -727,15 +743,17 @@ impl Model {
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
 
 
-        println!("---------- Model::alloc_cone_cons");
-        println!("b    = {:?}",b);
-        println!("ptr  = {:?}",ptr);
-        println!("subj = {:?}",subj);
-        println!("cof  = {:?}",cof);
+        //println!("---------- Model::alloc_cone_cons");
+        //println!("b    = {:?}",b);
+        //println!("ptr  = {:?}",ptr);
+        //println!("subj = {:?}",subj);
+        //println!("cof  = {:?}",cof);
 
         //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
 
         //Following must be rewritten when we introduce PSD items
+        self.itr.touch(); self.itg.touch(); self.bas.touch();
+
         let slacks = self.alloc_vars(no_namer(),BOUNDKEY_FR,zs.as_slice())?;
         let mut slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
         self.slack.extend_from_slice(slacksi64.as_slice());
@@ -768,12 +786,12 @@ impl Model {
 
         self.task.append_cons(nrows as i32)?;
 
-        println!("---------- put_a_row_list");
-        println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
-        println!("ptre    ({:?}) = {:?}",ptre.len(),ptre);
-        println!("sl_subj ({:?}) = {:?}",sl_subj.len(),sl_subj);
-        println!("sl_cof  ({:?}) = {:?}",sl_cof.len(),sl_cof);
-        println!("numvar = {:?}",self.task.get_num_var()?);
+        //println!("---------- put_a_row_list");
+        //println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
+        //println!("ptre    ({:?}) = {:?}",ptre.len(),ptre);
+        //println!("sl_subj ({:?}) = {:?}",sl_subj.len(),sl_subj);
+        //println!("sl_cof  ({:?}) = {:?}",sl_cof.len(),sl_cof);
+        //println!("numvar = {:?}",self.task.get_num_var()?);
         self.task.put_a_row_list(idxs.as_slice(),
                                  ptrb,
                                  ptre,
@@ -783,15 +801,15 @@ impl Model {
     }
 
     pub fn variable<Dom:Domain>(& mut self,name : &str,dom : &Dom) -> Result<Variable,String> {
-        return dom.alloc_var_block(self,name)
+        return Ok(Variable{idxs: dom.alloc_var_block(self,name)? });
     }
 
     pub fn constraint<Dom:Domain>(& mut self, name : &str, expr : & impl Expr, dom : &Dom) -> Result<Constraint,String> {
         let (ptr,subj,cof) = expr.eval();
-        return dom.alloc_con_block(self,name,
-                                   ptr.as_slice(),
-                                   subj.as_slice(),
-                                   cof.as_slice());
+        return Ok(Constraint{idxs : dom.alloc_con_block(self,name,
+                                                        ptr.as_slice(),
+                                                        subj.as_slice(),
+                                                        cof.as_slice())? });
     }
 
     pub fn objective(& mut self,
@@ -799,21 +817,23 @@ impl Model {
                      sense : ObjectiveSense,
                      expr  : & impl Expr) -> Result<(),String> {
         let (ptr,subj,cof) = expr.eval();
+        assert_eq!(ptr.len(),2);
         let numvar = self.task.get_num_var()?;
         let mut c : Vec<f64> = Vec::with_capacity(numvar as usize); c.resize(numvar as usize,0.0);
         subj.iter().zip(cof.iter()).for_each(|(j,v)| c[*j as usize] = *v);
         let subj : Vec<i32> = (0..numvar).collect();
         self.task.put_c_list(subj.as_slice(), c.as_slice())?;
+        self.task.put_obj_name(name)?;
 
         match sense {
-            Min => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE)?,
-            Max => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE)?,
+            ObjectiveSense::Min => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE)?,
+            ObjectiveSense::Max => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE)?,
         }
         Ok(())
     }
 
     pub fn solve(& mut self) -> Result<(),String> {
-        self.task.optimize();
+        self.task.optimize()?;
 
         let numvar = self.task.get_num_var()? as usize;
         let numcon = self.task.get_num_con()? as usize;
@@ -827,10 +847,8 @@ impl Model {
             let mut slx : Vec<f64> = vec![0.0; numvar];
             let mut sux : Vec<f64> = vec![0.0; numvar];
             let mut snx : Vec<f64> = vec![0.0; numvar];
-            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
             let mut slc : Vec<f64> = vec![0.0; numcon];
             let mut suc : Vec<f64> = vec![0.0; numcon];
-            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
 
             self.task.get_xx (super::MSK_SOL_ITR, self.itr.xx.as_mut_slice())?;
             self.task.get_slx(super::MSK_SOL_ITR, slx.as_mut_slice())?;
@@ -866,10 +884,8 @@ impl Model {
             let solsta = self.task.get_sol_sta(super::MSK_SOL_BAS)?;
             let mut slx : Vec<f64> = vec![0.0; numvar];
             let mut sux : Vec<f64> = vec![0.0; numvar];
-            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
             let mut slc : Vec<f64> = vec![0.0; numcon];
             let mut suc : Vec<f64> = vec![0.0; numcon];
-            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
 
             self.task.get_xx (super::MSK_SOL_BAS, self.bas.xx.as_mut_slice())?;
             self.task.get_slx(super::MSK_SOL_BAS, slx.as_mut_slice())?;
@@ -879,6 +895,10 @@ impl Model {
             self.task.get_slc(super::MSK_SOL_BAS, slc.as_mut_slice())?;
             self.task.get_suc(super::MSK_SOL_BAS, suc.as_mut_slice())?;
             self.task.get_skc(super::MSK_SOL_BAS, self.bas.skc.as_mut_slice())?;
+
+            let (psta,dsta) = convert_solution_status(solsta);
+            self.bas.psta = psta;
+            self.bas.dsta = dsta;
 
             for i in 0..numvar {
                 self.bas.sx[i] = slx[i] - sux[i];
@@ -894,14 +914,16 @@ impl Model {
 
         if self.task.solution_def(super::MSK_SOL_ITG)? {
             let solsta = self.task.get_sol_sta(super::MSK_SOL_ITG)?;
-            let mut skx : Vec<i32> = vec![super::MSK_SK_UNK; numvar];
-            let mut skc : Vec<i32> = vec![super::MSK_SK_UNK; numcon];
             let mut xc  : Vec<f64> = vec![0.0; numcon];
 
             self.task.get_xx (super::MSK_SOL_ITG, self.itg.xx.as_mut_slice())?;
             self.task.get_skx(super::MSK_SOL_ITG, self.itg.skx.as_mut_slice())?;
             self.task.get_xc (super::MSK_SOL_ITG, xc.as_mut_slice())?;
             self.task.get_skc(super::MSK_SOL_ITG, self.itg.skc.as_mut_slice())?;
+
+            let (psta,_) = convert_solution_status(solsta);
+            self.bas.psta = psta;
+            self.bas.dsta = SolutionStatus::Undefined;
 
             for i in 0..numcon {
                 if self.slack[i] == 0 {
@@ -920,14 +942,17 @@ impl Model {
     fn fetch_expected_solution<'a>(& 'a self) -> Option<&'a Solution> {
         return
             match &self.expectsol {
-                Default => {
+                SolutionType::Default => {
                     if      self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { Some(&self.itg) }
                     else if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { Some(&self.bas) }
                     else if self.itr.psta != SolutionStatus::Undefined || self.itr.dsta != SolutionStatus::Undefined { Some(&self.itr) }
                     else { Option::None }  },
-                Itr => if self.itr.psta != SolutionStatus::Undefined || self.itr.dsta != SolutionStatus::Undefined { Some(&self.itr) } else { Option::None } ,
-                Bas => if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { Some(&self.bas) } else { Option::None } ,
-                Itg => if self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { Some(&self.itg) } else { Option::None } ,
+                SolutionType::Itr =>
+                    if self.itr.psta != SolutionStatus::Undefined || self.itr.dsta != SolutionStatus::Undefined { Some(&self.itr) } else { Option::None },
+                SolutionType::Bas =>
+                    if self.bas.psta != SolutionStatus::Undefined || self.bas.dsta != SolutionStatus::Undefined { Some(&self.bas) } else { Option::None },
+                SolutionType::Itg =>
+                    if self.itg.psta != SolutionStatus::Undefined || self.itg.dsta != SolutionStatus::Undefined { Some(&self.itg) } else { Option::None },
             };
     }
 
@@ -942,20 +967,84 @@ impl Model {
     fn check_solution_bound(&self,solsta : SolutionStatus) -> bool {
         return
             match &self.solbound {
-                Optimal             => solsta == SolutionStatus::Optimal,
-                Feasible            => solsta == SolutionStatus::Optimal || solsta == SolutionStatus::Feasible,
-                InfeasCertificate   => solsta == SolutionStatus::InfeasCertificate,
-                IllposedCertificate => solsta == SolutionStatus::IllPosedCertificate,
-                Any                 => solsta != SolutionStatus::Undefined,
+                SolutionStatusBound::Optimal             => solsta == SolutionStatus::Optimal,
+                SolutionStatusBound::Feasible            => solsta == SolutionStatus::Optimal || solsta == SolutionStatus::Feasible,
+                SolutionStatusBound::InfeasCertificate   => solsta == SolutionStatus::InfeasCertificate,
+                SolutionStatusBound::IllposedCertificate => solsta == SolutionStatus::IllPosedCertificate,
+                SolutionStatusBound::Any                 => solsta != SolutionStatus::Undefined,
             };
     }
 
-    pub fn variable_level(&self,x : &Variable, res : & mut [f64]) -> Option<String> {
-        return Option::None;
+    fn variable_level(&self,x : &Variable, res : & mut [f64]) -> Result<(),String> {
+        assert_eq!(x.len(),res.len());
+        match self.fetch_expected_solution() {
+            None => return Err("Solution not available".to_string()),
+            Some(sol) =>
+                if ! self.check_solution_bound(sol.psta) {
+                    return Err("Solution not available".to_string());
+                } else {
+                    for i in 0 .. x.len() {
+                        res[i] = sol.xx[x.idxs[i] as usize];
+                    }
+                }
+        }
+        Ok(())
     }
+
+    fn variable_dual(&self,x : &Variable, res : & mut [f64]) -> Result<(),String> {
+        assert_eq!(x.len(),res.len());
+        match self.fetch_expected_solution() {
+            None => return Err("Solution not available".to_string()),
+            Some(sol) =>
+                if ! self.check_solution_bound(sol.dsta) {
+                    return Err("Solution not available".to_string());
+                } else {
+                    for i in 0 .. x.len() {
+                        res[i] = sol.sx[x.idxs[i] as usize];
+                    }
+                }
+        }
+        Ok(())
+    }
+
+    fn constraint_level(&self,x : &Constraint, res : & mut [f64]) -> Result<(),String> {
+        assert_eq!(x.len(),res.len());
+        match self.fetch_expected_solution() {
+            None => return Err("Solution not available".to_string()),
+            Some(sol) =>
+                if ! self.check_solution_bound(sol.psta) {
+                    return Err("Solution not available".to_string());
+                } else {
+                    for i in 0 .. x.len() {
+                        res[i] = sol.xc[x.idxs[i] as usize];
+                    }
+                }
+        }
+        Ok(())
+    }
+
+    fn constraint_dual(&self,x : &Constraint, res : & mut [f64]) -> Result<(),String> {
+        assert_eq!(x.len(),res.len());
+        match self.fetch_expected_solution() {
+            None => return Err("Solution not available".to_string()),
+            Some(sol) =>
+                if ! self.check_solution_bound(sol.dsta) {
+                    return Err("Solution not available".to_string());
+                } else {
+                    for i in 0 .. x.len() {
+                        res[i] = sol.sc[x.idxs[i] as usize];
+                    }
+                }
+        }
+        Ok(())
+    }
+
+    pub fn level<T: ModelItem>(&self, x : &T, res : & mut [f64]) -> Result<(),String> { x.level(self,res) }
+    pub fn dual <T: ModelItem>(&self, x : &T, res : & mut [f64]) -> Result<(),String> { x.dual(self,res) }
 
     pub fn set_solution_bound(&mut self, bnd : SolutionStatusBound) { self.solbound = bnd; }
     pub fn expect_solution(&mut self, sol : SolutionType) { self.expectsol = sol; }
+
 
     pub fn write_task(& self, filename  : &str) -> Result<(),String> {
         self.task.write_data(filename)
