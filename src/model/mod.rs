@@ -1,3 +1,4 @@
+use std::ops::{Index,Range};
 /**********************************************************/
 #[derive(Clone)]
 pub enum ConeType {
@@ -142,13 +143,16 @@ pub fn basic_namer(name : &str) -> FlatNamer<FlatIndexer> {
 pub struct Variable { idxs : Vec<i64> }
 pub struct Constraint { idxs : Vec<u32> }
 
+impl Variable {
+    fn index(&self, i : usize) -> Variable { Variable{ idxs : self.idxs[i..i+1].to_vec() } }
+    fn slice(&self, r : Range<usize>) -> Variable { Variable{ idxs : self.idxs[r.start..r.end].to_vec() } }
+}
+
 pub trait ModelItem {
     fn level(&self, &Model, &mut [f64]) -> Result<(),String>;
     fn dual (&self, &Model, &mut [f64]) -> Result<(),String>;
 }
 
-
-impl Variable { pub fn len(&self) -> usize { self.idxs.len() } }
 impl Constraint { pub fn len(&self) -> usize { self.idxs.len() } }
 impl ModelItem for Variable {
     fn level(&self, m : &Model, res : &mut[f64]) -> Result<(),String> { m.variable_level(self, res) }
@@ -217,12 +221,6 @@ impl Domain for LinearBound {
             };
 
 
-        //println!("---------- Domain::alloc");
-        //println!("bk = {:?}",bk);
-        //println!("b    = {:?}",self.rhs);
-        //println!("ptr  = {:?}",ptr);
-        //println!("subj = {:?}",subj);
-        //println!("cof  = {:?}",cof);
         let idxs = m.alloc_cons(basic_namer(name),
                                 bk,
                                 self.rhs.as_slice(),
@@ -426,6 +424,42 @@ pub fn expr_mul(mx : &(usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
                      cof  : cof };
 }
 
+pub fn expr_mul_sparse(mx : &(usize,usize,Vec<usize>,Vec<usize>,Vec<f64>), e : & impl Expr) -> BaseExpr {
+    let (dim0_,dim1_,msubi,msubj,mval) = mx;
+    let dim0 : usize = *dim0_;
+    let dim1 : usize = *dim1_;
+
+    assert_eq!(dim1,e.len());
+    assert_eq!(msubi.len(),msubj.len());
+    assert_eq!(msubi.len(),mval.len());
+    for i in 0..msubi.len()-1 {
+        assert!(msubi[i] < msubi[i+1] || (msubi[i] == msubi[i+1] && msubj[i] < msubj[i+1]));
+    }
+    
+    let (eptr,esubj,ecof) = e.eval();
+    let numnz = e.len();
+
+    let ptr : Vec<usize> = (0..dim0+1).map(|i| i * numnz).collect();
+    let mut subj : Vec<i64> = Vec::new();
+    let mut cof  : Vec<f64> = Vec::new();
+
+    let mut i1 = 0;
+    for i in 0..dim0 {
+        let i0 = i1;
+        while msubi[i1] == i as usize {
+            for k in eptr[i1]..eptr[i1+1] {
+                subj.push(esubj[k]);
+                cof.push(ecof[k] * mval[i1]);
+            }
+            i1 += 1;
+        }
+    }
+
+    return BaseExpr{ ptr  : ptr,
+                     subj : subj,
+                     cof  : cof };
+}
+
 pub fn expr_stack_2(e1 : & impl Expr, e2 : & impl Expr) -> BaseExpr {
     let (eptr1,esubj1,ecof1) = e1.eval();
     let (eptr2,esubj2,ecof2) = e2.eval();
@@ -582,6 +616,10 @@ pub struct Model {
     itg         : Solution,
 }
 
+fn printmsg(msg : &String) {
+    print!("{}",msg);
+}
+
 impl Model {
     pub fn with_name(name : &str) -> Result<Model,String> {
         let env = match super::Env::new() {
@@ -601,13 +639,13 @@ impl Model {
         task.put_var_bound(0,super::MSK_BK_FX,1.0,1.0)?;
 
         task.put_task_name(name)?;
-        if name.len() > 0 {
-            let mut filename = name.to_string(); filename.push_str(".log");
+        //if name.len() > 0 {
+        //    let mut filename = name.to_string(); filename.push_str(".log");
+        //    task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0)?;
+       // }
 
-            task.link_file_to_stream(super::MSK_STREAM_LOG,filename.as_str(),0)?;
-        }
-
-        task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg));
+        //task.put_stream_callback(super::MSK_STREAM_LOG, printmsg);
+        task.put_stream_callback(super::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
 
         return Ok(Model{ env         : env,
                          task        : task,

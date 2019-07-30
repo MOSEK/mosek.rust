@@ -11,7 +11,8 @@ extern
     fn MSK_deleteenv(env : * mut * const u8) -> i32;
     fn MSK_maketask(env : * const u8, maxnumcon : i32, maxnumvar : i32, task : * mut * const u8) -> u32;
     fn MSK_deletetask(task : * mut * const u8) -> i32;
-
+    
+    
     fn MSK_linkfunctotaskstream(task        : * const u8,
                                 whichstream : i32,
                                 handle      : * const c_void,
@@ -28,8 +29,8 @@ extern
     fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> i32;
     fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
-    fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut libc::int64_t) -> i32;
-    fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut libc::int64_t) -> i32;
+    fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
+    fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
     fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
     fn MSK_asyncoptimize(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const u8) -> i32;
@@ -57,35 +58,35 @@ extern
     fn MSK_echotask(task_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
-    fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
-    fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
-    fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const libc::int64_t) -> i32;
+    fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
+    fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
+    fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
     fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
-    fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
     fn MSK_getarow(task_ : * const u8,i_ : i32,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
     fn MSK_getarownumnz(task_ : * const u8,i_ : i32,nzi_ : & mut i32) -> i32;
-    fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
     fn MSK_getatruncatetol(task_ : * const u8,tolzero_ : * mut f64) -> i32;
-    fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subi_ : * mut i32,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valijkl_ : * mut f64) -> i32;
-    fn MSK_getbaraidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,i_ : & mut i32,j_ : & mut i32,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
-    fn MSK_getbaraidxij(task_ : * const u8,idx_ : libc::int64_t,i_ : & mut i32,j_ : & mut i32) -> i32;
-    fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxij_ : * mut libc::int64_t) -> i32;
-    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : libc::int64_t,num_ : & mut libc::int64_t,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valjkl_ : * mut f64) -> i32;
-    fn MSK_getbarcidx(task_ : * const u8,idx_ : libc::int64_t,maxnum_ : libc::int64_t,j_ : & mut i32,num_ : & mut libc::int64_t,sub_ : * mut libc::int64_t,weights_ : * mut f64) -> i32;
-    fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : libc::int64_t,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getbarcidxj(task_ : * const u8,idx_ : libc::int64_t,j_ : & mut i32) -> i32;
-    fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : libc::int64_t,numnz_ : & mut libc::int64_t,idxj_ : * mut libc::int64_t) -> i32;
+    fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subi_ : * mut i32,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valijkl_ : * mut f64) -> i32;
+    fn MSK_getbaraidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,i_ : & mut i32,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    fn MSK_getbaraidxij(task_ : * const u8,idx_ : i64,i_ : & mut i32,j_ : & mut i32) -> i32;
+    fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxij_ : * mut i64) -> i32;
+    fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valjkl_ : * mut f64) -> i32;
+    fn MSK_getbarcidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    fn MSK_getbarcidxj(task_ : * const u8,idx_ : i64,j_ : & mut i32) -> i32;
+    fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxj_ : * mut i64) -> i32;
     fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * mut f64) -> i32;
-    fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : libc::int64_t,barsslice_ : * mut f64) -> i32;
+    fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : * mut f64) -> i32;
     fn MSK_getbarvarname(task_ : * const u8,i_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
     fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
     fn MSK_getbarvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
     fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * mut f64) -> i32;
-    fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : libc::int64_t,barxslice_ : * mut f64) -> i32;
+    fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : * mut f64) -> i32;
     fn MSK_getbuildinfo(buildstate_ : * const u8,builddate_ : * const u8) -> i32;
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
@@ -117,36 +118,36 @@ extern
     fn MSK_getinfname(task_ : * const u8,inftype_ : i32,whichinf_ : i32,infname_ : * const u8) -> i32;
     fn MSK_getintinf(task_ : * const u8,whichiinf_ : i32,ivalue_ : & mut i32) -> i32;
     fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut i32) -> i32;
-    fn MSK_getlenbarvarj(task_ : * const u8,j_ : i32,lenbarvarj_ : & mut libc::int64_t) -> i32;
-    fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut libc::int64_t) -> i32;
+    fn MSK_getlenbarvarj(task_ : * const u8,j_ : i32,lenbarvarj_ : & mut i64) -> i32;
+    fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut i64) -> i32;
     fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut i32) -> i32;
-    fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut i64) -> i32;
     fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut i32) -> i32;
     fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut i32) -> i32;
     fn MSK_getmaxnumcone(task_ : * const u8,maxnumcone_ : & mut i32) -> i32;
-    fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut i64) -> i32;
     fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut i32) -> i32;
-    fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut libc::int64_t,maxmemuse_ : & mut libc::int64_t) -> i32;
+    fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut i64,maxmemuse_ : & mut i64) -> i32;
     fn MSK_getnadouinf(task_ : * const u8,infitemname_ : * const libc::c_char,dvalue_ : & mut f64) -> i32;
     fn MSK_getnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut f64) -> i32;
     fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut i32) -> i32;
     fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut i32) -> i32;
     fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
     fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut i32) -> i32;
-    fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumbaranz(task_ : * const u8,nz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumbarcblocktriplets(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumbarcnz(task_ : * const u8,nz_ : & mut libc::int64_t) -> i32;
+    fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut i64) -> i32;
+    fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    fn MSK_getnumbaranz(task_ : * const u8,nz_ : & mut i64) -> i32;
+    fn MSK_getnumbarcblocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    fn MSK_getnumbarcnz(task_ : * const u8,nz_ : & mut i64) -> i32;
     fn MSK_getnumbarvar(task_ : * const u8,numbarvar_ : & mut i32) -> i32;
     fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut i32) -> i32;
     fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut i32) -> i32;
     fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
     fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
     fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
-    fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut libc::int64_t) -> i32;
-    fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut libc::int64_t) -> i32;
+    fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut i64) -> i32;
+    fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut i64) -> i32;
+    fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut i64) -> i32;
     fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut i32) -> i32;
     fn MSK_getobjname(task_ : * const u8,sizeobjname_ : i32,objname_ : * const u8) -> i32;
     fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut i32) -> i32;
@@ -179,7 +180,7 @@ extern
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
-    fn MSK_getsparsesymmat(task_ : * const u8,idx_ : libc::int64_t,maxlen_ : libc::int64_t,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
+    fn MSK_getsparsesymmat(task_ : * const u8,idx_ : i64,maxlen_ : i64,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
     fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
     fn MSK_getstrparamlen(task_ : * const u8,param_ : i32,len_ : & mut i32) -> i32;
     fn MSK_getsuc(task_ : * const u8,whichsol_ : i32,suc_ : * mut f64) -> i32;
@@ -187,7 +188,7 @@ extern
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
     fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * mut f64) -> i32;
     fn MSK_getsymbcon(task_ : * const u8,i_ : i32,sizevalue_ : i32,name_ : * const u8,value_ : & mut i32) -> i32;
-    fn MSK_getsymmatinfo(task_ : * const u8,idx_ : libc::int64_t,dim_ : & mut i32,nz_ : & mut libc::int64_t,type_ : & mut i32) -> i32;
+    fn MSK_getsymmatinfo(task_ : * const u8,idx_ : i64,dim_ : & mut i32,nz_ : & mut i64,type_ : & mut i32) -> i32;
     fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : i32,taskname_ : * const u8) -> i32;
     fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut i32) -> i32;
     fn MSK_getvarbound(task_ : * const u8,i_ : i32,bk_ : & mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
@@ -205,7 +206,7 @@ extern
     fn MSK_gety(task_ : * const u8,whichsol_ : i32,y_ : * mut f64) -> i32;
     fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * mut f64) -> i32;
     fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut i32) -> i32;
-    fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const libc::int64_t,aptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i64,aptre_ : * const i64,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
     fn MSK_isinfinity(value_ : f64) -> i32;
     fn MSK_isintparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : & mut i32) -> i32;
@@ -224,20 +225,20 @@ extern
     fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str_ : * const u8) -> i32;
     fn MSK_prostatostr(task_ : * const u8,prosta_ : i32,str_ : * const u8) -> i32;
     fn MSK_putacol(task_ : * const u8,j_ : i32,nzj_ : i32,subj_ : * const i32,valj_ : * const f64) -> i32;
-    fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
-    fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
-    fn MSK_putaijlist64(task_ : * const u8,num_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    fn MSK_putaijlist64(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
     fn MSK_putarow(task_ : * const u8,i_ : i32,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
-    fn MSK_putarowlist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
-    fn MSK_putarowslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putarowlist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putarowslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putatruncatetol(task_ : * const u8,tolzero_ : f64) -> i32;
-    fn MSK_putbarablocktriplet(task_ : * const u8,num_ : libc::int64_t,subi_ : * const i32,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valijkl_ : * const f64) -> i32;
-    fn MSK_putbaraij(task_ : * const u8,i_ : i32,j_ : i32,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbaraijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,alphaptrb_ : * const libc::int64_t,alphaptre_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbararowlist(task_ : * const u8,num_ : i32,subi_ : * const i32,ptrb_ : * const libc::int64_t,ptre_ : * const libc::int64_t,subj_ : * const i32,nummat_ : * const libc::int64_t,matidx_ : * const libc::int64_t,weights_ : * const f64) -> i32;
-    fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : libc::int64_t,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valjkl_ : * const f64) -> i32;
-    fn MSK_putbarcj(task_ : * const u8,j_ : i32,num_ : libc::int64_t,sub_ : * const libc::int64_t,weights_ : * const f64) -> i32;
+    fn MSK_putbarablocktriplet(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valijkl_ : * const f64) -> i32;
+    fn MSK_putbaraij(task_ : * const u8,i_ : i32,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    fn MSK_putbaraijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,alphaptrb_ : * const i64,alphaptre_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    fn MSK_putbararowlist(task_ : * const u8,num_ : i32,subi_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,subj_ : * const i32,nummat_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : i64,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valjkl_ : * const f64) -> i32;
+    fn MSK_putbarcj(task_ : * const u8,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
     fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * const f64) -> i32;
     fn MSK_putbarvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
     fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * const f64) -> i32;
@@ -260,11 +261,11 @@ extern
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
     fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
-    fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : libc::int64_t) -> i32;
+    fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : i64) -> i32;
     fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : i32) -> i32;
     fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : i32) -> i32;
     fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : i32) -> i32;
-    fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : libc::int64_t) -> i32;
+    fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : i64) -> i32;
     fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : i32) -> i32;
     fn MSK_putnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : f64) -> i32;
     fn MSK_putnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : i32) -> i32;
@@ -323,7 +324,7 @@ extern
     fn MSK_removecones(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
     fn MSK_removecons(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
     fn MSK_removevars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
-    fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : libc::int64_t,maxnumqnz_ : libc::int64_t) -> i32;
+    fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> i32;
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_setdefaults(task_ : * const u8) -> i32;
     fn MSK_setupthreads(env_ : * const u8,numthreads_ : i32) -> i32;
@@ -332,7 +333,7 @@ extern
     fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut i32) -> i32;
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_solvewithbasis(task_ : * const u8,transp_ : i32,numnz_ : & mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
-    fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const libc::int64_t,lensubnval_ : libc::int64_t,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
+    fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const i64,lensubnval_ : i64,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
     fn MSK_strduptask(task_ : * const u8,str_ : * const libc::c_char) -> i32;
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : & mut i32) -> i32;
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : & mut i32) -> i32;
@@ -357,10 +358,8 @@ macro_rules! callMSK
     ( $n:ident, $( $a : expr ),* ) => {
         {
             let res = unsafe { $n ( $( $a,)* ) };
-            if 0 != res
-            {
+            if 0 != res {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
-                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     };
@@ -370,7 +369,6 @@ macro_rules! callMSK
             if 0 != res
             {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
-                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     }
@@ -1843,7 +1841,7 @@ pub type CallbackType = fn(i32,&[f64],&[i32],&[i64]) -> bool;
 pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<fn(&String)>; 4 ],
+    streamcb  : [ Option<Box<fn(&String)>>; 4 ],
     valuecb   : Option<CallbackType>,
 }
 
@@ -2130,7 +2128,7 @@ impl Env
       if lsubc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lsubc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       if lvalc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lvalc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       if b_.len() != ((n_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
-      callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as i32,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as libc::int64_t,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
+      callMSK!(MSK_sparsetriangularsolvedense,self.ptr,transposed_,n_ as i32,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_ as i64,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr());
       return Result::Ok(())
     }
 
@@ -2228,9 +2226,15 @@ impl Task
     {
         if whichstream >= 0 && whichstream < 4 //
         {
-            self.streamcb[whichstream as usize] = Some(func);
-            let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
-            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
+            self.streamcb[whichstream as usize] = Some(Box::new(func));
+           
+            match self.streamcb[whichstream as usize] {
+                Some(ref bf) => {
+                    let hnd =  &(**bf) as * const _ as * mut libc::c_void;
+                    callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
+                }
+                None => {}
+            }
         }
         return Ok(());
     }
@@ -2347,8 +2351,8 @@ impl Task
       let mut nz_ = subi_.len();
       if subj_.len() > nz_ { nz_ = subj_.len() };
       if valij_.len() > nz_ { nz_ = valij_.len() };
-      let mut _ref_idx_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as i32,nz_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
+      let mut _ref_idx_ : i64 = 0 as i64;
+      callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as i32,nz_ as i64,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
       return Result::Ok((_ref_idx_ as i64))
     }
 
@@ -2633,7 +2637,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String>
     {
-      let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numnz_ : i64 = 0 as i64;
       callMSK!(MSK_getacolslicenumnz64,self.ptr,first_ as i32,last_ as i32,& mut _ref_numnz_);
       return Result::Ok((_ref_numnz_ as i64))
     }
@@ -2697,7 +2701,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String>
     {
-      let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numnz_ : i64 = 0 as i64;
       callMSK!(MSK_getarowslicenumnz64,self.ptr,first_ as i32,last_ as i32,& mut _ref_numnz_);
       return Result::Ok((_ref_numnz_ as i64))
     }
@@ -2723,13 +2727,13 @@ impl Task
     {
       let tmp_var_1__ = self.get_num_bara_block_triplets()?;
       let maxnum_ = tmp_var_1__;
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       if subi_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_bara_block_triplet'".to_string()) }
       if subj_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_bara_block_triplet'".to_string()) }
       if subk_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'get_bara_block_triplet'".to_string()) }
       if subl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'get_bara_block_triplet'".to_string()) }
       if valijkl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'valijkl_' is too short in call to 'get_bara_block_triplet'".to_string()) }
-      callMSK!(MSK_getbarablocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
+      callMSK!(MSK_getbarablocktriplet,self.ptr,maxnum_ as i64,& mut _ref_num_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr());
       return Result::Ok((_ref_num_ as i64))
     }
 
@@ -2744,10 +2748,10 @@ impl Task
       let maxnum_ = tmp_var_1__;
       let mut _ref_i_ : i32 = 0 as i32;
       let mut _ref_j_ : i32 = 0 as i32;
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       if sub_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'sub_' is too short in call to 'get_bara_idx'".to_string()) }
       if weights_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'weights_' is too short in call to 'get_bara_idx'".to_string()) }
-      callMSK!(MSK_getbaraidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
+      callMSK!(MSK_getbaraidx,self.ptr,idx_ as i64,maxnum_ as i64,& mut _ref_i_,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64))
     }
 
@@ -2760,7 +2764,7 @@ impl Task
     {
       let mut _ref_i_ : i32 = 0 as i32;
       let mut _ref_j_ : i32 = 0 as i32;
-      callMSK!(MSK_getbaraidxij,self.ptr,idx_ as libc::int64_t,& mut _ref_i_,& mut _ref_j_);
+      callMSK!(MSK_getbaraidxij,self.ptr,idx_ as i64,& mut _ref_i_,& mut _ref_j_);
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32))
     }
 
@@ -2771,8 +2775,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_bara_idx_info(&self,idx_ : i64) -> Result<i64,String>
     {
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getbaraidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
+      let mut _ref_num_ : i64 = 0 as i64;
+      callMSK!(MSK_getbaraidxinfo,self.ptr,idx_ as i64,& mut _ref_num_);
       return Result::Ok((_ref_num_ as i64))
     }
 
@@ -2785,9 +2789,9 @@ impl Task
     {
       let tmp_var_1__ = self.get_num_bara_nz()?;
       let maxnumnz_ = tmp_var_1__;
-      let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numnz_ : i64 = 0 as i64;
       if idxij_.len() != ((maxnumnz_) as usize) { return Result::Err("Argument 'idxij_' is too short in call to 'get_bara_sparsity'".to_string()) }
-      callMSK!(MSK_getbarasparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxij_.as_mut_ptr());
+      callMSK!(MSK_getbarasparsity,self.ptr,maxnumnz_ as i64,& mut _ref_numnz_,idxij_.as_mut_ptr());
       return Result::Ok((_ref_numnz_ as i64))
     }
 
@@ -2800,12 +2804,12 @@ impl Task
     {
       let tmp_var_1__ = self.get_num_barc_block_triplets()?;
       let maxnum_ = tmp_var_1__;
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       if subj_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_barc_block_triplet'".to_string()) }
       if subk_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'get_barc_block_triplet'".to_string()) }
       if subl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'get_barc_block_triplet'".to_string()) }
       if valjkl_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'valjkl_' is too short in call to 'get_barc_block_triplet'".to_string()) }
-      callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as libc::int64_t,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr());
+      callMSK!(MSK_getbarcblocktriplet,self.ptr,maxnum_ as i64,& mut _ref_num_,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr());
       return Result::Ok((_ref_num_ as i64))
     }
 
@@ -2819,10 +2823,10 @@ impl Task
       let tmp_var_1__ = self.get_barc_idx_info(idx_)?;
       let maxnum_ = tmp_var_1__;
       let mut _ref_j_ : i32 = 0 as i32;
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       if sub_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'sub_' is too short in call to 'get_barc_idx'".to_string()) }
       if weights_.len() != ((maxnum_) as usize) { return Result::Err("Argument 'weights_' is too short in call to 'get_barc_idx'".to_string()) }
-      callMSK!(MSK_getbarcidx,self.ptr,idx_ as libc::int64_t,maxnum_ as libc::int64_t,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
+      callMSK!(MSK_getbarcidx,self.ptr,idx_ as i64,maxnum_ as i64,& mut _ref_j_,& mut _ref_num_,sub_.as_mut_ptr(),weights_.as_mut_ptr());
       return Result::Ok((_ref_j_ as i32,_ref_num_ as i64))
     }
 
@@ -2833,8 +2837,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_barc_idx_info(&self,idx_ : i64) -> Result<i64,String>
     {
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
-      callMSK!(MSK_getbarcidxinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_num_);
+      let mut _ref_num_ : i64 = 0 as i64;
+      callMSK!(MSK_getbarcidxinfo,self.ptr,idx_ as i64,& mut _ref_num_);
       return Result::Ok((_ref_num_ as i64))
     }
 
@@ -2846,7 +2850,7 @@ impl Task
     pub fn get_barc_idx_j(&self,idx_ : i64) -> Result<i32,String>
     {
       let mut _ref_j_ : i32 = 0 as i32;
-      callMSK!(MSK_getbarcidxj,self.ptr,idx_ as libc::int64_t,& mut _ref_j_);
+      callMSK!(MSK_getbarcidxj,self.ptr,idx_ as i64,& mut _ref_j_);
       return Result::Ok((_ref_j_ as i32))
     }
 
@@ -2859,9 +2863,9 @@ impl Task
     {
       let tmp_var_1__ = self.get_num_barc_nz()?;
       let maxnumnz_ = tmp_var_1__;
-      let mut _ref_numnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numnz_ : i64 = 0 as i64;
       if idxj_.len() != ((maxnumnz_) as usize) { return Result::Err("Argument 'idxj_' is too short in call to 'get_barc_sparsity'".to_string()) }
-      callMSK!(MSK_getbarcsparsity,self.ptr,maxnumnz_ as libc::int64_t,& mut _ref_numnz_,idxj_.as_mut_ptr());
+      callMSK!(MSK_getbarcsparsity,self.ptr,maxnumnz_ as i64,& mut _ref_numnz_,idxj_.as_mut_ptr());
       return Result::Ok((_ref_numnz_ as i64))
     }
 
@@ -2886,7 +2890,7 @@ impl Task
     pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : & mut [f64]) -> Result<(),String>
     {
       if barsslice_.len() != ((slicesize_) as usize) { return Result::Err("Argument 'barsslice_' is too short in call to 'get_bars_slice'".to_string()) }
-      callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as libc::int64_t,barsslice_.as_mut_ptr());
+      callMSK!(MSK_getbarsslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as i64,barsslice_.as_mut_ptr());
       return Result::Ok(())
     }
 
@@ -2951,7 +2955,7 @@ impl Task
     pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : & mut [f64]) -> Result<(),String>
     {
       if barxslice_.len() != ((slicesize_) as usize) { return Result::Err("Argument 'barxslice_' is too short in call to 'get_barx_slice'".to_string()) }
-      callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as libc::int64_t,barxslice_.as_mut_ptr());
+      callMSK!(MSK_getbarxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slicesize_ as i64,barxslice_.as_mut_ptr());
       return Result::Ok(())
     }
 
@@ -3341,7 +3345,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_len_barvar_j(&self,j_ : i32) -> Result<i64,String>
     {
-      let mut _ref_lenbarvarj_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_lenbarvarj_ : i64 = 0 as i64;
       callMSK!(MSK_getlenbarvarj,self.ptr,j_ as i32,& mut _ref_lenbarvarj_);
       return Result::Ok((_ref_lenbarvarj_ as i64))
     }
@@ -3353,7 +3357,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_lint_inf(&self,whichliinf_ : i32) -> Result<i64,String>
     {
-      let mut _ref_ivalue_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_ivalue_ : i64 = 0 as i64;
       callMSK!(MSK_getlintinf,self.ptr,whichliinf_,& mut _ref_ivalue_);
       return Result::Ok((_ref_ivalue_ as i64))
     }
@@ -3377,7 +3381,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_max_num_a_nz(&self) -> Result<i64,String>
     {
-      let mut _ref_maxnumanz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_maxnumanz_ : i64 = 0 as i64;
       callMSK!(MSK_getmaxnumanz64,self.ptr,& mut _ref_maxnumanz_);
       return Result::Ok((_ref_maxnumanz_ as i64))
     }
@@ -3425,7 +3429,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_max_num_q_nz(&self) -> Result<i64,String>
     {
-      let mut _ref_maxnumqnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_maxnumqnz_ : i64 = 0 as i64;
       callMSK!(MSK_getmaxnumqnz64,self.ptr,& mut _ref_maxnumqnz_);
       return Result::Ok((_ref_maxnumqnz_ as i64))
     }
@@ -3449,8 +3453,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_mem_usage(&self) -> Result<(i64,i64),String>
     {
-      let mut _ref_meminuse_ : libc::int64_t = 0 as libc::int64_t;
-      let mut _ref_maxmemuse_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_meminuse_ : i64 = 0 as i64;
+      let mut _ref_maxmemuse_ : i64 = 0 as i64;
       callMSK!(MSK_getmemusagetask,self.ptr,& mut _ref_meminuse_,& mut _ref_maxmemuse_);
       return Result::Ok((_ref_meminuse_ as i64,_ref_maxmemuse_ as i64))
     }
@@ -3536,7 +3540,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_a_nz_64(&self) -> Result<i64,String>
     {
-      let mut _ref_numanz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numanz_ : i64 = 0 as i64;
       callMSK!(MSK_getnumanz64,self.ptr,& mut _ref_numanz_);
       return Result::Ok((_ref_numanz_ as i64))
     }
@@ -3548,7 +3552,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_bara_block_triplets(&self) -> Result<i64,String>
     {
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       callMSK!(MSK_getnumbarablocktriplets,self.ptr,& mut _ref_num_);
       return Result::Ok((_ref_num_ as i64))
     }
@@ -3560,7 +3564,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_bara_nz(&self) -> Result<i64,String>
     {
-      let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_nz_ : i64 = 0 as i64;
       callMSK!(MSK_getnumbaranz,self.ptr,& mut _ref_nz_);
       return Result::Ok((_ref_nz_ as i64))
     }
@@ -3572,7 +3576,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_barc_block_triplets(&self) -> Result<i64,String>
     {
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       callMSK!(MSK_getnumbarcblocktriplets,self.ptr,& mut _ref_num_);
       return Result::Ok((_ref_num_ as i64))
     }
@@ -3584,7 +3588,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_barc_nz(&self) -> Result<i64,String>
     {
-      let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_nz_ : i64 = 0 as i64;
       callMSK!(MSK_getnumbarcnz,self.ptr,& mut _ref_nz_);
       return Result::Ok((_ref_nz_ as i64))
     }
@@ -3668,7 +3672,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_q_con_k_nz(&self,k_ : i32) -> Result<i64,String>
     {
-      let mut _ref_numqcnz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numqcnz_ : i64 = 0 as i64;
       callMSK!(MSK_getnumqconknz64,self.ptr,k_ as i32,& mut _ref_numqcnz_);
       return Result::Ok((_ref_numqcnz_ as i64))
     }
@@ -3680,7 +3684,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_q_obj_nz(&self) -> Result<i64,String>
     {
-      let mut _ref_numqonz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_numqonz_ : i64 = 0 as i64;
       callMSK!(MSK_getnumqobjnz64,self.ptr,& mut _ref_numqonz_);
       return Result::Ok((_ref_numqonz_ as i64))
     }
@@ -3692,7 +3696,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_num_sym_mat(&self) -> Result<i64,String>
     {
-      let mut _ref_num_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_num_ : i64 = 0 as i64;
       callMSK!(MSK_getnumsymmat,self.ptr,& mut _ref_num_);
       return Result::Ok((_ref_num_ as i64))
     }
@@ -4130,7 +4134,7 @@ impl Task
       if subi_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
       if subj_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
       if valij_.len() != ((maxlen_) as usize) { return Result::Err("Argument 'valij_' is too short in call to 'get_sparse_sym_mat'".to_string()) }
-      callMSK!(MSK_getsparsesymmat,self.ptr,idx_ as libc::int64_t,maxlen_ as libc::int64_t,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr());
+      callMSK!(MSK_getsparsesymmat,self.ptr,idx_ as i64,maxlen_ as i64,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr());
       return Result::Ok(())
     }
 
@@ -4235,9 +4239,9 @@ impl Task
     pub fn get_sym_mat_info(&self,idx_ : i64) -> Result<(i32,i64,i32),String>
     {
       let mut _ref_dim_ : i32 = 0 as i32;
-      let mut _ref_nz_ : libc::int64_t = 0 as libc::int64_t;
+      let mut _ref_nz_ : i64 = 0 as i64;
       let mut _ref_type_ : i32 = 0 as i32;
-      callMSK!(MSK_getsymmatinfo,self.ptr,idx_ as libc::int64_t,& mut _ref_dim_,& mut _ref_nz_,& mut _ref_type_);
+      callMSK!(MSK_getsymmatinfo,self.ptr,idx_ as i64,& mut _ref_dim_,& mut _ref_nz_,& mut _ref_type_);
       return Result::Ok((_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32))
     }
 
@@ -4524,7 +4528,7 @@ impl Task
     pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_onesolutionsummary,self.ptr,whichstream_,whichsol_);
-      return Result::Ok(())
+      return Result::Ok(()) 
     }
 
     // optimizermt
@@ -4533,7 +4537,7 @@ impl Task
     #[allow(unused_parens)]
     #[allow(unused_variables)]
     pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> Result<i32,String>
-    {
+    {        
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
       return Result::Ok((_ref_trmcode_ as i32))
@@ -4557,6 +4561,12 @@ impl Task
     #[allow(unused_variables)]
     pub fn optimize(&self) -> Result<i32,String>
     {
+        match self.streamcb[MSK_STREAM_LOG as usize] {
+            Some(ref f) => {
+                f(&"Test, test\n".to_string());
+            },
+            None => {}
+        }
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
       return Result::Ok((_ref_trmcode_ as i32))
@@ -4700,7 +4710,7 @@ impl Task
       let mut num_ = subi_.len();
       if subj_.len() > num_ { num_ = subj_.len() };
       if valij_.len() > num_ { num_ = valij_.len() };
-      callMSK!(MSK_putaijlist64,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr());
+      callMSK!(MSK_putaijlist64,self.ptr,num_ as i64,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr());
       return Result::Ok(())
     }
 
@@ -4767,7 +4777,7 @@ impl Task
       if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_bara_block_triplet'".to_string()) }
       if subl_.len() != ((num_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'put_bara_block_triplet'".to_string()) }
       if valijkl_.len() != ((num_) as usize) { return Result::Err("Argument 'valijkl_' is too short in call to 'put_bara_block_triplet'".to_string()) }
-      callMSK!(MSK_putbarablocktriplet,self.ptr,num_ as libc::int64_t,subi_.as_ptr(),subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valijkl_.as_ptr());
+      callMSK!(MSK_putbarablocktriplet,self.ptr,num_ as i64,subi_.as_ptr(),subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valijkl_.as_ptr());
       return Result::Ok(())
     }
 
@@ -4780,7 +4790,7 @@ impl Task
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
-      callMSK!(MSK_putbaraij,self.ptr,i_ as i32,j_ as i32,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      callMSK!(MSK_putbaraij,self.ptr,i_ as i32,j_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr());
       return Result::Ok(())
     }
 
@@ -4830,7 +4840,7 @@ impl Task
       if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_barc_block_triplet'".to_string()) }
       if subl_.len() != ((num_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'put_barc_block_triplet'".to_string()) }
       if valjkl_.len() != ((num_) as usize) { return Result::Err("Argument 'valjkl_' is too short in call to 'put_barc_block_triplet'".to_string()) }
-      callMSK!(MSK_putbarcblocktriplet,self.ptr,num_ as libc::int64_t,subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valjkl_.as_ptr());
+      callMSK!(MSK_putbarcblocktriplet,self.ptr,num_ as i64,subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valjkl_.as_ptr());
       return Result::Ok(())
     }
 
@@ -4843,7 +4853,7 @@ impl Task
     {
       let mut num_ = sub_.len();
       if weights_.len() > num_ { num_ = weights_.len() };
-      callMSK!(MSK_putbarcj,self.ptr,j_ as i32,num_ as libc::int64_t,sub_.as_ptr(),weights_.as_ptr());
+      callMSK!(MSK_putbarcj,self.ptr,j_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr());
       return Result::Ok(())
     }
 
@@ -5068,7 +5078,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_max_num_a_nz(&self,maxnumanz_ : i64) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as libc::int64_t);
+      callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as i64);
       return Result::Ok(())
     }
 
@@ -5112,7 +5122,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_max_num_q_nz(&self,maxnumqnz_ : i64) -> Result<(),String>
     {
-      callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as libc::int64_t);
+      callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as i64);
       return Result::Ok(())
     }
 
@@ -5814,7 +5824,7 @@ impl Task
     #[allow(unused_variables)]
     pub fn resize_task(&self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String>
     {
-      callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,maxnumcone_ as i32,maxnumanz_ as libc::int64_t,maxnumqnz_ as libc::int64_t);
+      callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,maxnumcone_ as i32,maxnumanz_ as i64,maxnumqnz_ as i64);
       return Result::Ok(())
     }
 
