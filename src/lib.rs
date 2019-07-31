@@ -11,13 +11,10 @@ extern
     fn MSK_deleteenv(env : * mut * const u8) -> i32;
     fn MSK_maketask(env : * const u8, maxnumcon : i32, maxnumvar : i32, task : * mut * const u8) -> u32;
     fn MSK_deletetask(task : * mut * const u8) -> i32;
-    
-    
     fn MSK_linkfunctotaskstream(task        : * const u8,
                                 whichstream : i32,
                                 handle      : * const c_void,
                                 func        : extern fn (handle : * const c_void, msg : * const libc::c_char)) -> i32;
-
     fn MSK_putcallbackfunc(task        : * const u8,
                            func        : extern fn (task : * const c_void, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
                            handle      : * const c_void) -> i32;
@@ -1837,12 +1834,13 @@ pub struct Env
 }
 
 pub type CallbackType = fn(i32,&[f64],&[i32],&[i64]) -> bool;
+pub type StreamCallbackType = fn(&String);
 
 pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<Box<fn(&String)>>; 4 ],
-    valuecb   : Option<CallbackType>,
+    streamcb  : [ Option<Box<StreamCallbackType>>; 4 ],
+    valuecb   : Option<Box<CallbackType>>,
 }
 
 impl Env
@@ -2239,14 +2237,31 @@ impl Task
         return Ok(());
     }
 
+    pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
+        match self.streamcb[whichstream as usize] {
+            Some(ref f) => {
+                callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr, whichstream);
+            }
+            None => {}
+        }
+        self.streamcb[whichstream as usize] = None;
+        return Ok(());
+    }
+    
     pub fn put_callback(& mut self,func : CallbackType) -> Result<(),String>
     {
-        self.valuecb = Some(func);
-        let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
-        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
+        self.valuecb = Some(Box::new(func));
+        match self.valuecb {
+            Some(ref f) => {
+                let hnd =  &(**f) as * const _ as * mut libc::c_void;
+                callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
+            }
+            None => {}
+        }
         return Ok(());
     }
 
+    
 
     // analyzenames
     #[allow(non_snake_case)]
