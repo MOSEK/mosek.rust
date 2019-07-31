@@ -144,9 +144,10 @@ pub struct Variable { idxs : Vec<i64> }
 pub struct Constraint { idxs : Vec<u32> }
 
 impl Variable {
-    fn index(&self, i : usize) -> Variable { Variable{ idxs : self.idxs[i..i+1].to_vec() } }
-    fn slice(&self, r : Range<usize>) -> Variable { Variable{ idxs : self.idxs[r.start..r.end].to_vec() } }
+    pub fn index(&self, i : usize) -> Variable { Variable{ idxs : self.idxs[i..i+1].to_vec() } }
+    pub fn slice(&self, r : Range<usize>) -> Variable { Variable{ idxs : self.idxs[r.start..r.end].to_vec() } }
 }
+
 
 pub trait ModelItem {
     fn level(&self, &Model, &mut [f64]) -> Result<(),String>;
@@ -175,6 +176,7 @@ impl Expr for Variable {
         return (ptr,subj,cof);
     }
 }
+
 
 
 /**********************************************************/
@@ -424,7 +426,7 @@ pub fn expr_mul(mx : &(usize,usize,Vec<f64>), e : & impl Expr) -> BaseExpr {
                      cof  : cof };
 }
 
-pub fn expr_mul_sparse(mx : &(usize,usize,Vec<usize>,Vec<usize>,Vec<f64>), e : & impl Expr) -> BaseExpr {
+pub fn expr_mul_sparse(mx : &(usize,usize,&[usize],&[usize],&[f64]), e : & impl Expr) -> BaseExpr {
     let (dim0_,dim1_,msubi,msubj,mval) = mx;
     let dim0 : usize = *dim0_;
     let dim1 : usize = *dim1_;
@@ -439,22 +441,27 @@ pub fn expr_mul_sparse(mx : &(usize,usize,Vec<usize>,Vec<usize>,Vec<f64>), e : &
     let (eptr,esubj,ecof) = e.eval();
     let numnz = e.len();
 
-    let ptr : Vec<usize> = (0..dim0+1).map(|i| i * numnz).collect();
+    let mut ptr  : Vec<usize> = Vec::new();
     let mut subj : Vec<i64> = Vec::new();
     let mut cof  : Vec<f64> = Vec::new();
 
     let mut i1 = 0;
+    ptr.push(0);
     for i in 0..dim0 {
         let i0 = i1;
-        while msubi[i1] == i as usize {
+        while i1 < msubi.len() && msubi[i1] == i as usize {
             for k in eptr[i1]..eptr[i1+1] {
                 subj.push(esubj[k]);
                 cof.push(ecof[k] * mval[i1]);
             }
             i1 += 1;
         }
+        ptr.push(subj.len());
     }
 
+    println!("ptr  : {:?}",ptr);
+    println!("subj : {:?}",subj);
+    println!("cof  : {:?}",cof);
     return BaseExpr{ ptr  : ptr,
                      subj : subj,
                      cof  : cof };

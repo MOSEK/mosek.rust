@@ -19,38 +19,31 @@ fn main() -> Result<(),String> {
     let mut M = Model::with_name("lo1")?;
     let x = M.variable("x", & greater_than(vec![0f64; 4]))?;
 
-    let aptr  : Vec<usize> = vec![0, 3, 7, 9];
+    let asubi : Vec<usize> = vec![0,0,0,0,0,0,0,0,0];
+    let asubj : Vec<usize> = vec![0,1,2,0,1,2,3,1,3];
+    let acof  : Vec<f64>   = vec![3.0,1.0,2.0,2.0,1.0,3.0,1.0,2.0,3.0];
 
-    let asubj : Vec<i64> = vec![x[0],x[1],x[2],
-                                x[0],x[1],x[2],x[3],
-                                    x[1],     x[3]];
-    let acof  : Vec<f64> = vec![3.0,1.0,2.0,
-                                2.0,1.0,3.0,1.0,
-                                    2.0,    3.0];
+    let m1 = (1usize,4usize,&asubi[0..3],&asubj[0..3],&acof[0..3]);
+    let m2 = (1usize,4usize,&asubi[3..7],&asubj[3..7],&acof[3..7]);
+    let m3 = (1usize,4usize,&asubi[7..9],&asubj[7..9],&acof[7..9]);
 
     let c1 = M.constraint("c1",
-                          &expr(&aptr[0..2], asubj.as_slice(),acof.as_slice()),
-                          & equal_to_scalar(30.0))?;
+                          &expr_mul_sparse(&m1,&x),
+                          &equal_to_scalar(30.0))?;
 
     let c2 = M.constraint("c2",
-                          &expr(&aptr[1..3], asubj.as_slice(),acof.as_slice()),
-                          & greater_than_scalar(15.0))?;
+                          &expr_mul_sparse(&m2,&x),
+                          &greater_than_scalar(15.0))?;
 
     let c3 = M.constraint("c3",
-                          &expr(&aptr[2..4], asubj.as_slice(),acof.as_slice()),
-                          & less_than_scalar(25.0))?;
+                          &expr_mul_sparse(&m3,&x),
+                          &less_than_scalar(25.0))?;
 
-    let c3 = M.constraint("x2",
-                          &expr(vec![0usize,1].as_slice(),
-                               vec![x[1]].as_slice(),
-                               vec![1.0].as_slice()),
-                          & less_than_scalar(10.0))?;
+    let c3 = M.constraint("x2", &x.index(1), &less_than_scalar(10.0))?;
 
     M.objective("obj",
                 ObjectiveSense::Min,
-                &expr(vec![0usize, 4].as_slice(),
-                      vec![x[0],x[1],x[2],x[3]].as_slice(),
-                      vec![3.0, 1.0, 5.0, 1.0].as_slice()))?;
+                &expr_dot(vec![3.0, 1.0, 5.0, 1.0].as_slice(), &x))?;
 
     M.solve()?;
 
