@@ -1,13 +1,13 @@
-//<comment>
+// Generated for MOSEK v9.1.0
 pub mod model;
+
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
-#[link(name = "mosek64")]
-extern
-{
+//#[link(name = "mosek64")]
+extern {
     fn MSK_makeenv(env : * mut * const u8, dbgfile : * const libc::c_char) -> i32;
     fn MSK_deleteenv(env : * mut * const u8) -> i32;
     fn MSK_maketask(env : * const u8, maxnumcon : i32, maxnumvar : i32, task : * mut * const u8) -> u32;
@@ -358,8 +358,10 @@ macro_rules! callMSK
     ( $n:ident, $( $a : expr ),* ) => {
         {
             let res = unsafe { $n ( $( $a,)* ) };
-            if 0 != res {
+            if 0 != res
+            {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
+                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     };
@@ -369,11 +371,11 @@ macro_rules! callMSK
             if 0 != res
             {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
+                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     }
 }
-
 
 // basindtype
 pub const MSK_BI_ALWAYS      : i32 = 1;
@@ -1490,9 +1492,13 @@ pub const MSK_RES_ERR_SEN_NUMERICAL                              : i32 = 3058;
 pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
 pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
+pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN                        : i32 = 8007;
+pub const MSK_RES_ERR_SERVER_ADDRESS                             : i32 = 8004;
+pub const MSK_RES_ERR_SERVER_CERTIFICATE                         : i32 = 8005;
 pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
 pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
 pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
+pub const MSK_RES_ERR_SERVER_TLS_CLIENT                          : i32 = 8006;
 pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
 pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE                         : i32 = 1202;
 pub const MSK_RES_ERR_SIZE_LICENSE                               : i32 = 1005;
@@ -1574,6 +1580,8 @@ pub const MSK_RES_WRN_EMPTY_NAME                                 : i32 = 502;
 pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO     : i32 = 932;
 pub const MSK_RES_WRN_IGNORE_INTEGER                             : i32 = 250;
 pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800;
+pub const MSK_RES_WRN_INVALID_MPS_NAME                           : i32 = 504;
+pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                       : i32 = 505;
 pub const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62;
 pub const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51;
 pub const MSK_RES_WRN_LARGE_CJ                                   : i32 = 57;
@@ -1581,7 +1589,7 @@ pub const MSK_RES_WRN_LARGE_CON_FX                               : i32 = 54;
 pub const MSK_RES_WRN_LARGE_LO_BOUND                             : i32 = 52;
 pub const MSK_RES_WRN_LARGE_UP_BOUND                             : i32 = 53;
 pub const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500;
-pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 505;
+pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 509;
 pub const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501;
 pub const MSK_RES_WRN_LP_DROP_VARIABLE                           : i32 = 85;
 pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                         : i32 = 80;
@@ -1751,18 +1759,20 @@ pub const MSK_SPAR_READ_MPS_OBJ_NAME         : i32 = 10;
 pub const MSK_SPAR_READ_MPS_RAN_NAME         : i32 = 11;
 pub const MSK_SPAR_READ_MPS_RHS_NAME         : i32 = 12;
 pub const MSK_SPAR_REMOTE_ACCESS_TOKEN       : i32 = 13;
-pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 14;
-pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 15;
-pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 16;
-pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 17;
-pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 18;
-pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 19;
-pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 20;
-pub const MSK_SPAR_STAT_KEY                  : i32 = 21;
-pub const MSK_SPAR_STAT_NAME                 : i32 = 22;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 23;
+pub const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 14;
+pub const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 15;
+pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 16;
+pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
+pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 18;
+pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 19;
+pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 20;
+pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 21;
+pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 22;
+pub const MSK_SPAR_STAT_KEY                  : i32 = 23;
+pub const MSK_SPAR_STAT_NAME                 : i32 = 24;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 25;
 pub const MSK_SPAR_BEGIN : i32 = 0;
-pub const MSK_SPAR_END   : i32 = 24;
+pub const MSK_SPAR_END   : i32 = 26;
 
 // stakey
 pub const MSK_SK_BAS    : i32 = 1;
@@ -1835,8 +1845,8 @@ pub type StreamCallbackType = fn(&String);
 pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<Box<StreamCallbackType>>; 4 ],
-    valuecb   : Option<Box<CallbackType>>,
+    streamcb  : [ Option<StreamCallbackType>; 4 ],
+    valuecb   : Option<CallbackType>,
 }
 
 impl Env
@@ -1859,8 +1869,7 @@ impl Env
 
     pub fn task(&self) -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
-        if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) }
-        {
+        if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) } {
             return None;
         }
 
@@ -1869,16 +1878,17 @@ impl Env
                            valuecb  : None,});
     }
 
-    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Task {
+    pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Option<Task>
+    {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, numcon,numvar, & mut task) }
         {
-            panic!("Failed: MSK_maketask");
+            return None;
         }
 
-        return Task { ptr      : task,
-                      streamcb : [None,None,None,None],
-                      valuecb  : None, };
+        return Some(Task { ptr      : task,
+                           streamcb : [None,None,None,None],
+                           valuecb  : None, });
     }
 
     
@@ -2183,7 +2193,7 @@ impl Env
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char)
 {
-    let h = handle as * const fn(&String);
+    let h = handle as * const StreamCallbackType;
     unsafe
     {
         let cstr = CStr::from_ptr(msg);
@@ -2220,42 +2230,29 @@ impl Task
     {
         if whichstream >= 0 && whichstream < 4 //
         {
-            self.streamcb[whichstream as usize] = Some(Box::new(func));
-
-            match self.streamcb[whichstream as usize] {
-                Some(ref bf) => {
-                    let hnd =  &(**bf) as * const _ as * mut libc::c_void;
-                    callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
-                }
-                None => {}
-            }
+            self.streamcb[whichstream as usize] = Some(func);
+            let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
+            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
         }
         return Ok(());
     }
 
-    pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
-        match self.streamcb[whichstream as usize] {
-            Some(ref f) => {
-                callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr, whichstream);
-            }
-            None => {}
+    pub fn clear_stream_callback(& mut self,whichstream : i32) -> Result<(),String>
+    {
+        if whichstream >= 0 && whichstream < 4 {
+            callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream);
         }
-        self.streamcb[whichstream as usize] = None;
         return Ok(());
     }
 
     pub fn put_callback(& mut self,func : CallbackType) -> Result<(),String>
     {
-        self.valuecb = Some(Box::new(func));
-        match self.valuecb {
-            Some(ref f) => {
-                let hnd =  &(**f) as * const _ as * mut libc::c_void;
-                callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
-            }
-            None => {}
-        }
+        self.valuecb = Some(func);
+        let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
+        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
         return Ok(());
     }
+
     
     // analyzenames
     #[allow(non_snake_case)]
