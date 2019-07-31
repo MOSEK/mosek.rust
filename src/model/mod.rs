@@ -284,8 +284,12 @@ pub fn equal_to_scalar    (b : f64) -> LinearBound { return LinearBound{rhs : ve
 pub fn greater_than_scalar(b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_LO }; }
 pub fn less_than_scalar   (b : f64) -> LinearBound { return LinearBound{rhs : vec![b], bk : BOUNDKEY_UP }; }
 
-pub fn in_second_order_cone(n : usize) -> VectorCone { return VectorCone{ct:ConeType::SecondOrder, num:n, par:0.0} }
+pub fn in_second_order_cone        (n : usize) -> VectorCone { return VectorCone{ct:ConeType::SecondOrder, num:n, par:0.0} }
 pub fn in_rotated_second_order_cone(n : usize) -> VectorCone { return VectorCone{ct:ConeType::RotatedSecondOrder, num:n, par:0.0} }
+pub fn in_exponential_cone         (n : usize) -> VectorCone { return VectorCone{ct:ConeType::Exponential, num:n, par:0.0} }
+pub fn in_dual_exponential_cone    (n : usize) -> VectorCone { return VectorCone{ct:ConeType::DualExponential, num:n, par:0.0} }
+pub fn in_power_cone               (par : f64, n : usize) -> VectorCone { return VectorCone{ct:ConeType::Power, num:n, par:par} }
+pub fn in_dual_power_cone          (par : f64, n : usize) -> VectorCone { return VectorCone{ct:ConeType::DualPower, num:n, par:par} }
 
 /**********************************************************/
 /* Expr */
@@ -671,6 +675,14 @@ impl Model {
         Model::with_name("")
     }
 
+    pub fn set_log_handler(&mut self, f : super::StreamCallbackType) -> Result<(),String> {
+        self.task.put_stream_callback(super::MSK_STREAM_LOG,f)
+    }
+
+    pub fn clear_log_handler(&mut self) -> Result<(),String> {
+        self.task.clear_stream_callback(super::MSK_STREAM_LOG)
+    }
+    
 
     fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Result<Vec<i32>,String> {
         let numvar = self.task.get_num_var()?;
@@ -787,15 +799,6 @@ impl Model {
         let nnz   = subj.len();
         let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
 
-
-        //println!("---------- Model::alloc_cone_cons");
-        //println!("b    = {:?}",b);
-        //println!("ptr  = {:?}",ptr);
-        //println!("subj = {:?}",subj);
-        //println!("cof  = {:?}",cof);
-
-        //let numlinnz : u64 = subj.iter().filter(|v| v >= 0).count();
-
         //Following must be rewritten when we introduce PSD items
         self.itr.touch(); self.itg.touch(); self.bas.touch();
 
@@ -830,6 +833,9 @@ impl Model {
         let idxs : Vec<i32> = (first..last).collect();
 
         self.task.append_cons(nrows as i32)?;
+        let bks : Vec<i32> = vec![super::MSK_BK_FX; nrows];
+        let b   = vec![0.0; nrows];
+        self.task.put_con_bound_slice(first,last,bks.as_slice(),b.as_slice(),b.as_slice())?;
 
         //println!("---------- put_a_row_list");
         //println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
