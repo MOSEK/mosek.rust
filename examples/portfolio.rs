@@ -31,10 +31,10 @@ fn basic_markowitz(n : usize,
 
     // Defines the variables (holdings). Shortselling is not allowed.
     let x = M.variable("x", &greater_than(vec![0.0; n]))?;
-    
+
     //  Maximize expected return
     M.objective("obj", ObjectiveSense::Max, &expr_dot(&mu,&x))?;
-    
+
     // The amount invested  must be identical to intial wealth
     let sumx0 : f64 = x0.iter().sum();
     M.constraint("budget", &expr_sum(&x), &equal_to_scalar(w + sumx0))?;
@@ -43,10 +43,10 @@ fn basic_markowitz(n : usize,
     M.constraint("risk",&expr_stack_2(&gamma, &expr_mul(&GT,&x)), &in_second_order_cone(1+n))?;
 
     // Solves the model.
-    M.solve();
+    M.solve()?;
 
     M.write_task(format!("portfolio-{:.2}.ptf",gamma).as_str());
-    
+
     let mut xlvl = vec![0.0; n];
     M.level(&x,xlvl.as_mut_slice())?;
 
@@ -64,7 +64,7 @@ fn main() -> Result<(),String> {
                        0.0              , 0.102863378954911  , -0.00222873156550421,
                        0.0              , 0.0                ,  0.0338148677744977 ]);
 
-    for gamma in gammas { 
+    for gamma in gammas {
         let res = basic_markowitz(n,mu.as_slice(),&GT,x0.as_slice(),w,gamma)?;
         println!("Expected return: {0:.4}  St deviation: {1:.4} ", res,gamma);
     }
