@@ -1845,8 +1845,8 @@ pub type StreamCallbackType = fn(&String);
 pub struct Task
 {
     ptr       : * const u8,
-    streamcb  : [ Option<StreamCallbackType>; 4 ],
-    valuecb   : Option<CallbackType>,
+    streamcb  : [ Option<Box<StreamCallbackType>>; 4 ],
+    valuecb   : Option<Box<CallbackType>>,
 }
 
 impl Env
@@ -2230,26 +2230,40 @@ impl Task
     {
         if whichstream >= 0 && whichstream < 4 //
         {
-            self.streamcb[whichstream as usize] = Some(func);
-            let hnd = self.streamcb[whichstream as usize].as_ref().unwrap() as * const _ as * mut libc::c_void;
-            callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
+            self.streamcb[whichstream as usize] = Some(Box::new(func));
+
+            match self.streamcb[whichstream as usize] {
+                Some(ref bf) => {
+                    let hnd =  &(**bf) as * const _ as * mut libc::c_void;
+                    callMSK!(MSK_linkfunctotaskstream,self.ptr,whichstream, hnd, stream_callback_proxy);
+                }
+                None => {}
+            }
         }
         return Ok(());
     }
 
-    pub fn clear_stream_callback(& mut self,whichstream : i32) -> Result<(),String>
-    {
-        if whichstream >= 0 && whichstream < 4 {
-            callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream);
+    pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
+        match self.streamcb[whichstream as usize] {
+            Some(ref f) => {
+                callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr, whichstream);
+            }
+            None => {}
         }
+        self.streamcb[whichstream as usize] = None;
         return Ok(());
     }
 
     pub fn put_callback(& mut self,func : CallbackType) -> Result<(),String>
     {
-        self.valuecb = Some(func);
-        let hnd = self.valuecb.as_ref().unwrap() as * const _ as * mut libc::c_void;
-        callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
+        self.valuecb = Some(Box::new(func));
+        match self.valuecb {
+            Some(ref f) => {
+                let hnd =  &(**f) as * const _ as * mut libc::c_void;
+                callMSK!(MSK_putcallbackfunc,self.ptr, callback_proxy, hnd);
+            }
+            None => {}
+        }
         return Ok(());
     }
 

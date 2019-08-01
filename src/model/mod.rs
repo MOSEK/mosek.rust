@@ -262,12 +262,9 @@ impl Domain for VectorCone {
                        ptr  : &[usize],
                        subj : &[i64],
                        cof  : &[f64]) -> Result<Vec<u32>,String> {
-        let nrows = self.size();
-        let mut zs : Vec<f64> = Vec::with_capacity(nrows); zs.resize(nrows,0.0);
         let idxs = m.alloc_cone_cons(basic_namer(name),
                                      self.ct.clone(),
                                      self.par,
-                                     zs.as_slice(),
                                      ptr,
                                      subj,
                                      cof)?;
@@ -441,9 +438,8 @@ pub fn expr_mul_sparse(mx : &(usize,usize,&[usize],&[usize],&[f64]), e : & impl 
     for i in 0..msubi.len()-1 {
         assert!(msubi[i] < msubi[i+1] || (msubi[i] == msubi[i+1] && msubj[i] < msubj[i+1]));
     }
-    
+
     let (eptr,esubj,ecof) = e.eval();
-    let numnz = e.len();
 
     let mut ptr  : Vec<usize> = Vec::new();
     let mut subj : Vec<i64> = Vec::new();
@@ -452,7 +448,6 @@ pub fn expr_mul_sparse(mx : &(usize,usize,&[usize],&[usize],&[f64]), e : & impl 
     let mut i1 = 0;
     ptr.push(0);
     for i in 0..dim0 {
-        let i0 = i1;
         while i1 < msubi.len() && msubi[i1] == i as usize {
             for k in eptr[i1]..eptr[i1+1] {
                 subj.push(esubj[k]);
@@ -682,7 +677,7 @@ impl Model {
     pub fn clear_log_handler(&mut self) -> Result<(),String> {
         self.task.clear_stream_callback(super::MSK_STREAM_LOG)
     }
-    
+
 
     fn alloc_vars(& mut self, mut ng : impl NameGenerator, boundkey : BoundKey, b : &[f64]) -> Result<Vec<i32>,String> {
         let numvar = self.task.get_num_var()?;
@@ -765,8 +760,8 @@ impl Model {
         self.task.put_con_bound_slice(first,last,bks.as_slice(),b,b)?;
 
 
-        let mut sl_ptr  : Vec<i64> = ptr.iter().map(|v| *v as i64).collect();
-        let mut sl_subj : Vec<i32> = subj.iter().map(|v| *v as i32).collect();
+        let sl_ptr  : Vec<i64> = ptr.iter().map(|v| *v as i64).collect();
+        let sl_subj : Vec<i32> = subj.iter().map(|v| *v as i32).collect();
 
         let (ptrb,_) = sl_ptr.split_at(numrows);
         let (_,ptre) = sl_ptr.split_at(1);
@@ -791,7 +786,6 @@ impl Model {
                        mut ng : impl NameGenerator,
                        ct   : ConeType,
                        cpar : f64,
-                       b    : &[f64],
                        ptr  : &[usize],
                        subj : &[i64],
                        cof  : &[f64] ) -> Result<Vec<i32>,String> {
@@ -803,7 +797,7 @@ impl Model {
         self.itr.touch(); self.itg.touch(); self.bas.touch();
 
         let slacks = self.alloc_vars(no_namer(),BOUNDKEY_FR,zs.as_slice())?;
-        let mut slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
+        let slacksi64 : Vec<i64> = slacks.iter().map(|i| (i+1) as i64).collect();
         self.slack.extend_from_slice(slacksi64.as_slice());
         self.alloc_cone(ct,cpar,slacks.as_slice())?;
         let mut sl_ptr  : Vec<i64> = Vec::with_capacity(nrows+1);
@@ -836,6 +830,7 @@ impl Model {
         let bks : Vec<i32> = vec![super::MSK_BK_FX; nrows];
         let b   = vec![0.0; nrows];
         self.task.put_con_bound_slice(first,last,bks.as_slice(),b.as_slice(),b.as_slice())?;
+
 
         //println!("---------- put_a_row_list");
         //println!("ptrb    ({:?}) = {:?}",ptrb.len(),ptrb);
