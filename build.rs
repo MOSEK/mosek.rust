@@ -12,11 +12,11 @@ fn get_platform_name() -> (String,String) {
     else if cfg!(target_os = "linux") {
         ("linux64x86".to_string(),"mosek64".to_string())
     }
-    else if cfg!(target_os = "darwin") {
+    else if cfg!(target_os = "macos") {
         ("osx64x86".to_string(),  "mosek64".to_string())
     }
     else {
-        panic!("Unsupported operating system {}",target_os)
+        panic!("Unsupported operating system")
     }
 }
 
