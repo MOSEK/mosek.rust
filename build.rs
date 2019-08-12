@@ -16,7 +16,7 @@ fn get_platform_name() -> (String,String) {
         ("osx64x86".to_string(),  "mosek64".to_string())
     }
     else {
-        panic!("Unsupported operating system")
+        panic!("Unsupported operating system {}",target_os)
     }
 }
 
