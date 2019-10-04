@@ -1,6 +1,4 @@
 // Generated for MOSEK v9.1.0
-pub mod model;
-
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
