@@ -1,4 +1,4 @@
-// Generated for MOSEK v9.1.0
+// Generated for MOSEK v10.0.0
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -30,10 +30,10 @@ extern {
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
-    fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
-    fn MSK_asyncoptimize(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const u8) -> i32;
-    fn MSK_asyncpoll(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
-    fn MSK_asyncstop(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    fn MSK_asyncgetresult(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncoptimize(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const u8) -> i32;
+    fn MSK_asyncpoll(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncstop(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
     fn MSK_bktostr(task_ : * const u8,bk_ : i32,str_ : * const u8) -> i32;
@@ -213,7 +213,7 @@ extern {
     fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
-    fn MSK_optimizermt(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
+    fn MSK_optimizermt(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : & mut i32) -> i32;
     fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
@@ -1415,6 +1415,7 @@ pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                          : i32 = 1126;
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                          : i32 = 1127;
 pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                         : i32 = 1105;
 pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                         : i32 = 1106;
+pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE          : i32 = 7750;
 pub const MSK_RES_ERR_MUL_A_ELEMENT                              : i32 = 1254;
 pub const MSK_RES_ERR_NAME_IS_NULL                               : i32 = 1760;
 pub const MSK_RES_ERR_NAME_MAX_LEN                               : i32 = 1750;
@@ -1756,21 +1757,20 @@ pub const MSK_SPAR_READ_MPS_BOU_NAME         : i32 = 9;
 pub const MSK_SPAR_READ_MPS_OBJ_NAME         : i32 = 10;
 pub const MSK_SPAR_READ_MPS_RAN_NAME         : i32 = 11;
 pub const MSK_SPAR_READ_MPS_RHS_NAME         : i32 = 12;
-pub const MSK_SPAR_REMOTE_ACCESS_TOKEN       : i32 = 13;
-pub const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 14;
-pub const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 15;
-pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 16;
-pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
-pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 18;
-pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 19;
-pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 20;
-pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 21;
-pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 22;
-pub const MSK_SPAR_STAT_KEY                  : i32 = 23;
-pub const MSK_SPAR_STAT_NAME                 : i32 = 24;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 25;
+pub const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 13;
+pub const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 14;
+pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 15;
+pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 16;
+pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 17;
+pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 18;
+pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 19;
+pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 20;
+pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 21;
+pub const MSK_SPAR_STAT_KEY                  : i32 = 22;
+pub const MSK_SPAR_STAT_NAME                 : i32 = 23;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 24;
 pub const MSK_SPAR_BEGIN : i32 = 0;
-pub const MSK_SPAR_END   : i32 = 26;
+pub const MSK_SPAR_END   : i32 = 25;
 
 // stakey
 pub const MSK_SK_BAS    : i32 = 1;
@@ -2410,12 +2410,12 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
+    pub fn async_get_result(&self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2424,10 +2424,10 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_optimize(&self,server_ : &str,port_ : &str) -> Result<String,String>
+    pub fn async_optimize(&self,addr_ : &str,accesstoken_ : &str) -> Result<String,String>
     {
       let mut _token__bytes = Vec::with_capacity(33 as usize);
-      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
+      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
       unsafe { _token__bytes.set_len((33) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()))
     }
@@ -2437,12 +2437,12 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
+    pub fn async_poll(&self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncpoll,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2451,9 +2451,9 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(),String>
+    pub fn async_stop(&self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
+      callMSK!(MSK_asyncstop,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
       return Result::Ok(())
     }
     
@@ -4554,10 +4554,10 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> Result<i32,String>
+    pub fn optimize_rmt(&self,addr_ : &str,accesstoken_ : &str) -> Result<i32,String>
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
-      callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
+      callMSK!(MSK_optimizermt,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),& mut _ref_trmcode_);
       return Result::Ok((_ref_trmcode_ as i32))
     }
     
