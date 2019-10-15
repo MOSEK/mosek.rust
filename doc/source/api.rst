@@ -5,6 +5,42 @@
 Module level functions
 ======================
 
+.. index:: callback_code_to_str
+
+.. _optimizer_env_callbackcodetostr:
+
+``callback_code_to_str()``
+--------------------------
+
+.. code-block:: rust
+
+    pub fn callback_code_to_str ( code : i32 ) -> Result<String,String>
+
+``code``
+    
+*Returns:* ``callbackcodestr``
+    ``callbackcodestr : String``
+        
+
+
+.. index:: get_build_info
+
+.. _optimizer_env_getbuildinfo:
+
+``get_build_info()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn get_build_info (  ) -> Result<(String,String),String>
+
+*Returns:* ``(buildstate,builddate)``
+    ``buildstate : String``
+        
+    ``builddate : String``
+        
+
+
 .. index:: get_code_desc
 
 .. _optimizer_env_getcodedesc:
@@ -14,7 +50,7 @@ Module level functions
 
 .. code-block:: rust
 
-    pub fn get_code_desc ( code : i32 ) -> (String,String)
+    pub fn get_code_desc ( code : i32 ) -> Result<(String,String),String>
 
 ``code``
     
@@ -22,6 +58,24 @@ Module level functions
     ``symname : String``
         
     ``str : String``
+        
+
+
+.. index:: get_response_class
+
+.. _optimizer_env_getresponseclass:
+
+``get_response_class()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn get_response_class ( r : i32 ) -> Result<i32,String>
+
+``r``
+    
+*Returns:* ``rc``
+    ``rc : i32``
         
 
 
@@ -34,7 +88,7 @@ Module level functions
 
 .. code-block:: rust
 
-    pub fn get_version (  ) -> (i32,i32,i32)
+    pub fn get_version (  ) -> Result<(i32,i32,i32),String>
 
 *Returns:* ``(major,minor,revision)``
     ``major : i32``
@@ -43,6 +97,21 @@ Module level functions
         
     ``revision : i32``
         
+
+
+.. index:: is_infinity
+
+.. _optimizer_env_isinfinity:
+
+``is_infinity()``
+-----------------
+
+.. code-block:: rust
+
+    pub fn is_infinity ( value : f64 ) -> Result<(),String>
+
+``value``
+    
 
 
 .. index:: licensecleanup
@@ -54,8 +123,26 @@ Module level functions
 
 .. code-block:: rust
 
-    pub fn licensecleanup (  )
+    pub fn licensecleanup (  ) -> Result<(),String>
 
+
+
+.. index:: sym_nam_to_value
+
+.. _optimizer_env_symnamtovalue:
+
+``sym_nam_to_value()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn sym_nam_to_value ( name : &str ) -> Result<String,String>
+
+``name``
+    
+*Returns:* ``value``
+    ``value : String``
+        
 
 Env methods
 ===========
@@ -73,7 +160,7 @@ Env methods
                   n     : i32,
                   alpha : f64,
                   x_    : & [f64],
-                  y     : & mut [f64] )
+                  y     : & mut [f64]) -> Result<(),String>
 
 ``n``
     
@@ -94,7 +181,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn check_in_all ( &self )
+    pub fn check_in_all ( &self ) -> Result<(),String>
 
 
 
@@ -107,9 +194,50 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn check_in_license ( &self,feature : i32 )
+    pub fn check_in_license ( &self,feature : i32 ) -> Result<(),String>
 
 ``feature``
+    
+
+
+.. index:: check_mem
+
+.. _optimizer_env_checkmemenv:
+
+``check_mem()``
+---------------
+
+.. code-block:: rust
+
+    pub fn check_mem ( &self,
+                       file  : &str,
+                       line  : i32) -> Result<(),String>
+
+``file``
+    
+``line``
+    
+
+
+.. index:: check_version
+
+.. _optimizer_env_checkversion:
+
+``check_version()``
+-------------------
+
+.. code-block:: rust
+
+    pub fn check_version ( &self,
+                           major    : i32,
+                           minor    : i32,
+                           revision : i32) -> Result<(),String>
+
+``major``
+    
+``minor``
+    
+``revision``
     
 
 
@@ -122,7 +250,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn checkout_license ( &self,feature : i32 )
+    pub fn checkout_license ( &self,feature : i32 ) -> Result<(),String>
 
 ``feature``
     
@@ -140,7 +268,7 @@ Env methods
     pub fn dot ( &self,
                  n     : i32,
                  x_    : & [f64],
-                 y_    : & [f64] )
+                 y_    : & [f64]) -> Result<f64,String>
 
 ``n``
     
@@ -153,6 +281,25 @@ Env methods
         
 
 
+.. index:: echo_env
+
+.. _optimizer_env_echoenv:
+
+``echo_env()``
+--------------
+
+.. code-block:: rust
+
+    pub fn echo_env ( &self,
+                      whichstream : i32,
+                      format      : &str) -> Result<(),String>
+
+``whichstream``
+    
+``format``
+    
+
+
 .. index:: echo_intro
 
 .. _optimizer_env_echointro:
@@ -162,7 +309,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn echo_intro ( &self,longver : i32 )
+    pub fn echo_intro ( &self,longver : i32 ) -> Result<(),String>
 
 ``longver``
     
@@ -187,7 +334,7 @@ Env methods
                   a_     : & [f64],
                   b_     : & [f64],
                   beta   : f64,
-                  c      : & mut [f64] )
+                  c      : & mut [f64]) -> Result<(),String>
 
 ``transa``
     
@@ -228,7 +375,7 @@ Env methods
                   a_     : & [f64],
                   x_     : & [f64],
                   beta   : f64,
-                  y      : & mut [f64] )
+                  y      : & mut [f64]) -> Result<(),String>
 
 ``transa``
     
@@ -248,19 +395,19 @@ Env methods
     
 
 
-.. index:: linkfiletostream
+.. index:: link_file_to_env_stream
 
 .. _optimizer_env_linkfiletoenvstream:
 
-``linkfiletostream()``
-----------------------
+``link_file_to_env_stream()``
+-----------------------------
 
 .. code-block:: rust
 
-    pub fn linkfiletostream ( &self,
-                              whichstream : i32,
-                              filename    : &str,
-                              append      : i32 )
+    pub fn link_file_to_env_stream ( &self,
+                                     whichstream : i32,
+                                     filename    : &str,
+                                     append      : i32) -> Result<(),String>
 
 ``whichstream``
     
@@ -303,7 +450,7 @@ Env methods
     pub fn potrf ( &self,
                    uplo  : i32,
                    n     : i32,
-                   a     : & mut [f64] )
+                   a     : & mut [f64]) -> Result<(),String>
 
 ``uplo``
     
@@ -322,7 +469,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn put_license_code ( &self,code_ : & [i32] )
+    pub fn put_license_code ( &self,code_ : & [i32] ) -> Result<(),String>
 
 ``code``
     
@@ -337,7 +484,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn put_license_debug ( &self,licdebug : i32 )
+    pub fn put_license_debug ( &self,licdebug : i32 ) -> Result<(),String>
 
 ``licdebug``
     
@@ -352,7 +499,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn put_license_path ( &self,licensepath : &str )
+    pub fn put_license_path ( &self,licensepath : &str ) -> Result<(),String>
 
 ``licensepath``
     
@@ -367,7 +514,7 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn put_license_wait ( &self,licwait : i32 )
+    pub fn put_license_wait ( &self,licwait : i32 ) -> Result<(),String>
 
 ``licwait``
     
@@ -382,9 +529,40 @@ Env methods
 
 .. code-block:: rust
 
-    pub fn setup_threads ( &self,numthreads : i32 )
+    pub fn setup_threads ( &self,numthreads : i32 ) -> Result<(),String>
 
 ``numthreads``
+    
+
+
+.. index:: sparse_triangular_solve_dense
+
+.. _optimizer_env_sparsetriangularsolvedense:
+
+``sparse_triangular_solve_dense()``
+-----------------------------------
+
+.. code-block:: rust
+
+    pub fn sparse_triangular_solve_dense ( &self,
+                                           transposed : i32,
+                                           lnzc_      : & [i32],
+                                           lptrc_     : & [i64],
+                                           lsubc_     : & [i32],
+                                           lvalc_     : & [f64],
+                                           b          : & mut [f64]) -> Result<(),String>
+
+``transposed``
+    
+``lnzc``
+    
+``lptrc``
+    
+``lsubc``
+    
+``lvalc``
+    
+``b``
     
 
 
@@ -401,7 +579,7 @@ Env methods
                    uplo  : i32,
                    n     : i32,
                    a_    : & [f64],
-                   w     : & mut [f64] )
+                   w     : & mut [f64]) -> Result<(),String>
 
 ``uplo``
     
@@ -426,7 +604,7 @@ Env methods
                    uplo  : i32,
                    n     : i32,
                    a     : & mut [f64],
-                   w     : & mut [f64] )
+                   w     : & mut [f64]) -> Result<(),String>
 
 ``uplo``
     
@@ -455,7 +633,7 @@ Env methods
                   alpha : f64,
                   a_    : & [f64],
                   beta  : f64,
-                  c     : & mut [f64] )
+                  c     : & mut [f64]) -> Result<(),String>
 
 ``uplo``
     
@@ -508,6 +686,21 @@ Env methods
     functions. If you do not intend to use callback functions, you can
     let this be ``()`` (unit).
 
+
+.. index:: unlink_func_from_stream
+
+.. _optimizer_env_unlinkfuncfromenvstream:
+
+``unlink_func_from_stream()``
+-----------------------------
+
+.. code-block:: rust
+
+    pub fn unlink_func_from_stream ( &self,whichstream : i32 ) -> Result<(),String>
+
+``whichstream``
+    
+
 Task methods
 ============
 
@@ -522,7 +715,7 @@ Task methods
 
     pub fn analyze_names ( &self,
                            whichstream : i32,
-                           nametype    : i32 )
+                           nametype    : i32) -> Result<(),String>
 
 ``whichstream``
     
@@ -539,7 +732,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn analyze_problem ( &self,whichstream : i32 )
+    pub fn analyze_problem ( &self,whichstream : i32 ) -> Result<(),String>
 
 ``whichstream``
     
@@ -556,7 +749,7 @@ Task methods
 
     pub fn analyze_solution ( &self,
                               whichstream : i32,
-                              whichsol    : i32 )
+                              whichsol    : i32) -> Result<(),String>
 
 ``whichstream``
     
@@ -573,7 +766,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn append_barvars ( &self,dim_  : & [i32] )
+    pub fn append_barvars ( &self,dim_  : & [i32] ) -> Result<(),String>
 
 ``dim``
     
@@ -591,7 +784,7 @@ Task methods
     pub fn append_cone ( &self,
                          ct      : i32,
                          conepar : f64,
-                         submem_ : & [i32] )
+                         submem_ : & [i32]) -> Result<(),String>
 
 ``ct``
     
@@ -614,7 +807,7 @@ Task methods
                              ct      : i32,
                              conepar : f64,
                              nummem  : i32,
-                             j       : i32 )
+                             j       : i32) -> Result<(),String>
 
 ``ct``
     
@@ -639,7 +832,7 @@ Task methods
                               ct_      : & [i32],
                               conepar_ : & [f64],
                               nummem_  : & [i32],
-                              j        : i32 )
+                              j        : i32) -> Result<(),String>
 
 ``ct``
     
@@ -660,7 +853,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn append_cons ( &self,num   : i32 )
+    pub fn append_cons ( &self,num   : i32 ) -> Result<(),String>
 
 ``num``
     
@@ -679,7 +872,7 @@ Task methods
                                    dim    : i32,
                                    subi_  : & [i32],
                                    subj_  : & [i32],
-                                   valij_ : & [f64] )
+                                   valij_ : & [f64]) -> Result<i64,String>
 
 ``dim``
     
@@ -709,7 +902,7 @@ Task methods
                                         subi_  : & [i32],
                                         subj_  : & [i32],
                                         valij_ : & [f64],
-                                        idx    : & mut [i64] )
+                                        idx    : & mut [i64]) -> Result<(),String>
 
 ``dims``
     
@@ -734,9 +927,111 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn append_vars ( &self,num   : i32 )
+    pub fn append_vars ( &self,num   : i32 ) -> Result<(),String>
 
 ``num``
+    
+
+
+.. index:: async_get_result
+
+.. _optimizer_task_asyncgetresult:
+
+``async_get_result()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn async_get_result ( &self,
+                              addr        : &str,
+                              accesstoken : &str,
+                              token       : &str) -> Result<(bool,i32,i32),String>
+
+``addr``
+    
+``accesstoken``
+    
+``token``
+    
+*Returns:* ``(respavailable,resp,trm)``
+    ``respavailable : bool``
+        
+    ``resp : i32``
+        
+    ``trm : i32``
+        
+
+
+.. index:: async_optimize
+
+.. _optimizer_task_asyncoptimize:
+
+``async_optimize()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn async_optimize ( &self,
+                            addr        : &str,
+                            accesstoken : &str) -> Result<String,String>
+
+``addr``
+    
+``accesstoken``
+    
+*Returns:* ``token``
+    ``token : String``
+        
+
+
+.. index:: async_poll
+
+.. _optimizer_task_asyncpoll:
+
+``async_poll()``
+----------------
+
+.. code-block:: rust
+
+    pub fn async_poll ( &self,
+                        addr        : &str,
+                        accesstoken : &str,
+                        token       : &str) -> Result<(bool,i32,i32),String>
+
+``addr``
+    
+``accesstoken``
+    
+``token``
+    
+*Returns:* ``(respavailable,resp,trm)``
+    ``respavailable : bool``
+        
+    ``resp : i32``
+        
+    ``trm : i32``
+        
+
+
+.. index:: async_stop
+
+.. _optimizer_task_asyncstop:
+
+``async_stop()``
+----------------
+
+.. code-block:: rust
+
+    pub fn async_stop ( &self,
+                        addr        : &str,
+                        accesstoken : &str,
+                        token       : &str) -> Result<(),String>
+
+``addr``
+    
+``accesstoken``
+    
+``token``
     
 
 
@@ -749,7 +1044,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn basis_cond ( &self ) -> (f64,f64)
+    pub fn basis_cond ( &self ) -> Result<(f64,f64),String>
 
 *Returns:* ``(nrmbasis,nrminvbasis)``
     ``nrmbasis : f64``
@@ -758,17 +1053,22 @@ Task methods
         
 
 
-.. index:: check_convexity
+.. index:: bk_to_str
 
-.. _optimizer_task_checkconvexity:
+.. _optimizer_task_bktostr:
 
-``check_convexity()``
----------------------
+``bk_to_str()``
+---------------
 
 .. code-block:: rust
 
-    pub fn check_convexity ( &self )
+    pub fn bk_to_str ( &self,bk    : i32 ) -> Result<String,String>
 
+``bk``
+    
+*Returns:* ``str``
+    ``str : String``
+        
 
 
 .. index:: check_mem
@@ -782,7 +1082,7 @@ Task methods
 
     pub fn check_mem ( &self,
                        file  : &str,
-                       line  : i32 )
+                       line  : i32) -> Result<(),String>
 
 ``file``
     
@@ -803,7 +1103,7 @@ Task methods
                            i      : i32,
                            lower  : i32,
                            finite : i32,
-                           value  : f64 )
+                           value  : f64) -> Result<(),String>
 
 ``i``
     
@@ -828,7 +1128,7 @@ Task methods
                            j      : i32,
                            lower  : i32,
                            finite : i32,
-                           value  : f64 )
+                           value  : f64) -> Result<(),String>
 
 ``j``
     
@@ -849,8 +1149,26 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn commit_changes ( &self )
+    pub fn commit_changes ( &self ) -> Result<(),String>
 
+
+
+.. index:: cone_type_to_str
+
+.. _optimizer_task_conetypetostr:
+
+``cone_type_to_str()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn cone_type_to_str ( &self,ct    : i32 ) -> Result<String,String>
+
+``ct``
+    
+*Returns:* ``str``
+    ``str : String``
+        
 
 
 .. index:: delete_solution
@@ -862,7 +1180,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn delete_solution ( &self,whichsol : i32 )
+    pub fn delete_solution ( &self,whichsol : i32 ) -> Result<(),String>
 
 ``whichsol``
     
@@ -882,7 +1200,7 @@ Task methods
                               leftpricej  : & mut [f64],
                               rightpricej : & mut [f64],
                               leftrangej  : & mut [f64],
-                              rightrangej : & mut [f64] )
+                              rightrangej : & mut [f64]) -> Result<(),String>
 
 ``subj``
     
@@ -893,6 +1211,25 @@ Task methods
 ``leftrangej``
     
 ``rightrangej``
+    
+
+
+.. index:: echo_task
+
+.. _optimizer_task_echotask:
+
+``echo_task()``
+---------------
+
+.. code-block:: rust
+
+    pub fn echo_task ( &self,
+                       whichstream : i32,
+                       format      : &str) -> Result<(),String>
+
+``whichstream``
+    
+``format``
     
 
 
@@ -909,7 +1246,7 @@ Task methods
                                 subi_ : & [i32],
                                 fmt   : &str,
                                 dims_ : & [i32],
-                                sp_   : & [i64] )
+                                sp_   : & [i64]) -> Result<(),String>
 
 ``subi``
     
@@ -934,7 +1271,7 @@ Task methods
                                  subk_ : & [i32],
                                  fmt   : &str,
                                  dims_ : & [i32],
-                                 sp_   : & [i64] )
+                                 sp_   : & [i64]) -> Result<(),String>
 
 ``subk``
     
@@ -959,7 +1296,7 @@ Task methods
                                 subj_ : & [i32],
                                 fmt   : &str,
                                 dims_ : & [i32],
-                                sp_   : & [i64] )
+                                sp_   : & [i64]) -> Result<(),String>
 
 ``subj``
     
@@ -983,7 +1320,7 @@ Task methods
     pub fn get_a_col ( &self,
                        j     : i32,
                        subj  : & mut [i32],
-                       valj  : & mut [f64] )
+                       valj  : & mut [f64]) -> Result<i32,String>
 
 ``j``
     
@@ -1005,7 +1342,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_a_col_num_nz ( &self,i     : i32 ) -> i32
+    pub fn get_a_col_num_nz ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -1025,7 +1362,7 @@ Task methods
 
     pub fn get_a_col_slice_num_nz ( &self,
                                     first : i32,
-                                    last  : i32 )
+                                    last  : i32) -> Result<i64,String>
 
 ``first``
     
@@ -1049,7 +1386,7 @@ Task methods
                                 firsti : i32,
                                 lasti  : i32,
                                 firstj : i32,
-                                lastj  : i32 )
+                                lastj  : i32) -> Result<i32,String>
 
 ``firsti``
     
@@ -1076,7 +1413,7 @@ Task methods
     pub fn get_a_row ( &self,
                        i     : i32,
                        subi  : & mut [i32],
-                       vali  : & mut [f64] )
+                       vali  : & mut [f64]) -> Result<i32,String>
 
 ``i``
     
@@ -1098,7 +1435,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_a_row_num_nz ( &self,i     : i32 ) -> i32
+    pub fn get_a_row_num_nz ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -1118,7 +1455,7 @@ Task methods
 
     pub fn get_a_row_slice_num_nz ( &self,
                                     first : i32,
-                                    last  : i32 )
+                                    last  : i32) -> Result<i64,String>
 
 ``first``
     
@@ -1138,7 +1475,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_a_truncate_tol ( &self,tolzero : & mut [f64] )
+    pub fn get_a_truncate_tol ( &self,tolzero : & mut [f64] ) -> Result<(),String>
 
 ``tolzero``
     
@@ -1155,7 +1492,7 @@ Task methods
 
     pub fn get_aij ( &self,
                      i     : i32,
-                     j     : i32 )
+                     j     : i32) -> Result<f64,String>
 
 ``i``
     
@@ -1180,7 +1517,7 @@ Task methods
                                     subj    : & mut [i32],
                                     subk    : & mut [i32],
                                     subl    : & mut [i32],
-                                    valijkl : & mut [f64] )
+                                    valijkl : & mut [f64]) -> Result<i64,String>
 
 ``subi``
     
@@ -1209,7 +1546,7 @@ Task methods
     pub fn get_bara_idx ( &self,
                           idx     : i64,
                           sub     : & mut [i64],
-                          weights : & mut [f64] )
+                          weights : & mut [f64]) -> Result<(i32,i32,i64),String>
 
 ``idx``
     
@@ -1235,7 +1572,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_bara_idx_i_j ( &self,idx   : i64 ) -> (i32,i32)
+    pub fn get_bara_idx_i_j ( &self,idx   : i64 ) -> Result<(i32,i32),String>
 
 ``idx``
     
@@ -1255,7 +1592,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_bara_idx_info ( &self,idx   : i64 ) -> i64
+    pub fn get_bara_idx_info ( &self,idx   : i64 ) -> Result<i64,String>
 
 ``idx``
     
@@ -1273,7 +1610,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_bara_sparsity ( &self,idxij : & mut [i64] ) -> i64
+    pub fn get_bara_sparsity ( &self,idxij : & mut [i64] ) -> Result<i64,String>
 
 ``idxij``
     
@@ -1295,7 +1632,7 @@ Task methods
                                     subj   : & mut [i32],
                                     subk   : & mut [i32],
                                     subl   : & mut [i32],
-                                    valjkl : & mut [f64] )
+                                    valjkl : & mut [f64]) -> Result<i64,String>
 
 ``subj``
     
@@ -1322,7 +1659,7 @@ Task methods
     pub fn get_barc_idx ( &self,
                           idx     : i64,
                           sub     : & mut [i64],
-                          weights : & mut [f64] )
+                          weights : & mut [f64]) -> Result<(i32,i64),String>
 
 ``idx``
     
@@ -1346,7 +1683,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barc_idx_info ( &self,idx   : i64 ) -> i64
+    pub fn get_barc_idx_info ( &self,idx   : i64 ) -> Result<i64,String>
 
 ``idx``
     
@@ -1364,7 +1701,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barc_idx_j ( &self,idx   : i64 ) -> i32
+    pub fn get_barc_idx_j ( &self,idx   : i64 ) -> Result<i32,String>
 
 ``idx``
     
@@ -1382,7 +1719,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barc_sparsity ( &self,idxj  : & mut [i64] ) -> i64
+    pub fn get_barc_sparsity ( &self,idxj  : & mut [i64] ) -> Result<i64,String>
 
 ``idxj``
     
@@ -1403,7 +1740,7 @@ Task methods
     pub fn get_bars_j ( &self,
                         whichsol : i32,
                         j        : i32,
-                        barsj    : & mut [f64] )
+                        barsj    : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -1427,7 +1764,7 @@ Task methods
                             first     : i32,
                             last      : i32,
                             slicesize : i64,
-                            barsslice : & mut [f64] )
+                            barsslice : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -1450,7 +1787,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barvar_name ( &self,i     : i32 ) -> String
+    pub fn get_barvar_name ( &self,i     : i32 ) -> Result<String,String>
 
 ``i``
     
@@ -1468,7 +1805,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barvar_name_index ( &self,somename : &str ) -> (i32,i32)
+    pub fn get_barvar_name_index ( &self,somename : &str ) -> Result<(i32,i32),String>
 
 ``somename``
     
@@ -1488,7 +1825,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_barvar_name_len ( &self,i     : i32 ) -> i32
+    pub fn get_barvar_name_len ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -1509,7 +1846,7 @@ Task methods
     pub fn get_barx_j ( &self,
                         whichsol : i32,
                         j        : i32,
-                        barxj    : & mut [f64] )
+                        barxj    : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -1533,7 +1870,7 @@ Task methods
                             first     : i32,
                             last      : i32,
                             slicesize : i64,
-                            barxslice : & mut [f64] )
+                            barxslice : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -1556,7 +1893,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_c ( &self,c     : & mut [f64] )
+    pub fn get_c ( &self,c     : & mut [f64] ) -> Result<(),String>
 
 ``c``
     
@@ -1571,7 +1908,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_c_j ( &self,j     : i32 ) -> f64
+    pub fn get_c_j ( &self,j     : i32 ) -> Result<f64,String>
 
 ``j``
     
@@ -1591,7 +1928,7 @@ Task methods
 
     pub fn get_c_list ( &self,
                         subj_ : & [i32],
-                        c     : & mut [f64] )
+                        c     : & mut [f64]) -> Result<(),String>
 
 ``subj``
     
@@ -1611,7 +1948,7 @@ Task methods
     pub fn get_c_slice ( &self,
                          first : i32,
                          last  : i32,
-                         c     : & mut [f64] )
+                         c     : & mut [f64]) -> Result<(),String>
 
 ``first``
     
@@ -1630,7 +1967,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_cfix ( &self ) -> f64
+    pub fn get_cfix ( &self ) -> Result<f64,String>
 
 *Returns:* ``cfix``
     ``cfix : f64``
@@ -1646,7 +1983,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_con_bound ( &self,i     : i32 ) -> (i32,f64,f64)
+    pub fn get_con_bound ( &self,i     : i32 ) -> Result<(i32,f64,f64),String>
 
 ``i``
     
@@ -1673,7 +2010,7 @@ Task methods
                                  last  : i32,
                                  bk    : & mut [i32],
                                  bl    : & mut [f64],
-                                 bu    : & mut [f64] )
+                                 bu    : & mut [f64]) -> Result<(),String>
 
 ``first``
     
@@ -1696,7 +2033,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_con_name ( &self,i     : i32 ) -> String
+    pub fn get_con_name ( &self,i     : i32 ) -> Result<String,String>
 
 ``i``
     
@@ -1714,7 +2051,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_con_name_index ( &self,somename : &str ) -> (i32,i32)
+    pub fn get_con_name_index ( &self,somename : &str ) -> Result<(i32,i32),String>
 
 ``somename``
     
@@ -1734,7 +2071,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_con_name_len ( &self,i     : i32 ) -> i32
+    pub fn get_con_name_len ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -1754,7 +2091,7 @@ Task methods
 
     pub fn get_cone ( &self,
                       k      : i32,
-                      submem : & mut [i32] )
+                      submem : & mut [i32]) -> Result<(i32,f64,i32),String>
 
 ``k``
     
@@ -1778,7 +2115,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_cone_info ( &self,k     : i32 ) -> (i32,f64,i32)
+    pub fn get_cone_info ( &self,k     : i32 ) -> Result<(i32,f64,i32),String>
 
 ``k``
     
@@ -1800,7 +2137,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_cone_name ( &self,i     : i32 ) -> String
+    pub fn get_cone_name ( &self,i     : i32 ) -> Result<String,String>
 
 ``i``
     
@@ -1818,7 +2155,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_cone_name_index ( &self,somename : &str ) -> (i32,i32)
+    pub fn get_cone_name_index ( &self,somename : &str ) -> Result<(i32,i32),String>
 
 ``somename``
     
@@ -1838,7 +2175,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_cone_name_len ( &self,i     : i32 ) -> i32
+    pub fn get_cone_name_len ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -1856,7 +2193,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_dim_barvar_j ( &self,j     : i32 ) -> i32
+    pub fn get_dim_barvar_j ( &self,j     : i32 ) -> Result<i32,String>
 
 ``j``
     
@@ -1874,7 +2211,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_dou_inf ( &self,whichdinf : i32 ) -> f64
+    pub fn get_dou_inf ( &self,whichdinf : i32 ) -> Result<f64,String>
 
 ``whichdinf``
     
@@ -1892,7 +2229,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_dou_param ( &self,param : i32 ) -> f64
+    pub fn get_dou_param ( &self,param : i32 ) -> Result<f64,String>
 
 ``param``
     
@@ -1910,7 +2247,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_dual_obj ( &self,whichsol : i32 ) -> f64
+    pub fn get_dual_obj ( &self,whichsol : i32 ) -> Result<f64,String>
 
 ``whichsol``
     
@@ -1928,7 +2265,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_dual_solution_norms ( &self,whichsol : i32 ) -> (f64,f64,f64,f64,f64,f64,f64)
+    pub fn get_dual_solution_norms ( &self,whichsol : i32 ) -> Result<(f64,f64,f64,f64,f64,f64,f64),String>
 
 ``whichsol``
     
@@ -1961,7 +2298,7 @@ Task methods
     pub fn get_dviol_barvar ( &self,
                               whichsol : i32,
                               sub_     : & [i32],
-                              viol     : & mut [f64] )
+                              viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -1983,7 +2320,7 @@ Task methods
     pub fn get_dviol_con ( &self,
                            whichsol : i32,
                            sub_     : & [i32],
-                           viol     : & mut [f64] )
+                           viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2005,7 +2342,7 @@ Task methods
     pub fn get_dviol_cones ( &self,
                              whichsol : i32,
                              sub_     : & [i32],
-                             viol     : & mut [f64] )
+                             viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2027,7 +2364,7 @@ Task methods
     pub fn get_dviol_var ( &self,
                            whichsol : i32,
                            sub_     : & [i32],
-                           viol     : & mut [f64] )
+                           viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2048,7 +2385,7 @@ Task methods
 
     pub fn get_inf_index ( &self,
                            inftype : i32,
-                           infname : &str )
+                           infname : &str) -> Result<i32,String>
 
 ``inftype``
     
@@ -2070,7 +2407,7 @@ Task methods
 
     pub fn get_inf_max ( &self,
                          inftype : i32,
-                         infmax  : & mut [i32] )
+                         infmax  : & mut [i32]) -> Result<(),String>
 
 ``inftype``
     
@@ -2089,7 +2426,7 @@ Task methods
 
     pub fn get_inf_name ( &self,
                           inftype  : i32,
-                          whichinf : i32 )
+                          whichinf : i32) -> Result<String,String>
 
 ``inftype``
     
@@ -2109,7 +2446,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_int_inf ( &self,whichiinf : i32 ) -> i32
+    pub fn get_int_inf ( &self,whichiinf : i32 ) -> Result<i32,String>
 
 ``whichiinf``
     
@@ -2127,7 +2464,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_int_param ( &self,param : i32 ) -> i32
+    pub fn get_int_param ( &self,param : i32 ) -> Result<i32,String>
 
 ``param``
     
@@ -2145,7 +2482,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_len_barvar_j ( &self,j     : i32 ) -> i64
+    pub fn get_len_barvar_j ( &self,j     : i32 ) -> Result<i64,String>
 
 ``j``
     
@@ -2163,12 +2500,28 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_lint_inf ( &self,whichliinf : i32 ) -> i64
+    pub fn get_lint_inf ( &self,whichliinf : i32 ) -> Result<i64,String>
 
 ``whichliinf``
     
 *Returns:* ``ivalue``
     ``ivalue : i64``
+        
+
+
+.. index:: get_max_name_len
+
+.. _optimizer_task_getmaxnamelen:
+
+``get_max_name_len()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn get_max_name_len ( &self ) -> Result<i32,String>
+
+*Returns:* ``maxlen``
+    ``maxlen : i32``
         
 
 
@@ -2181,7 +2534,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_a_nz ( &self ) -> i64
+    pub fn get_max_num_a_nz ( &self ) -> Result<i64,String>
 
 *Returns:* ``maxnumanz``
     ``maxnumanz : i64``
@@ -2197,7 +2550,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_barvar ( &self ) -> i32
+    pub fn get_max_num_barvar ( &self ) -> Result<i32,String>
 
 *Returns:* ``maxnumbarvar``
     ``maxnumbarvar : i32``
@@ -2213,7 +2566,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_con ( &self ) -> i32
+    pub fn get_max_num_con ( &self ) -> Result<i32,String>
 
 *Returns:* ``maxnumcon``
     ``maxnumcon : i32``
@@ -2229,7 +2582,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_cone ( &self ) -> i32
+    pub fn get_max_num_cone ( &self ) -> Result<i32,String>
 
 *Returns:* ``maxnumcone``
     ``maxnumcone : i32``
@@ -2245,7 +2598,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_q_nz ( &self ) -> i64
+    pub fn get_max_num_q_nz ( &self ) -> Result<i64,String>
 
 *Returns:* ``maxnumqnz``
     ``maxnumqnz : i64``
@@ -2261,7 +2614,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_max_num_var ( &self ) -> i32
+    pub fn get_max_num_var ( &self ) -> Result<i32,String>
 
 *Returns:* ``maxnumvar``
     ``maxnumvar : i32``
@@ -2277,12 +2630,108 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_mem_usage ( &self ) -> (i64,i64)
+    pub fn get_mem_usage ( &self ) -> Result<(i64,i64),String>
 
 *Returns:* ``(meminuse,maxmemuse)``
     ``meminuse : i64``
         
     ``maxmemuse : i64``
+        
+
+
+.. index:: get_na_dou_inf
+
+.. _optimizer_task_getnadouinf:
+
+``get_na_dou_inf()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn get_na_dou_inf ( &self,infitemname : &str ) -> Result<f64,String>
+
+``infitemname``
+    
+*Returns:* ``dvalue``
+    ``dvalue : f64``
+        
+
+
+.. index:: get_na_dou_param
+
+.. _optimizer_task_getnadouparam:
+
+``get_na_dou_param()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn get_na_dou_param ( &self,paramname : &str ) -> Result<f64,String>
+
+``paramname``
+    
+*Returns:* ``parvalue``
+    ``parvalue : f64``
+        
+
+
+.. index:: get_na_int_inf
+
+.. _optimizer_task_getnaintinf:
+
+``get_na_int_inf()``
+--------------------
+
+.. code-block:: rust
+
+    pub fn get_na_int_inf ( &self,infitemname : &str ) -> Result<i32,String>
+
+``infitemname``
+    
+*Returns:* ``ivalue``
+    ``ivalue : i32``
+        
+
+
+.. index:: get_na_int_param
+
+.. _optimizer_task_getnaintparam:
+
+``get_na_int_param()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn get_na_int_param ( &self,paramname : &str ) -> Result<i32,String>
+
+``paramname``
+    
+*Returns:* ``parvalue``
+    ``parvalue : i32``
+        
+
+
+.. index:: get_na_str_param
+
+.. _optimizer_task_getnastrparam:
+
+``get_na_str_param()``
+----------------------
+
+.. code-block:: rust
+
+    pub fn get_na_str_param ( &self,
+                              paramname     : &str,
+                              sizeparamname : i32) -> Result<(i32,String),String>
+
+``paramname``
+    
+``sizeparamname``
+    
+*Returns:* ``(len,parvalue)``
+    ``len : i32``
+        
+    ``parvalue : String``
         
 
 
@@ -2295,7 +2744,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_a_nz ( &self ) -> i32
+    pub fn get_num_a_nz ( &self ) -> Result<i32,String>
 
 *Returns:* ``numanz``
     ``numanz : i32``
@@ -2311,7 +2760,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_a_nz_64 ( &self ) -> i64
+    pub fn get_num_a_nz_64 ( &self ) -> Result<i64,String>
 
 *Returns:* ``numanz``
     ``numanz : i64``
@@ -2327,7 +2776,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_bara_block_triplets ( &self ) -> i64
+    pub fn get_num_bara_block_triplets ( &self ) -> Result<i64,String>
 
 *Returns:* ``num``
     ``num : i64``
@@ -2343,7 +2792,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_bara_nz ( &self ) -> i64
+    pub fn get_num_bara_nz ( &self ) -> Result<i64,String>
 
 *Returns:* ``nz``
     ``nz : i64``
@@ -2359,7 +2808,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_barc_block_triplets ( &self ) -> i64
+    pub fn get_num_barc_block_triplets ( &self ) -> Result<i64,String>
 
 *Returns:* ``num``
     ``num : i64``
@@ -2375,7 +2824,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_barc_nz ( &self ) -> i64
+    pub fn get_num_barc_nz ( &self ) -> Result<i64,String>
 
 *Returns:* ``nz``
     ``nz : i64``
@@ -2391,7 +2840,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_barvar ( &self ) -> i32
+    pub fn get_num_barvar ( &self ) -> Result<i32,String>
 
 *Returns:* ``numbarvar``
     ``numbarvar : i32``
@@ -2407,7 +2856,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_con ( &self ) -> i32
+    pub fn get_num_con ( &self ) -> Result<i32,String>
 
 *Returns:* ``numcon``
     ``numcon : i32``
@@ -2423,7 +2872,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_cone ( &self ) -> i32
+    pub fn get_num_cone ( &self ) -> Result<i32,String>
 
 *Returns:* ``numcone``
     ``numcone : i32``
@@ -2439,7 +2888,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_cone_mem ( &self,k     : i32 ) -> i32
+    pub fn get_num_cone_mem ( &self,k     : i32 ) -> Result<i32,String>
 
 ``k``
     
@@ -2457,7 +2906,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_int_var ( &self ) -> i32
+    pub fn get_num_int_var ( &self ) -> Result<i32,String>
 
 *Returns:* ``numintvar``
     ``numintvar : i32``
@@ -2473,7 +2922,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_param ( &self,partype : i32 ) -> i32
+    pub fn get_num_param ( &self,partype : i32 ) -> Result<i32,String>
 
 ``partype``
     
@@ -2491,7 +2940,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_q_con_k_nz ( &self,k     : i32 ) -> i64
+    pub fn get_num_q_con_k_nz ( &self,k     : i32 ) -> Result<i64,String>
 
 ``k``
     
@@ -2509,7 +2958,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_q_obj_nz ( &self ) -> i64
+    pub fn get_num_q_obj_nz ( &self ) -> Result<i64,String>
 
 *Returns:* ``numqonz``
     ``numqonz : i64``
@@ -2525,7 +2974,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_sym_mat ( &self ) -> i64
+    pub fn get_num_sym_mat ( &self ) -> Result<i64,String>
 
 *Returns:* ``num``
     ``num : i64``
@@ -2541,7 +2990,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_num_var ( &self ) -> i32
+    pub fn get_num_var ( &self ) -> Result<i32,String>
 
 *Returns:* ``numvar``
     ``numvar : i32``
@@ -2557,7 +3006,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_obj_name ( &self ) -> String
+    pub fn get_obj_name ( &self ) -> Result<String,String>
 
 *Returns:* ``objname``
     ``objname : String``
@@ -2573,7 +3022,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_obj_name_len ( &self ) -> i32
+    pub fn get_obj_name_len ( &self ) -> Result<i32,String>
 
 *Returns:* ``len``
     ``len : i32``
@@ -2589,7 +3038,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_obj_sense ( &self ) -> i32
+    pub fn get_obj_sense ( &self ) -> Result<i32,String>
 
 *Returns:* ``sense``
     ``sense : i32``
@@ -2605,7 +3054,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_param_max ( &self,partype : i32 ) -> i32
+    pub fn get_param_max ( &self,partype : i32 ) -> Result<i32,String>
 
 ``partype``
     
@@ -2625,7 +3074,7 @@ Task methods
 
     pub fn get_param_name ( &self,
                             partype : i32,
-                            param   : i32 )
+                            param   : i32) -> Result<String,String>
 
 ``partype``
     
@@ -2645,7 +3094,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_primal_obj ( &self,whichsol : i32 ) -> f64
+    pub fn get_primal_obj ( &self,whichsol : i32 ) -> Result<f64,String>
 
 ``whichsol``
     
@@ -2663,7 +3112,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_primal_solution_norms ( &self,whichsol : i32 ) -> (f64,f64,f64)
+    pub fn get_primal_solution_norms ( &self,whichsol : i32 ) -> Result<(f64,f64,f64),String>
 
 ``whichsol``
     
@@ -2685,7 +3134,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_pro_sta ( &self,whichsol : i32 ) -> i32
+    pub fn get_pro_sta ( &self,whichsol : i32 ) -> Result<i32,String>
 
 ``whichsol``
     
@@ -2703,7 +3152,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_prob_type ( &self ) -> i32
+    pub fn get_prob_type ( &self ) -> Result<i32,String>
 
 *Returns:* ``probtype``
     ``probtype : i32``
@@ -2722,7 +3171,7 @@ Task methods
     pub fn get_pviol_barvar ( &self,
                               whichsol : i32,
                               sub_     : & [i32],
-                              viol     : & mut [f64] )
+                              viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2744,7 +3193,7 @@ Task methods
     pub fn get_pviol_con ( &self,
                            whichsol : i32,
                            sub_     : & [i32],
-                           viol     : & mut [f64] )
+                           viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2766,7 +3215,7 @@ Task methods
     pub fn get_pviol_cones ( &self,
                              whichsol : i32,
                              sub_     : & [i32],
-                             viol     : & mut [f64] )
+                             viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2788,7 +3237,7 @@ Task methods
     pub fn get_pviol_var ( &self,
                            whichsol : i32,
                            sub_     : & [i32],
-                           viol     : & mut [f64] )
+                           viol     : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2809,7 +3258,7 @@ Task methods
 
     pub fn get_q_obj_i_j ( &self,
                            i     : i32,
-                           j     : i32 )
+                           j     : i32) -> Result<f64,String>
 
 ``i``
     
@@ -2833,7 +3282,7 @@ Task methods
                                whichsol : i32,
                                first    : i32,
                                last     : i32,
-                               redcosts : & mut [f64] )
+                               redcosts : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2856,7 +3305,7 @@ Task methods
 
     pub fn get_skc ( &self,
                      whichsol : i32,
-                     skc      : & mut [i32] )
+                     skc      : & mut [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2877,7 +3326,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           skc      : & mut [i32] )
+                           skc      : & mut [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2886,6 +3335,25 @@ Task methods
 ``last``
     
 ``skc``
+    
+
+
+.. index:: get_skn
+
+.. _optimizer_task_getskn:
+
+``get_skn()``
+-------------
+
+.. code-block:: rust
+
+    pub fn get_skn ( &self,
+                     whichsol : i32,
+                     skn      : & mut [i32]) -> Result<(),String>
+
+``whichsol``
+    
+``skn``
     
 
 
@@ -2900,7 +3368,7 @@ Task methods
 
     pub fn get_skx ( &self,
                      whichsol : i32,
-                     skx      : & mut [i32] )
+                     skx      : & mut [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2921,7 +3389,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           skx      : & mut [i32] )
+                           skx      : & mut [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2944,7 +3412,7 @@ Task methods
 
     pub fn get_slc ( &self,
                      whichsol : i32,
-                     slc      : & mut [f64] )
+                     slc      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2965,7 +3433,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           slc      : & mut [f64] )
+                           slc      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -2988,7 +3456,7 @@ Task methods
 
     pub fn get_slx ( &self,
                      whichsol : i32,
-                     slx      : & mut [f64] )
+                     slx      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3009,7 +3477,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           slx      : & mut [f64] )
+                           slx      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3032,7 +3500,7 @@ Task methods
 
     pub fn get_snx ( &self,
                      whichsol : i32,
-                     snx      : & mut [f64] )
+                     snx      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3053,7 +3521,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           snx      : & mut [f64] )
+                           snx      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3074,7 +3542,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_sol_sta ( &self,whichsol : i32 ) -> i32
+    pub fn get_sol_sta ( &self,whichsol : i32 ) -> Result<i32,String>
 
 ``whichsol``
     
@@ -3104,7 +3572,7 @@ Task methods
                           suc      : & mut [f64],
                           slx      : & mut [f64],
                           sux      : & mut [f64],
-                          snx      : & mut [f64] )
+                          snx      : & mut [f64]) -> Result<(i32,i32),String>
 
 ``whichsol``
     
@@ -3146,7 +3614,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_solution_info ( &self,whichsol : i32 ) -> (f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64)
+    pub fn get_solution_info ( &self,whichsol : i32 ) -> Result<(f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64),String>
 
 ``whichsol``
     
@@ -3189,7 +3657,7 @@ Task methods
                                 solitem  : i32,
                                 first    : i32,
                                 last     : i32,
-                                values   : & mut [f64] )
+                                values   : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3216,7 +3684,7 @@ Task methods
                                 idx   : i64,
                                 subi  : & mut [i32],
                                 subj  : & mut [i32],
-                                valij : & mut [f64] )
+                                valij : & mut [f64]) -> Result<(),String>
 
 ``idx``
     
@@ -3237,7 +3705,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_str_param ( &self,param : i32 ) -> (i32,String)
+    pub fn get_str_param ( &self,param : i32 ) -> Result<(i32,String),String>
 
 ``param``
     
@@ -3257,7 +3725,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_str_param_len ( &self,param : i32 ) -> i32
+    pub fn get_str_param_len ( &self,param : i32 ) -> Result<i32,String>
 
 ``param``
     
@@ -3277,7 +3745,7 @@ Task methods
 
     pub fn get_suc ( &self,
                      whichsol : i32,
-                     suc      : & mut [f64] )
+                     suc      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3298,7 +3766,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           suc      : & mut [f64] )
+                           suc      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3321,7 +3789,7 @@ Task methods
 
     pub fn get_sux ( &self,
                      whichsol : i32,
-                     sux      : & mut [f64] )
+                     sux      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3342,7 +3810,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           sux      : & mut [f64] )
+                           sux      : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3363,7 +3831,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_sym_mat_info ( &self,idx   : i64 ) -> (i32,i64,i32)
+    pub fn get_sym_mat_info ( &self,idx   : i64 ) -> Result<(i32,i64,i32),String>
 
 ``idx``
     
@@ -3376,6 +3844,26 @@ Task methods
         
 
 
+.. index:: get_symb_con
+
+.. _optimizer_task_getsymbcon:
+
+``get_symb_con()``
+------------------
+
+.. code-block:: rust
+
+    pub fn get_symb_con ( &self,i     : i32 ) -> Result<(String,i32),String>
+
+``i``
+    
+*Returns:* ``(name,value)``
+    ``name : String``
+        
+    ``value : i32``
+        
+
+
 .. index:: get_task_name
 
 .. _optimizer_task_gettaskname:
@@ -3385,7 +3873,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_task_name ( &self ) -> String
+    pub fn get_task_name ( &self ) -> Result<String,String>
 
 *Returns:* ``taskname``
     ``taskname : String``
@@ -3401,7 +3889,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_task_name_len ( &self ) -> i32
+    pub fn get_task_name_len ( &self ) -> Result<i32,String>
 
 *Returns:* ``len``
     ``len : i32``
@@ -3417,7 +3905,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_var_bound ( &self,i     : i32 ) -> (i32,f64,f64)
+    pub fn get_var_bound ( &self,i     : i32 ) -> Result<(i32,f64,f64),String>
 
 ``i``
     
@@ -3444,7 +3932,7 @@ Task methods
                                  last  : i32,
                                  bk    : & mut [i32],
                                  bl    : & mut [f64],
-                                 bu    : & mut [f64] )
+                                 bu    : & mut [f64]) -> Result<(),String>
 
 ``first``
     
@@ -3467,7 +3955,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_var_name ( &self,j     : i32 ) -> String
+    pub fn get_var_name ( &self,j     : i32 ) -> Result<String,String>
 
 ``j``
     
@@ -3485,7 +3973,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_var_name_index ( &self,somename : &str ) -> (i32,i32)
+    pub fn get_var_name_index ( &self,somename : &str ) -> Result<(i32,i32),String>
 
 ``somename``
     
@@ -3505,7 +3993,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_var_name_len ( &self,i     : i32 ) -> i32
+    pub fn get_var_name_len ( &self,i     : i32 ) -> Result<i32,String>
 
 ``i``
     
@@ -3523,7 +4011,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn get_var_type ( &self,j     : i32 ) -> i32
+    pub fn get_var_type ( &self,j     : i32 ) -> Result<i32,String>
 
 ``j``
     
@@ -3543,7 +4031,7 @@ Task methods
 
     pub fn get_var_type_list ( &self,
                                subj_   : & [i32],
-                               vartype : & mut [i32] )
+                               vartype : & mut [i32]) -> Result<(),String>
 
 ``subj``
     
@@ -3562,7 +4050,7 @@ Task methods
 
     pub fn get_xc ( &self,
                     whichsol : i32,
-                    xc       : & mut [f64] )
+                    xc       : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3583,7 +4071,7 @@ Task methods
                           whichsol : i32,
                           first    : i32,
                           last     : i32,
-                          xc       : & mut [f64] )
+                          xc       : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3606,7 +4094,7 @@ Task methods
 
     pub fn get_xx ( &self,
                     whichsol : i32,
-                    xx       : & mut [f64] )
+                    xx       : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3627,7 +4115,7 @@ Task methods
                           whichsol : i32,
                           first    : i32,
                           last     : i32,
-                          xx       : & mut [f64] )
+                          xx       : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3650,7 +4138,7 @@ Task methods
 
     pub fn get_y ( &self,
                    whichsol : i32,
-                   y        : & mut [f64] )
+                   y        : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3671,7 +4159,7 @@ Task methods
                          whichsol : i32,
                          first    : i32,
                          last     : i32,
-                         y        : & mut [f64] )
+                         y        : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -3692,7 +4180,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn init_basis_solve ( &self,basis : & mut [i32] )
+    pub fn init_basis_solve ( &self,basis : & mut [i32] ) -> Result<(),String>
 
 ``basis``
     
@@ -3721,7 +4209,7 @@ Task methods
                         buc_      : & [f64],
                         bkx_      : & [i32],
                         blx_      : & [f64],
-                        bux_      : & [f64] )
+                        bux_      : & [f64]) -> Result<(),String>
 
 ``maxnumcon``
     
@@ -3762,7 +4250,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn is_dou_par_name ( &self,parname : &str ) -> i32
+    pub fn is_dou_par_name ( &self,parname : &str ) -> Result<i32,String>
 
 ``parname``
     
@@ -3780,7 +4268,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn is_int_par_name ( &self,parname : &str ) -> i32
+    pub fn is_int_par_name ( &self,parname : &str ) -> Result<i32,String>
 
 ``parname``
     
@@ -3798,7 +4286,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn is_str_par_name ( &self,parname : &str ) -> i32
+    pub fn is_str_par_name ( &self,parname : &str ) -> Result<i32,String>
 
 ``parname``
     
@@ -3819,7 +4307,7 @@ Task methods
     pub fn link_file_to_stream ( &self,
                                  whichstream : i32,
                                  filename    : &str,
-                                 append      : i32 )
+                                 append      : i32) -> Result<(),String>
 
 ``whichstream``
     
@@ -3840,7 +4328,7 @@ Task methods
 
     pub fn one_solution_summary ( &self,
                                   whichstream : i32,
-                                  whichsol    : i32 )
+                                  whichsol    : i32) -> Result<(),String>
 
 ``whichstream``
     
@@ -3857,8 +4345,30 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn optimize ( &self ) -> i32
+    pub fn optimize ( &self ) -> Result<i32,String>
 
+*Returns:* ``trmcode``
+    ``trmcode : i32``
+        
+
+
+.. index:: optimize_rmt
+
+.. _optimizer_task_optimizermt:
+
+``optimize_rmt()``
+------------------
+
+.. code-block:: rust
+
+    pub fn optimize_rmt ( &self,
+                          addr        : &str,
+                          accesstoken : &str) -> Result<i32,String>
+
+``addr``
+    
+``accesstoken``
+    
 *Returns:* ``trmcode``
     ``trmcode : i32``
         
@@ -3873,7 +4383,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn optimizer_summary ( &self,whichstream : i32 )
+    pub fn optimizer_summary ( &self,whichstream : i32 ) -> Result<(),String>
 
 ``whichstream``
     
@@ -3892,7 +4402,7 @@ Task methods
                            wlc_  : & [f64],
                            wuc_  : & [f64],
                            wlx_  : & [f64],
-                           wux_  : & [f64] )
+                           wux_  : & [f64]) -> Result<(),String>
 
 ``wlc``
     
@@ -3925,7 +4435,7 @@ Task methods
                                 leftpricej  : & mut [f64],
                                 rightpricej : & mut [f64],
                                 leftrangej  : & mut [f64],
-                                rightrangej : & mut [f64] )
+                                rightrangej : & mut [f64]) -> Result<(),String>
 
 ``subi``
     
@@ -3953,6 +4463,19 @@ Task methods
     
 
 
+.. index:: print_param
+
+.. _optimizer_task_printparam:
+
+``print_param()``
+-----------------
+
+.. code-block:: rust
+
+    pub fn print_param ( &self ) -> Result<(),String>
+
+
+
 .. index:: pro_sta_to_str
 
 .. _optimizer_task_prostatostr:
@@ -3962,7 +4485,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn pro_sta_to_str ( &self,prosta : i32 ) -> String
+    pub fn pro_sta_to_str ( &self,prosta : i32 ) -> Result<String,String>
 
 ``prosta``
     
@@ -3980,7 +4503,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn prob_type_to_str ( &self,probtype : i32 ) -> String
+    pub fn prob_type_to_str ( &self,probtype : i32 ) -> Result<String,String>
 
 ``probtype``
     
@@ -4001,7 +4524,7 @@ Task methods
     pub fn put_a_col ( &self,
                        j     : i32,
                        subj_ : & [i32],
-                       valj_ : & [f64] )
+                       valj_ : & [f64]) -> Result<(),String>
 
 ``j``
     
@@ -4013,7 +4536,7 @@ Task methods
 
 .. index:: put_a_col_list
 
-.. _optimizer_task_putacollist:
+.. _optimizer_task_putacollist64:
 
 ``put_a_col_list()``
 --------------------
@@ -4022,10 +4545,10 @@ Task methods
 
     pub fn put_a_col_list ( &self,
                             sub_  : & [i32],
-                            ptrb_ : & [i32],
-                            ptre_ : & [i32],
+                            ptrb_ : & [i64],
+                            ptre_ : & [i64],
                             asub_ : & [i32],
-                            aval_ : & [f64] )
+                            aval_ : & [f64]) -> Result<(),String>
 
 ``sub``
     
@@ -4054,7 +4577,7 @@ Task methods
                              ptrb_ : & [i64],
                              ptre_ : & [i64],
                              asub_ : & [i32],
-                             aval_ : & [f64] )
+                             aval_ : & [f64]) -> Result<(),String>
 
 ``first``
     
@@ -4082,7 +4605,7 @@ Task methods
     pub fn put_a_row ( &self,
                        i     : i32,
                        subi_ : & [i32],
-                       vali_ : & [f64] )
+                       vali_ : & [f64]) -> Result<(),String>
 
 ``i``
     
@@ -4094,7 +4617,7 @@ Task methods
 
 .. index:: put_a_row_list
 
-.. _optimizer_task_putarowlist:
+.. _optimizer_task_putarowlist64:
 
 ``put_a_row_list()``
 --------------------
@@ -4103,10 +4626,10 @@ Task methods
 
     pub fn put_a_row_list ( &self,
                             sub_  : & [i32],
-                            ptrb_ : & [i32],
-                            ptre_ : & [i32],
+                            ptrb_ : & [i64],
+                            ptre_ : & [i64],
                             asub_ : & [i32],
-                            aval_ : & [f64] )
+                            aval_ : & [f64]) -> Result<(),String>
 
 ``sub``
     
@@ -4135,7 +4658,7 @@ Task methods
                              ptrb_ : & [i64],
                              ptre_ : & [i64],
                              asub_ : & [i32],
-                             aval_ : & [f64] )
+                             aval_ : & [f64]) -> Result<(),String>
 
 ``first``
     
@@ -4160,7 +4683,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_a_truncate_tol ( &self,tolzero : f64 )
+    pub fn put_a_truncate_tol ( &self,tolzero : f64 ) -> Result<(),String>
 
 ``tolzero``
     
@@ -4178,7 +4701,7 @@ Task methods
     pub fn put_aij ( &self,
                      i     : i32,
                      j     : i32,
-                     aij   : f64 )
+                     aij   : f64) -> Result<(),String>
 
 ``i``
     
@@ -4200,7 +4723,7 @@ Task methods
     pub fn put_aij_list ( &self,
                           subi_  : & [i32],
                           subj_  : & [i32],
-                          valij_ : & [f64] )
+                          valij_ : & [f64]) -> Result<(),String>
 
 ``subi``
     
@@ -4225,7 +4748,7 @@ Task methods
                                     subj_    : & [i32],
                                     subk_    : & [i32],
                                     subl_    : & [i32],
-                                    valijkl_ : & [f64] )
+                                    valijkl_ : & [f64]) -> Result<(),String>
 
 ``num``
     
@@ -4254,7 +4777,7 @@ Task methods
                          i        : i32,
                          j        : i32,
                          sub_     : & [i64],
-                         weights_ : & [f64] )
+                         weights_ : & [f64]) -> Result<(),String>
 
 ``i``
     
@@ -4281,7 +4804,7 @@ Task methods
                               alphaptrb_ : & [i64],
                               alphaptre_ : & [i64],
                               matidx_    : & [i64],
-                              weights_   : & [f64] )
+                              weights_   : & [f64]) -> Result<(),String>
 
 ``subi``
     
@@ -4313,7 +4836,7 @@ Task methods
                                subj_    : & [i32],
                                nummat_  : & [i64],
                                matidx_  : & [i64],
-                               weights_ : & [f64] )
+                               weights_ : & [f64]) -> Result<(),String>
 
 ``subi``
     
@@ -4345,7 +4868,7 @@ Task methods
                                     subj_   : & [i32],
                                     subk_   : & [i32],
                                     subl_   : & [i32],
-                                    valjkl_ : & [f64] )
+                                    valjkl_ : & [f64]) -> Result<(),String>
 
 ``num``
     
@@ -4371,7 +4894,7 @@ Task methods
     pub fn put_barc_j ( &self,
                         j        : i32,
                         sub_     : & [i64],
-                        weights_ : & [f64] )
+                        weights_ : & [f64]) -> Result<(),String>
 
 ``j``
     
@@ -4393,7 +4916,7 @@ Task methods
     pub fn put_bars_j ( &self,
                         whichsol : i32,
                         j        : i32,
-                        barsj_   : & [f64] )
+                        barsj_   : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -4414,7 +4937,7 @@ Task methods
 
     pub fn put_barvar_name ( &self,
                              j     : i32,
-                             name  : &str )
+                             name  : &str) -> Result<(),String>
 
 ``j``
     
@@ -4434,7 +4957,7 @@ Task methods
     pub fn put_barx_j ( &self,
                         whichsol : i32,
                         j        : i32,
-                        barxj_   : & [f64] )
+                        barxj_   : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -4455,7 +4978,7 @@ Task methods
 
     pub fn put_c_j ( &self,
                      j     : i32,
-                     cj    : f64 )
+                     cj    : f64) -> Result<(),String>
 
 ``j``
     
@@ -4474,7 +4997,7 @@ Task methods
 
     pub fn put_c_list ( &self,
                         subj_ : & [i32],
-                        val_  : & [f64] )
+                        val_  : & [f64]) -> Result<(),String>
 
 ``subj``
     
@@ -4494,7 +5017,7 @@ Task methods
     pub fn put_c_slice ( &self,
                          first  : i32,
                          last   : i32,
-                         slice_ : & [f64] )
+                         slice_ : & [f64]) -> Result<(),String>
 
 ``first``
     
@@ -4531,7 +5054,7 @@ Task methods
     ``handle``
         The handle object.
     ``caller``
-        An integer indicating where the callback was called from (see :ref:`calbackcode`). 
+        An integer indicating where the callback was called from (see :ref:`calbackcode`).
     ``douinf``
         Information values
     ``intinf``
@@ -4551,7 +5074,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_cfix ( &self,cfix  : f64 )
+    pub fn put_cfix ( &self,cfix  : f64 ) -> Result<(),String>
 
 ``cfix``
     
@@ -4568,17 +5091,17 @@ Task methods
 
     pub fn put_con_bound ( &self,
                            i     : i32,
-                           bk    : i32,
-                           bl    : f64,
-                           bu    : f64 )
+                           bkc   : i32,
+                           blc   : f64,
+                           buc   : f64) -> Result<(),String>
 
 ``i``
     
-``bk``
+``bkc``
     
-``bl``
+``blc``
     
-``bu``
+``buc``
     
 
 
@@ -4593,17 +5116,42 @@ Task methods
 
     pub fn put_con_bound_list ( &self,
                                 sub_  : & [i32],
-                                bk_   : & [i32],
-                                bl_   : & [f64],
-                                bu_   : & [f64] )
+                                bkc_  : & [i32],
+                                blc_  : & [f64],
+                                buc_  : & [f64]) -> Result<(),String>
 
 ``sub``
     
-``bk``
+``bkc``
     
-``bl``
+``blc``
     
-``bu``
+``buc``
+    
+
+
+.. index:: put_con_bound_list_const
+
+.. _optimizer_task_putconboundlistconst:
+
+``put_con_bound_list_const()``
+------------------------------
+
+.. code-block:: rust
+
+    pub fn put_con_bound_list_const ( &self,
+                                      sub_  : & [i32],
+                                      bkc   : i32,
+                                      blc   : f64,
+                                      buc   : f64) -> Result<(),String>
+
+``sub``
+    
+``bkc``
+    
+``blc``
+    
+``buc``
     
 
 
@@ -4619,19 +5167,47 @@ Task methods
     pub fn put_con_bound_slice ( &self,
                                  first : i32,
                                  last  : i32,
-                                 bk_   : & [i32],
-                                 bl_   : & [f64],
-                                 bu_   : & [f64] )
+                                 bkc_  : & [i32],
+                                 blc_  : & [f64],
+                                 buc_  : & [f64]) -> Result<(),String>
 
 ``first``
     
 ``last``
     
-``bk``
+``bkc``
     
-``bl``
+``blc``
     
-``bu``
+``buc``
+    
+
+
+.. index:: put_con_bound_slice_const
+
+.. _optimizer_task_putconboundsliceconst:
+
+``put_con_bound_slice_const()``
+-------------------------------
+
+.. code-block:: rust
+
+    pub fn put_con_bound_slice_const ( &self,
+                                       first : i32,
+                                       last  : i32,
+                                       bkc   : i32,
+                                       blc   : f64,
+                                       buc   : f64) -> Result<(),String>
+
+``first``
+    
+``last``
+    
+``bkc``
+    
+``blc``
+    
+``buc``
     
 
 
@@ -4646,7 +5222,7 @@ Task methods
 
     pub fn put_con_name ( &self,
                           i     : i32,
-                          name  : &str )
+                          name  : &str) -> Result<(),String>
 
 ``i``
     
@@ -4669,7 +5245,7 @@ Task methods
                                 sk       : i32,
                                 x        : f64,
                                 sl       : f64,
-                                su       : f64 )
+                                su       : f64) -> Result<(),String>
 
 ``i``
     
@@ -4698,7 +5274,7 @@ Task methods
                       k       : i32,
                       ct      : i32,
                       conepar : f64,
-                      submem_ : & [i32] )
+                      submem_ : & [i32]) -> Result<(),String>
 
 ``k``
     
@@ -4721,7 +5297,7 @@ Task methods
 
     pub fn put_cone_name ( &self,
                            j     : i32,
-                           name  : &str )
+                           name  : &str) -> Result<(),String>
 
 ``j``
     
@@ -4740,7 +5316,7 @@ Task methods
 
     pub fn put_dou_param ( &self,
                            param    : i32,
-                           parvalue : f64 )
+                           parvalue : f64) -> Result<(),String>
 
 ``param``
     
@@ -4759,7 +5335,7 @@ Task methods
 
     pub fn put_int_param ( &self,
                            param    : i32,
-                           parvalue : i32 )
+                           parvalue : i32) -> Result<(),String>
 
 ``param``
     
@@ -4776,7 +5352,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_a_nz ( &self,maxnumanz : i64 )
+    pub fn put_max_num_a_nz ( &self,maxnumanz : i64 ) -> Result<(),String>
 
 ``maxnumanz``
     
@@ -4791,7 +5367,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_barvar ( &self,maxnumbarvar : i32 )
+    pub fn put_max_num_barvar ( &self,maxnumbarvar : i32 ) -> Result<(),String>
 
 ``maxnumbarvar``
     
@@ -4806,7 +5382,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_con ( &self,maxnumcon : i32 )
+    pub fn put_max_num_con ( &self,maxnumcon : i32 ) -> Result<(),String>
 
 ``maxnumcon``
     
@@ -4821,7 +5397,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_cone ( &self,maxnumcone : i32 )
+    pub fn put_max_num_cone ( &self,maxnumcone : i32 ) -> Result<(),String>
 
 ``maxnumcone``
     
@@ -4836,7 +5412,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_q_nz ( &self,maxnumqnz : i64 )
+    pub fn put_max_num_q_nz ( &self,maxnumqnz : i64 ) -> Result<(),String>
 
 ``maxnumqnz``
     
@@ -4851,7 +5427,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_max_num_var ( &self,maxnumvar : i32 )
+    pub fn put_max_num_var ( &self,maxnumvar : i32 ) -> Result<(),String>
 
 ``maxnumvar``
     
@@ -4868,7 +5444,7 @@ Task methods
 
     pub fn put_na_dou_param ( &self,
                               paramname : &str,
-                              parvalue  : f64 )
+                              parvalue  : f64) -> Result<(),String>
 
 ``paramname``
     
@@ -4887,7 +5463,7 @@ Task methods
 
     pub fn put_na_int_param ( &self,
                               paramname : &str,
-                              parvalue  : i32 )
+                              parvalue  : i32) -> Result<(),String>
 
 ``paramname``
     
@@ -4906,7 +5482,7 @@ Task methods
 
     pub fn put_na_str_param ( &self,
                               paramname : &str,
-                              parvalue  : &str )
+                              parvalue  : &str) -> Result<(),String>
 
 ``paramname``
     
@@ -4923,7 +5499,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_obj_name ( &self,objname : &str )
+    pub fn put_obj_name ( &self,objname : &str ) -> Result<(),String>
 
 ``objname``
     
@@ -4938,7 +5514,7 @@ Task methods
 
 .. code-block:: rust
 
-    pub fn put_obj_sense ( &self,sense : i32 )
+    pub fn put_obj_sense ( &self,sense : i32 ) -> Result<(),String>
 
 ``sense``
     
@@ -4955,7 +5531,7 @@ Task methods
 
     pub fn put_param ( &self,
                        parname  : &str,
-                       parvalue : &str )
+                       parvalue : &str) -> Result<(),String>
 
 ``parname``
     
@@ -4976,7 +5552,7 @@ Task methods
                        qcsubk_ : & [i32],
                        qcsubi_ : & [i32],
                        qcsubj_ : & [i32],
-                       qcval_  : & [f64] )
+                       qcval_  : & [f64]) -> Result<(),String>
 
 ``qcsubk``
     
@@ -5001,7 +5577,7 @@ Task methods
                          k       : i32,
                          qcsubi_ : & [i32],
                          qcsubj_ : & [i32],
-                         qcval_  : & [f64] )
+                         qcval_  : & [f64]) -> Result<(),String>
 
 ``k``
     
@@ -5025,7 +5601,7 @@ Task methods
     pub fn put_q_obj ( &self,
                        qosubi_ : & [i32],
                        qosubj_ : & [i32],
-                       qoval_  : & [f64] )
+                       qoval_  : & [f64]) -> Result<(),String>
 
 ``qosubi``
     
@@ -5047,7 +5623,7 @@ Task methods
     pub fn put_q_obj_i_j ( &self,
                            i     : i32,
                            j     : i32,
-                           qoij  : f64 )
+                           qoij  : f64) -> Result<(),String>
 
 ``i``
     
@@ -5068,7 +5644,7 @@ Task methods
 
     pub fn put_skc ( &self,
                      whichsol : i32,
-                     skc_     : & [i32] )
+                     skc_     : & [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5089,7 +5665,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           skc_     : & [i32] )
+                           skc_     : & [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5112,7 +5688,7 @@ Task methods
 
     pub fn put_skx ( &self,
                      whichsol : i32,
-                     skx_     : & [i32] )
+                     skx_     : & [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5133,7 +5709,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           skx_     : & [i32] )
+                           skx_     : & [i32]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5156,7 +5732,7 @@ Task methods
 
     pub fn put_slc ( &self,
                      whichsol : i32,
-                     slc_     : & [f64] )
+                     slc_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5177,7 +5753,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           slc_     : & [f64] )
+                           slc_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5200,7 +5776,7 @@ Task methods
 
     pub fn put_slx ( &self,
                      whichsol : i32,
-                     slx_     : & [f64] )
+                     slx_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5221,7 +5797,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           slx_     : & [f64] )
+                           slx_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5244,7 +5820,7 @@ Task methods
 
     pub fn put_snx ( &self,
                      whichsol : i32,
-                     sux_     : & [f64] )
+                     sux_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5265,7 +5841,7 @@ Task methods
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           snx_     : & [f64] )
+                           snx_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5298,7 +5874,7 @@ Task methods
                           suc_     : & [f64],
                           slx_     : & [f64],
                           sux_     : & [f64],
-                          snx_     : & [f64] )
+                          snx_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5338,7 +5914,7 @@ Task methods
     pub fn put_solution_y_i ( &self,
                               i        : i32,
                               whichsol : i32,
-                              y        : f64 )
+                              y        : f64) -> Result<(),String>
 
 ``i``
     
@@ -5359,7 +5935,7 @@ Task methods
 
     pub fn put_str_param ( &self,
                            param    : i32,
-                           parvalue : &str )
+                           parvalue : &str) -> Result<(),String>
 
 ``param``
     
@@ -5385,7 +5961,7 @@ Sets the callback function and handle for the given stream in the
     Which stream to link to (see :ref:`streamtype`).
 ``func``
     A printer function. This takes the object specified in ``handle``
-    and a string. 
+    and a string.
 ``handle``
     An object of type ``H``, as defined from ``Task<H>``.
 
@@ -5402,7 +5978,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_suc ( &self,
                      whichsol : i32,
-                     suc_     : & [f64] )
+                     suc_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5423,7 +5999,7 @@ Sets the callback function and handle for the given stream in the
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           suc_     : & [f64] )
+                           suc_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5446,7 +6022,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_sux ( &self,
                      whichsol : i32,
-                     sux_     : & [f64] )
+                     sux_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5467,7 +6043,7 @@ Sets the callback function and handle for the given stream in the
                            whichsol : i32,
                            first    : i32,
                            last     : i32,
-                           sux_     : & [f64] )
+                           sux_     : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5488,7 +6064,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn put_task_name ( &self,taskname : &str )
+    pub fn put_task_name ( &self,taskname : &str ) -> Result<(),String>
 
 ``taskname``
     
@@ -5505,17 +6081,17 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_var_bound ( &self,
                            j     : i32,
-                           bk    : i32,
-                           bl    : f64,
-                           bu    : f64 )
+                           bkx   : i32,
+                           blx   : f64,
+                           bux   : f64) -> Result<(),String>
 
 ``j``
     
-``bk``
+``bkx``
     
-``bl``
+``blx``
     
-``bu``
+``bux``
     
 
 
@@ -5532,7 +6108,32 @@ Sets the callback function and handle for the given stream in the
                                 sub_  : & [i32],
                                 bkx_  : & [i32],
                                 blx_  : & [f64],
-                                bux_  : & [f64] )
+                                bux_  : & [f64]) -> Result<(),String>
+
+``sub``
+    
+``bkx``
+    
+``blx``
+    
+``bux``
+    
+
+
+.. index:: put_var_bound_list_const
+
+.. _optimizer_task_putvarboundlistconst:
+
+``put_var_bound_list_const()``
+------------------------------
+
+.. code-block:: rust
+
+    pub fn put_var_bound_list_const ( &self,
+                                      sub_  : & [i32],
+                                      bkx   : i32,
+                                      blx   : f64,
+                                      bux   : f64) -> Result<(),String>
 
 ``sub``
     
@@ -5556,19 +6157,47 @@ Sets the callback function and handle for the given stream in the
     pub fn put_var_bound_slice ( &self,
                                  first : i32,
                                  last  : i32,
-                                 bk_   : & [i32],
-                                 bl_   : & [f64],
-                                 bu_   : & [f64] )
+                                 bkx_  : & [i32],
+                                 blx_  : & [f64],
+                                 bux_  : & [f64]) -> Result<(),String>
 
 ``first``
     
 ``last``
     
-``bk``
+``bkx``
     
-``bl``
+``blx``
     
-``bu``
+``bux``
+    
+
+
+.. index:: put_var_bound_slice_const
+
+.. _optimizer_task_putvarboundsliceconst:
+
+``put_var_bound_slice_const()``
+-------------------------------
+
+.. code-block:: rust
+
+    pub fn put_var_bound_slice_const ( &self,
+                                       first : i32,
+                                       last  : i32,
+                                       bkx   : i32,
+                                       blx   : f64,
+                                       bux   : f64) -> Result<(),String>
+
+``first``
+    
+``last``
+    
+``bkx``
+    
+``blx``
+    
+``bux``
     
 
 
@@ -5583,7 +6212,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_var_name ( &self,
                           j     : i32,
-                          name  : &str )
+                          name  : &str) -> Result<(),String>
 
 ``j``
     
@@ -5607,7 +6236,7 @@ Sets the callback function and handle for the given stream in the
                                 x        : f64,
                                 sl       : f64,
                                 su       : f64,
-                                sn       : f64 )
+                                sn       : f64) -> Result<(),String>
 
 ``j``
     
@@ -5636,7 +6265,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_var_type ( &self,
                           j       : i32,
-                          vartype : i32 )
+                          vartype : i32) -> Result<(),String>
 
 ``j``
     
@@ -5655,7 +6284,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_var_type_list ( &self,
                                subj_    : & [i32],
-                               vartype_ : & [i32] )
+                               vartype_ : & [i32]) -> Result<(),String>
 
 ``subj``
     
@@ -5674,7 +6303,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_xc ( &self,
                     whichsol : i32,
-                    xc       : & mut [f64] )
+                    xc       : & mut [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5695,7 +6324,7 @@ Sets the callback function and handle for the given stream in the
                           whichsol : i32,
                           first    : i32,
                           last     : i32,
-                          xc_      : & [f64] )
+                          xc_      : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5718,7 +6347,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_xx ( &self,
                     whichsol : i32,
-                    xx_      : & [f64] )
+                    xx_      : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5739,7 +6368,7 @@ Sets the callback function and handle for the given stream in the
                           whichsol : i32,
                           first    : i32,
                           last     : i32,
-                          xx_      : & [f64] )
+                          xx_      : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5762,7 +6391,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn put_y ( &self,
                    whichsol : i32,
-                   y_       : & [f64] )
+                   y_       : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5783,7 +6412,7 @@ Sets the callback function and handle for the given stream in the
                          whichsol : i32,
                          first    : i32,
                          last     : i32,
-                         y_       : & [f64] )
+                         y_       : & [f64]) -> Result<(),String>
 
 ``whichsol``
     
@@ -5804,7 +6433,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_data ( &self,filename : &str )
+    pub fn read_data ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
@@ -5822,7 +6451,7 @@ Sets the callback function and handle for the given stream in the
     pub fn read_data_format ( &self,
                               filename : &str,
                               format   : i32,
-                              compress : i32 )
+                              compress : i32) -> Result<(),String>
 
 ``filename``
     
@@ -5841,7 +6470,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_json_string ( &self,data  : &str )
+    pub fn read_json_string ( &self,data  : &str ) -> Result<(),String>
 
 ``data``
     
@@ -5856,7 +6485,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_lp_string ( &self,data  : &str )
+    pub fn read_lp_string ( &self,data  : &str ) -> Result<(),String>
 
 ``data``
     
@@ -5871,7 +6500,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_opf_string ( &self,data  : &str )
+    pub fn read_opf_string ( &self,data  : &str ) -> Result<(),String>
 
 ``data``
     
@@ -5886,9 +6515,24 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_param_file ( &self,filename : &str )
+    pub fn read_param_file ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
+    
+
+
+.. index:: read_ptf_string
+
+.. _optimizer_task_readptfstring:
+
+``read_ptf_string()``
+---------------------
+
+.. code-block:: rust
+
+    pub fn read_ptf_string ( &self,data  : &str ) -> Result<(),String>
+
+``data``
     
 
 
@@ -5903,7 +6547,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn read_solution ( &self,
                            whichsol : i32,
-                           filename : &str )
+                           filename : &str) -> Result<(),String>
 
 ``whichsol``
     
@@ -5920,7 +6564,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_summary ( &self,whichstream : i32 )
+    pub fn read_summary ( &self,whichstream : i32 ) -> Result<(),String>
 
 ``whichstream``
     
@@ -5935,7 +6579,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn read_task ( &self,filename : &str )
+    pub fn read_task ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
@@ -5950,7 +6594,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn remove_barvars ( &self,subset_ : & [i32] )
+    pub fn remove_barvars ( &self,subset_ : & [i32] ) -> Result<(),String>
 
 ``subset``
     
@@ -5965,7 +6609,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn remove_cones ( &self,subset_ : & [i32] )
+    pub fn remove_cones ( &self,subset_ : & [i32] ) -> Result<(),String>
 
 ``subset``
     
@@ -5980,7 +6624,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn remove_cons ( &self,subset_ : & [i32] )
+    pub fn remove_cons ( &self,subset_ : & [i32] ) -> Result<(),String>
 
 ``subset``
     
@@ -5995,7 +6639,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn remove_vars ( &self,subset_ : & [i32] )
+    pub fn remove_vars ( &self,subset_ : & [i32] ) -> Result<(),String>
 
 ``subset``
     
@@ -6015,7 +6659,7 @@ Sets the callback function and handle for the given stream in the
                          maxnumvar  : i32,
                          maxnumcone : i32,
                          maxnumanz  : i64,
-                         maxnumqnz  : i64 )
+                         maxnumqnz  : i64) -> Result<(),String>
 
 ``maxnumcon``
     
@@ -6029,52 +6673,6 @@ Sets the callback function and handle for the given stream in the
     
 
 
-.. index:: sctoconic
-
-.. _optimizer_task_sctoconic:
-
-``sctoconic()``
----------------
-
-.. code-block:: rust
-
-    pub fn sctoconic ( &self,
-                       opro_  : & [i32],
-                       oprjo_ : & [i32],
-                       oprfo_ : & [f64],
-                       oprgo_ : & [f64],
-                       oprho_ : & [f64],
-                       oprc_  : & [i32],
-                       opric_ : & [i32],
-                       oprjc_ : & [i32],
-                       oprfc_ : & [f64],
-                       oprgc_ : & [f64],
-                       oprhc_ : & [f64] )
-
-``opro``
-    
-``oprjo``
-    
-``oprfo``
-    
-``oprgo``
-    
-``oprho``
-    
-``oprc``
-    
-``opric``
-    
-``oprjc``
-    
-``oprfc``
-    
-``oprgc``
-    
-``oprhc``
-    
-
-
 .. index:: sensitivity_report
 
 .. _optimizer_task_sensitivityreport:
@@ -6084,7 +6682,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn sensitivity_report ( &self,whichstream : i32 )
+    pub fn sensitivity_report ( &self,whichstream : i32 ) -> Result<(),String>
 
 ``whichstream``
     
@@ -6099,7 +6697,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn set_defaults ( &self )
+    pub fn set_defaults ( &self ) -> Result<(),String>
 
 
 
@@ -6112,7 +6710,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn sk_to_str ( &self,sk    : i32 ) -> String
+    pub fn sk_to_str ( &self,sk    : i32 ) -> Result<String,String>
 
 ``sk``
     
@@ -6130,7 +6728,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn sol_sta_to_str ( &self,solsta : i32 ) -> String
+    pub fn sol_sta_to_str ( &self,solsta : i32 ) -> Result<String,String>
 
 ``solsta``
     
@@ -6148,7 +6746,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn solution_def ( &self,whichsol : i32 ) -> bool
+    pub fn solution_def ( &self,whichsol : i32 ) -> Result<bool,String>
 
 ``whichsol``
     
@@ -6166,7 +6764,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn solution_summary ( &self,whichstream : i32 )
+    pub fn solution_summary ( &self,whichstream : i32 ) -> Result<(),String>
 
 ``whichstream``
     
@@ -6185,7 +6783,7 @@ Sets the callback function and handle for the given stream in the
                               transp : i32,
                               numnz  : i32,
                               sub    : & mut [i32],
-                              val    : & mut [f64] )
+                              val    : & mut [f64]) -> Result<i32,String>
 
 ``transp``
     
@@ -6200,6 +6798,21 @@ Sets the callback function and handle for the given stream in the
         
 
 
+.. index:: str_dup_task
+
+.. _optimizer_task_strduptask:
+
+``str_dup_task()``
+------------------
+
+.. code-block:: rust
+
+    pub fn str_dup_task ( &self,str   : &str ) -> Result<(),String>
+
+``str``
+    
+
+
 .. index:: str_to_cone_type
 
 .. _optimizer_task_strtoconetype:
@@ -6209,7 +6822,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn str_to_cone_type ( &self,str   : &str ) -> i32
+    pub fn str_to_cone_type ( &self,str   : &str ) -> Result<i32,String>
 
 ``str``
     
@@ -6227,7 +6840,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn str_to_sk ( &self,str   : &str ) -> i32
+    pub fn str_to_sk ( &self,str   : &str ) -> Result<i32,String>
 
 ``str``
     
@@ -6245,8 +6858,23 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn toconic ( &self )
+    pub fn toconic ( &self ) -> Result<(),String>
 
+
+
+.. index:: unlink_func_from_stream
+
+.. _optimizer_task_unlinkfuncfromtaskstream:
+
+``unlink_func_from_stream()``
+-----------------------------
+
+.. code-block:: rust
+
+    pub fn unlink_func_from_stream ( &self,whichstream : i32 ) -> Result<(),String>
+
+``whichstream``
+    
 
 
 .. index:: update_solution_info
@@ -6258,10 +6886,30 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn update_solution_info ( &self,whichsol : i32 )
+    pub fn update_solution_info ( &self,whichsol : i32 ) -> Result<(),String>
 
 ``whichsol``
     
+
+
+.. index:: which_param
+
+.. _optimizer_task_whichparam:
+
+``which_param()``
+-----------------
+
+.. code-block:: rust
+
+    pub fn which_param ( &self,parname : &str ) -> Result<(i32,i32),String>
+
+``parname``
+    
+*Returns:* ``(partype,param)``
+    ``partype : i32``
+        
+    ``param : i32``
+        
 
 
 .. index:: write_data
@@ -6273,7 +6921,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn write_data ( &self,filename : &str )
+    pub fn write_data ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
@@ -6288,7 +6936,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn write_json_sol ( &self,filename : &str )
+    pub fn write_json_sol ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
@@ -6303,7 +6951,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn write_param_file ( &self,filename : &str )
+    pub fn write_param_file ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
@@ -6320,7 +6968,7 @@ Sets the callback function and handle for the given stream in the
 
     pub fn write_solution ( &self,
                             whichsol : i32,
-                            filename : &str )
+                            filename : &str) -> Result<(),String>
 
 ``whichsol``
     
@@ -6337,7 +6985,7 @@ Sets the callback function and handle for the given stream in the
 
 .. code-block:: rust
 
-    pub fn write_task ( &self,filename : &str )
+    pub fn write_task ( &self,filename : &str ) -> Result<(),String>
 
 ``filename``
     
