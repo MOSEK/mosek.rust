@@ -61,7 +61,7 @@ impl Solution {
     }
 }
 
-struct MosekTask {
+pub struct MosekTask {
     _env        : super::Env,
     task        : super::Task,
 
@@ -136,8 +136,8 @@ impl ConicSolverAPI for MosekTask {
 
 impl MosekTask {
     pub fn new(name : Option<&str>) -> MosekTask {
-        let env = super::Env::new().unwrap();
-        let mut task = env.task().unwrap();
+        let env  = super::Env::new().unwrap();
+        let task = env.task().unwrap();
 
         match name {
             Some(name) => {
@@ -190,7 +190,7 @@ impl MosekTask {
 
         let blockidx = self.conblock_ptr.len()-1;
         let num_ordered_baraij = self.baraij_ptre.last().and_then(|v| Some(*v)).unwrap_or_else(|| 0 as usize);
-        for i in 0..n {
+        for _ in 0..n {
             self.conslack.push(0);
             self.baraij_ptrb.push(num_ordered_baraij);
             self.baraij_ptre.push(num_ordered_baraij);
@@ -219,7 +219,7 @@ impl MosekTask {
     }
 
     pub fn append_psdvar_block(&mut self,n : usize, dim : usize) -> BlockIndex {
-        let numelm = dim * (dim+1)/2;
+        //let numelm = dim * (dim+1)/2;
         let firstbarj = self.task.get_num_barvar().unwrap();
 
         let blockidx = self.varblock_ptr.len()-1;
@@ -305,8 +305,8 @@ impl MosekTask {
                                                              symmats.as_mut_slice()).unwrap();
                     }
 
-                    let mut elmi = self.conblock_ptr[bi] as i32;
-                    for k in 0..*num {
+                    let elmi = self.conblock_ptr[bi] as i32;
+                    for _k in 0..*num {
                         let barj = self.barelm_map[(-(self.var_map[slackbi]+1)) as usize].0;
                         for i in 0..coneelm {
                             self.task.put_bara_ij(elmi,barj,vec![symmats[i]].as_slice(),vec![-1.0].as_slice()).unwrap();
@@ -325,7 +325,7 @@ impl MosekTask {
 
         let blocksize = self.get_con_block_size(bi);
         match slackbi {
-            None => for i in 0..blocksize { self.conslack.push(0); },
+            None => for _i in 0..blocksize { self.conslack.push(0); },
             Some(slackbi) => {
                 for (i,j) in (self.conblock_ptr[bi]..self.conblock_ptr[bi+1]).zip(self.varblock_ptr[slackbi]..self.varblock_ptr[slackbi+1]) {
                     self.conslack[i] = j+1;
@@ -380,7 +380,7 @@ impl MosekTask {
                 j += 1;
 
                 while j < pe && barj == self.barelm_map[-(1+self.var_map[perm[j]]) as usize].0 {
-                    let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
+                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
                     if self.var_map[perm[j]] == self.var_map[perm[j-1]] {
                         let last = barelmc.len()-1;
                         barelmc[last] += cof[perm[j]];
@@ -427,7 +427,7 @@ impl MosekTask {
                     rsubj.push(self.var_map[subj[perm[b]]] as i32);
                     rcof.push(cof[perm[b]]);
                     nzi += 1;
-                    for j in b+1 .. end {
+                    for _ in b+1 .. end {
                         if self.var_map[subj[perm[b]]] as i32 == rsubj[nzi-1] {
                             rcof[nzi-1] += cof[perm[b]];
                         }
@@ -469,7 +469,7 @@ impl MosekTask {
                 j += 1;
 
                 while j < pe && barj == self.barelm_map[-(1+self.var_map[perm[j]]) as usize].0 {
-                    let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
+                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
                     if self.var_map[perm[j]] == self.var_map[perm[j-1]] {
                         let last = barelmc.len()-1;
                         barelmc[last] += cof[perm[j]];
@@ -536,7 +536,7 @@ impl MosekTask {
             for i in subi.iter() {
                 for j in self.baraij_ptrb[*i]..self.baraij_ptre[*i] {
                     let (i,j) = self.baraijs[j];
-                    self.task.put_bara_ij(i,j,midx.as_slice(),alpha.as_slice());
+                    self.task.put_bara_ij(i,j,midx.as_slice(),alpha.as_slice()).unwrap();
                 }
                 self.baraij_num[*i] = 0;
                 self.baraij_ptre[*i] = self.baraij_ptrb[*i];
@@ -586,7 +586,7 @@ impl MosekTask {
                     while barj == self.barelm_map[(-subj[perm[p]]-1) as usize].0 { p += 1 }
                     let p1 = p;
 
-                    for j in p0..p1 {
+                    for _ in p0..p1 {
                         let (_,ii,jj) = self.barelm_map[(-subj[perm[p]]-1) as usize];
                         barsubi.push(ii);
                         barsubj.push(jj);
@@ -620,7 +620,8 @@ impl MosekTask {
                 self.baraij_num[barilist[i] as usize] += 1;
             }
         }
-        self.task.put_aij_list(asubi.as_slice(),asubj.as_slice(),acof.as_slice());
+        self.task.put_aij_list(asubi.as_slice(),asubj.as_slice(),acof.as_slice()).unwrap();
+        
     }
 
     // Solutions
@@ -683,7 +684,7 @@ impl MosekTask {
         self.sols.clear();
         let numvar = self.task.get_num_var().unwrap() as usize;
         let numcon = self.task.get_num_con().unwrap() as usize;
-        let numbarvar = self.task.get_num_barvar().unwrap() as usize;
+        //let numbarvar = self.task.get_num_barvar().unwrap() as usize;
         let numbarelm = self.barelm_map.len();
 
         let mut skx  = vec![0i32; numvar ];
@@ -711,7 +712,7 @@ impl MosekTask {
                         self.task.get_skx(which,& mut skx[0..numvar]).unwrap();
                         self.task.get_xc (which,& mut xc[0..numcon]).unwrap();
                         self.task.get_skc(which,& mut skc[0..numcon]).unwrap();
-                        if numbarelm > 0 { self.task.get_barx_slice(which, 0, numvar as i32, numbarelm as i64, barx.as_mut_slice()); }
+                        if numbarelm > 0 { self.task.get_barx_slice(which, 0, numvar as i32, numbarelm as i64, barx.as_mut_slice()).unwrap(); }
 
                         // Copy primal variable solution values
                         for (i,idx) in self.var_map.iter().enumerate() {
