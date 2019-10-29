@@ -423,7 +423,7 @@ impl MosekTask {
         let nrows = subi.len();
         let mut perm : Vec<usize> = (0..subj.len()).collect();
         for i in 0..nrows {
-            perm[ptr[i]..ptr[i+1]].sort_by_key(|j| self.var_map[subj[*j]]);
+            perm[ptr[i]..ptr[i+1]].sort_by_key(|j| -self.var_map[subj[*j]]);
         }
 
         self.clear_baraijs(subi);
@@ -474,17 +474,23 @@ impl MosekTask {
                                  rcof.as_slice() ).unwrap();
 
 
+        println!("------");
+        println!("subj = {:?}",perm.iter().map(|i| self.var_map[subj[*i]]).collect::<Vec<i64>>());
+        println!("perm = {:?}",perm);
+        println!("ptr = {:?}",ptr);
         for i in 0..nrows {
             let pb = ptr[i];
-            let pe = { let mut r = pb; while r < ptr[i+1] && self.var_map[subj[perm[r]]] < 0 { r += 1; }; r };
-
-            let mut j = pb;
+            let mut pe = pb; while pe < ptr[i+1] && self.var_map[subj[perm[pe]]] < 0 { pe += 1 };
+            println!("  range = {}:{}",pb,pe);
             let mut barelmi : Vec<i32> = Vec::new();
             let mut barelmj : Vec<i32> = Vec::new();
             let mut barelmc : Vec<f64> = Vec::new();
-            println!("barelm_map = {:?}",self.barelm_map);
-            println!("var_map = {:?}",self.var_map);
-            println!("var idxs = {:?}",perm[pb..pe].iter().map(|i| self.var_map[*i]).collect::<Vec<i64>>());
+            println!("row [{}]",i);
+            println!("  idxs ({}) = {:?} {:?}",
+                     pe-pb,
+                     &perm[pb..pe],
+                     perm[pb..pe].iter().map(|i| self.var_map[*i]).collect::<Vec<i64>>());
+            let mut j = pb;
             while j < pe {
                 barelmi.clear();
                 barelmj.clear();
