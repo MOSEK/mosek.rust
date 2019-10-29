@@ -372,19 +372,22 @@ impl MosekTask {
             let mut barelmi : Vec<i32> = Vec::new();
             let mut barelmj : Vec<i32> = Vec::new();
             let mut barelmc : Vec<f64> = Vec::new();
+            //println!("barelm_map = {:?}",self.barelm_map);
+            //println!("subj : {:?}",perm[j..p1]);
             while j < p1 {
                 barelmi.clear();
                 barelmj.clear();
                 barelmc.clear();
 
-                let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
+                let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
                 barelmi.push(ii);
                 barelmj.push(jj);
-                barelmc.push(cof[perm[j]]);
+                if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                else        { barelmc.push(cof[perm[j]]); }
                 j += 1;
 
-                while j < pe && barj == self.barelm_map[-(1+self.var_map[perm[j]]) as usize].0 {
-                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
+                while j < p1 && barj == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
+                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
                     if self.var_map[perm[j]] == self.var_map[perm[j-1]] {
                         let last = barelmc.len()-1;
                         barelmc[last] += cof[perm[j]];
@@ -392,7 +395,8 @@ impl MosekTask {
                     else {
                         barelmi.push(ii);
                         barelmj.push(jj);
-                        barelmc.push(cof[perm[j]]);
+                        if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                        else        { barelmc.push(cof[perm[j]]); }
                     }
                     j += 1;
                 }
@@ -406,7 +410,11 @@ impl MosekTask {
     }
 
     // Matrix
-    fn put_a_row_list(& mut self, subi : &[ElementIndex], ptr : &[usize], subj : &[ElementIndex], cof : &[f64]) {
+    fn put_a_row_list(& mut self,
+                      subi : &[ElementIndex],
+                      ptr  : &[usize],
+                      subj : &[ElementIndex],
+                      cof  : &[f64]) {
         println!("put_a_row_list");
         println!("  subi = {:?}",subi);
         println!("  ptr  = {:?}",ptr);
@@ -468,12 +476,15 @@ impl MosekTask {
 
         for i in 0..nrows {
             let pb = ptr[i];
-            let pe = { let mut r = pb; while r < ptr[i+1] && self.var_map[subj[r]] < 0 { r += 1; }; r };
+            let pe = { let mut r = pb; while r < ptr[i+1] && self.var_map[subj[perm[r]]] < 0 { r += 1; }; r };
 
             let mut j = pb;
             let mut barelmi : Vec<i32> = Vec::new();
             let mut barelmj : Vec<i32> = Vec::new();
             let mut barelmc : Vec<f64> = Vec::new();
+            println!("barelm_map = {:?}",self.barelm_map);
+            println!("var_map = {:?}",self.var_map);
+            println!("var idxs = {:?}",perm[pb..pe].iter().map(|i| self.var_map[*i]).collect::<Vec<i64>>());
             while j < pe {
                 barelmi.clear();
                 barelmj.clear();
@@ -482,7 +493,8 @@ impl MosekTask {
                 let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
                 barelmi.push(ii);
                 barelmj.push(jj);
-                barelmc.push(cof[perm[j]]);
+                if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                else        { barelmc.push(cof[perm[j]]); }
                 j += 1;
 
                 while j < pe && barj == self.barelm_map[-(1+self.var_map[perm[j]]) as usize].0 {
@@ -494,7 +506,8 @@ impl MosekTask {
                     else {
                         barelmi.push(ii);
                         barelmj.push(jj);
-                        barelmc.push(cof[perm[j]]);
+                        if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                        else        { barelmc.push(cof[perm[j]]); }
                     }
                     j += 1;
                 }
