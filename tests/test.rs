@@ -74,5 +74,17 @@ fn test_lo1() {
     let x    = m.create_var_block(Domain::Free{num : 3});
     let barx = m.create_var_block(Domain::PSDCone{num : 3, dim : 3});
 
+    let c    = m.create_con_block(Domain::Fixed{bound : vec![1.0, 0.5]});
+
+    let mut xi = vec![3];
+    let mut ci = vec![2];
+    m.get_var_block_indexes(x,xi.as_mut_slice());
+    m.get_con_block_indexes(c,ci.as_mut_slice());
+
+    m.put_a_row_list(c.as_slice(),
+                     &[0,1,3],
+                     &[xi[0],xi[1],ci[2],
+                     &[1.0,  1.0,  1.0]]);
+
 
 }
