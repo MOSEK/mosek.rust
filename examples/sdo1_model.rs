@@ -65,6 +65,4 @@ fn main() {
       println!("  barx = {:?}",level_X);
       println!("  bars = {:?}",dual_X);
     }
-    m.write_task("sdo1.ptf");
-    m.write_task("sdo1.opf");
 }

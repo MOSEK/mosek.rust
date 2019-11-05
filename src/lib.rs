@@ -1,4 +1,4 @@
-callMSK// Generated for MOSEK v9.1.0
+// Generated for MOSEK v9.1.0
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -4748,6 +4748,7 @@ impl Task
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
+      println!("ptrb = {:?}, ptre = {:?}, subj = {:?}, val = {:?}",ptrb_,ptre_,asub_,aval_);  
       callMSK!(MSK_putarowlist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
       return Result::Ok(())
     }

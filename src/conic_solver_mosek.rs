@@ -125,7 +125,8 @@ impl ConicSolverAPI for MosekTask {
     fn get_dual_con_solution  (& self, solidx : usize, idxs : &[ElementIndex], res : &mut [f64]) -> Result<(),String> { self.get_dual_con_solution  (solidx, idxs,res) }
 
     // Task
-    fn write_task(&self, filename : &str) { self.write_task(filename) }
+    fn write_task(&self, filename : &str) { self.write_task(filename); 
+    }
 
     fn solve(&mut self) { self.solve(); }
     fn solve_with(&mut self,conf : &str) { self.solve_with(conf); }
@@ -709,7 +710,10 @@ impl MosekTask {
 
     // Task
     pub fn put_task_name(& mut self, name : &str) { self.task.put_task_name(name).unwrap(); }
-    pub fn write_task(&self, filename : &str) { self.task.write_data(filename).unwrap(); }
+    pub fn write_task(&self, filename : &str) {
+        self.task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
+        self.task.write_data(filename).unwrap();
+    }
 
 
     fn solve_postprocess(&mut self) {
