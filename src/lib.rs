@@ -1,4 +1,4 @@
-// Generated for MOSEK v9.1.0
+callMSK// Generated for MOSEK v9.1.0
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;

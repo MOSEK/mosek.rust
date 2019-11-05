@@ -415,15 +415,10 @@ impl MosekTask {
                       ptr  : &[usize],
                       subj : &[ElementIndex],
                       cof  : &[f64]) {
-        println!("put_a_row_list");
-        println!("  subi = {:?}",subi);
-        println!("  ptr  = {:?}",ptr);
-        println!("  subj = {:?}",subj);
-        println!("  varmap = {:?}",self.var_map);
         let nrows = subi.len();
         let mut perm : Vec<usize> = (0..subj.len()).collect();
         for i in 0..nrows {
-            perm[ptr[i]..ptr[i+1]].sort_by_key(|j| -self.var_map[subj[*j]]);
+            perm[ptr[i]..ptr[i+1]].sort_by_key(|j| self.var_map[subj[*j]]);
         }
 
         self.clear_baraijs(subi);
@@ -431,6 +426,8 @@ impl MosekTask {
         let mut rsubj : Vec<i32> = Vec::new();
         let mut rcof  : Vec<f64> = Vec::new();
         let mut rptr  : Vec<i64> = vec![0; nrows+1];
+
+        let mut numbarnz = 0;
 
         {
             let mut nzi = 0;
@@ -441,7 +438,8 @@ impl MosekTask {
                 let pe = ptr[i+1];
                 while b < pe && self.var_map[subj[perm[b]]] < 0 { b += 1; }
 
-                println!("  [{}]: {}:{}:{}",i,pb,b,pe);
+                numbarnz += b-pb;
+
                 // PSD nonzeros: pb..b
                 // Linear nonzeros: b..pe
                 if b < pe {
@@ -460,13 +458,56 @@ impl MosekTask {
                     }
                 }
                 rptr[i+1] = nzi as i64;
+
+                // PSD nonzeros
+                if pb < b {
+                    let mut barelmi : Vec<i32> = Vec::new();
+                    let mut barelmj : Vec<i32> = Vec::new();
+                    let mut barelmc : Vec<f64> = Vec::new();
+                    let mut j = pb;
+                    
+                    while j < b {
+                        barelmi.clear();
+                        barelmj.clear();
+                        barelmc.clear();
+
+                        let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
+                        barelmi.push(ii);
+                        barelmj.push(jj);
+                        if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                        else        { barelmc.push(cof[perm[j]]); }
+                        j += 1;
+                        
+
+                        while j < b && barj == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
+                                                        
+                            let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
+
+                            if self.var_map[subj[perm[j]]] == self.var_map[subj[perm[j-1]]] {
+                                let last = barelmc.len()-1;
+                                barelmc[last] += cof[perm[j]];
+                            }
+                            else {
+                                barelmi.push(ii);
+                                barelmj.push(jj);
+                                if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
+                                else        { barelmc.push(cof[perm[j]]); }
+                            }
+                            j += 1;
+                        }
+
+                        let dimbarj = self.task.get_dim_barvar_j(barj).unwrap();
+                        let mati = self.task.append_sparse_sym_mat(dimbarj,barelmi.as_slice(),barelmj.as_slice(),barelmc.as_slice()).unwrap();
+                        self.task.put_bara_ij(subi[i] as i32,barj,vec![mati].as_slice(),vec![1.0].as_slice()).unwrap();
+                        self.baraijs.push((subi[i] as i32,barj));
+                        self.baraij_num[subi[i] as usize] += 1;
+                    }
+
+                }
             }
         }
 
-        println!("  -- input:");
-        println!("     rsubi: {:?}",rsubi);
-        println!("     rptr:  {:?}",rptr);
-        println!("     rsubj: {:?}",rsubj);
+        println!("put linear non-zeros:\n  rptr = {:?}\n  rsubj = {:?}\n  rcof = {:?}",rptr,rsubj,rcof);
         self.task.put_a_row_list(rsubi.as_slice(),
                                  &rptr[0..nrows],
                                  &rptr[1..nrows+1],
@@ -474,55 +515,10 @@ impl MosekTask {
                                  rcof.as_slice() ).unwrap();
 
 
-        println!("------");
-        println!("subj = {:?}",perm.iter().map(|i| self.var_map[subj[*i]]).collect::<Vec<i64>>());
-        println!("perm = {:?}",perm);
-        println!("ptr = {:?}",ptr);
-        for i in 0..nrows {
-            let pb = ptr[i];
-            let mut pe = pb; while pe < ptr[i+1] && self.var_map[subj[perm[pe]]] < 0 { pe += 1 };
-            println!("  range = {}:{}",pb,pe);
-            let mut barelmi : Vec<i32> = Vec::new();
-            let mut barelmj : Vec<i32> = Vec::new();
-            let mut barelmc : Vec<f64> = Vec::new();
-            println!("row [{}]",i);
-            println!("  idxs ({}) = {:?} {:?}",
-                     pe-pb,
-                     &perm[pb..pe],
-                     perm[pb..pe].iter().map(|i| self.var_map[*i]).collect::<Vec<i64>>());
-            let mut j = pb;
-            while j < pe {
-                barelmi.clear();
-                barelmj.clear();
-                barelmc.clear();
-
-                let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
-                barelmi.push(ii);
-                barelmj.push(jj);
-                if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
-                else        { barelmc.push(cof[perm[j]]); }
-                j += 1;
-
-                while j < pe && barj == self.barelm_map[-(1+self.var_map[perm[j]]) as usize].0 {
-                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[perm[j]]) as usize];
-                    if self.var_map[perm[j]] == self.var_map[perm[j-1]] {
-                        let last = barelmc.len()-1;
-                        barelmc[last] += cof[perm[j]];
-                    }
-                    else {
-                        barelmi.push(ii);
-                        barelmj.push(jj);
-                        if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
-                        else        { barelmc.push(cof[perm[j]]); }
-                    }
-                    j += 1;
-                }
-
-                let dimbarj = self.task.get_dim_barvar_j(barj).unwrap();
-                let mati = self.task.append_sparse_sym_mat(dimbarj,barelmi.as_slice(),barelmj.as_slice(),barelmc.as_slice()).unwrap();
-                self.task.put_bara_ij(subi[i] as i32,barj,vec![mati].as_slice(),vec![1.0].as_slice()).unwrap();
-                self.baraijs.push((subi[i] as i32,barj));
-                self.baraij_num[subi[i] as usize] += 1;
+        if numbarnz > 0 {
+            for i in 0..nrows {
+                let pb = ptr[i];
+                let mut pe = pb; while pe < ptr[i+1] && self.var_map[subj[perm[pe]]] < 0 { pe += 1 };
             }
         }
     }
@@ -720,7 +716,7 @@ impl MosekTask {
         self.sols.clear();
         let numvar = self.task.get_num_var().unwrap() as usize;
         let numcon = self.task.get_num_con().unwrap() as usize;
-        //let numbarvar = self.task.get_num_barvar().unwrap() as usize;
+        let numbarvar = self.task.get_num_barvar().unwrap() as usize;
         let numbarelm = self.barelm_map.len();
 
         let mut skx  = vec![0i32; numvar ];
@@ -748,7 +744,9 @@ impl MosekTask {
                         self.task.get_skx(which,& mut skx[0..numvar]).unwrap();
                         self.task.get_xc (which,& mut xc[0..numcon]).unwrap();
                         self.task.get_skc(which,& mut skc[0..numcon]).unwrap();
-                        if numbarelm > 0 { self.task.get_barx_slice(which, 0, numvar as i32, numbarelm as i64, barx.as_mut_slice()).unwrap(); }
+
+                        
+                        if numbarelm > 0 { self.task.get_barx_slice(which, 0, numbarvar as i32, numbarelm as i64, barx.as_mut_slice()).unwrap(); }
 
                         // Copy primal variable solution values
                         for (i,idx) in self.var_map.iter().enumerate() {
@@ -790,7 +788,7 @@ impl MosekTask {
                         self.task.get_sux(which,& mut sux[0..numvar]).unwrap();
                         self.task.get_snx(which,& mut snx[0..numvar]).unwrap_or_else(|_| { snx.iter_mut().for_each(|v| *v = 0.0); });
                         self.task.get_y  (which,& mut y[0..numcon]).unwrap();
-                        if numbarelm > 0 { self.task.get_bars_slice(which, 0, numvar as i32, numbarelm as i64, barx.as_mut_slice()).unwrap(); }
+                        if numbarelm > 0 { self.task.get_bars_slice(which, 0, numbarvar as i32, numbarelm as i64, barx.as_mut_slice()).unwrap(); }
 
                         // Copy dual variable solution values
                         for (i,idx) in self.var_map.iter().enumerate() {
