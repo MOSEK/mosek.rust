@@ -138,7 +138,7 @@ impl ConicSolverAPI for MosekTask {
                 assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
                 let mut ng = namegen::sparse(name,shape,sp);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if i >= 0 {
+                    if *j >= 0 {
                         self.task.put_var_name(*j as i32, ng.get(i));
                     }
                 }
@@ -146,7 +146,7 @@ impl ConicSolverAPI for MosekTask {
             else {
                 let mut ng = namegen::shaped(name,shape);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if i >= 0 {
+                    if *j >= 0 {
                         self.task.put_var_name(*j as i32, ng.get(i));
                     }
                 }
@@ -158,7 +158,7 @@ impl ConicSolverAPI for MosekTask {
                 assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
                 let mut ng = namegen::sparse(name,shape.as_slice(),sp);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if i >= 0 {
+                    if *j >= 0 {
                         self.task.put_var_name(*j as i32, ng.get(i));
                     }
                 }
@@ -166,7 +166,7 @@ impl ConicSolverAPI for MosekTask {
             else {
                 let mut ng = namegen::shaped(name,shape.as_slice());
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if i >= 0 {
+                    if *j >= 0 {
                         self.task.put_var_name(*j as i32, ng.get(i));
                     }
                 }
