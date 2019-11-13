@@ -5,6 +5,7 @@ use std::ffi::CStr;
 use libc::c_void;
 
 pub mod conic_solver_mosek;
+mod namegen;
 
 //#[link(name = "mosek64")]
 extern {

@@ -1,5 +1,7 @@
 extern crate conic_solver_api;
 use self::conic_solver_api::*;
+use super::namegen;
+
 
 pub struct Solution {
     tp      : SolType,
@@ -125,7 +127,93 @@ impl ConicSolverAPI for MosekTask {
     fn get_dual_con_solution  (& self, solidx : usize, idxs : &[ElementIndex], res : &mut [f64]) -> Result<(),String> { self.get_dual_con_solution  (solidx, idxs,res) }
 
     // Task
-    fn write_task(&self, filename : &str) { self.write_task(filename); 
+    fn write_task(&self, filename : &str) {
+        self.write_task(filename); 
+    }
+
+
+    fn put_var_block_name(&mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        if let Some(shape) = shape {
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape,sp);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if i >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if i >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+        }
+        else {
+            let shape = vec![self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]];
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if i >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape.as_slice());
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if i >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }            
+        }
+    }
+    
+    fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        if let Some(shape) = shape {
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape,sp);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    if i >= 0 {
+                        self.task.put_con_name(j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    if i >= 0 {
+                        self.task.put_con_name(j as i32, ng.get(i));
+                    }
+                }
+            }
+        }
+        else {
+            let shape = vec![self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]];
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    if i >= 0 {
+                        self.task.put_con_name(j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape.as_slice());
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    if i >= 0 {
+                        self.task.put_con_name(j as i32, ng.get(i));
+                    }
+                }
+            }            
+        }
     }
 
     fn solve(&mut self) { self.solve(); }
@@ -268,7 +356,7 @@ impl MosekTask {
         slice_fill_from_iterator(res, self.varblock_ptr[i]..self.varblock_ptr[i+1])
     }
 
-    fn create_con_block(& mut self, dom : &Domain) -> BlockIndex {
+    pub fn create_con_block(& mut self, dom : &Domain) -> BlockIndex {
         let blockidx = self.conblock_ptr.len()-1;
 
         let (bi,slackbi) =
@@ -339,21 +427,21 @@ impl MosekTask {
 
         blockidx as BlockIndex
     }
-    fn get_con_block_size(&self, i : BlockIndex) -> usize { self.conblock_ptr[i+1] - self.conblock_ptr[i] }
-    fn get_con_block_indexes(& self, i : BlockIndex, res : & mut [usize]) {
+    pub fn get_con_block_size(&self, i : BlockIndex) -> usize { self.conblock_ptr[i+1] - self.conblock_ptr[i] }
+    pub fn get_con_block_indexes(& self, i : BlockIndex, res : & mut [usize]) {
         println!("get block indexes #{}: conblock_ptr = {:?}",i,self.conblock_ptr);
         slice_fill_from_iterator(res, self.conblock_ptr[i]..self.conblock_ptr[i+1]);
     }
 
     // Objective
-    fn put_objective_name(& mut self, name : &str) { self.task.put_obj_name(name).unwrap(); }
-    fn put_objective_sense(& mut self, sense : ObjectiveSense) {
+    pub fn put_objective_name(& mut self, name : &str) { self.task.put_obj_name(name).unwrap(); }
+    pub fn put_objective_sense(& mut self, sense : ObjectiveSense) {
         match sense {
             ObjectiveSense::Minimize => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MINIMIZE),
             ObjectiveSense::Maximize => self.task.put_obj_sense(super::MSK_OBJECTIVE_SENSE_MAXIMIZE),
         }.unwrap();
     }
-    fn put_objective(& mut self, subj : &[ElementIndex], cof : &[f64]) {
+    pub fn put_objective(& mut self, subj : &[ElementIndex], cof : &[f64]) {
         let mut perm : Vec<usize> = (0..subj.len()).collect();
         perm.sort_by_key(|i| self.var_map[subj[*i]]);
         let mut p1 = 0; while self.var_map[subj[perm[p1]]] < 0 { p1 += 1 }
@@ -411,11 +499,11 @@ impl MosekTask {
     }
 
     // Matrix
-    fn put_a_row_list(& mut self,
-                      subi : &[ElementIndex],
-                      ptr  : &[usize],
-                      subj : &[ElementIndex],
-                      cof  : &[f64]) {
+    pub fn put_a_row_list(& mut self,
+                          subi : &[ElementIndex],
+                          ptr  : &[usize],
+                          subj : &[ElementIndex],
+                          cof  : &[f64]) {
         let nrows = subi.len();
         let mut perm : Vec<usize> = (0..subj.len()).collect();
         for i in 0..nrows {
@@ -577,7 +665,7 @@ impl MosekTask {
         }
     }
 
-    fn put_aij_list(& mut self, subi : &[ElementIndex], subj : &[ElementIndex], cof : &[f64]) {
+    pub fn put_aij_list(& mut self, subi : &[ElementIndex], subj : &[ElementIndex], cof : &[f64]) {
         let n = subi.len();
         let subj : Vec<i64> = subj.iter().map(|i| self.var_map[*i]).collect();
         let mut perm : Vec<usize> = (0..n).collect();
@@ -711,6 +799,7 @@ impl MosekTask {
     // Task
     pub fn put_task_name(& mut self, name : &str) { self.task.put_task_name(name).unwrap(); }
     pub fn write_task(&self, filename : &str) {
+        self.task.put_int_param(super::MSK_IPAR_OPF_WRITE_SOLUTIONS,super::MSK_ON).unwrap();
         self.task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
         self.task.write_data(filename).unwrap();
     }
