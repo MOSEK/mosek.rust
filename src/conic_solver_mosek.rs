@@ -132,89 +132,19 @@ impl ConicSolverAPI for MosekTask {
     }
 
 
-    fn put_var_block_name(&mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
-        if let Some(shape) = shape {
-            if let Some(sp) = sp {
-                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
-                let mut ng = namegen::sparse(name,shape,sp);
-                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
-                    }
-                }
-            }
-            else {
-                let mut ng = namegen::shaped(name,shape);
-                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
-                    }
-                }
-            }
-        }
-        else {
-            let shape = vec![self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]];
-            if let Some(sp) = sp {
-                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
-                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
-                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
-                    }
-                }
-            }
-            else {
-                let mut ng = namegen::shaped(name,shape.as_slice());
-                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
-                    if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
-                    }
-                }
-            }            
-        }
-    }
-    
-    fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
-        if let Some(shape) = shape {
-            if let Some(sp) = sp {
-                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
-                let mut ng = namegen::sparse(name,shape,sp);
-                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    if i >= 0 {
-                        self.task.put_con_name(j as i32, ng.get(i));
-                    }
-                }
-            }
-            else {
-                let mut ng = namegen::shaped(name,shape);
-                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
-                }
-            }
-        }
-        else {
-            let shape = vec![self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]];
-            if let Some(sp) = sp {
-                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]);
-                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
-                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
-                }
-            }
-            else {
-                let mut ng = namegen::shaped(name,shape.as_slice());
-                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
-                }
-            }            
-        }
-    }
 
     fn solve(&mut self) { self.solve(); }
     fn solve_with(&mut self,conf : &str) { self.solve_with(conf); }
 
     fn set_log_printer<F>(&mut self, f : Option<F>) where F : 'static+Fn(&str){ self.set_log_printer(f) }
     fn set_callback<F>(&mut self, f : Option<F>) where F : 'static+Fn(&str) -> bool { self.set_callback(f) }
+
+    fn put_var_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        self.put_var_block_name(blocki,name,shape,sp)
+    }
+    fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        self.put_con_block_name(blocki,name,shape,sp)
+    }
 }
 
 impl MosekTask {
@@ -937,6 +867,83 @@ impl MosekTask {
         match fun {
             Some(fun) => self.task.put_callback(move |k,_,_,_| { let r = format!("{}",k); fun(r.as_str()) }).unwrap(),
             None => self.task.put_callback(|_,_,_,_| true).unwrap(),
+        }
+    }
+    fn put_var_block_name(&mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        if let Some(shape) = shape {
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape,sp);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if *j >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if *j >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+        }
+        else {
+            let shape = vec![self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]];
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if *j >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape.as_slice());
+                for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
+                    if *j >= 0 {
+                        self.task.put_var_name(*j as i32, ng.get(i));
+                    }
+                }
+            }            
+        }
+    }
+    
+    fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+        if let Some(shape) = shape {
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape,sp);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    if i >= 0 {
+                        self.task.put_con_name(j as i32, ng.get(i));
+                    }
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    self.task.put_con_name(j as i32, ng.get(i));
+                }
+            }
+        }
+        else {
+            let shape = vec![self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]];
+            if let Some(sp) = sp {
+                assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]);
+                let mut ng = namegen::sparse(name,shape.as_slice(),sp);
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    self.task.put_con_name(j as i32, ng.get(i));
+                }
+            }
+            else {
+                let mut ng = namegen::shaped(name,shape.as_slice());
+                for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
+                    self.task.put_con_name(j as i32, ng.get(i));
+                }
+            }            
         }
     }
 }
