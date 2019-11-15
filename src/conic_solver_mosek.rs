@@ -202,16 +202,13 @@ impl MosekTask {
 
         let blockidx = self.conblock_ptr.len()-1;
         let num_ordered_baraij = self.baraij_ptre.last().and_then(|v| Some(*v)).unwrap_or_else(|| 0 as usize);
-        println!("num_ordered_baraij : {}, firstcon = {}, numcon = {}, conslack : {}",num_ordered_baraij,firstcon,n,self.conslack.len());
         for _ in 0..n {
             self.conslack.push(0);
-            println!("  -conslack : {:?}",self.conslack);
             self.baraij_ptrb.push(num_ordered_baraij);
             self.baraij_ptre.push(num_ordered_baraij);
             self.baraij_num.push(0);
         }
 
-        println!("  conslack : {}",self.conslack.len());
         self.conblock_ptr.push(self.conslack.len());
         (blockidx,firstcon)
     }
@@ -352,7 +349,6 @@ impl MosekTask {
     }
     pub fn get_con_block_size(&self, i : BlockIndex) -> usize { self.conblock_ptr[i+1] - self.conblock_ptr[i] }
     pub fn get_con_block_indexes(& self, i : BlockIndex, res : & mut [usize]) {
-        println!("get block indexes #{}: conblock_ptr = {:?}",i,self.conblock_ptr);
         slice_fill_from_iterator(res, self.conblock_ptr[i]..self.conblock_ptr[i+1]);
     }
 
@@ -384,8 +380,6 @@ impl MosekTask {
             let mut barelmi : Vec<i32> = Vec::new();
             let mut barelmj : Vec<i32> = Vec::new();
             let mut barelmc : Vec<f64> = Vec::new();
-            //println!("barelm_map = {:?}",self.barelm_map);
-            //println!("subj : {:?}",perm[j..p1]);
             while j < p1 {
                 barelmi.clear();
                 barelmj.clear();
@@ -524,7 +518,6 @@ impl MosekTask {
             }
         }
 
-        println!("put linear non-zeros:\n  rptr = {:?}\n  rsubj = {:?}\n  rcof = {:?}",rptr,rsubj,rcof);
         self.task.put_a_row_list(rsubi.as_slice(),
                                  &rptr[0..nrows],
                                  &rptr[1..nrows+1],
