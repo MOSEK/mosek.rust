@@ -2,7 +2,6 @@ extern crate conic_solver_api;
 use self::conic_solver_api::*;
 use super::namegen;
 
-
 pub struct Solution {
     tp      : SolType,
     prosta  : ProblemStatus,
@@ -82,7 +81,7 @@ pub struct MosekTask {
     barvar_ptr  : Vec<usize>,
 
     conblock_ptr : Vec<usize>,
-    conslack    : Vec<usize>,
+    conslack     : Vec<usize>,
 
     // baraij accounting
     baraij_ptrb : Vec<usize>,
@@ -302,7 +301,7 @@ impl MosekTask {
                         let mut subi : Vec<i32> = Vec::with_capacity(coneelm);
                         let mut subj : Vec<i32> = Vec::with_capacity(coneelm);
                         let mut cof  : Vec<f64> = Vec::with_capacity(coneelm);
-                        let mut dims  : Vec<i32> = Vec::with_capacity(coneelm);
+                        let mut dims : Vec<i32> = Vec::with_capacity(coneelm);
                         let mut nz   : Vec<i64> = Vec::with_capacity(coneelm);
                         for i in 0..*dim {
                             for j in 0..i+1 {
@@ -339,7 +338,7 @@ impl MosekTask {
                 }
             };
 
-        let blocksize = self.get_con_block_size(bi);
+        //let blocksize = self.get_con_block_size(bi);
         match slackbi {
             None => {},
             Some(slackbi) => {
@@ -469,6 +468,11 @@ impl MosekTask {
                             nzi += 1;
                         }
                     }
+                }
+                if self.conslack[rsubi[i] as usize] > 0 {
+                    rsubj.push((self.var_map[self.conslack[rsubi[i] as usize]-1]) as i32);
+                    rcof.push(-1.0);
+                    nzi += 1;
                 }
                 rptr[i+1] = nzi as i64;
 
@@ -869,14 +873,14 @@ impl MosekTask {
             None => self.task.put_callback(|_,_,_,_| true).unwrap(),
         }
     }
-    fn put_var_block_name(&mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+    pub fn put_var_block_name(&mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
         if let Some(shape) = shape {
             if let Some(sp) = sp {
                 assert_eq!(sp.len(),self.varblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
                 let mut ng = namegen::sparse(name,shape,sp);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
                     if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
+                        self.task.put_var_name(*j as i32, ng.get(i)).unwrap();
                     }
                 }
             }
@@ -884,7 +888,7 @@ impl MosekTask {
                 let mut ng = namegen::shaped(name,shape);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
                     if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
+                        self.task.put_var_name(*j as i32, ng.get(i)).unwrap();
                     }
                 }
             }
@@ -896,7 +900,7 @@ impl MosekTask {
                 let mut ng = namegen::sparse(name,shape.as_slice(),sp);
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
                     if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
+                        self.task.put_var_name(*j as i32, ng.get(i)).unwrap();
                     }
                 }
             }
@@ -904,28 +908,26 @@ impl MosekTask {
                 let mut ng = namegen::shaped(name,shape.as_slice());
                 for (i,j) in self.var_map[self.varblock_ptr[blocki]..self.varblock_ptr[blocki+1]].iter().enumerate() {
                     if *j >= 0 {
-                        self.task.put_var_name(*j as i32, ng.get(i));
+                        self.task.put_var_name(*j as i32, ng.get(i)).unwrap();
                     }
                 }
             }            
         }
     }
     
-    fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
+    pub fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
         if let Some(shape) = shape {
             if let Some(sp) = sp {
                 assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.varblock_ptr[blocki]);
                 let mut ng = namegen::sparse(name,shape,sp);
                 for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    if i >= 0 {
-                        self.task.put_con_name(j as i32, ng.get(i));
-                    }
+                    self.task.put_con_name(j as i32, ng.get(i)).unwrap();
                 }
             }
             else {
                 let mut ng = namegen::shaped(name,shape);
                 for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
+                    self.task.put_con_name(j as i32, ng.get(i)).unwrap();
                 }
             }
         }
@@ -935,13 +937,13 @@ impl MosekTask {
                 assert_eq!(sp.len(),self.conblock_ptr[blocki+1]-self.conblock_ptr[blocki]);
                 let mut ng = namegen::sparse(name,shape.as_slice(),sp);
                 for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
+                    self.task.put_con_name(j as i32, ng.get(i)).unwrap();
                 }
             }
             else {
                 let mut ng = namegen::shaped(name,shape.as_slice());
                 for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
-                    self.task.put_con_name(j as i32, ng.get(i));
+                    self.task.put_con_name(j as i32, ng.get(i)).unwrap();
                 }
             }            
         }
