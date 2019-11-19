@@ -215,16 +215,19 @@ impl MosekTask {
     pub fn append_cones(&mut self, ct : i32, ncone : usize, conedim : usize,conepar : Option<&[f64]>) -> usize {
         let n = ncone*conedim;
         let (blockidx,firstvar) = self.append_vars(super::MSK_BK_FR, vec![0.0; n].as_slice());
+        let lastvar = firstvar + n as i32;
         let firstcone = self.task.get_num_cone().unwrap();
-        let idxs : Vec<i32> = (firstvar..firstvar+n as i32).collect();
+        let idxs : Vec<i32> = (firstvar..lastvar).collect();
         match conepar {
             None =>
                 for i in 0..ncone {
-                    self.task.append_cone(ct,0.0,&idxs[firstcone as usize+(i*conedim)..firstcone as usize+((i+1)*conedim)]).unwrap()
+                    let first = i*conedim;
+                    self.task.append_cone(ct,0.0,&idxs[first..first+conedim]).unwrap()
                 },
             Some(conepar) =>
                 for i in 0..ncone {
-                    self.task.append_cone(ct,conepar[i],&idxs[firstcone as usize+(i*conedim)..firstcone as usize+((i+1)*conedim)]).unwrap()
+                    let first = i*conedim;
+                    self.task.append_cone(ct, conepar[i], &idxs[first..first+conedim]).unwrap()
                 },
         }
         blockidx
