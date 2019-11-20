@@ -4,6 +4,9 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
+pub mod conic_solver_mosek;
+mod namegen;
+
 //#[link(name = "mosek64")]
 extern {
     fn MSK_makeenv(env : * mut * const u8, dbgfile : * const libc::c_char) -> i32;
@@ -4751,8 +4754,6 @@ impl Task
       let mut num_ = sub_.len();
       if ptrb_.len() > num_ { num_ = ptrb_.len() };
       if ptre_.len() > num_ { num_ = ptre_.len() };
-      if ! ptrb_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptrb".to_string()) }
-      if ! ptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptre".to_string()) }
       callMSK!(MSK_putarowlist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
       return Result::Ok(())
     }
