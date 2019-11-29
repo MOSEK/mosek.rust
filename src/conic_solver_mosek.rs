@@ -156,7 +156,7 @@ impl ConicSolverAPI for MosekTask {
 impl MosekTask {
     pub fn new(name : Option<&str>) -> MosekTask {
         let env  = super::Env::new().unwrap();
-        let task = env.task().unwrap();
+        let mut task = env.task().unwrap();
 
         match name {
             Some(name) => {
@@ -736,7 +736,7 @@ impl MosekTask {
 
     // Task
     pub fn put_task_name(& mut self, name : &str) { self.task.put_task_name(name).unwrap(); }
-    pub fn write_task(&self, filename : &str) {
+    pub fn write_task(&mut self, filename : &str) {
         self.task.put_int_param(super::MSK_IPAR_OPF_WRITE_SOLUTIONS,super::MSK_ON).unwrap();
         self.task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
         self.task.write_data(filename).unwrap();
