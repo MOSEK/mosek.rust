@@ -62,12 +62,19 @@ impl Solution {
     }
 }
 
+enum BlockType {
+    PSD(usize,usize,usize), // size,first,num
+    Linear(usize), // first,num
+    VCone(usize,usize,usize), // size,first,num
+}
+
 pub struct MosekTask {
     _env        : super::Env,
     task        : super::Task,
 
     // varblock_ptr[i] defines the offset into var_map where block i starts
     varblock_ptr : Vec<usize>,
+    varblock_type : Vec<BlockType>,
     // var_map[i] >= 0, maps to linear variable varmap[i]
     // var_map[i] <  0, maps to psd variable element barelm_map[varmap[i]]
     var_map      : Vec<i64>,
@@ -163,6 +170,7 @@ impl MosekTask {
             task        : task,
 
             varblock_ptr : vec![0],
+            varblock_type : Vec::new(),
             var_map     : Vec::new(),
             varblock_map : Vec::new(),
             barelm_map  : Vec::new(),
@@ -186,14 +194,16 @@ impl MosekTask {
         self.task.append_vars(n as i32).unwrap();
         self.task.put_var_bound_slice(firstvar,firstvar+n as i32, vec![bk; n].as_slice(), b, b).unwrap();
 
-        let blockidx = self.varblock_ptr.len()-1;
+        let blockidx = self.varblock_type.len();
         for i in 0..n {
             self.var_map.push(firstvar as i64 + i as i64);
             self.varblock_map.push((blockidx,i));
         }
+        self.varblock_type.push(BlockType::Linear(b.len()));
         self.varblock_ptr.push(self.varblock_map.len());
         (blockidx,firstvar)
     }
+
     pub fn append_cons(& mut self, bk : i32, b : &[f64]) -> (usize,i32) {
         let n = b.len();
         let firstcon = self.task.get_num_con().unwrap();
@@ -212,12 +222,16 @@ impl MosekTask {
         self.conblock_ptr.push(self.conslack.len());
         (blockidx,firstcon)
     }
+    
     pub fn append_cones(&mut self, ct : i32, ncone : usize, conedim : usize,conepar : Option<&[f64]>) -> usize {
         let n = ncone*conedim;
         let (blockidx,firstvar) = self.append_vars(super::MSK_BK_FR, vec![0.0; n].as_slice());
         let lastvar = firstvar + n as i32;
         let firstcone = self.task.get_num_cone().unwrap();
         let idxs : Vec<i32> = (firstvar..lastvar).collect();
+        
+        self.varblock_type[blockidx] = BlockType::VCone(conedim, firstcone as usize, ncone);
+
         match conepar {
             None =>
                 for i in 0..ncone {
@@ -238,6 +252,7 @@ impl MosekTask {
 
         let blockidx = self.varblock_ptr.len()-1;
 
+        let firstcone = self.task.get_num_barvar().unwrap();
         self.task.append_barvars(vec![dim as i32; n].as_slice()).unwrap();
 
         let mut elmi = 0;
@@ -253,6 +268,7 @@ impl MosekTask {
             self.barvar_ptr.push(self.barelm_map.len())
         }
         self.varblock_ptr.push(self.varblock_map.len());
+        self.varblock_type.push(BlockType::PSD(firstcone as usize,dim,n));
         blockidx
     }
     pub fn create_var_block(&mut self,dom : &Domain) -> BlockIndex {
