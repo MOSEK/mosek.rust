@@ -158,6 +158,9 @@ impl MosekTask {
         let env  = super::Env::new().unwrap();
         let mut task = env.task().unwrap();
 
+        task.put_int_param(super::MSK_IPAR_OPF_WRITE_SOLUTIONS,super::MSK_ON).unwrap();
+        task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
+        
         match name {
             Some(name) => {
                 task.put_task_name(name).unwrap();
@@ -736,9 +739,7 @@ impl MosekTask {
 
     // Task
     pub fn put_task_name(& mut self, name : &str) { self.task.put_task_name(name).unwrap(); }
-    pub fn write_task(&mut self, filename : &str) {
-        self.task.put_int_param(super::MSK_IPAR_OPF_WRITE_SOLUTIONS,super::MSK_ON).unwrap();
-        self.task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
+    pub fn write_task(& self, filename : &str) {
         self.task.write_data(filename).unwrap();
     }
 
