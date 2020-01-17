@@ -406,20 +406,23 @@ impl MosekTask {
                 barelmj.clear();
                 barelmc.clear();
 
-                let (barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
-                barelmi.push(ii);
-                barelmj.push(jj);
-                if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
-                else        { barelmc.push(cof[perm[j]]); }
-                j += 1;
+                let j0 = j;
+                let barj0 = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0;
+                while j < p1 && barj0 == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
+                    j += 1
+                }
 
-                while j < p1 && barj == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
-                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
-                    if self.var_map[perm[j]] == self.var_map[perm[j-1]] {
+                let mut ii0 = std::i32::MAX;
+                let mut jj0 = std::i32::MAX;
+                for k in j0..j { 
+                    let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[k]]]) as usize];
+                    if ii == ii0 && jj == jj0 {
                         let last = barelmc.len()-1;
-                        barelmc[last] += cof[perm[j]];
+                        barelmc[last] += cof[perm[k]];
                     }
                     else {
+                        ii0 = ii;
+                        jj0 = jj;
                         barelmi.push(ii);
                         barelmj.push(jj);
                         barelmc.push(cof[perm[j]]);
@@ -429,11 +432,13 @@ impl MosekTask {
                     j += 1;
                 }
 
-                let dimbarj = self.task.get_dim_barvar_j(barj).unwrap();
-                let mati = self.task.append_sparse_sym_mat(dimbarj,barelmi.as_slice(),barelmj.as_slice(),barelmc.as_slice()).unwrap();
-                self.task.put_barc_j(barj,vec![mati].as_slice(),vec![1.0].as_slice()).unwrap();
-            }
+                let dimbarj = self.task.get_dim_barvar_j(barj0).unwrap();
 
+                //println!("barelmi = {:?}, barelmj = {:?}",barelmi,barelmj);
+
+                let mati = self.task.append_sparse_sym_mat(dimbarj,barelmi.as_slice(),barelmj.as_slice(),barelmc.as_slice()).unwrap();
+                self.task.put_barc_j(barj0,vec![mati].as_slice(),vec![1.0].as_slice()).unwrap();
+            }   
         }
     }
 
@@ -509,7 +514,6 @@ impl MosekTask {
                         if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
                         else        { barelmc.push(cof[perm[j]]); }
                         j += 1;
-                        
 
                         while j < b && barj == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
                                                         
