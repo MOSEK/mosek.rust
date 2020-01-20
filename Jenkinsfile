@@ -44,7 +44,7 @@ node ("karise") {
       sh """
 export PATH=/remote/public/linux/64-x86/rust/current/bin:$PATH
 export LD_LIBRARY_PATH=mosek/$mosekver/tools/platform/linux64x86/bin
-export MOSEK_INST_BASE=../
+export MOSEK_INST_BASE=.
 cargo test
 """
     }
