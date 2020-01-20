@@ -10,12 +10,13 @@ node ("karise") {
              poll: true,
              scm: ([$class: 'GitSCM',
                     branches: [[name: branchname]],
-                    doGenerateSubmoduleConfigurations: false,
-                                     extensions: [[$class: 'CloneOption',
-                                                   noTags: false,
-                                                   reference: ''],
-                                                  [$class: 'CheckoutOption'],
-                                                  [$class: 'RelativeTargetDirectory', relativeTargetDir: 'Mosek.rs']],
+                    doGenerateSubmoduleConfigurations: true,
+                    extensions: [[$class: 'CloneOption',
+                                  noTags: false,
+                                  reference: ''],
+                                 [$class: 'CheckoutOption'],
+                                 [$class: 'RelativeTargetDirectory',
+                                  relativeTargetDir: 'Mosek.rs']],
                         gitTool: 'Default',
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@gitlab.mosek.intranet:ulfw/mosek.rust.git']]])
@@ -27,12 +28,14 @@ node ("karise") {
         sh "tar xf bld/hudson/distro/minidist-linux64x86.tar.bz2"
     //}
 
-    gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
-                        name: "Mosek.rs") {
-      sh '''
+    dir("Mosek.rs") {
+      gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
+                          name: "Mosek.rs") {
+          sh '''
 export PATH=/remote/public/linux/64-x86/rust/current/bin:$PATH
 export LD_LIBRARY_PATH=$(pwd)/minidist/bin
 cargo test
 '''
-    }
+      }
+  }
 }
