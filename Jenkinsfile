@@ -30,7 +30,7 @@ node ("karise") {
     def mosekver     = readFile "MOSEKVERSION"
     def mosekjobname = readFile "JOBNAME"
     mosekver = mosekver.trim()
-    mosekjobname = mosekbrn.trim()
+    mosekjobname = mosekjobname.trim()
     copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
                   fingerprintArtifacts: true,
                   projectName: "${mosekjobname}/Distro-pipeline",
