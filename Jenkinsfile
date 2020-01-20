@@ -29,10 +29,11 @@ node ("karise") {
 
       //}
 
-      gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),name: "Mosek.rs") {
+      gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
+                          name: "Mosek.rs") {
         sh """
-export PATH=/remote/public/liux/64-x86/rust/current/bin:$PATH
-export LD_LIBRARY_PATH=
+export PATH=/remote/public/linux/64-x86/rust/current/bin:$PATH
+export LD_LIBRARY_PATH=$(pwd)/minidist/bin
 cargo test
 """
     }
