@@ -2,8 +2,8 @@ use std::env;
 use std::path::PathBuf;
 
 
-const MSK_MAJOR_VER : i32 = 10;
-const MSK_MINOR_VER : i32 = 0;
+const MSK_MAJOR_VER : i32 = 9;
+const MSK_MINOR_VER : i32 = 2;
 
 fn get_platform_name() -> (String,String) {
     if cfg!(target_os = "windows") {
