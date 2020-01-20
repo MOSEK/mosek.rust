@@ -6,7 +6,7 @@ node ("karise") {
              ( !brn.startsWith("refs/") ? brn : "origin/$brn" ) )
 
     stage "checkout" {
-        checkout changelog: true,
+        checkout changelog: false,
                  poll: true,
                  scm: ([$class: 'GitSCM',
                         branches: [[name: branchname]],
