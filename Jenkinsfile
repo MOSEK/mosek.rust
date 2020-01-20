@@ -14,8 +14,6 @@ node ("karise") {
                                      extensions: [[$class: 'CloneOption',
                                                    noTags: false,
                                                    reference: '',
-                                                   depth: gitclonedepth,
-                                                   shallow: true,
                                                    timeout: gitclonetimeout],
                                                   [$class: 'CheckoutOption',
                                                    timeout: gitclonetimeout]],
@@ -32,7 +30,6 @@ node ("karise") {
 
 
     }
-
 
     gitlabCommitStatus connection: gitLabConnection('gitlab-api'),
                        name:       "Mosek.rs" {
