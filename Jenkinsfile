@@ -10,7 +10,7 @@ node ("karise") {
              poll: true,
              scm: ([$class: 'GitSCM',
                     branches: [[name: branchname]],
-                    doGenerateSubmoduleConfigurations: true,
+                    doGenerateSubmoduleConfigurations: false,
                     extensions: [[$class: 'CloneOption',
                                   noTags: false,
                                   reference: ''],
@@ -27,21 +27,24 @@ node ("karise") {
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@git-lab.mosek.intranet:ulfw/mosek.rust.git']]])
 
-        copyArtifacts filter: 'bld/hudson/distro/minidist-linux64x86.tar.bz2',
+        def mosekver = readFile "MOSEKVERSION"
+        copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
                       fingerprintArtifacts: true,
-                      projectName: 'dev/Distro-pipeline',
+                      projectName: "${mosekver}/Distro-pipeline",
                       selector: lastSuccessful()
-        sh "tar xf bld/hudson/distro/minidist-linux64x86.tar.bz2"
+        sh "rm -rf minidist && tar xf bld/hudson/distro/mosketoolslinux64x86.tar.bz2"
     //}
 
     dir("Mosek.rs") {
       gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
                           name: "Mosek.rs") {
-          sh '''
+
+          sh """
 export PATH=/remote/public/linux/64-x86/rust/current/bin:$PATH
-export LD_LIBRARY_PATH=$(pwd)/minidist/bin
+export LD_LIBRARY_PATH=../mosek/
+export MOSEK_INST_BASE=../
 cargo test
-'''
+"""
       }
   }
 }
