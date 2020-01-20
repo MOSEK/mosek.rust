@@ -6,7 +6,7 @@ authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 build = "build.rs"
 
 [dependencies.conic_solver_api]
-path = "../ConicSolverAPI.rs"
+path = "deps/conicsolverapi.rs"
 
 [dependencies]
 libc = "*"
