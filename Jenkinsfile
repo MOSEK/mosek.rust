@@ -27,11 +27,12 @@ node ("karise") {
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@git-lab.mosek.intranet:ulfw/mosek.rust.git']]])
 
-        def mosekver = readFile "MOSEKVERSION"
-        copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
-                      fingerprintArtifacts: true,
-                      projectName: "${mosekver}/Distro-pipeline",
-                      selector: lastSuccessful()
+    def mosekver = readFile "MOSEKVERSION"
+    mosekver = mosekver.trim()
+    copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
+                  fingerprintArtifacts: true,
+                  projectName: "${mosekver}/Distro-pipeline",
+                  selector: lastSuccessful()
         sh "rm -rf minidist && tar xf bld/hudson/distro/mosketoolslinux64x86.tar.bz2"
     //}
 
