@@ -33,7 +33,7 @@ node ("karise") {
                   fingerprintArtifacts: true,
                   projectName: "${mosekver}/Distro-pipeline",
                   selector: lastSuccessful()
-        sh "rm -rf minidist && tar xf bld/hudson/distro/mosketoolslinux64x86.tar.bz2"
+        sh "tar xf bld/hudson/distro/mosektoolslinux64x86.tar.bz2"
     //}
 
     gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
