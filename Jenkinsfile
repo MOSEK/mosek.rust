@@ -28,10 +28,12 @@ node ("karise") {
                                              url: 'git@git-lab.mosek.intranet:ulfw/mosek.rust.git']]])
 
     def mosekver = readFile "MOSEKVERSION"
+    def mosekbrn = readFile "MOSEKBRANCH"
     mosekver = mosekver.trim()
+    mosekbrn = mosekbrn.trim()
     copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
                   fingerprintArtifacts: true,
-                  projectName: "${mosekver}/Distro-pipeline",
+                  projectName: "${mosekbrn}/Distro-pipeline",
                   selector: lastSuccessful()
         sh "tar xf bld/hudson/distro/mosektoolslinux64x86.tar.bz2"
     //}
@@ -41,7 +43,7 @@ node ("karise") {
 
       sh """
 export PATH=/remote/public/linux/64-x86/rust/current/bin:$PATH
-export LD_LIBRARY_PATH=../mosek/
+export LD_LIBRARY_PATH=mosek/$mosekver/tools/platform/linux64x86/bin
 export MOSEK_INST_BASE=../
 cargo test
 """
