@@ -5,7 +5,7 @@ node ("karise") {
             "origin/master" :
              ( !brn.startsWith("refs/") ? brn : "origin/$brn" ) )
 
-    stage "checkout" {
+        //stage "checkout" {
         checkout changelog: false,
                  poll: true,
                  scm: ([$class: 'GitSCM',
@@ -29,7 +29,7 @@ node ("karise") {
         sh "tar xf bld/hudson/distro/minidist-linux64x86.tar.bz2"
 
 
-    }
+      //}
 
     gitlabCommitStatus connection: gitLabConnection('gitlab-api'),
                        name:       "Mosek.rs" {
