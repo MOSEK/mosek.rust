@@ -5,6 +5,8 @@ node ("karise") {
             "origin/master" :
              ( !brn.startsWith("refs/") ? brn : "origin/$brn" ) )
 
+    currentBuild.displayName = branchname
+
     //stage "checkout" {
     checkout changelog: false,
              poll: true,
