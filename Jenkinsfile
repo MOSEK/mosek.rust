@@ -19,7 +19,7 @@ node ("karise") {
                                   relativeTargetDir: 'Mosek.rs']],
                         gitTool: 'Default',
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
-                                             url: 'git@gitlab.mosek.intranet:ulfw/mosek.rust.git']]])
+                                             url: 'git@git-lab.mosek.intranet:ulfw/mosek.rust.git']]])
 
         copyArtifacts filter: 'bld/hudson/distro/minidist-linux64x86.tar.bz2',
                       fingerprintArtifacts: true,
