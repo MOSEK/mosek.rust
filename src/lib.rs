@@ -1,4 +1,4 @@
-// Generated for MOSEK v10.0.0
+// Generated for MOSEK v9.2.0
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -33,10 +33,10 @@ extern {
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
-    fn MSK_asyncgetresult(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
-    fn MSK_asyncoptimize(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const u8) -> i32;
-    fn MSK_asyncpoll(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
-    fn MSK_asyncstop(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    fn MSK_asyncgetresult(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncoptimize(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const u8) -> i32;
+    fn MSK_asyncpoll(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : & mut i32,trm_ : & mut i32) -> i32;
+    fn MSK_asyncstop(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
     fn MSK_bktostr(task_ : * const u8,bk_ : i32,str_ : * const u8) -> i32;
@@ -216,7 +216,7 @@ extern {
     fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
-    fn MSK_optimizermt(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
+    fn MSK_optimizermt(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,trmcode_ : & mut i32) -> i32;
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : & mut i32) -> i32;
     fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
@@ -1416,7 +1416,6 @@ pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                          : i32 = 1126;
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                          : i32 = 1127;
 pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                         : i32 = 1105;
 pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                         : i32 = 1106;
-pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE          : i32 = 7750;
 pub const MSK_RES_ERR_MUL_A_ELEMENT                              : i32 = 1254;
 pub const MSK_RES_ERR_NAME_IS_NULL                               : i32 = 1760;
 pub const MSK_RES_ERR_NAME_MAX_LEN                               : i32 = 1750;
@@ -1492,13 +1491,9 @@ pub const MSK_RES_ERR_SEN_NUMERICAL                              : i32 = 3058;
 pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
 pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
-pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN                        : i32 = 8007;
-pub const MSK_RES_ERR_SERVER_ADDRESS                             : i32 = 8004;
-pub const MSK_RES_ERR_SERVER_CERTIFICATE                         : i32 = 8005;
 pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
 pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
 pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
-pub const MSK_RES_ERR_SERVER_TLS_CLIENT                          : i32 = 8006;
 pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
 pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE                         : i32 = 1202;
 pub const MSK_RES_ERR_SIZE_LICENSE                               : i32 = 1005;
@@ -1580,8 +1575,6 @@ pub const MSK_RES_WRN_EMPTY_NAME                                 : i32 = 502;
 pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO     : i32 = 932;
 pub const MSK_RES_WRN_IGNORE_INTEGER                             : i32 = 250;
 pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800;
-pub const MSK_RES_WRN_INVALID_MPS_NAME                           : i32 = 504;
-pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                       : i32 = 505;
 pub const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62;
 pub const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51;
 pub const MSK_RES_WRN_LARGE_CJ                                   : i32 = 57;
@@ -1589,7 +1582,7 @@ pub const MSK_RES_WRN_LARGE_CON_FX                               : i32 = 54;
 pub const MSK_RES_WRN_LARGE_LO_BOUND                             : i32 = 52;
 pub const MSK_RES_WRN_LARGE_UP_BOUND                             : i32 = 53;
 pub const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500;
-pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 509;
+pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 505;
 pub const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501;
 pub const MSK_RES_WRN_LP_DROP_VARIABLE                           : i32 = 85;
 pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                         : i32 = 80;
@@ -1758,20 +1751,19 @@ pub const MSK_SPAR_READ_MPS_BOU_NAME         : i32 = 9;
 pub const MSK_SPAR_READ_MPS_OBJ_NAME         : i32 = 10;
 pub const MSK_SPAR_READ_MPS_RAN_NAME         : i32 = 11;
 pub const MSK_SPAR_READ_MPS_RHS_NAME         : i32 = 12;
-pub const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 13;
-pub const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 14;
-pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 15;
-pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 16;
-pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 17;
-pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 18;
-pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 19;
-pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 20;
-pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 21;
-pub const MSK_SPAR_STAT_KEY                  : i32 = 22;
-pub const MSK_SPAR_STAT_NAME                 : i32 = 23;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 24;
+pub const MSK_SPAR_REMOTE_ACCESS_TOKEN       : i32 = 13;
+pub const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 14;
+pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 15;
+pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 16;
+pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 17;
+pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 18;
+pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 19;
+pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 20;
+pub const MSK_SPAR_STAT_KEY                  : i32 = 21;
+pub const MSK_SPAR_STAT_NAME                 : i32 = 22;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 23;
 pub const MSK_SPAR_BEGIN : i32 = 0;
-pub const MSK_SPAR_END   : i32 = 25;
+pub const MSK_SPAR_END   : i32 = 24;
 
 // stakey
 pub const MSK_SK_BAS    : i32 = 1;
@@ -1906,7 +1898,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_in_all(& mut self) -> Result<(),String>
+    pub fn check_in_all(&self) -> Result<(),String>
     {
       callMSK!(MSK_checkinall,self.ptr);
       return Result::Ok(())
@@ -1917,7 +1909,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_in_license(& mut self,feature_ : i32) -> Result<(),String>
+    pub fn check_in_license(&self,feature_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkinlicense,self.ptr,feature_);
       return Result::Ok(())
@@ -1928,7 +1920,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_mem(& mut self,file_ : &str,line_ : i32) -> Result<(),String>
+    pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
       return Result::Ok(())
@@ -1939,7 +1931,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn checkout_license(& mut self,feature_ : i32) -> Result<(),String>
+    pub fn checkout_license(&self,feature_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkoutlicense,self.ptr,feature_);
       return Result::Ok(())
@@ -2037,7 +2029,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn link_file_to_env_stream(& mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
+    pub fn link_file_to_env_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
       return Result::Ok(())
@@ -2060,7 +2052,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_code(& mut self,code_ : & [i32]) -> Result<(),String>
+    pub fn put_license_code(&self,code_ : & [i32]) -> Result<(),String>
     {
       if code_.len() != ((MSK_LICENSE_BUFFER_LENGTH) as usize) { return Result::Err("Argument 'code_' is too short in call to 'put_license_code'".to_string()) }
       callMSK!(MSK_putlicensecode,self.ptr,code_.as_ptr());
@@ -2072,7 +2064,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_debug(& mut self,licdebug_ : i32) -> Result<(),String>
+    pub fn put_license_debug(&self,licdebug_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putlicensedebug,self.ptr,licdebug_ as i32);
       return Result::Ok(())
@@ -2083,7 +2075,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_path(& mut self,licensepath_ : &str) -> Result<(),String>
+    pub fn put_license_path(&self,licensepath_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putlicensepath,self.ptr,CString::new(licensepath_).unwrap().as_ptr());
       return Result::Ok(())
@@ -2094,7 +2086,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_license_wait(& mut self,licwait_ : i32) -> Result<(),String>
+    pub fn put_license_wait(&self,licwait_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putlicensewait,self.ptr,licwait_ as i32);
       return Result::Ok(())
@@ -2105,7 +2097,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn setup_threads(& mut self,numthreads_ : i32) -> Result<(),String>
+    pub fn setup_threads(&self,numthreads_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_setupthreads,self.ptr,numthreads_ as i32);
       return Result::Ok(())
@@ -2176,7 +2168,7 @@ impl Env
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn unlink_func_from_stream(& mut self,whichstream_ : i32) -> Result<(),String>
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_unlinkfuncfromenvstream,self.ptr,whichstream_);
       return Result::Ok(())
@@ -2301,7 +2293,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_barvars(& mut self,dim_ : & [i32]) -> Result<(),String>
+    pub fn append_barvars(&self,dim_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = dim_.len();
       callMSK!(MSK_appendbarvars,self.ptr,num_ as i32,dim_.as_ptr());
@@ -2313,7 +2305,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cone(& mut self,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
+    pub fn append_cone(&self,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
     {
       let mut nummem_ = submem_.len();
       callMSK!(MSK_appendcone,self.ptr,ct_,conepar_ as f64,nummem_ as i32,submem_.as_ptr());
@@ -2325,7 +2317,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cone_seq(& mut self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> Result<(),String>
+    pub fn append_cone_seq(&self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_appendconeseq,self.ptr,ct_,conepar_ as f64,nummem_ as i32,j_ as i32);
       return Result::Ok(())
@@ -2336,7 +2328,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cones_seq(& mut self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32) -> Result<(),String>
+    pub fn append_cones_seq(&self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32) -> Result<(),String>
     {
       let mut num_ = ct_.len();
       if conepar_.len() < num_ { num_ = conepar_.len() };
@@ -2350,7 +2342,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_cons(& mut self,num_ : i32) -> Result<(),String>
+    pub fn append_cons(&self,num_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_appendcons,self.ptr,num_ as i32);
       return Result::Ok(())
@@ -2361,7 +2353,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_sparse_sym_mat(& mut self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<i64,String>
+    pub fn append_sparse_sym_mat(&self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<i64,String>
     {
       let mut nz_ = subi_.len();
       if subj_.len() < nz_ { nz_ = subj_.len() };
@@ -2376,7 +2368,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_sparse_sym_mat_list(& mut self,dims_ : & [i32],nz_ : & [i64],subi_ : & [i32],subj_ : & [i32],valij_ : & [f64],idx_ : & mut [i64]) -> Result<(),String>
+    pub fn append_sparse_sym_mat_list(&self,dims_ : & [i32],nz_ : & [i64],subi_ : & [i32],subj_ : & [i32],valij_ : & [f64],idx_ : & mut [i64]) -> Result<(),String>
     {
       let mut num_ = dims_.len();
       if nz_.len() < num_ { num_ = nz_.len() };
@@ -2396,7 +2388,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_vars(& mut self,num_ : i32) -> Result<(),String>
+    pub fn append_vars(&self,num_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_appendvars,self.ptr,num_ as i32);
       return Result::Ok(())
@@ -2407,12 +2399,12 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_get_result(& mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
+    pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2421,10 +2413,10 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_optimize(& mut self,addr_ : &str,accesstoken_ : &str) -> Result<String,String>
+    pub fn async_optimize(&self,server_ : &str,port_ : &str) -> Result<String,String>
     {
       let mut _token__bytes = Vec::with_capacity(33 as usize);
-      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
+      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
       unsafe { _token__bytes.set_len((33) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()))
     }
@@ -2434,12 +2426,12 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_poll(& mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
+    pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncpoll,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2448,9 +2440,9 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn async_stop(& mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String>
+    pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_asyncstop,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
+      callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
       return Result::Ok(())
     }
     
@@ -2459,7 +2451,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn basis_cond(& mut self) -> Result<(f64,f64),String>
+    pub fn basis_cond(&self) -> Result<(f64,f64),String>
     {
       let mut _ref_nrmbasis_ : f64 = 0 as f64;
       let mut _ref_nrminvbasis_ : f64 = 0 as f64;
@@ -2485,7 +2477,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn check_mem(& mut self,file_ : &str,line_ : i32) -> Result<(),String>
+    pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
       return Result::Ok(())
@@ -2496,7 +2488,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn chg_con_bound(& mut self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
+    pub fn chg_con_bound(&self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_chgconbound,self.ptr,i_ as i32,lower_ as i32,finite_ as i32,value_ as f64);
       return Result::Ok(())
@@ -2507,7 +2499,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn chg_var_bound(& mut self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
+    pub fn chg_var_bound(&self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_chgvarbound,self.ptr,j_ as i32,lower_ as i32,finite_ as i32,value_ as f64);
       return Result::Ok(())
@@ -2518,7 +2510,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn commit_changes(& mut self) -> Result<(),String>
+    pub fn commit_changes(&self) -> Result<(),String>
     {
       callMSK!(MSK_commitchanges,self.ptr);
       return Result::Ok(())
@@ -2542,7 +2534,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn delete_solution(& mut self,whichsol_ : i32) -> Result<(),String>
+    pub fn delete_solution(&self,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_deletesolution,self.ptr,whichsol_);
       return Result::Ok(())
@@ -2580,7 +2572,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_cone_names(& mut self,subk_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
+    pub fn generate_cone_names(&self,subk_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subk_.len();
       let mut ndims_ = dims_.len();
@@ -2594,7 +2586,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_con_names(& mut self,subi_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
+    pub fn generate_con_names(&self,subi_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       let mut ndims_ = dims_.len();
@@ -2608,7 +2600,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn generate_var_names(& mut self,subj_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
+    pub fn generate_var_names(&self,subj_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       let mut ndims_ = dims_.len();
@@ -3057,7 +3049,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_cone(& mut self,k_ : i32,submem_ : & mut [i32]) -> Result<(i32,f64,i32),String>
+    pub fn get_cone(&self,k_ : i32,submem_ : & mut [i32]) -> Result<(i32,f64,i32),String>
     {
       let mut _ref_ct_ : i32 = 0 as i32;
       let mut _ref_conepar_ : f64 = 0 as f64;
@@ -4460,7 +4452,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn init_basis_solve(& mut self,basis_ : & mut [i32]) -> Result<(),String>
+    pub fn init_basis_solve(&self,basis_ : & mut [i32]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if basis_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'basis_' is too short in call to 'init_basis_solve'".to_string()) }
@@ -4473,7 +4465,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn input_data(& mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
+    pub fn input_data(&self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut numcon_ = buc_.len();
       if blc_.len() < numcon_ { numcon_ = blc_.len() };
@@ -4531,7 +4523,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn link_file_to_stream(& mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
+    pub fn link_file_to_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
       return Result::Ok(())
@@ -4553,10 +4545,10 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize_rmt(& mut self,addr_ : &str,accesstoken_ : &str) -> Result<i32,String>
+    pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> Result<i32,String>
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
-      callMSK!(MSK_optimizermt,self.ptr,CString::new(addr_).unwrap().as_ptr(),CString::new(accesstoken_).unwrap().as_ptr(),& mut _ref_trmcode_);
+      callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
       return Result::Ok((_ref_trmcode_ as i32))
     }
     
@@ -4576,7 +4568,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn optimize(& mut self) -> Result<i32,String>
+    pub fn optimize(&self) -> Result<i32,String>
     {
       let mut _ref_trmcode_ : i32 = 0 as i32;
       callMSK!(MSK_optimizetrm,self.ptr,& mut _ref_trmcode_);
@@ -4588,7 +4580,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn primal_repair(& mut self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64]) -> Result<(),String>
+    pub fn primal_repair(&self,wlc_ : & [f64],wuc_ : & [f64],wlx_ : & [f64],wux_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if wlc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'wlc_' is too short in call to 'primal_repair'".to_string()) }
@@ -4607,7 +4599,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn primal_sensitivity(& mut self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64]) -> Result<(),String>
+    pub fn primal_sensitivity(&self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64]) -> Result<(),String>
     {
       let mut numi_ = subi_.len();
       if marki_.len() < numi_ { numi_ = marki_.len() };
@@ -4641,7 +4633,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn prob_type_to_str(& mut self,probtype_ : i32) -> Result<String,String>
+    pub fn prob_type_to_str(&self,probtype_ : i32) -> Result<String,String>
     {
       let mut _str__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
       callMSK!(MSK_probtypetostr,self.ptr,probtype_,_str__bytes.as_mut_ptr());
@@ -4667,7 +4659,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col(& mut self,j_ : i32,subj_ : & [i32],valj_ : & [f64]) -> Result<(),String>
+    pub fn put_a_col(&self,j_ : i32,subj_ : & [i32],valj_ : & [f64]) -> Result<(),String>
     {
       let mut nzj_ = subj_.len();
       if valj_.len() < nzj_ { nzj_ = valj_.len() };
@@ -4680,7 +4672,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col_list(& mut self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
+    pub fn put_a_col_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if ptrb_.len() < num_ { num_ = ptrb_.len() };
@@ -4696,7 +4688,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_col_slice(& mut self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
+    pub fn put_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       if ! ptrb_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptrb".to_string()) }
       if ! ptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptre".to_string()) }
@@ -4709,7 +4701,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_aij(& mut self,i_ : i32,j_ : i32,aij_ : f64) -> Result<(),String>
+    pub fn put_aij(&self,i_ : i32,j_ : i32,aij_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putaij,self.ptr,i_ as i32,j_ as i32,aij_ as f64);
       return Result::Ok(())
@@ -4720,7 +4712,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_aij_list(& mut self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<(),String>
+    pub fn put_aij_list(&self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if subj_.len() < num_ { num_ = subj_.len() };
@@ -4734,7 +4726,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row(& mut self,i_ : i32,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
+    pub fn put_a_row(&self,i_ : i32,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
     {
       let mut nzi_ = subi_.len();
       if vali_.len() < nzi_ { nzi_ = vali_.len() };
@@ -4747,7 +4739,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row_list(& mut self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
+    pub fn put_a_row_list(&self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if ptrb_.len() < num_ { num_ = ptrb_.len() };
@@ -4763,7 +4755,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_row_slice(& mut self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
+    pub fn put_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       if ptrb_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'ptrb_' is too short in call to 'put_a_row_slice'".to_string()) }
       if ptre_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'ptre_' is too short in call to 'put_a_row_slice'".to_string()) }
@@ -4778,7 +4770,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_a_truncate_tol(& mut self,tolzero_ : f64) -> Result<(),String>
+    pub fn put_a_truncate_tol(&self,tolzero_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putatruncatetol,self.ptr,tolzero_ as f64);
       return Result::Ok(())
@@ -4789,7 +4781,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_block_triplet(& mut self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64]) -> Result<(),String>
+    pub fn put_bara_block_triplet(&self,num_ : i64,subi_ : & [i32],subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valijkl_ : & [f64]) -> Result<(),String>
     {
       if subi_.len() != ((num_) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'put_bara_block_triplet'".to_string()) }
       if subj_.len() != ((num_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'put_bara_block_triplet'".to_string()) }
@@ -4805,7 +4797,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_ij(& mut self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    pub fn put_bara_ij(&self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if weights_.len() < num_ { num_ = weights_.len() };
@@ -4818,7 +4810,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_ij_list(& mut self,subi_ : & [i32],subj_ : & [i32],alphaptrb_ : & [i64],alphaptre_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    pub fn put_bara_ij_list(&self,subi_ : & [i32],subj_ : & [i32],alphaptrb_ : & [i64],alphaptre_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if subj_.len() < num_ { num_ = subj_.len() };
@@ -4835,7 +4827,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bara_row_list(& mut self,subi_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],subj_ : & [i32],nummat_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    pub fn put_bara_row_list(&self,subi_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],subj_ : & [i32],nummat_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
       if ptrb_.len() < num_ { num_ = ptrb_.len() };
@@ -4857,7 +4849,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barc_block_triplet(& mut self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64]) -> Result<(),String>
+    pub fn put_barc_block_triplet(&self,num_ : i64,subj_ : & [i32],subk_ : & [i32],subl_ : & [i32],valjkl_ : & [f64]) -> Result<(),String>
     {
       if subj_.len() != ((num_) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'put_barc_block_triplet'".to_string()) }
       if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_barc_block_triplet'".to_string()) }
@@ -4872,7 +4864,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barc_j(& mut self,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    pub fn put_barc_j(&self,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if weights_.len() < num_ { num_ = weights_.len() };
@@ -4885,7 +4877,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_bars_j(& mut self,whichsol_ : i32,j_ : i32,barsj_ : & [f64]) -> Result<(),String>
+    pub fn put_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_)?;
       if barsj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barsj_' is too short in call to 'put_bars_j'".to_string()) }
@@ -4898,7 +4890,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barvar_name(& mut self,j_ : i32,name_ : &str) -> Result<(),String>
+    pub fn put_barvar_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putbarvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
       return Result::Ok(())
@@ -4909,7 +4901,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_barx_j(& mut self,whichsol_ : i32,j_ : i32,barxj_ : & [f64]) -> Result<(),String>
+    pub fn put_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_len_barvar_j(j_)?;
       if barxj_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'barxj_' is too short in call to 'put_barx_j'".to_string()) }
@@ -4922,7 +4914,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cfix(& mut self,cfix_ : f64) -> Result<(),String>
+    pub fn put_cfix(&self,cfix_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putcfix,self.ptr,cfix_ as f64);
       return Result::Ok(())
@@ -4933,7 +4925,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_j(& mut self,j_ : i32,cj_ : f64) -> Result<(),String>
+    pub fn put_c_j(&self,j_ : i32,cj_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putcj,self.ptr,j_ as i32,cj_ as f64);
       return Result::Ok(())
@@ -4944,7 +4936,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_list(& mut self,subj_ : & [i32],val_ : & [f64]) -> Result<(),String>
+    pub fn put_c_list(&self,subj_ : & [i32],val_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       if val_.len() < num_ { num_ = val_.len() };
@@ -4957,7 +4949,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound(& mut self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
+    pub fn put_con_bound(&self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putconbound,self.ptr,i_ as i32,bkc_,blc_ as f64,buc_ as f64);
       return Result::Ok(())
@@ -4968,7 +4960,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_list(& mut self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
+    pub fn put_con_bound_list(&self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if bkc_.len() < num_ { num_ = bkc_.len() };
@@ -4983,7 +4975,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_list_const(& mut self,sub_ : & [i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
+    pub fn put_con_bound_list_const(&self,sub_ : & [i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       callMSK!(MSK_putconboundlistconst,self.ptr,num_ as i32,sub_.as_ptr(),bkc_,blc_ as f64,buc_ as f64);
@@ -4995,7 +4987,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_slice(& mut self,first_ : i32,last_ : i32,bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
+    pub fn put_con_bound_slice(&self,first_ : i32,last_ : i32,bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
     {
       if bkc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bkc_' is too short in call to 'put_con_bound_slice'".to_string()) }
       if blc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'blc_' is too short in call to 'put_con_bound_slice'".to_string()) }
@@ -5009,7 +5001,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_bound_slice_const(& mut self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
+    pub fn put_con_bound_slice_const(&self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putconboundsliceconst,self.ptr,first_ as i32,last_ as i32,bkc_,blc_ as f64,buc_ as f64);
       return Result::Ok(())
@@ -5020,7 +5012,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cone(& mut self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
+    pub fn put_cone(&self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : & [i32]) -> Result<(),String>
     {
       let mut nummem_ = submem_.len();
       callMSK!(MSK_putcone,self.ptr,k_ as i32,ct_,conepar_ as f64,nummem_ as i32,submem_.as_ptr());
@@ -5032,7 +5024,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_cone_name(& mut self,j_ : i32,name_ : &str) -> Result<(),String>
+    pub fn put_cone_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putconename,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5043,7 +5035,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_name(& mut self,i_ : i32,name_ : &str) -> Result<(),String>
+    pub fn put_con_name(&self,i_ : i32,name_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putconname,self.ptr,i_ as i32,CString::new(name_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5054,7 +5046,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_con_solution_i(& mut self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> Result<(),String>
+    pub fn put_con_solution_i(&self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putconsolutioni,self.ptr,i_ as i32,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64);
       return Result::Ok(())
@@ -5065,7 +5057,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_c_slice(& mut self,first_ : i32,last_ : i32,slice_ : & [f64]) -> Result<(),String>
+    pub fn put_c_slice(&self,first_ : i32,last_ : i32,slice_ : & [f64]) -> Result<(),String>
     {
       if slice_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slice_' is too short in call to 'put_c_slice'".to_string()) }
       callMSK!(MSK_putcslice,self.ptr,first_ as i32,last_ as i32,slice_.as_ptr());
@@ -5077,7 +5069,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_dou_param(& mut self,param_ : i32,parvalue_ : f64) -> Result<(),String>
+    pub fn put_dou_param(&self,param_ : i32,parvalue_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putdouparam,self.ptr,param_,parvalue_ as f64);
       return Result::Ok(())
@@ -5088,7 +5080,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_int_param(& mut self,param_ : i32,parvalue_ : i32) -> Result<(),String>
+    pub fn put_int_param(&self,param_ : i32,parvalue_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putintparam,self.ptr,param_,parvalue_ as i32);
       return Result::Ok(())
@@ -5099,7 +5091,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_a_nz(& mut self,maxnumanz_ : i64) -> Result<(),String>
+    pub fn put_max_num_a_nz(&self,maxnumanz_ : i64) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumanz,self.ptr,maxnumanz_ as i64);
       return Result::Ok(())
@@ -5110,7 +5102,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_barvar(& mut self,maxnumbarvar_ : i32) -> Result<(),String>
+    pub fn put_max_num_barvar(&self,maxnumbarvar_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumbarvar,self.ptr,maxnumbarvar_ as i32);
       return Result::Ok(())
@@ -5121,7 +5113,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_con(& mut self,maxnumcon_ : i32) -> Result<(),String>
+    pub fn put_max_num_con(&self,maxnumcon_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumcon,self.ptr,maxnumcon_ as i32);
       return Result::Ok(())
@@ -5132,7 +5124,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_cone(& mut self,maxnumcone_ : i32) -> Result<(),String>
+    pub fn put_max_num_cone(&self,maxnumcone_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumcone,self.ptr,maxnumcone_ as i32);
       return Result::Ok(())
@@ -5143,7 +5135,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_q_nz(& mut self,maxnumqnz_ : i64) -> Result<(),String>
+    pub fn put_max_num_q_nz(&self,maxnumqnz_ : i64) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumqnz,self.ptr,maxnumqnz_ as i64);
       return Result::Ok(())
@@ -5154,7 +5146,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_var(& mut self,maxnumvar_ : i32) -> Result<(),String>
+    pub fn put_max_num_var(&self,maxnumvar_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putmaxnumvar,self.ptr,maxnumvar_ as i32);
       return Result::Ok(())
@@ -5165,7 +5157,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_dou_param(& mut self,paramname_ : &str,parvalue_ : f64) -> Result<(),String>
+    pub fn put_na_dou_param(&self,paramname_ : &str,parvalue_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as f64);
       return Result::Ok(())
@@ -5176,7 +5168,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_int_param(& mut self,paramname_ : &str,parvalue_ : i32) -> Result<(),String>
+    pub fn put_na_int_param(&self,paramname_ : &str,parvalue_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as i32);
       return Result::Ok(())
@@ -5187,7 +5179,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_na_str_param(& mut self,paramname_ : &str,parvalue_ : &str) -> Result<(),String>
+    pub fn put_na_str_param(&self,paramname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5198,7 +5190,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_obj_name(& mut self,objname_ : &str) -> Result<(),String>
+    pub fn put_obj_name(&self,objname_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putobjname,self.ptr,CString::new(objname_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5209,7 +5201,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_obj_sense(& mut self,sense_ : i32) -> Result<(),String>
+    pub fn put_obj_sense(&self,sense_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putobjsense,self.ptr,sense_);
       return Result::Ok(())
@@ -5220,7 +5212,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_param(& mut self,parname_ : &str,parvalue_ : &str) -> Result<(),String>
+    pub fn put_param(&self,parname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5231,7 +5223,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_con(& mut self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
+    pub fn put_q_con(&self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() < numqcnz_ { numqcnz_ = qcsubj_.len() };
@@ -5245,7 +5237,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_con_k(& mut self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
+    pub fn put_q_con_k(&self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
       if qcsubj_.len() < numqcnz_ { numqcnz_ = qcsubj_.len() };
@@ -5259,7 +5251,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_obj(& mut self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64]) -> Result<(),String>
+    pub fn put_q_obj(&self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64]) -> Result<(),String>
     {
       let mut numqonz_ = qosubi_.len();
       if qosubj_.len() < numqonz_ { numqonz_ = qosubj_.len() };
@@ -5273,7 +5265,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_q_obj_i_j(& mut self,i_ : i32,j_ : i32,qoij_ : f64) -> Result<(),String>
+    pub fn put_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putqobjij,self.ptr,i_ as i32,j_ as i32,qoij_ as f64);
       return Result::Ok(())
@@ -5284,7 +5276,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skc(& mut self,whichsol_ : i32,skc_ : & [i32]) -> Result<(),String>
+    pub fn put_skc(&self,whichsol_ : i32,skc_ : & [i32]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if skc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'put_skc'".to_string()) }
@@ -5297,7 +5289,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skc_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32]) -> Result<(),String>
+    pub fn put_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : & [i32]) -> Result<(),String>
     {
       if skc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'put_skc_slice'".to_string()) }
       callMSK!(MSK_putskcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skc_.as_ptr());
@@ -5309,7 +5301,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skx(& mut self,whichsol_ : i32,skx_ : & [i32]) -> Result<(),String>
+    pub fn put_skx(&self,whichsol_ : i32,skx_ : & [i32]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_var()?;
       if skx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'put_skx'".to_string()) }
@@ -5322,7 +5314,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_skx_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32]) -> Result<(),String>
+    pub fn put_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : & [i32]) -> Result<(),String>
     {
       if skx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'put_skx_slice'".to_string()) }
       callMSK!(MSK_putskxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,skx_.as_ptr());
@@ -5334,7 +5326,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slc(& mut self,whichsol_ : i32,slc_ : & [f64]) -> Result<(),String>
+    pub fn put_slc(&self,whichsol_ : i32,slc_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if slc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'put_slc'".to_string()) }
@@ -5347,7 +5339,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slc_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64]) -> Result<(),String>
+    pub fn put_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : & [f64]) -> Result<(),String>
     {
       if slc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'put_slc_slice'".to_string()) }
       callMSK!(MSK_putslcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slc_.as_ptr());
@@ -5359,7 +5351,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slx(& mut self,whichsol_ : i32,slx_ : & [f64]) -> Result<(),String>
+    pub fn put_slx(&self,whichsol_ : i32,slx_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_var()?;
       if slx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'put_slx'".to_string()) }
@@ -5372,7 +5364,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_slx_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64]) -> Result<(),String>
+    pub fn put_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : & [f64]) -> Result<(),String>
     {
       if slx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'put_slx_slice'".to_string()) }
       callMSK!(MSK_putslxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,slx_.as_ptr());
@@ -5384,7 +5376,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_snx(& mut self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
+    pub fn put_snx(&self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_var()?;
       if sux_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_snx'".to_string()) }
@@ -5397,7 +5389,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_snx_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64]) -> Result<(),String>
+    pub fn put_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : & [f64]) -> Result<(),String>
     {
       if snx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'put_snx_slice'".to_string()) }
       callMSK!(MSK_putsnxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,snx_.as_ptr());
@@ -5409,7 +5401,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_solution(& mut self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64]) -> Result<(),String>
+    pub fn put_solution(&self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64]) -> Result<(),String>
     {
       callMSK!(MSK_putsolution,self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr());
       return Result::Ok(())
@@ -5420,7 +5412,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_solution_y_i(& mut self,i_ : i32,whichsol_ : i32,y_ : f64) -> Result<(),String>
+    pub fn put_solution_y_i(&self,i_ : i32,whichsol_ : i32,y_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putsolutionyi,self.ptr,i_ as i32,whichsol_,y_ as f64);
       return Result::Ok(())
@@ -5431,7 +5423,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_str_param(& mut self,param_ : i32,parvalue_ : &str) -> Result<(),String>
+    pub fn put_str_param(&self,param_ : i32,parvalue_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putstrparam,self.ptr,param_,CString::new(parvalue_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5442,7 +5434,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_suc(& mut self,whichsol_ : i32,suc_ : & [f64]) -> Result<(),String>
+    pub fn put_suc(&self,whichsol_ : i32,suc_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if suc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'put_suc'".to_string()) }
@@ -5455,7 +5447,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_suc_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64]) -> Result<(),String>
+    pub fn put_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : & [f64]) -> Result<(),String>
     {
       if suc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'put_suc_slice'".to_string()) }
       callMSK!(MSK_putsucslice,self.ptr,whichsol_,first_ as i32,last_ as i32,suc_.as_ptr());
@@ -5467,7 +5459,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_sux(& mut self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
+    pub fn put_sux(&self,whichsol_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_var()?;
       if sux_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_sux'".to_string()) }
@@ -5480,7 +5472,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_sux_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64]) -> Result<(),String>
+    pub fn put_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : & [f64]) -> Result<(),String>
     {
       if sux_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'put_sux_slice'".to_string()) }
       callMSK!(MSK_putsuxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,sux_.as_ptr());
@@ -5492,7 +5484,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_task_name(& mut self,taskname_ : &str) -> Result<(),String>
+    pub fn put_task_name(&self,taskname_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_puttaskname,self.ptr,CString::new(taskname_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5503,7 +5495,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound(& mut self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
+    pub fn put_var_bound(&self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putvarbound,self.ptr,j_ as i32,bkx_,blx_ as f64,bux_ as f64);
       return Result::Ok(())
@@ -5514,7 +5506,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_list(& mut self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
+    pub fn put_var_bound_list(&self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       if bkx_.len() < num_ { num_ = bkx_.len() };
@@ -5529,7 +5521,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_list_const(& mut self,sub_ : & [i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
+    pub fn put_var_bound_list_const(&self,sub_ : & [i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
       let mut num_ = sub_.len();
       callMSK!(MSK_putvarboundlistconst,self.ptr,num_ as i32,sub_.as_ptr(),bkx_,blx_ as f64,bux_ as f64);
@@ -5541,7 +5533,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_slice(& mut self,first_ : i32,last_ : i32,bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
+    pub fn put_var_bound_slice(&self,first_ : i32,last_ : i32,bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       if bkx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'bkx_' is too short in call to 'put_var_bound_slice'".to_string()) }
       if blx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'blx_' is too short in call to 'put_var_bound_slice'".to_string()) }
@@ -5555,7 +5547,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_bound_slice_const(& mut self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
+    pub fn put_var_bound_slice_const(&self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putvarboundsliceconst,self.ptr,first_ as i32,last_ as i32,bkx_,blx_ as f64,bux_ as f64);
       return Result::Ok(())
@@ -5566,7 +5558,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_name(& mut self,j_ : i32,name_ : &str) -> Result<(),String>
+    pub fn put_var_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_putvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5577,7 +5569,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_solution_j(& mut self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> Result<(),String>
+    pub fn put_var_solution_j(&self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> Result<(),String>
     {
       callMSK!(MSK_putvarsolutionj,self.ptr,j_ as i32,whichsol_,sk_,x_ as f64,sl_ as f64,su_ as f64,sn_ as f64);
       return Result::Ok(())
@@ -5588,7 +5580,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_type(& mut self,j_ : i32,vartype_ : i32) -> Result<(),String>
+    pub fn put_var_type(&self,j_ : i32,vartype_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putvartype,self.ptr,j_ as i32,vartype_);
       return Result::Ok(())
@@ -5599,7 +5591,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_var_type_list(& mut self,subj_ : & [i32],vartype_ : & [i32]) -> Result<(),String>
+    pub fn put_var_type_list(&self,subj_ : & [i32],vartype_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
       if vartype_.len() < num_ { num_ = vartype_.len() };
@@ -5612,7 +5604,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xc(& mut self,whichsol_ : i32,xc_ : & mut [f64]) -> Result<(),String>
+    pub fn put_xc(&self,whichsol_ : i32,xc_ : & mut [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if xc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'put_xc'".to_string()) }
@@ -5625,7 +5617,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xc_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64]) -> Result<(),String>
+    pub fn put_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : & [f64]) -> Result<(),String>
     {
       if xc_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'put_xc_slice'".to_string()) }
       callMSK!(MSK_putxcslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xc_.as_ptr());
@@ -5637,7 +5629,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xx(& mut self,whichsol_ : i32,xx_ : & [f64]) -> Result<(),String>
+    pub fn put_xx(&self,whichsol_ : i32,xx_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_var()?;
       if xx_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'put_xx'".to_string()) }
@@ -5650,7 +5642,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_xx_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64]) -> Result<(),String>
+    pub fn put_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : & [f64]) -> Result<(),String>
     {
       if xx_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'put_xx_slice'".to_string()) }
       callMSK!(MSK_putxxslice,self.ptr,whichsol_,first_ as i32,last_ as i32,xx_.as_ptr());
@@ -5662,7 +5654,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_y(& mut self,whichsol_ : i32,y_ : & [f64]) -> Result<(),String>
+    pub fn put_y(&self,whichsol_ : i32,y_ : & [f64]) -> Result<(),String>
     {
       let tmp_var_1__ = self.get_num_con()?;
       if y_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'put_y'".to_string()) }
@@ -5675,7 +5667,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_y_slice(& mut self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64]) -> Result<(),String>
+    pub fn put_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : & [f64]) -> Result<(),String>
     {
       if y_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'y_' is too short in call to 'put_y_slice'".to_string()) }
       callMSK!(MSK_putyslice,self.ptr,whichsol_,first_ as i32,last_ as i32,y_.as_ptr());
@@ -5687,7 +5679,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_data(& mut self,filename_ : &str) -> Result<(),String>
+    pub fn read_data(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readdataautoformat,self.ptr,CString::new(filename_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5698,7 +5690,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_data_format(& mut self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String>
+    pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
       return Result::Ok(())
@@ -5709,7 +5701,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_json_string(& mut self,data_ : &str) -> Result<(),String>
+    pub fn read_json_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readjsonstring,self.ptr,CString::new(data_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5720,7 +5712,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_lp_string(& mut self,data_ : &str) -> Result<(),String>
+    pub fn read_lp_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readlpstring,self.ptr,CString::new(data_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5731,7 +5723,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_opf_string(& mut self,data_ : &str) -> Result<(),String>
+    pub fn read_opf_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readopfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5742,7 +5734,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_param_file(& mut self,filename_ : &str) -> Result<(),String>
+    pub fn read_param_file(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5753,7 +5745,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_ptf_string(& mut self,data_ : &str) -> Result<(),String>
+    pub fn read_ptf_string(&self,data_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readptfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5764,7 +5756,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_solution(& mut self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
+    pub fn read_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readsolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5775,7 +5767,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_summary(& mut self,whichstream_ : i32) -> Result<(),String>
+    pub fn read_summary(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_readsummary,self.ptr,whichstream_);
       return Result::Ok(())
@@ -5786,7 +5778,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn read_task(& mut self,filename_ : &str) -> Result<(),String>
+    pub fn read_task(&self,filename_ : &str) -> Result<(),String>
     {
       callMSK!(MSK_readtask,self.ptr,CString::new(filename_).unwrap().as_ptr());
       return Result::Ok(())
@@ -5797,7 +5789,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_barvars(& mut self,subset_ : & [i32]) -> Result<(),String>
+    pub fn remove_barvars(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removebarvars,self.ptr,num_ as i32,subset_.as_ptr());
@@ -5809,7 +5801,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_cones(& mut self,subset_ : & [i32]) -> Result<(),String>
+    pub fn remove_cones(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removecones,self.ptr,num_ as i32,subset_.as_ptr());
@@ -5821,7 +5813,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_cons(& mut self,subset_ : & [i32]) -> Result<(),String>
+    pub fn remove_cons(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removecons,self.ptr,num_ as i32,subset_.as_ptr());
@@ -5833,7 +5825,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn remove_vars(& mut self,subset_ : & [i32]) -> Result<(),String>
+    pub fn remove_vars(&self,subset_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subset_.len();
       callMSK!(MSK_removevars,self.ptr,num_ as i32,subset_.as_ptr());
@@ -5845,7 +5837,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn resize_task(& mut self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String>
+    pub fn resize_task(&self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String>
     {
       callMSK!(MSK_resizetask,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,maxnumcone_ as i32,maxnumanz_ as i64,maxnumqnz_ as i64);
       return Result::Ok(())
@@ -5867,7 +5859,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn set_defaults(& mut self) -> Result<(),String>
+    pub fn set_defaults(&self) -> Result<(),String>
     {
       callMSK!(MSK_setdefaults,self.ptr);
       return Result::Ok(())
@@ -5927,7 +5919,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn solve_with_basis(& mut self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> Result<i32,String>
+    pub fn solve_with_basis(&self,transp_ : i32,numnz_ : i32,sub_ : & mut [i32],val_ : & mut [f64]) -> Result<i32,String>
     {
       let mut _ref_numnz_ = numnz_;
       let tmp_var_1__ = self.get_num_con()?;
@@ -5978,7 +5970,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn toconic(& mut self) -> Result<(),String>
+    pub fn toconic(&self) -> Result<(),String>
     {
       callMSK!(MSK_toconic,self.ptr);
       return Result::Ok(())
@@ -5989,7 +5981,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn unlink_func_from_stream(& mut self,whichstream_ : i32) -> Result<(),String>
+    pub fn unlink_func_from_stream(&self,whichstream_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr,whichstream_);
       return Result::Ok(())
@@ -6000,7 +5992,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn update_solution_info(& mut self,whichsol_ : i32) -> Result<(),String>
+    pub fn update_solution_info(&self,whichsol_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_updatesolutioninfo,self.ptr,whichsol_);
       return Result::Ok(())
