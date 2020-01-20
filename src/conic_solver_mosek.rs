@@ -134,7 +134,7 @@ impl ConicSolverAPI for MosekTask {
 
     // Task
     fn write_task(&self, filename : &str) {
-        self.write_task(filename); 
+        self.write_task(filename);
     }
 
 
@@ -160,7 +160,7 @@ impl MosekTask {
 
         task.put_int_param(super::MSK_IPAR_OPF_WRITE_SOLUTIONS,super::MSK_ON).unwrap();
         task.put_int_param(super::MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,super::MSK_ON).unwrap();
-        
+
         match name {
             Some(name) => {
                 task.put_task_name(name).unwrap();
@@ -225,14 +225,14 @@ impl MosekTask {
         self.conblock_ptr.push(self.conslack.len());
         (blockidx,firstcon)
     }
-    
+
     pub fn append_cones(&mut self, ct : i32, ncone : usize, conedim : usize,conepar : Option<&[f64]>) -> usize {
         let n = ncone*conedim;
         let (blockidx,firstvar) = self.append_vars(super::MSK_BK_FR, vec![0.0; n].as_slice());
         let lastvar = firstvar + n as i32;
         let firstcone = self.task.get_num_cone().unwrap();
         let idxs : Vec<i32> = (firstvar..lastvar).collect();
-        
+
         self.varblock_type[blockidx] = BlockType::VCone(conedim, firstcone as usize, ncone);
 
         match conepar {
@@ -414,7 +414,7 @@ impl MosekTask {
 
                 let mut ii0 = std::i32::MAX;
                 let mut jj0 = std::i32::MAX;
-                for k in j0..j { 
+                for k in j0..j {
                     let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[k]]]) as usize];
                     if ii == ii0 && jj == jj0 {
                         let last = barelmc.len()-1;
@@ -425,11 +425,9 @@ impl MosekTask {
                         jj0 = jj;
                         barelmi.push(ii);
                         barelmj.push(jj);
-                        barelmc.push(cof[perm[j]]);
-                        if ii != jj { barelmc.push(0.5 * cof[perm[j]]); }
-                        else        { barelmc.push(cof[perm[j]]); }
+                        if ii != jj { barelmc.push(0.5 * cof[perm[k]]); }
+                        else        { barelmc.push(cof[perm[k]]); }
                     }
-                    j += 1;
                 }
 
                 let dimbarj = self.task.get_dim_barvar_j(barj0).unwrap();
@@ -438,7 +436,7 @@ impl MosekTask {
 
                 let mati = self.task.append_sparse_sym_mat(dimbarj,barelmi.as_slice(),barelmj.as_slice(),barelmc.as_slice()).unwrap();
                 self.task.put_barc_j(barj0,vec![mati].as_slice(),vec![1.0].as_slice()).unwrap();
-            }   
+            }
         }
     }
 
@@ -502,7 +500,7 @@ impl MosekTask {
                     let mut barelmj : Vec<i32> = Vec::new();
                     let mut barelmc : Vec<f64> = Vec::new();
                     let mut j = pb;
-                    
+
                     while j < b {
                         barelmi.clear();
                         barelmj.clear();
@@ -516,7 +514,7 @@ impl MosekTask {
                         j += 1;
 
                         while j < b && barj == self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize].0 {
-                                                        
+
                             let (_barj,ii,jj) = self.barelm_map[-(1+self.var_map[subj[perm[j]]]) as usize];
 
                             if self.var_map[subj[perm[j]]] == self.var_map[subj[perm[j-1]]] {
@@ -924,10 +922,10 @@ impl MosekTask {
                         self.task.put_var_name(*j as i32, ng.get(i)).unwrap();
                     }
                 }
-            }            
+            }
         }
     }
-    
+
     pub fn put_con_block_name(& mut self,blocki : BlockIndex, name : &str, shape : Option<&[usize]>, sp : Option<&[usize]>) {
         if let Some(shape) = shape {
             if let Some(sp) = sp {
@@ -958,7 +956,7 @@ impl MosekTask {
                 for (i,j) in (self.conblock_ptr[blocki]..self.conblock_ptr[blocki+1]).enumerate() {
                     self.task.put_con_name(j as i32, ng.get(i)).unwrap();
                 }
-            }            
+            }
         }
     }
 }

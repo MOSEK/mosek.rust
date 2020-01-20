@@ -27,16 +27,15 @@ node ("karise") {
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@git-lab.mosek.intranet:ulfw/mosek.rust.git']]])
 
-    def mosekver = readFile "MOSEKVERSION"
-    def mosekbrn = readFile "MOSEKBRANCH"
+    def mosekver     = readFile "MOSEKVERSION"
+    def mosekjobname = readFile "JOBNAME"
     mosekver = mosekver.trim()
-    mosekbrn = mosekbrn.trim()
+    mosekjobname = mosekbrn.trim()
     copyArtifacts filter: 'bld/hudson/distro/mosektoolslinux64x86.tar.bz2',
                   fingerprintArtifacts: true,
-                  projectName: "${mosekbrn}/Distro-pipeline",
+                  projectName: "${mosekjobname}/Distro-pipeline",
                   selector: lastSuccessful()
-        sh "tar xf bld/hudson/distro/mosektoolslinux64x86.tar.bz2"
-    //}
+    sh "tar xf bld/hudson/distro/mosektoolslinux64x86.tar.bz2"
 
     gitlabCommitStatus (connection: gitLabConnection('gitlab-api'),
                         name: "Mosek.rs") {

@@ -362,7 +362,6 @@ macro_rules! callMSK
             if 0 != res
             {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
-                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     };
@@ -372,7 +371,6 @@ macro_rules! callMSK
             if 0 != res
             {
                 return Result::Err(format!("Error in call to {:?}: {:?}",stringify!($n),res));
-                //panic!(format!("Fail in call: {}",stringify!($n)));
             }
         }
     }
@@ -2121,12 +2119,12 @@ impl Env
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : & [i32],lptrc_ : & [i64],lsubc_ : & [i32],lvalc_ : & [f64],b_ : & mut [f64]) -> Result<(),String>
     {
       let mut n_ = b_.len();
-      if lnzc_.len() > n_ { n_ = lnzc_.len() };
-      if lptrc_.len() > n_ { n_ = lptrc_.len() };
+      if lnzc_.len() < n_ { n_ = lnzc_.len() };
+      if lptrc_.len() < n_ { n_ = lptrc_.len() };
       if lnzc_.len() != ((n_) as usize) { return Result::Err("Argument 'lnzc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       if lptrc_.len() != ((n_) as usize) { return Result::Err("Argument 'lptrc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       let mut lensubnval_ = lsubc_.len();
-      if lvalc_.len() > lensubnval_ { lensubnval_ = lvalc_.len() };
+      if lvalc_.len() < lensubnval_ { lensubnval_ = lvalc_.len() };
       if lsubc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lsubc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       if lvalc_.len() != ((lensubnval_) as usize) { return Result::Err("Argument 'lvalc_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
       if b_.len() != ((n_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'sparse_triangular_solve_dense'".to_string()) }
@@ -2341,8 +2339,8 @@ impl Task
     pub fn append_cones_seq(& mut self,ct_ : & [i32],conepar_ : & [f64],nummem_ : & [i32],j_ : i32) -> Result<(),String>
     {
       let mut num_ = ct_.len();
-      if conepar_.len() > num_ { num_ = conepar_.len() };
-      if nummem_.len() > num_ { num_ = nummem_.len() };
+      if conepar_.len() < num_ { num_ = conepar_.len() };
+      if nummem_.len() < num_ { num_ = nummem_.len() };
       callMSK!(MSK_appendconesseq,self.ptr,num_ as i32,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_ as i32);
       return Result::Ok(())
     }
@@ -2366,8 +2364,8 @@ impl Task
     pub fn append_sparse_sym_mat(& mut self,dim_ : i32,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<i64,String>
     {
       let mut nz_ = subi_.len();
-      if subj_.len() > nz_ { nz_ = subj_.len() };
-      if valij_.len() > nz_ { nz_ = valij_.len() };
+      if subj_.len() < nz_ { nz_ = subj_.len() };
+      if valij_.len() < nz_ { nz_ = valij_.len() };
       let mut _ref_idx_ : i64 = 0 as i64;
       callMSK!(MSK_appendsparsesymmat,self.ptr,dim_ as i32,nz_ as i64,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),& mut _ref_idx_);
       return Result::Ok((_ref_idx_ as i64))
@@ -2381,7 +2379,7 @@ impl Task
     pub fn append_sparse_sym_mat_list(& mut self,dims_ : & [i32],nz_ : & [i64],subi_ : & [i32],subj_ : & [i32],valij_ : & [f64],idx_ : & mut [i64]) -> Result<(),String>
     {
       let mut num_ = dims_.len();
-      if nz_.len() > num_ { num_ = nz_.len() };
+      if nz_.len() < num_ { num_ = nz_.len() };
       let tmp_var_0__ = nz_.iter().fold(0,|res,v| res + v);
       if subi_.len() != ((tmp_var_0__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'append_sparse_sym_mat_list'".to_string()) }
       let tmp_var_2__ = nz_.iter().fold(0,|res,v| res + v);
@@ -4478,14 +4476,14 @@ impl Task
     pub fn input_data(& mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : & [f64],cfix_ : f64,aptrb_ : & [i64],aptre_ : & [i64],asub_ : & [i32],aval_ : & [f64],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut numcon_ = buc_.len();
-      if blc_.len() > numcon_ { numcon_ = blc_.len() };
-      if bkc_.len() > numcon_ { numcon_ = bkc_.len() };
+      if blc_.len() < numcon_ { numcon_ = blc_.len() };
+      if bkc_.len() < numcon_ { numcon_ = bkc_.len() };
       let mut numvar_ = c_.len();
-      if bux_.len() > numvar_ { numvar_ = bux_.len() };
-      if blx_.len() > numvar_ { numvar_ = blx_.len() };
-      if bkx_.len() > numvar_ { numvar_ = bkx_.len() };
-      if aptrb_.len() > numvar_ { numvar_ = aptrb_.len() };
-      if aptre_.len() > numvar_ { numvar_ = aptre_.len() };
+      if bux_.len() < numvar_ { numvar_ = bux_.len() };
+      if blx_.len() < numvar_ { numvar_ = blx_.len() };
+      if bkx_.len() < numvar_ { numvar_ = bkx_.len() };
+      if aptrb_.len() < numvar_ { numvar_ = aptrb_.len() };
+      if aptre_.len() < numvar_ { numvar_ = aptre_.len() };
       if ! aptrb_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument aptrb".to_string()) }
       if ! aptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument aptre".to_string()) }
       callMSK!(MSK_inputdata64,self.ptr,maxnumcon_ as i32,maxnumvar_ as i32,numcon_ as i32,numvar_ as i32,c_.as_ptr(),cfix_ as f64,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
@@ -4612,9 +4610,9 @@ impl Task
     pub fn primal_sensitivity(& mut self,subi_ : & [i32],marki_ : & [i32],subj_ : & [i32],markj_ : & [i32],leftpricei_ : & mut [f64],rightpricei_ : & mut [f64],leftrangei_ : & mut [f64],rightrangei_ : & mut [f64],leftpricej_ : & mut [f64],rightpricej_ : & mut [f64],leftrangej_ : & mut [f64],rightrangej_ : & mut [f64]) -> Result<(),String>
     {
       let mut numi_ = subi_.len();
-      if marki_.len() > numi_ { numi_ = marki_.len() };
+      if marki_.len() < numi_ { numi_ = marki_.len() };
       let mut numj_ = subj_.len();
-      if markj_.len() > numj_ { numj_ = markj_.len() };
+      if markj_.len() < numj_ { numj_ = markj_.len() };
       if leftpricei_.len() != ((numi_) as usize) { return Result::Err("Argument 'leftpricei_' is too short in call to 'primal_sensitivity'".to_string()) }
       if rightpricei_.len() != ((numi_) as usize) { return Result::Err("Argument 'rightpricei_' is too short in call to 'primal_sensitivity'".to_string()) }
       if leftrangei_.len() != ((numi_) as usize) { return Result::Err("Argument 'leftrangei_' is too short in call to 'primal_sensitivity'".to_string()) }
@@ -4672,7 +4670,7 @@ impl Task
     pub fn put_a_col(& mut self,j_ : i32,subj_ : & [i32],valj_ : & [f64]) -> Result<(),String>
     {
       let mut nzj_ = subj_.len();
-      if valj_.len() > nzj_ { nzj_ = valj_.len() };
+      if valj_.len() < nzj_ { nzj_ = valj_.len() };
       callMSK!(MSK_putacol,self.ptr,j_ as i32,nzj_ as i32,subj_.as_ptr(),valj_.as_ptr());
       return Result::Ok(())
     }
@@ -4685,8 +4683,8 @@ impl Task
     pub fn put_a_col_list(& mut self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if ptrb_.len() > num_ { num_ = ptrb_.len() };
-      if ptre_.len() > num_ { num_ = ptre_.len() };
+      if ptrb_.len() < num_ { num_ = ptrb_.len() };
+      if ptre_.len() < num_ { num_ = ptre_.len() };
       if ! ptrb_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptrb".to_string()) }
       if ! ptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptre".to_string()) }
       callMSK!(MSK_putacollist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
@@ -4725,8 +4723,8 @@ impl Task
     pub fn put_aij_list(& mut self,subi_ : & [i32],subj_ : & [i32],valij_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
-      if subj_.len() > num_ { num_ = subj_.len() };
-      if valij_.len() > num_ { num_ = valij_.len() };
+      if subj_.len() < num_ { num_ = subj_.len() };
+      if valij_.len() < num_ { num_ = valij_.len() };
       callMSK!(MSK_putaijlist64,self.ptr,num_ as i64,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr());
       return Result::Ok(())
     }
@@ -4739,7 +4737,7 @@ impl Task
     pub fn put_a_row(& mut self,i_ : i32,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
     {
       let mut nzi_ = subi_.len();
-      if vali_.len() > nzi_ { nzi_ = vali_.len() };
+      if vali_.len() < nzi_ { nzi_ = vali_.len() };
       callMSK!(MSK_putarow,self.ptr,i_ as i32,nzi_ as i32,subi_.as_ptr(),vali_.as_ptr());
       return Result::Ok(())
     }
@@ -4752,8 +4750,10 @@ impl Task
     pub fn put_a_row_list(& mut self,sub_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],asub_ : & [i32],aval_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if ptrb_.len() > num_ { num_ = ptrb_.len() };
-      if ptre_.len() > num_ { num_ = ptre_.len() };
+      if ptrb_.len() < num_ { num_ = ptrb_.len() };
+      if ptre_.len() < num_ { num_ = ptre_.len() };
+      if ! ptrb_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptrb".to_string()) }
+      if ! ptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptre".to_string()) }
       callMSK!(MSK_putarowlist64,self.ptr,num_ as i32,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr());
       return Result::Ok(())
     }
@@ -4808,7 +4808,7 @@ impl Task
     pub fn put_bara_ij(& mut self,i_ : i32,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if weights_.len() > num_ { num_ = weights_.len() };
+      if weights_.len() < num_ { num_ = weights_.len() };
       callMSK!(MSK_putbaraij,self.ptr,i_ as i32,j_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr());
       return Result::Ok(())
     }
@@ -4821,9 +4821,9 @@ impl Task
     pub fn put_bara_ij_list(& mut self,subi_ : & [i32],subj_ : & [i32],alphaptrb_ : & [i64],alphaptre_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
-      if subj_.len() > num_ { num_ = subj_.len() };
-      if alphaptrb_.len() > num_ { num_ = alphaptrb_.len() };
-      if alphaptre_.len() > num_ { num_ = alphaptre_.len() };
+      if subj_.len() < num_ { num_ = subj_.len() };
+      if alphaptrb_.len() < num_ { num_ = alphaptrb_.len() };
+      if alphaptre_.len() < num_ { num_ = alphaptre_.len() };
       if ! alphaptrb_.iter().all(|i| *i >= 0 && *i <= matidx_.len() as i64 && *i <= weights_.len() as i64) { return Err("Invalid index in argument alphaptrb".to_string()) }
       if ! alphaptre_.iter().all(|i| *i >= 0 && *i <= matidx_.len() as i64 && *i <= weights_.len() as i64) { return Err("Invalid index in argument alphaptre".to_string()) }
       callMSK!(MSK_putbaraijlist,self.ptr,num_ as i32,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr());
@@ -4838,8 +4838,8 @@ impl Task
     pub fn put_bara_row_list(& mut self,subi_ : & [i32],ptrb_ : & [i64],ptre_ : & [i64],subj_ : & [i32],nummat_ : & [i64],matidx_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
-      if ptrb_.len() > num_ { num_ = ptrb_.len() };
-      if ptre_.len() > num_ { num_ = ptre_.len() };
+      if ptrb_.len() < num_ { num_ = ptrb_.len() };
+      if ptre_.len() < num_ { num_ = ptre_.len() };
       let tmp_var_0__ = subj_.len();
       if nummat_.len() != ((tmp_var_0__) as usize) { return Result::Err("Argument 'nummat_' is too short in call to 'put_bara_row_list'".to_string()) }
       let tmp_var_2__ = nummat_.iter().fold(0,|res,v| res + v);
@@ -4875,7 +4875,7 @@ impl Task
     pub fn put_barc_j(& mut self,j_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if weights_.len() > num_ { num_ = weights_.len() };
+      if weights_.len() < num_ { num_ = weights_.len() };
       callMSK!(MSK_putbarcj,self.ptr,j_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr());
       return Result::Ok(())
     }
@@ -4947,7 +4947,7 @@ impl Task
     pub fn put_c_list(& mut self,subj_ : & [i32],val_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
-      if val_.len() > num_ { num_ = val_.len() };
+      if val_.len() < num_ { num_ = val_.len() };
       callMSK!(MSK_putclist,self.ptr,num_ as i32,subj_.as_ptr(),val_.as_ptr());
       return Result::Ok(())
     }
@@ -4971,9 +4971,9 @@ impl Task
     pub fn put_con_bound_list(& mut self,sub_ : & [i32],bkc_ : & [i32],blc_ : & [f64],buc_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if bkc_.len() > num_ { num_ = bkc_.len() };
-      if blc_.len() > num_ { num_ = blc_.len() };
-      if buc_.len() > num_ { num_ = buc_.len() };
+      if bkc_.len() < num_ { num_ = bkc_.len() };
+      if blc_.len() < num_ { num_ = blc_.len() };
+      if buc_.len() < num_ { num_ = buc_.len() };
       callMSK!(MSK_putconboundlist,self.ptr,num_ as i32,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr());
       return Result::Ok(())
     }
@@ -5234,8 +5234,8 @@ impl Task
     pub fn put_q_con(& mut self,qcsubk_ : & [i32],qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
-      if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
-      if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
+      if qcsubj_.len() < numqcnz_ { numqcnz_ = qcsubj_.len() };
+      if qcval_.len() < numqcnz_ { numqcnz_ = qcval_.len() };
       callMSK!(MSK_putqcon,self.ptr,numqcnz_ as i32,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
       return Result::Ok(())
     }
@@ -5248,8 +5248,8 @@ impl Task
     pub fn put_q_con_k(& mut self,k_ : i32,qcsubi_ : & [i32],qcsubj_ : & [i32],qcval_ : & [f64]) -> Result<(),String>
     {
       let mut numqcnz_ = qcsubi_.len();
-      if qcsubj_.len() > numqcnz_ { numqcnz_ = qcsubj_.len() };
-      if qcval_.len() > numqcnz_ { numqcnz_ = qcval_.len() };
+      if qcsubj_.len() < numqcnz_ { numqcnz_ = qcsubj_.len() };
+      if qcval_.len() < numqcnz_ { numqcnz_ = qcval_.len() };
       callMSK!(MSK_putqconk,self.ptr,k_ as i32,numqcnz_ as i32,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr());
       return Result::Ok(())
     }
@@ -5262,8 +5262,8 @@ impl Task
     pub fn put_q_obj(& mut self,qosubi_ : & [i32],qosubj_ : & [i32],qoval_ : & [f64]) -> Result<(),String>
     {
       let mut numqonz_ = qosubi_.len();
-      if qosubj_.len() > numqonz_ { numqonz_ = qosubj_.len() };
-      if qoval_.len() > numqonz_ { numqonz_ = qoval_.len() };
+      if qosubj_.len() < numqonz_ { numqonz_ = qosubj_.len() };
+      if qoval_.len() < numqonz_ { numqonz_ = qoval_.len() };
       callMSK!(MSK_putqobj,self.ptr,numqonz_ as i32,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr());
       return Result::Ok(())
     }
@@ -5517,9 +5517,9 @@ impl Task
     pub fn put_var_bound_list(& mut self,sub_ : & [i32],bkx_ : & [i32],blx_ : & [f64],bux_ : & [f64]) -> Result<(),String>
     {
       let mut num_ = sub_.len();
-      if bkx_.len() > num_ { num_ = bkx_.len() };
-      if blx_.len() > num_ { num_ = blx_.len() };
-      if bux_.len() > num_ { num_ = bux_.len() };
+      if bkx_.len() < num_ { num_ = bkx_.len() };
+      if blx_.len() < num_ { num_ = blx_.len() };
+      if bux_.len() < num_ { num_ = bux_.len() };
       callMSK!(MSK_putvarboundlist,self.ptr,num_ as i32,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr());
       return Result::Ok(())
     }
@@ -5602,7 +5602,7 @@ impl Task
     pub fn put_var_type_list(& mut self,subj_ : & [i32],vartype_ : & [i32]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
-      if vartype_.len() > num_ { num_ = vartype_.len() };
+      if vartype_.len() < num_ { num_ = vartype_.len() };
       callMSK!(MSK_putvartypelist,self.ptr,num_ as i32,subj_.as_ptr(),vartype_.as_ptr());
       return Result::Ok(())
     }
