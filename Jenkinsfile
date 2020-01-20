@@ -14,19 +14,21 @@ node ("karise") {
                         extensions: [[$class: 'CloneOption',
                                      noTags: false,
                                      reference: '',
-                                     shallow: true,
-                                     relativeTargetDir: "Mosek.rs",
+                                      //shallow: true,
+                                      //relativeTargetDir: "Mosek.rs",
                                      timeout: 60],
                                      [$class: 'CheckoutOption',timeout: 60]],
                         gitTool: 'Default',
-                        submoduleCfg: [],
+                        //submoduleCfg: [],
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@gitlab.mosek.intranet:ulfw/mosek.rust.git']]])
+
         copyArtifacts filter: 'bld/hudson/distro/minidist-linux64x86.tar.bz2',
                       fingerprintArtifacts: true,
                       projectName: 'dev/Distro-pipeline',
                       selector: lastSuccessful()
         sh "tar xf bld/hudson/distro/minidist-linux64x86.tar.bz2"
+
 
     }
 
