@@ -1,7 +1,7 @@
 
 node ("karise") {
     def brn = env.gitlabSourceBranch
-    brn = ( brn == null ?
+    branchname = ( brn == null ?
             "origin/master" :
              ( !brn.startsWith("refs/") ? brn : "origin/$brn" ) )
 
@@ -9,17 +9,18 @@ node ("karise") {
         checkout changelog: true,
                  poll: true,
                  scm: ([$class: 'GitSCM',
-                        branches: [[name: "$brn"]],
+                        branches: [[name: branchname]],
                         doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'CloneOption',
-                                     noTags: false,
-                                     reference: '',
-                                      //shallow: true,
-                                      //relativeTargetDir: "Mosek.rs",
-                                     timeout: 60],
-                                     [$class: 'CheckoutOption',timeout: 60]],
+                                     extensions: [[$class: 'CloneOption',
+                                                   noTags: false,
+                                                   reference: '',
+                                                   depth: gitclonedepth,
+                                                   shallow: true,
+                                                   timeout: gitclonetimeout],
+                                                  [$class: 'CheckoutOption',
+                                                   timeout: gitclonetimeout]],
                         gitTool: 'Default',
-                        //submoduleCfg: [],
+                        submoduleCfg: [],
                         userRemoteConfigs: [[credentialsId: '65bca1cb-66bd-4983-9aaa-0aec83b1491b',
                                              url: 'git@gitlab.mosek.intranet:ulfw/mosek.rust.git']]])
 
