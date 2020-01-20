@@ -37,6 +37,6 @@ node ("karise") {
 export PATH=/remote/public/liux/64-x86/rust/current/bin:$PATH
 export LD_LIBRARY_PATH=
 cargo test
-"
+"""
     }
 }
