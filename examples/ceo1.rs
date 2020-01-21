@@ -15,7 +15,7 @@ fn main() -> Result<(),String> {
     let numcon = 1;
     let numvar = 3;
 
-    let bkc = mosek.boundkey.fx;
+    let bkc = mosek::MSK_BK_FX;
     let blc = 1.0;
     let buc = 1.0;
 
@@ -23,7 +23,7 @@ fn main() -> Result<(),String> {
                     mosek::MSK_BK_FR,
                     mosek::MSK_BK_FR ];
     let blx = vec![ -INF, -INF, -INF ];
-    let bux = vec![ +INF, +INF, +INF ];
+    let bux = vec![ INF, INF, INF ];
     let c   = vec![ 1.0, 1.0, 0.0 ];
     let a   = vec![ 1.0, 1.0, 1.0 ];
     let asub = vec![0, 1, 2];
@@ -55,7 +55,7 @@ fn main() -> Result<(),String> {
 
     /* Define the linear part of the problem */
     task.put_c_slice(0, numvar, c.as_slice())?;
-    task.put_a_row(0, asub.as_slice(), a)?;
+    task.put_a_row(0, asub.as_slice(), a.as_slice())?;
     task.put_con_bound(0, bkc, blc, buc)?;
     task.put_var_bound_slice(0, numvar, bkx.as_slice(), blx.as_slice(), bux.as_slice())?;
 
@@ -63,7 +63,7 @@ fn main() -> Result<(),String> {
     task.append_cone(mosek::MSK_CT_PEXP,
                      0.0, /* For future use only, can be set to 0.0 */
                      csub.as_slice())?;
-    task.put_obj_sense(mosek::MSK_OBJ_SENSE_MINIMIZE)?;
+    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
 
     println!("optimize");
     /* Solve the problem */
@@ -72,37 +72,36 @@ fn main() -> Result<(),String> {
     // about the solution for debugging purposes
     task.solution_summary(mosek::MSK_STREAM_MSG);
 
-    mosek.solsta solsta[] = new mosek.solsta[1];
-
     /* Get status information about the solution */
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR);
+    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
 
-    task.getxx(mosek.soltype.itr, // Interior solution.
-                 xx);
-      /*TAG:end-getsolution*/
+     
+    match solsta {
+        mosek::MSK_SOL_STA_OPTIMAL => {
+            let mut xx = vec![0.0; numvar as usize];
+            task.get_xx(mosek::MSK_SOL_ITR, & mut xx[..])?;
+            println!("Optimal primal solution");
+            for j in 0..numvar as usize {
+                println!("x[{}]: {:.4}",j,xx[j]);
+            }
+          }
 
-      switch (solsta[0]) {
-        case optimal:
-          System.out.println("Optimal primal solution\n");
-          for (int j = 0; j < numvar; ++j)
-            System.out.println ("x[" + j + "]:" + xx[j]);
-          break;
-        case dual_infeas_cer:
-        case prim_infeas_cer:
-          System.out.println("Primal or dual infeasibility.\n");
-          break;
-        case unknown:
-          System.out.println("Unknown solution status.\n");
-          break;
-        default:
-          System.out.println("Other solution status");
-          break;
-      }
-    } catch (mosek.Exception e) {
-      System.out.println ("An error/warning was encountered");
-      System.out.println (e.toString());
-      throw e;
+        mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
+        mosek::MSK_SOL_STA_PRIM_INFEAS_CER => {
+            println!("Primal or dual infeasibility certificate found.");
+        }
+
+        mosek::MSK_SOL_STA_UNKNOWN => {
+            /* If the solutions status is unknown, print the termination code
+             * indicating why the optimizer terminated prematurely. */
+
+            println!("The solution status is unknown.");
+            println!("The optimizer terminitated with code: {}",solsta);
+          }
+        _ =>
+        {
+            println!("Other solution status.");
+        }
     }
-  }
+    return Result::Ok(());
 }
-/*TAG:end-code*/
