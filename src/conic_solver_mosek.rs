@@ -68,7 +68,7 @@ enum BlockType {
     VCone(usize,usize,usize), // size,first,num
 }
 
-pub struct MosekTask {
+pub struct Solver {
     _env        : super::Env,
     task        : super::Task,
 
@@ -100,7 +100,7 @@ pub struct MosekTask {
     sols : Vec<Solution>,
 }
 
-impl ConicSolverAPI for MosekTask {
+impl ConicSolverAPI for Solver {
     fn create_var_block(&mut self,c : &Domain) -> BlockIndex { self.create_var_block(c) }
     fn get_var_block_size(&self, i : BlockIndex) -> usize { self.get_var_block_size(i) }
     fn get_var_block_indexes(& self, i : BlockIndex, res : & mut [ElementIndex]) { self.get_var_block_indexes(i,res) }
@@ -153,8 +153,8 @@ impl ConicSolverAPI for MosekTask {
     }
 }
 
-impl MosekTask {
-    pub fn new(name : Option<&str>) -> MosekTask {
+impl Solver {
+    pub fn new(name : Option<&str>) -> Solver {
         let env  = super::Env::new().unwrap();
         let mut task = env.task().unwrap();
 
@@ -168,7 +168,7 @@ impl MosekTask {
             }
             None => {}
         }
-        MosekTask{
+        Solver{
             _env        : env,
             task        : task,
 
