@@ -5,7 +5,7 @@ use mosek::conic_solver_mosek::*;
 
 #[test]
 fn test_conic_model() {
-    let mut m = MosekTask::new(None);
+    let mut m = Solver::new();
 
     let x = m.create_var_block( &Domain::Free{num : 3});
     let y = m.create_var_block( &Domain::Fixed{bound : &[1.0,2.0,3.0]});
@@ -25,7 +25,7 @@ fn test_conic_model() {
 
 #[test]
 fn test_lo1() {
-    let mut m = MosekTask::new(None);
+    let mut m = Solver::new();
     let x = m.create_var_block( &Domain::Lower{ bound  : &[0.0,0.0,0.0,0.0] });
     let c1 = m.create_con_block( &Domain::Fixed{ bound : &[30.0]});
     let c2 = m.create_con_block( &Domain::Lower{ bound : &[15.0]});
@@ -69,7 +69,7 @@ fn test_lo1() {
 
 #[test]
 fn test_sdo1() {
-    let mut m = MosekTask::new(None);
+    let mut m = Solver::new();
 
     let x    = m.create_var_block(&Domain::QuadCone{num : 1, dim : 3});
     let barx = m.create_var_block(&Domain::PSDCone{num : 1, dim : 3});

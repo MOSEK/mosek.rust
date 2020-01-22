@@ -18,7 +18,7 @@ const INF : f64 = 0.0;
 //           |1 1 1|
 
 fn main() {
-    let mut m = MosekTask::new(None);
+    let mut m = Solver::with_name("sdo1");
 
     let x    = m.create_var_block(&Domain::QuadCone{num : 1, dim : 3});
     let barx = m.create_var_block(&Domain::PSDCone{num : 1, dim : 3});
@@ -56,9 +56,9 @@ fn main() {
       let mut dual_x  = vec![0.0; 3];
       let mut dual_X  = vec![0.0; 6];
       m.get_primal_var_solution(i,xi.as_slice(),level_x.as_mut_slice());
-      m.get_dual_var_solution(  i,xi.as_slice(),dual_x.as_mut_slice());      
+      m.get_dual_var_solution(  i,xi.as_slice(),dual_x.as_mut_slice());
       m.get_primal_var_solution(i,barxi.as_slice(),level_X.as_mut_slice());
-      m.get_dual_var_solution(  i,barxi.as_slice(),dual_X.as_mut_slice());      
+      m.get_dual_var_solution(  i,barxi.as_slice(),dual_X.as_mut_slice());
 
       println!("  xx = {:?}",level_x);
       println!("  ss = {:?}",dual_x);

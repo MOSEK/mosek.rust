@@ -154,7 +154,10 @@ impl ConicSolverAPI for Solver {
 }
 
 impl Solver {
-    pub fn new(name : Option<&str>) -> Solver {
+    pub fn with_name(name : &str) -> Solver { Solver::create(Some(name)) }
+    pub fn new() -> Solver { Solver::create(None) }
+
+    fn create(name : Option<&str>) -> Solver {
         let env  = super::Env::new().unwrap();
         let mut task = env.task().unwrap();
 
@@ -163,7 +166,6 @@ impl Solver {
 
         match name {
             Some(name) => {
-                task.put_task_name(name).unwrap();
                 task.put_task_name(name).unwrap();
             }
             None => {}

@@ -3,7 +3,8 @@ node ("karise") {
     def brn = env.gitlabSourceBranch
     branchname = ( brn == null ?
             "origin/master" :
-             ( !brn.startsWith("refs/") ? brn : "origin/$brn" ) )
+             ( !brn.startsWith("refs/") ? brn :
+               "origin/$brn" ) )
 
     currentBuild.displayName = branchname
 
