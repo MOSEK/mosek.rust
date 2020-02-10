@@ -479,6 +479,8 @@ impl Solver {
                     rsubj.push(self.var_map[subj[perm[b]]] as i32);
                     rcof.push(cof[perm[b]]);
                     nzi += 1;
+
+                    //unsafe {
                     for p in b+1 .. pe {
                         if self.var_map[subj[perm[p]]] as i32 == rsubj[nzi-1] {
                             rcof[nzi-1] += cof[perm[p]];
@@ -489,6 +491,7 @@ impl Solver {
                             nzi += 1;
                         }
                     }
+                    //}
                 }
                 if self.conslack[rsubi[i] as usize] > 0 {
                     rsubj.push((self.var_map[self.conslack[rsubi[i] as usize]-1]) as i32);
