@@ -1,4 +1,4 @@
-// Generated for MOSEK v10.0.0
+// Generated for MOSEK v10.0.2
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -30,11 +30,29 @@ extern {
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    fn MSK_appendacc64(task_ : * const u8,domainidx_ : i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    fn MSK_appendaccs64(task_ : * const u8,numaccs_ : i64,domainidxs_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    fn MSK_appendaccseq64(task_ : * const u8,domainidx_ : i32,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    fn MSK_appendafes64(task_ : * const u8,num_ : i64) -> i32;
     fn MSK_appendbarvars(task_ : * const u8,num_ : i32,dim_ : * const i32) -> i32;
     fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
     fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> i32;
     fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
+    fn MSK_appenddjcs64(task_ : * const u8,num_ : i64) -> i32;
+    fn MSK_appenddualexpconedomain(task_ : * const u8,idx_ : & mut i32) -> i32;
+    fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendinfnormconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendonenormconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendprimalexpconedomain(task_ : * const u8,idx_ : & mut i32) -> i32;
+    fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendpsdconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendquadraticconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendrdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendrminusdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendrplusdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendrquadraticconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendrzerodomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
@@ -67,9 +85,25 @@ extern {
     fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
+    fn MSK_getaccafeidxlist64(task_ : * const u8,accidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    fn MSK_getaccb64(task_ : * const u8,accidx_ : i64,b_ : * mut f64) -> i32;
+    fn MSK_getaccdomain64(task_ : * const u8,accidx_ : i64,domidx_ : & mut i32) -> i32;
+    fn MSK_getaccdoty64(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    fn MSK_getaccn64(task_ : * const u8,accidx_ : i64,n_ : & mut i64) -> i32;
+    fn MSK_getaccname64(task_ : * const u8,accidx_ : i64,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getaccnamelen64(task_ : * const u8,accidx_ : i64,len_ : & mut i32) -> i32;
+    fn MSK_getaccntot64(task_ : * const u8,n_ : & mut i64) -> i32;
+    fn MSK_getaccs64(task_ : * const u8,domainidxlist_ : * mut i32,afeidxlist_ : * mut i64,b_ : * mut f64) -> i32;
     fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
     fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
     fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
+    fn MSK_getafebarfnumrowentries64(task_ : * const u8,afeidx_ : i64,numentries_ : & mut i32) -> i32;
+    fn MSK_getafebarfrowinfo64(task_ : * const u8,afeidx_ : i64,numentries_ : & mut i32,numterms_ : & mut i64) -> i32;
+    fn MSK_getafefnumnz64(task_ : * const u8,numfnz_ : & mut i64) -> i32;
+    fn MSK_getafefrow64(task_ : * const u8,i_ : i64,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
+    fn MSK_getafefrownumnz64(task_ : * const u8,i_ : i64,nzi_ : & mut i32) -> i32;
+    fn MSK_getafeg64(task_ : * const u8,i_ : i64,g_ : & mut f64) -> i32;
+    fn MSK_getafegslice64(task_ : * const u8,first_ : i64,last_ : i64,g_ : * mut f64) -> i32;
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
     fn MSK_getarow(task_ : * const u8,i_ : i32,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
@@ -111,10 +145,24 @@ extern {
     fn MSK_getconnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
     fn MSK_getcslice(task_ : * const u8,first_ : i32,last_ : i32,c_ : * mut f64) -> i32;
     fn MSK_getdimbarvarj(task_ : * const u8,j_ : i32,dimbarvarj_ : & mut i32) -> i32;
+    fn MSK_getdjcafeidxlist64(task_ : * const u8,djcidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    fn MSK_getdjcb64(task_ : * const u8,djcidx_ : i64,b_ : * mut f64) -> i32;
+    fn MSK_getdjcdomainidxlist64(task_ : * const u8,djcidx_ : i64,domidxlist_ : * mut i32) -> i32;
+    fn MSK_getdjcname64(task_ : * const u8,djcidx_ : i64,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getdjcnamelen64(task_ : * const u8,djcidx_ : i64,len_ : & mut i32) -> i32;
+    fn MSK_getdjcnumafe64(task_ : * const u8,idjc_ : i64,numafe_ : & mut i64) -> i32;
+    fn MSK_getdjcnumdomain64(task_ : * const u8,idjc_ : i64,numdomain_ : & mut i64) -> i32;
+    fn MSK_getdjcnumterm64(task_ : * const u8,idjc_ : i64,numterm_ : & mut i64) -> i32;
+    fn MSK_getdjctermsizelist64(task_ : * const u8,djcidx_ : i64,termsizelist_ : * mut i64) -> i32;
+    fn MSK_getdomainn64(task_ : * const u8,domidx_ : i32,n_ : & mut i64) -> i32;
+    fn MSK_getdomainname32(task_ : * const u8,domidx_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getdomainnamelen32(task_ : * const u8,domidx_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getdomaintype(task_ : * const u8,k_ : i32,domaintype_ : & mut i32) -> i32;
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
     fn MSK_getdualsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmy_ : & mut f64,nrmslc_ : & mut f64,nrmsuc_ : & mut f64,nrmslx_ : & mut f64,nrmsux_ : & mut f64,nrmsnx_ : & mut f64,nrmbars_ : & mut f64) -> i32;
+    fn MSK_getdviolacc64(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
     fn MSK_getdviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getdviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getdviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
@@ -139,6 +187,8 @@ extern {
     fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut i32) -> i32;
     fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut i32) -> i32;
     fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
+    fn MSK_getnumacc64(task_ : * const u8,num_ : & mut i64) -> i32;
+    fn MSK_getnumafe64(task_ : * const u8,numafe_ : & mut i64) -> i32;
     fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut i32) -> i32;
     fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut i64) -> i32;
     fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
@@ -149,6 +199,8 @@ extern {
     fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut i32) -> i32;
     fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut i32) -> i32;
     fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
+    fn MSK_getnumdjc64(task_ : * const u8,num_ : & mut i64) -> i32;
+    fn MSK_getnumdomain(task_ : * const u8,numdomain_ : & mut i32) -> i32;
     fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
     fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
     fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut i64) -> i32;
@@ -164,6 +216,7 @@ extern {
     fn MSK_getprimalsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmxc_ : & mut f64,nrmxx_ : & mut f64,nrmbarx_ : & mut f64) -> i32;
     fn MSK_getprobtype(task_ : * const u8,probtype_ : & mut i32) -> i32;
     fn MSK_getprosta(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32) -> i32;
+    fn MSK_getpviolacc64(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
     fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
@@ -185,6 +238,8 @@ extern {
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solsta_ : & mut i32) -> i32;
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
+    fn MSK_getsolutioninfonew(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolacc_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64,dviolacc_ : & mut f64) -> i32;
+    fn MSK_getsolutionnew(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64,doty_ : * mut f64) -> i32;
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
     fn MSK_getsparsesymmat(task_ : * const u8,idx_ : i64,maxlen_ : i64,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
     fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : i32,len_ : & mut i32,parvalue_ : * const u8) -> i32;
@@ -230,9 +285,16 @@ extern {
     fn MSK_printparam(task_ : * const u8) -> i32;
     fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str_ : * const u8) -> i32;
     fn MSK_prostatostr(task_ : * const u8,prosta_ : i32,str_ : * const u8) -> i32;
+    fn MSK_putaccdoty64(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    fn MSK_putaccname64(task_ : * const u8,accidx_ : i64,name_ : * const libc::c_char) -> i32;
     fn MSK_putacol(task_ : * const u8,j_ : i32,nzj_ : i32,subj_ : * const i32,valj_ : * const f64) -> i32;
     fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    fn MSK_putafebarfblocktriplet64(task_ : * const u8,num_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,subk_ : * const i32,subl_ : * const i32,valkl_ : * const f64) -> i32;
+    fn MSK_putafebarfentry64(task_ : * const u8,afeidx_ : i64,barvaridx_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    fn MSK_putafefrow64(task_ : * const u8,i_ : i64,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
+    fn MSK_putafeg64(task_ : * const u8,i_ : i64,gi_ : f64) -> i32;
+    fn MSK_putafegslice64(task_ : * const u8,first_ : i64,last_ : i64,slice_ : * mut f64) -> i32;
     fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
     fn MSK_putaijlist64(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
     fn MSK_putarow(task_ : * const u8,i_ : i32,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
@@ -261,16 +323,24 @@ extern {
     fn MSK_putconname(task_ : * const u8,i_ : i32,name_ : * const libc::c_char) -> i32;
     fn MSK_putconsolutioni(task_ : * const u8,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
     fn MSK_putcslice(task_ : * const u8,first_ : i32,last_ : i32,slice_ : * const f64) -> i32;
+    fn MSK_putdjc64(task_ : * const u8,djcidx_ : i64,numdomidx_ : i64,domidxlist_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64) -> i32;
+    fn MSK_putdjcname64(task_ : * const u8,djcidx_ : i64,name_ : * const libc::c_char) -> i32;
+    fn MSK_putdjcslice64(task_ : * const u8,idxfirst_ : i64,idxlast_ : i64,numdomidx_ : i64,domidxlist_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64,termsindjc_ : * const i64) -> i32;
+    fn MSK_putdomainname32(task_ : * const u8,domidx_ : i32,name_ : * const libc::c_char) -> i32;
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
     fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
     fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
+    fn MSK_putmaxnumacc64(task_ : * const u8,maxnumacc_ : i64) -> i32;
+    fn MSK_putmaxnumafe64(task_ : * const u8,maxnumafe_ : i64) -> i32;
     fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : i64) -> i32;
     fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : i32) -> i32;
     fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : i32) -> i32;
     fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : i32) -> i32;
+    fn MSK_putmaxnumdjc64(task_ : * const u8,maxnumdjc_ : i64) -> i32;
+    fn MSK_putmaxnumdomain(task_ : * const u8,maxnumdomain_ : i32) -> i32;
     fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : i64) -> i32;
     fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : i32) -> i32;
     fn MSK_putnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : f64) -> i32;
@@ -278,6 +348,7 @@ extern {
     fn MSK_putnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putobjname(task_ : * const u8,objname_ : * const libc::c_char) -> i32;
     fn MSK_putobjsense(task_ : * const u8,sense_ : i32) -> i32;
+    fn MSK_putoptserverhost(task_ : * const u8,host_ : * const libc::c_char) -> i32;
     fn MSK_putparam(task_ : * const u8,parname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putqcon(task_ : * const u8,numqcnz_ : i32,qcsubk_ : * const i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
     fn MSK_putqconk(task_ : * const u8,k_ : i32,numqcnz_ : i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
@@ -294,6 +365,7 @@ extern {
     fn MSK_putsnx(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
     fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * const f64) -> i32;
     fn MSK_putsolution(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64) -> i32;
+    fn MSK_putsolutionnew(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64,doty_ : * const f64) -> i32;
     fn MSK_putsolutionyi(task_ : * const u8,i_ : i32,whichsol_ : i32,y_ : f64) -> i32;
     fn MSK_putstrparam(task_ : * const u8,param_ : i32,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putsuc(task_ : * const u8,whichsol_ : i32,suc_ : * const f64) -> i32;
@@ -412,101 +484,99 @@ pub const MSK_BRANCH_DIR_BEGIN : i32 = 0;
 pub const MSK_BRANCH_DIR_END   : i32 = 8;
 
 // callbackcode
-pub const MSK_CALLBACK_BEGIN_BI                   : i32 = 0;
-pub const MSK_CALLBACK_BEGIN_CONIC                : i32 = 1;
-pub const MSK_CALLBACK_BEGIN_DUAL_BI              : i32 = 2;
-pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY     : i32 = 3;
-pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI        : i32 = 4;
-pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX         : i32 = 5;
-pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI      : i32 = 6;
-pub const MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK : i32 = 7;
-pub const MSK_CALLBACK_BEGIN_INFEAS_ANA           : i32 = 8;
-pub const MSK_CALLBACK_BEGIN_INTPNT               : i32 = 9;
-pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT         : i32 = 10;
-pub const MSK_CALLBACK_BEGIN_MIO                  : i32 = 11;
-pub const MSK_CALLBACK_BEGIN_OPTIMIZER            : i32 = 12;
-pub const MSK_CALLBACK_BEGIN_PRESOLVE             : i32 = 13;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_BI            : i32 = 14;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR        : i32 = 15;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY   : i32 = 16;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI      : i32 = 17;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX       : i32 = 18;
-pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI    : i32 = 19;
-pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE     : i32 = 20;
-pub const MSK_CALLBACK_BEGIN_READ                 : i32 = 21;
-pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN          : i32 = 22;
-pub const MSK_CALLBACK_BEGIN_SIMPLEX              : i32 = 23;
-pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI           : i32 = 24;
-pub const MSK_CALLBACK_BEGIN_TO_CONIC             : i32 = 25;
-pub const MSK_CALLBACK_BEGIN_WRITE                : i32 = 26;
-pub const MSK_CALLBACK_CONIC                      : i32 = 27;
-pub const MSK_CALLBACK_DUAL_SIMPLEX               : i32 = 28;
-pub const MSK_CALLBACK_END_BI                     : i32 = 29;
-pub const MSK_CALLBACK_END_CONIC                  : i32 = 30;
-pub const MSK_CALLBACK_END_DUAL_BI                : i32 = 31;
-pub const MSK_CALLBACK_END_DUAL_SENSITIVITY       : i32 = 32;
-pub const MSK_CALLBACK_END_DUAL_SETUP_BI          : i32 = 33;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX           : i32 = 34;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI        : i32 = 35;
-pub const MSK_CALLBACK_END_FULL_CONVEXITY_CHECK   : i32 = 36;
-pub const MSK_CALLBACK_END_INFEAS_ANA             : i32 = 37;
-pub const MSK_CALLBACK_END_INTPNT                 : i32 = 38;
-pub const MSK_CALLBACK_END_LICENSE_WAIT           : i32 = 39;
-pub const MSK_CALLBACK_END_MIO                    : i32 = 40;
-pub const MSK_CALLBACK_END_OPTIMIZER              : i32 = 41;
-pub const MSK_CALLBACK_END_PRESOLVE               : i32 = 42;
-pub const MSK_CALLBACK_END_PRIMAL_BI              : i32 = 43;
-pub const MSK_CALLBACK_END_PRIMAL_REPAIR          : i32 = 44;
-pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY     : i32 = 45;
-pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI        : i32 = 46;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX         : i32 = 47;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI      : i32 = 48;
-pub const MSK_CALLBACK_END_QCQO_REFORMULATE       : i32 = 49;
-pub const MSK_CALLBACK_END_READ                   : i32 = 50;
-pub const MSK_CALLBACK_END_ROOT_CUTGEN            : i32 = 51;
-pub const MSK_CALLBACK_END_SIMPLEX                : i32 = 52;
-pub const MSK_CALLBACK_END_SIMPLEX_BI             : i32 = 53;
-pub const MSK_CALLBACK_END_TO_CONIC               : i32 = 54;
-pub const MSK_CALLBACK_END_WRITE                  : i32 = 55;
-pub const MSK_CALLBACK_IM_BI                      : i32 = 56;
-pub const MSK_CALLBACK_IM_CONIC                   : i32 = 57;
-pub const MSK_CALLBACK_IM_DUAL_BI                 : i32 = 58;
-pub const MSK_CALLBACK_IM_DUAL_SENSIVITY          : i32 = 59;
-pub const MSK_CALLBACK_IM_DUAL_SIMPLEX            : i32 = 60;
-pub const MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK    : i32 = 61;
-pub const MSK_CALLBACK_IM_INTPNT                  : i32 = 62;
-pub const MSK_CALLBACK_IM_LICENSE_WAIT            : i32 = 63;
-pub const MSK_CALLBACK_IM_LU                      : i32 = 64;
-pub const MSK_CALLBACK_IM_MIO                     : i32 = 65;
-pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX        : i32 = 66;
-pub const MSK_CALLBACK_IM_MIO_INTPNT              : i32 = 67;
-pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX      : i32 = 68;
-pub const MSK_CALLBACK_IM_ORDER                   : i32 = 69;
-pub const MSK_CALLBACK_IM_PRESOLVE                : i32 = 70;
-pub const MSK_CALLBACK_IM_PRIMAL_BI               : i32 = 71;
-pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY        : i32 = 72;
-pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX          : i32 = 73;
-pub const MSK_CALLBACK_IM_QO_REFORMULATE          : i32 = 74;
-pub const MSK_CALLBACK_IM_READ                    : i32 = 75;
-pub const MSK_CALLBACK_IM_ROOT_CUTGEN             : i32 = 76;
-pub const MSK_CALLBACK_IM_SIMPLEX                 : i32 = 77;
-pub const MSK_CALLBACK_IM_SIMPLEX_BI              : i32 = 78;
-pub const MSK_CALLBACK_INTPNT                     : i32 = 79;
-pub const MSK_CALLBACK_NEW_INT_MIO                : i32 = 80;
-pub const MSK_CALLBACK_PRIMAL_SIMPLEX             : i32 = 81;
-pub const MSK_CALLBACK_READ_OPF                   : i32 = 82;
-pub const MSK_CALLBACK_READ_OPF_SECTION           : i32 = 83;
-pub const MSK_CALLBACK_SOLVING_REMOTE             : i32 = 84;
-pub const MSK_CALLBACK_UPDATE_DUAL_BI             : i32 = 85;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX        : i32 = 86;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI     : i32 = 87;
-pub const MSK_CALLBACK_UPDATE_PRESOLVE            : i32 = 88;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_BI           : i32 = 89;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX      : i32 = 90;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI   : i32 = 91;
-pub const MSK_CALLBACK_WRITE_OPF                  : i32 = 92;
+pub const MSK_CALLBACK_BEGIN_BI                 : i32 = 0;
+pub const MSK_CALLBACK_BEGIN_CONIC              : i32 = 1;
+pub const MSK_CALLBACK_BEGIN_DUAL_BI            : i32 = 2;
+pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY   : i32 = 3;
+pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI      : i32 = 4;
+pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX       : i32 = 5;
+pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI    : i32 = 6;
+pub const MSK_CALLBACK_BEGIN_INFEAS_ANA         : i32 = 7;
+pub const MSK_CALLBACK_BEGIN_INTPNT             : i32 = 8;
+pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT       : i32 = 9;
+pub const MSK_CALLBACK_BEGIN_MIO                : i32 = 10;
+pub const MSK_CALLBACK_BEGIN_OPTIMIZER          : i32 = 11;
+pub const MSK_CALLBACK_BEGIN_PRESOLVE           : i32 = 12;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_BI          : i32 = 13;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR      : i32 = 14;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY : i32 = 15;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI    : i32 = 16;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX     : i32 = 17;
+pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI  : i32 = 18;
+pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE   : i32 = 19;
+pub const MSK_CALLBACK_BEGIN_READ               : i32 = 20;
+pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN        : i32 = 21;
+pub const MSK_CALLBACK_BEGIN_SIMPLEX            : i32 = 22;
+pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI         : i32 = 23;
+pub const MSK_CALLBACK_BEGIN_TO_CONIC           : i32 = 24;
+pub const MSK_CALLBACK_BEGIN_WRITE              : i32 = 25;
+pub const MSK_CALLBACK_CONIC                    : i32 = 26;
+pub const MSK_CALLBACK_DUAL_SIMPLEX             : i32 = 27;
+pub const MSK_CALLBACK_END_BI                   : i32 = 28;
+pub const MSK_CALLBACK_END_CONIC                : i32 = 29;
+pub const MSK_CALLBACK_END_DUAL_BI              : i32 = 30;
+pub const MSK_CALLBACK_END_DUAL_SENSITIVITY     : i32 = 31;
+pub const MSK_CALLBACK_END_DUAL_SETUP_BI        : i32 = 32;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX         : i32 = 33;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI      : i32 = 34;
+pub const MSK_CALLBACK_END_INFEAS_ANA           : i32 = 35;
+pub const MSK_CALLBACK_END_INTPNT               : i32 = 36;
+pub const MSK_CALLBACK_END_LICENSE_WAIT         : i32 = 37;
+pub const MSK_CALLBACK_END_MIO                  : i32 = 38;
+pub const MSK_CALLBACK_END_OPTIMIZER            : i32 = 39;
+pub const MSK_CALLBACK_END_PRESOLVE             : i32 = 40;
+pub const MSK_CALLBACK_END_PRIMAL_BI            : i32 = 41;
+pub const MSK_CALLBACK_END_PRIMAL_REPAIR        : i32 = 42;
+pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY   : i32 = 43;
+pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI      : i32 = 44;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX       : i32 = 45;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI    : i32 = 46;
+pub const MSK_CALLBACK_END_QCQO_REFORMULATE     : i32 = 47;
+pub const MSK_CALLBACK_END_READ                 : i32 = 48;
+pub const MSK_CALLBACK_END_ROOT_CUTGEN          : i32 = 49;
+pub const MSK_CALLBACK_END_SIMPLEX              : i32 = 50;
+pub const MSK_CALLBACK_END_SIMPLEX_BI           : i32 = 51;
+pub const MSK_CALLBACK_END_TO_CONIC             : i32 = 52;
+pub const MSK_CALLBACK_END_WRITE                : i32 = 53;
+pub const MSK_CALLBACK_IM_BI                    : i32 = 54;
+pub const MSK_CALLBACK_IM_CONIC                 : i32 = 55;
+pub const MSK_CALLBACK_IM_DUAL_BI               : i32 = 56;
+pub const MSK_CALLBACK_IM_DUAL_SENSIVITY        : i32 = 57;
+pub const MSK_CALLBACK_IM_DUAL_SIMPLEX          : i32 = 58;
+pub const MSK_CALLBACK_IM_INTPNT                : i32 = 59;
+pub const MSK_CALLBACK_IM_LICENSE_WAIT          : i32 = 60;
+pub const MSK_CALLBACK_IM_LU                    : i32 = 61;
+pub const MSK_CALLBACK_IM_MIO                   : i32 = 62;
+pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX      : i32 = 63;
+pub const MSK_CALLBACK_IM_MIO_INTPNT            : i32 = 64;
+pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX    : i32 = 65;
+pub const MSK_CALLBACK_IM_ORDER                 : i32 = 66;
+pub const MSK_CALLBACK_IM_PRESOLVE              : i32 = 67;
+pub const MSK_CALLBACK_IM_PRIMAL_BI             : i32 = 68;
+pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY      : i32 = 69;
+pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX        : i32 = 70;
+pub const MSK_CALLBACK_IM_QO_REFORMULATE        : i32 = 71;
+pub const MSK_CALLBACK_IM_READ                  : i32 = 72;
+pub const MSK_CALLBACK_IM_ROOT_CUTGEN           : i32 = 73;
+pub const MSK_CALLBACK_IM_SIMPLEX               : i32 = 74;
+pub const MSK_CALLBACK_IM_SIMPLEX_BI            : i32 = 75;
+pub const MSK_CALLBACK_INTPNT                   : i32 = 76;
+pub const MSK_CALLBACK_NEW_INT_MIO              : i32 = 77;
+pub const MSK_CALLBACK_PRIMAL_SIMPLEX           : i32 = 78;
+pub const MSK_CALLBACK_READ_OPF                 : i32 = 79;
+pub const MSK_CALLBACK_READ_OPF_SECTION         : i32 = 80;
+pub const MSK_CALLBACK_SOLVING_REMOTE           : i32 = 81;
+pub const MSK_CALLBACK_UPDATE_DUAL_BI           : i32 = 82;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX      : i32 = 83;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI   : i32 = 84;
+pub const MSK_CALLBACK_UPDATE_PRESOLVE          : i32 = 85;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_BI         : i32 = 86;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX    : i32 = 87;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI : i32 = 88;
+pub const MSK_CALLBACK_UPDATE_SIMPLEX           : i32 = 89;
+pub const MSK_CALLBACK_WRITE_OPF                : i32 = 90;
 pub const MSK_CALLBACK_BEGIN : i32 = 0;
-pub const MSK_CALLBACK_END   : i32 = 93;
+pub const MSK_CALLBACK_END   : i32 = 91;
 
 // checkconvexitytype
 pub const MSK_CHECK_CONVEXITY_FULL   : i32 = 2;
@@ -524,15 +594,19 @@ pub const MSK_COMPRESS_BEGIN : i32 = 0;
 pub const MSK_COMPRESS_END   : i32 = 4;
 
 // conetype
-pub const MSK_CT_DEXP  : i32 = 3;
-pub const MSK_CT_DPOW  : i32 = 5;
-pub const MSK_CT_PEXP  : i32 = 2;
-pub const MSK_CT_PPOW  : i32 = 4;
-pub const MSK_CT_QUAD  : i32 = 0;
-pub const MSK_CT_RQUAD : i32 = 1;
-pub const MSK_CT_ZERO  : i32 = 6;
+pub const MSK_CT_DEXP     : i32 = 3;
+pub const MSK_CT_DGEOMEAN : i32 = 10;
+pub const MSK_CT_DPOW     : i32 = 5;
+pub const MSK_CT_INFNRM   : i32 = 7;
+pub const MSK_CT_ONENRM   : i32 = 8;
+pub const MSK_CT_PEXP     : i32 = 2;
+pub const MSK_CT_PGEOMEAN : i32 = 9;
+pub const MSK_CT_PPOW     : i32 = 4;
+pub const MSK_CT_QUAD     : i32 = 0;
+pub const MSK_CT_RQUAD    : i32 = 1;
+pub const MSK_CT_ZERO     : i32 = 6;
 pub const MSK_CT_BEGIN : i32 = 0;
-pub const MSK_CT_END   : i32 = 7;
+pub const MSK_CT_END   : i32 = 11;
 
 // dataformat
 pub const MSK_DATA_FORMAT_CB        : i32 = 7;
@@ -618,28 +692,49 @@ pub const MSK_DINF_SOL_ITG_PVIOLCONES                             : i32 = 66;
 pub const MSK_DINF_SOL_ITG_PVIOLITG                               : i32 = 67;
 pub const MSK_DINF_SOL_ITG_PVIOLVAR                               : i32 = 68;
 pub const MSK_DINF_SOL_ITR_DUAL_OBJ                               : i32 = 69;
-pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 70;
-pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 71;
-pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 72;
-pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 73;
-pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 74;
-pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 75;
-pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 76;
-pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 77;
-pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 78;
-pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 79;
-pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 80;
-pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 81;
-pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 82;
-pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 83;
-pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 84;
-pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 85;
-pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 86;
-pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 87;
-pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 88;
-pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 89;
+pub const MSK_DINF_SOL_ITR_DVIOLACC                               : i32 = 70;
+pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 71;
+pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 72;
+pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 73;
+pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 74;
+pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 75;
+pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 76;
+pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 77;
+pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 78;
+pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 79;
+pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 80;
+pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 81;
+pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 82;
+pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 83;
+pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 84;
+pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 85;
+pub const MSK_DINF_SOL_ITR_PVIOLACC                               : i32 = 86;
+pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 87;
+pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 88;
+pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 89;
+pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 90;
+pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 91;
 pub const MSK_DINF_BEGIN : i32 = 0;
-pub const MSK_DINF_END   : i32 = 90;
+pub const MSK_DINF_END   : i32 = 92;
+
+// domaintype
+pub const MSK_DOMAIN_DUAL_EXP_CONE        : i32 = 7;
+pub const MSK_DOMAIN_DUAL_GEO_MEAN_CONE   : i32 = 11;
+pub const MSK_DOMAIN_DUAL_POWER_CONE      : i32 = 9;
+pub const MSK_DOMAIN_INF_NORM_CONE        : i32 = 12;
+pub const MSK_DOMAIN_ONE_NORM_CONE        : i32 = 13;
+pub const MSK_DOMAIN_PRIMAL_EXP_CONE      : i32 = 6;
+pub const MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE : i32 = 10;
+pub const MSK_DOMAIN_PRIMAL_POWER_CONE    : i32 = 8;
+pub const MSK_DOMAIN_PSD_CONE             : i32 = 14;
+pub const MSK_DOMAIN_QUADRATIC_CONE       : i32 = 4;
+pub const MSK_DOMAIN_R                    : i32 = 0;
+pub const MSK_DOMAIN_RMINUS               : i32 = 3;
+pub const MSK_DOMAIN_RPLUS                : i32 = 2;
+pub const MSK_DOMAIN_RQUADRATIC_CONE      : i32 = 5;
+pub const MSK_DOMAIN_RZERO                : i32 = 1;
+pub const MSK_DOMAIN_BEGIN : i32 = 0;
+pub const MSK_DOMAIN_END   : i32 = 15;
 
 // dparam
 pub const MSK_DPAR_ANA_SOL_INFEAS_TOL                 : i32 = 0;
@@ -925,101 +1020,102 @@ pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL     : i32 = 83;
 pub const MSK_IPAR_MIO_SEED                           : i32 = 84;
 pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL             : i32 = 85;
 pub const MSK_IPAR_MT_SPINCOUNT                       : i32 = 86;
-pub const MSK_IPAR_NUM_THREADS                        : i32 = 87;
-pub const MSK_IPAR_OPF_WRITE_HEADER                   : i32 = 88;
-pub const MSK_IPAR_OPF_WRITE_HINTS                    : i32 = 89;
-pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH              : i32 = 90;
-pub const MSK_IPAR_OPF_WRITE_PARAMETERS               : i32 = 91;
-pub const MSK_IPAR_OPF_WRITE_PROBLEM                  : i32 = 92;
-pub const MSK_IPAR_OPF_WRITE_SOL_BAS                  : i32 = 93;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITG                  : i32 = 94;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITR                  : i32 = 95;
-pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                : i32 = 96;
-pub const MSK_IPAR_OPTIMIZER                          : i32 = 97;
-pub const MSK_IPAR_PARAM_READ_CASE_NAME               : i32 = 98;
-pub const MSK_IPAR_PARAM_READ_IGN_ERROR               : i32 = 99;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       : i32 = 100;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  : i32 = 101;
-pub const MSK_IPAR_PRESOLVE_LEVEL                     : i32 = 102;
-pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       : i32 = 103;
-pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       : i32 = 104;
-pub const MSK_IPAR_PRESOLVE_LINDEP_USE                : i32 = 105;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS              : i32 = 106;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        : i32 = 107;
-pub const MSK_IPAR_PRESOLVE_USE                       : i32 = 108;
-pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            : i32 = 109;
-pub const MSK_IPAR_PTF_WRITE_TRANSFORM                : i32 = 110;
-pub const MSK_IPAR_READ_DEBUG                         : i32 = 111;
-pub const MSK_IPAR_READ_KEEP_FREE_CON                 : i32 = 112;
-pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU       : i32 = 113;
-pub const MSK_IPAR_READ_LP_QUOTED_NAMES               : i32 = 114;
-pub const MSK_IPAR_READ_MPS_FORMAT                    : i32 = 115;
-pub const MSK_IPAR_READ_MPS_WIDTH                     : i32 = 116;
-pub const MSK_IPAR_READ_TASK_IGNORE_PARAM             : i32 = 117;
-pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            : i32 = 118;
-pub const MSK_IPAR_SENSITIVITY_ALL                    : i32 = 119;
-pub const MSK_IPAR_SENSITIVITY_OPTIMIZER              : i32 = 120;
-pub const MSK_IPAR_SENSITIVITY_TYPE                   : i32 = 121;
-pub const MSK_IPAR_SIM_BASIS_FACTOR_USE               : i32 = 122;
-pub const MSK_IPAR_SIM_DEGEN                          : i32 = 123;
-pub const MSK_IPAR_SIM_DUAL_CRASH                     : i32 = 124;
-pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           : i32 = 125;
-pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        : i32 = 126;
-pub const MSK_IPAR_SIM_DUAL_SELECTION                 : i32 = 127;
-pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                 : i32 = 128;
-pub const MSK_IPAR_SIM_HOTSTART                       : i32 = 129;
-pub const MSK_IPAR_SIM_HOTSTART_LU                    : i32 = 130;
-pub const MSK_IPAR_SIM_MAX_ITERATIONS                 : i32 = 131;
-pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS               : i32 = 132;
-pub const MSK_IPAR_SIM_NON_SINGULAR                   : i32 = 133;
-pub const MSK_IPAR_SIM_PRIMAL_CRASH                   : i32 = 134;
-pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         : i32 = 135;
-pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      : i32 = 136;
-pub const MSK_IPAR_SIM_PRIMAL_SELECTION               : i32 = 137;
-pub const MSK_IPAR_SIM_REFACTOR_FREQ                  : i32 = 138;
-pub const MSK_IPAR_SIM_REFORMULATION                  : i32 = 139;
-pub const MSK_IPAR_SIM_SAVE_LU                        : i32 = 140;
-pub const MSK_IPAR_SIM_SCALING                        : i32 = 141;
-pub const MSK_IPAR_SIM_SCALING_METHOD                 : i32 = 142;
-pub const MSK_IPAR_SIM_SEED                           : i32 = 143;
-pub const MSK_IPAR_SIM_SOLVE_FORM                     : i32 = 144;
-pub const MSK_IPAR_SIM_STABILITY_PRIORITY             : i32 = 145;
-pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER               : i32 = 146;
-pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC              : i32 = 147;
-pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED             : i32 = 148;
-pub const MSK_IPAR_SOL_READ_NAME_WIDTH                : i32 = 149;
-pub const MSK_IPAR_SOL_READ_WIDTH                     : i32 = 150;
-pub const MSK_IPAR_SOLUTION_CALLBACK                  : i32 = 151;
-pub const MSK_IPAR_TIMING_LEVEL                       : i32 = 152;
-pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS              : i32 = 153;
-pub const MSK_IPAR_WRITE_BAS_HEAD                     : i32 = 154;
-pub const MSK_IPAR_WRITE_BAS_VARIABLES                : i32 = 155;
-pub const MSK_IPAR_WRITE_COMPRESSION                  : i32 = 156;
-pub const MSK_IPAR_WRITE_DATA_PARAM                   : i32 = 157;
-pub const MSK_IPAR_WRITE_FREE_CON                     : i32 = 158;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES                : i32 = 159;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO             : i32 = 160;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    : i32 = 161;
-pub const MSK_IPAR_WRITE_INT_CONSTRAINTS              : i32 = 162;
-pub const MSK_IPAR_WRITE_INT_HEAD                     : i32 = 163;
-pub const MSK_IPAR_WRITE_INT_VARIABLES                : i32 = 164;
-pub const MSK_IPAR_WRITE_LP_FULL_OBJ                  : i32 = 165;
-pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                : i32 = 166;
-pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES              : i32 = 167;
-pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT             : i32 = 168;
-pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE            : i32 = 169;
-pub const MSK_IPAR_WRITE_MPS_FORMAT                   : i32 = 170;
-pub const MSK_IPAR_WRITE_MPS_INT                      : i32 = 171;
-pub const MSK_IPAR_WRITE_PRECISION                    : i32 = 172;
-pub const MSK_IPAR_WRITE_SOL_BARVARIABLES             : i32 = 173;
-pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS              : i32 = 174;
-pub const MSK_IPAR_WRITE_SOL_HEAD                     : i32 = 175;
-pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     : i32 = 176;
-pub const MSK_IPAR_WRITE_SOL_VARIABLES                : i32 = 177;
-pub const MSK_IPAR_WRITE_TASK_INC_SOL                 : i32 = 178;
-pub const MSK_IPAR_WRITE_XML_MODE                     : i32 = 179;
+pub const MSK_IPAR_NG                                 : i32 = 87;
+pub const MSK_IPAR_NUM_THREADS                        : i32 = 88;
+pub const MSK_IPAR_OPF_WRITE_HEADER                   : i32 = 89;
+pub const MSK_IPAR_OPF_WRITE_HINTS                    : i32 = 90;
+pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH              : i32 = 91;
+pub const MSK_IPAR_OPF_WRITE_PARAMETERS               : i32 = 92;
+pub const MSK_IPAR_OPF_WRITE_PROBLEM                  : i32 = 93;
+pub const MSK_IPAR_OPF_WRITE_SOL_BAS                  : i32 = 94;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITG                  : i32 = 95;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITR                  : i32 = 96;
+pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                : i32 = 97;
+pub const MSK_IPAR_OPTIMIZER                          : i32 = 98;
+pub const MSK_IPAR_PARAM_READ_CASE_NAME               : i32 = 99;
+pub const MSK_IPAR_PARAM_READ_IGN_ERROR               : i32 = 100;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       : i32 = 101;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  : i32 = 102;
+pub const MSK_IPAR_PRESOLVE_LEVEL                     : i32 = 103;
+pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       : i32 = 104;
+pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       : i32 = 105;
+pub const MSK_IPAR_PRESOLVE_LINDEP_USE                : i32 = 106;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS              : i32 = 107;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        : i32 = 108;
+pub const MSK_IPAR_PRESOLVE_USE                       : i32 = 109;
+pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            : i32 = 110;
+pub const MSK_IPAR_PTF_WRITE_TRANSFORM                : i32 = 111;
+pub const MSK_IPAR_READ_DEBUG                         : i32 = 112;
+pub const MSK_IPAR_READ_KEEP_FREE_CON                 : i32 = 113;
+pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU       : i32 = 114;
+pub const MSK_IPAR_READ_LP_QUOTED_NAMES               : i32 = 115;
+pub const MSK_IPAR_READ_MPS_FORMAT                    : i32 = 116;
+pub const MSK_IPAR_READ_MPS_WIDTH                     : i32 = 117;
+pub const MSK_IPAR_READ_TASK_IGNORE_PARAM             : i32 = 118;
+pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            : i32 = 119;
+pub const MSK_IPAR_SENSITIVITY_ALL                    : i32 = 120;
+pub const MSK_IPAR_SENSITIVITY_OPTIMIZER              : i32 = 121;
+pub const MSK_IPAR_SENSITIVITY_TYPE                   : i32 = 122;
+pub const MSK_IPAR_SIM_BASIS_FACTOR_USE               : i32 = 123;
+pub const MSK_IPAR_SIM_DEGEN                          : i32 = 124;
+pub const MSK_IPAR_SIM_DUAL_CRASH                     : i32 = 125;
+pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           : i32 = 126;
+pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        : i32 = 127;
+pub const MSK_IPAR_SIM_DUAL_SELECTION                 : i32 = 128;
+pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                 : i32 = 129;
+pub const MSK_IPAR_SIM_HOTSTART                       : i32 = 130;
+pub const MSK_IPAR_SIM_HOTSTART_LU                    : i32 = 131;
+pub const MSK_IPAR_SIM_MAX_ITERATIONS                 : i32 = 132;
+pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS               : i32 = 133;
+pub const MSK_IPAR_SIM_NON_SINGULAR                   : i32 = 134;
+pub const MSK_IPAR_SIM_PRIMAL_CRASH                   : i32 = 135;
+pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         : i32 = 136;
+pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      : i32 = 137;
+pub const MSK_IPAR_SIM_PRIMAL_SELECTION               : i32 = 138;
+pub const MSK_IPAR_SIM_REFACTOR_FREQ                  : i32 = 139;
+pub const MSK_IPAR_SIM_REFORMULATION                  : i32 = 140;
+pub const MSK_IPAR_SIM_SAVE_LU                        : i32 = 141;
+pub const MSK_IPAR_SIM_SCALING                        : i32 = 142;
+pub const MSK_IPAR_SIM_SCALING_METHOD                 : i32 = 143;
+pub const MSK_IPAR_SIM_SEED                           : i32 = 144;
+pub const MSK_IPAR_SIM_SOLVE_FORM                     : i32 = 145;
+pub const MSK_IPAR_SIM_STABILITY_PRIORITY             : i32 = 146;
+pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER               : i32 = 147;
+pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC              : i32 = 148;
+pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED             : i32 = 149;
+pub const MSK_IPAR_SOL_READ_NAME_WIDTH                : i32 = 150;
+pub const MSK_IPAR_SOL_READ_WIDTH                     : i32 = 151;
+pub const MSK_IPAR_SOLUTION_CALLBACK                  : i32 = 152;
+pub const MSK_IPAR_TIMING_LEVEL                       : i32 = 153;
+pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS              : i32 = 154;
+pub const MSK_IPAR_WRITE_BAS_HEAD                     : i32 = 155;
+pub const MSK_IPAR_WRITE_BAS_VARIABLES                : i32 = 156;
+pub const MSK_IPAR_WRITE_COMPRESSION                  : i32 = 157;
+pub const MSK_IPAR_WRITE_DATA_PARAM                   : i32 = 158;
+pub const MSK_IPAR_WRITE_FREE_CON                     : i32 = 159;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES                : i32 = 160;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO             : i32 = 161;
+pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    : i32 = 162;
+pub const MSK_IPAR_WRITE_INT_CONSTRAINTS              : i32 = 163;
+pub const MSK_IPAR_WRITE_INT_HEAD                     : i32 = 164;
+pub const MSK_IPAR_WRITE_INT_VARIABLES                : i32 = 165;
+pub const MSK_IPAR_WRITE_LP_FULL_OBJ                  : i32 = 166;
+pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                : i32 = 167;
+pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES              : i32 = 168;
+pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT             : i32 = 169;
+pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE            : i32 = 170;
+pub const MSK_IPAR_WRITE_MPS_FORMAT                   : i32 = 171;
+pub const MSK_IPAR_WRITE_MPS_INT                      : i32 = 172;
+pub const MSK_IPAR_WRITE_PRECISION                    : i32 = 173;
+pub const MSK_IPAR_WRITE_SOL_BARVARIABLES             : i32 = 174;
+pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS              : i32 = 175;
+pub const MSK_IPAR_WRITE_SOL_HEAD                     : i32 = 176;
+pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     : i32 = 177;
+pub const MSK_IPAR_WRITE_SOL_VARIABLES                : i32 = 178;
+pub const MSK_IPAR_WRITE_TASK_INC_SOL                 : i32 = 179;
+pub const MSK_IPAR_WRITE_XML_MODE                     : i32 = 180;
 pub const MSK_IPAR_BEGIN : i32 = 0;
-pub const MSK_IPAR_END   : i32 = 180;
+pub const MSK_IPAR_END   : i32 = 181;
 
 // liinfitem
 pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER   : i32 = 0;
@@ -1035,8 +1131,9 @@ pub const MSK_LIINF_MIO_PRESOLVED_ANZ        : i32 = 9;
 pub const MSK_LIINF_MIO_SIMPLEX_ITER         : i32 = 10;
 pub const MSK_LIINF_RD_NUMANZ                : i32 = 11;
 pub const MSK_LIINF_RD_NUMQNZ                : i32 = 12;
+pub const MSK_LIINF_SIMPLEX_ITER             : i32 = 13;
 pub const MSK_LIINF_BEGIN : i32 = 0;
-pub const MSK_LIINF_END   : i32 = 13;
+pub const MSK_LIINF_END   : i32 = 14;
 
 // mark
 pub const MSK_MARK_LO : i32 = 0;
@@ -1166,470 +1263,502 @@ pub const MSK_PURIFY_BEGIN : i32 = 0;
 pub const MSK_PURIFY_END   : i32 = 5;
 
 // rescode
-pub const MSK_RES_ERR_AD_INVALID_CODELIST                        : i32 = 3102;
-pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL                        : i32 = 3001;
-pub const MSK_RES_ERR_API_CB_CONNECT                             : i32 = 3002;
-pub const MSK_RES_ERR_API_FATAL_ERROR                            : i32 = 3005;
-pub const MSK_RES_ERR_API_INTERNAL                               : i32 = 3999;
-pub const MSK_RES_ERR_APPENDING_TOO_BIG_CONE                     : i32 = 1311;
-pub const MSK_RES_ERR_ARG_IS_TOO_LARGE                           : i32 = 1227;
-pub const MSK_RES_ERR_ARG_IS_TOO_SMALL                           : i32 = 1226;
-pub const MSK_RES_ERR_ARGUMENT_DIMENSION                         : i32 = 1201;
-pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE                      : i32 = 5005;
-pub const MSK_RES_ERR_ARGUMENT_LENNEQ                            : i32 = 1197;
-pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY                        : i32 = 1299;
-pub const MSK_RES_ERR_ARGUMENT_TYPE                              : i32 = 1198;
-pub const MSK_RES_ERR_BAR_VAR_DIM                                : i32 = 3920;
-pub const MSK_RES_ERR_BASIS                                      : i32 = 1266;
-pub const MSK_RES_ERR_BASIS_FACTOR                               : i32 = 1610;
-pub const MSK_RES_ERR_BASIS_SINGULAR                             : i32 = 1615;
-pub const MSK_RES_ERR_BLANK_NAME                                 : i32 = 1070;
-pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                       : i32 = 7116;
-pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                       : i32 = 7115;
-pub const MSK_RES_ERR_CBF_DUPLICATE_CON                          : i32 = 7108;
-pub const MSK_RES_ERR_CBF_DUPLICATE_INT                          : i32 = 7110;
-pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ                          : i32 = 7107;
-pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD                    : i32 = 7114;
-pub const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES                    : i32 = 7130;
-pub const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES               : i32 = 7131;
-pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR                       : i32 = 7123;
-pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                          : i32 = 7109;
-pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                       : i32 = 7112;
-pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES             : i32 = 7741;
-pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION               : i32 = 7113;
-pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION                  : i32 = 7126;
-pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX                      : i32 = 7121;
-pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES                : i32 = 7740;
-pub const MSK_RES_ERR_CBF_INVALID_POWER                          : i32 = 7132;
-pub const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX               : i32 = 7134;
-pub const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX          : i32 = 7135;
-pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION               : i32 = 7124;
-pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                       : i32 = 7111;
-pub const MSK_RES_ERR_CBF_NO_VARIABLES                           : i32 = 7102;
-pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED                   : i32 = 7105;
-pub const MSK_RES_ERR_CBF_OBJ_SENSE                              : i32 = 7101;
-pub const MSK_RES_ERR_CBF_PARSE                                  : i32 = 7100;
-pub const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG                 : i32 = 7133;
-pub const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH                    : i32 = 7138;
-pub const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH               : i32 = 7139;
-pub const MSK_RES_ERR_CBF_SYNTAX                                 : i32 = 7106;
-pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS                    : i32 = 7118;
-pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                           : i32 = 7119;
-pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR                         : i32 = 7125;
-pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES                      : i32 = 7117;
-pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS                   : i32 = 7103;
-pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                          : i32 = 7120;
-pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES                     : i32 = 7104;
-pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE              : i32 = 7136;
-pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE         : i32 = 7137;
-pub const MSK_RES_ERR_CBF_UNSUPPORTED                            : i32 = 7122;
-pub const MSK_RES_ERR_CON_Q_NOT_NSD                              : i32 = 1294;
-pub const MSK_RES_ERR_CON_Q_NOT_PSD                              : i32 = 1293;
-pub const MSK_RES_ERR_CONE_INDEX                                 : i32 = 1300;
-pub const MSK_RES_ERR_CONE_OVERLAP                               : i32 = 1302;
-pub const MSK_RES_ERR_CONE_OVERLAP_APPEND                        : i32 = 1307;
-pub const MSK_RES_ERR_CONE_PARAMETER                             : i32 = 1320;
-pub const MSK_RES_ERR_CONE_REP_VAR                               : i32 = 1303;
-pub const MSK_RES_ERR_CONE_SIZE                                  : i32 = 1301;
-pub const MSK_RES_ERR_CONE_TYPE                                  : i32 = 1305;
-pub const MSK_RES_ERR_CONE_TYPE_STR                              : i32 = 1306;
-pub const MSK_RES_ERR_DATA_FILE_EXT                              : i32 = 1055;
-pub const MSK_RES_ERR_DUP_NAME                                   : i32 = 1071;
-pub const MSK_RES_ERR_DUPLICATE_AIJ                              : i32 = 1385;
-pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES                : i32 = 4502;
-pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES                       : i32 = 4503;
-pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES                 : i32 = 4500;
-pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES                   : i32 = 4501;
-pub const MSK_RES_ERR_END_OF_FILE                                : i32 = 1059;
-pub const MSK_RES_ERR_FACTOR                                     : i32 = 1650;
-pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX                    : i32 = 1700;
-pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND              : i32 = 1702;
-pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED                 : i32 = 1701;
-pub const MSK_RES_ERR_FILE_LICENSE                               : i32 = 1007;
-pub const MSK_RES_ERR_FILE_OPEN                                  : i32 = 1052;
-pub const MSK_RES_ERR_FILE_READ                                  : i32 = 1053;
-pub const MSK_RES_ERR_FILE_WRITE                                 : i32 = 1054;
-pub const MSK_RES_ERR_FINAL_SOLUTION                             : i32 = 1560;
-pub const MSK_RES_ERR_FIRST                                      : i32 = 1570;
-pub const MSK_RES_ERR_FIRSTI                                     : i32 = 1285;
-pub const MSK_RES_ERR_FIRSTJ                                     : i32 = 1287;
-pub const MSK_RES_ERR_FIXED_BOUND_VALUES                         : i32 = 1420;
-pub const MSK_RES_ERR_FLEXLM                                     : i32 = 1014;
-pub const MSK_RES_ERR_FORMAT_STRING                              : i32 = 1072;
-pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM                   : i32 = 1503;
-pub const MSK_RES_ERR_HUGE_AIJ                                   : i32 = 1380;
-pub const MSK_RES_ERR_HUGE_C                                     : i32 = 1375;
-pub const MSK_RES_ERR_IDENTICAL_TASKS                            : i32 = 3101;
-pub const MSK_RES_ERR_IN_ARGUMENT                                : i32 = 1200;
-pub const MSK_RES_ERR_INDEX                                      : i32 = 1235;
-pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE                     : i32 = 1222;
-pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL                     : i32 = 1221;
-pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                         : i32 = 1204;
-pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                         : i32 = 1203;
-pub const MSK_RES_ERR_INF_DOU_INDEX                              : i32 = 1219;
-pub const MSK_RES_ERR_INF_DOU_NAME                               : i32 = 1230;
-pub const MSK_RES_ERR_INF_INT_INDEX                              : i32 = 1220;
-pub const MSK_RES_ERR_INF_INT_NAME                               : i32 = 1231;
-pub const MSK_RES_ERR_INF_LINT_INDEX                             : i32 = 1225;
-pub const MSK_RES_ERR_INF_LINT_NAME                              : i32 = 1234;
-pub const MSK_RES_ERR_INF_TYPE                                   : i32 = 1232;
-pub const MSK_RES_ERR_INFEAS_UNDEFINED                           : i32 = 3910;
-pub const MSK_RES_ERR_INFINITE_BOUND                             : i32 = 1400;
-pub const MSK_RES_ERR_INT64_TO_INT32_CAST                        : i32 = 3800;
-pub const MSK_RES_ERR_INTERNAL                                   : i32 = 3000;
-pub const MSK_RES_ERR_INTERNAL_TEST_FAILED                       : i32 = 3500;
-pub const MSK_RES_ERR_INV_APTRE                                  : i32 = 1253;
-pub const MSK_RES_ERR_INV_BK                                     : i32 = 1255;
-pub const MSK_RES_ERR_INV_BKC                                    : i32 = 1256;
-pub const MSK_RES_ERR_INV_BKX                                    : i32 = 1257;
-pub const MSK_RES_ERR_INV_CONE_TYPE                              : i32 = 1272;
-pub const MSK_RES_ERR_INV_CONE_TYPE_STR                          : i32 = 1271;
-pub const MSK_RES_ERR_INV_MARKI                                  : i32 = 2501;
-pub const MSK_RES_ERR_INV_MARKJ                                  : i32 = 2502;
-pub const MSK_RES_ERR_INV_NAME_ITEM                              : i32 = 1280;
-pub const MSK_RES_ERR_INV_NUMI                                   : i32 = 2503;
-pub const MSK_RES_ERR_INV_NUMJ                                   : i32 = 2504;
-pub const MSK_RES_ERR_INV_OPTIMIZER                              : i32 = 1550;
-pub const MSK_RES_ERR_INV_PROBLEM                                : i32 = 1500;
-pub const MSK_RES_ERR_INV_QCON_SUBI                              : i32 = 1405;
-pub const MSK_RES_ERR_INV_QCON_SUBJ                              : i32 = 1406;
-pub const MSK_RES_ERR_INV_QCON_SUBK                              : i32 = 1404;
-pub const MSK_RES_ERR_INV_QCON_VAL                               : i32 = 1407;
-pub const MSK_RES_ERR_INV_QOBJ_SUBI                              : i32 = 1401;
-pub const MSK_RES_ERR_INV_QOBJ_SUBJ                              : i32 = 1402;
-pub const MSK_RES_ERR_INV_QOBJ_VAL                               : i32 = 1403;
-pub const MSK_RES_ERR_INV_SK                                     : i32 = 1270;
-pub const MSK_RES_ERR_INV_SK_STR                                 : i32 = 1269;
-pub const MSK_RES_ERR_INV_SKC                                    : i32 = 1267;
-pub const MSK_RES_ERR_INV_SKN                                    : i32 = 1274;
-pub const MSK_RES_ERR_INV_SKX                                    : i32 = 1268;
-pub const MSK_RES_ERR_INV_VAR_TYPE                               : i32 = 1258;
-pub const MSK_RES_ERR_INVALID_AIJ                                : i32 = 1473;
-pub const MSK_RES_ERR_INVALID_AMPL_STUB                          : i32 = 3700;
-pub const MSK_RES_ERR_INVALID_BARVAR_NAME                        : i32 = 1079;
-pub const MSK_RES_ERR_INVALID_COMPRESSION                        : i32 = 1800;
-pub const MSK_RES_ERR_INVALID_CON_NAME                           : i32 = 1076;
-pub const MSK_RES_ERR_INVALID_CONE_NAME                          : i32 = 1078;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX               : i32 = 4001;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES              : i32 = 4005;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS   : i32 = 4003;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR          : i32 = 4010;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS : i32 = 4002;
-pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT            : i32 = 4000;
-pub const MSK_RES_ERR_INVALID_FILE_NAME                          : i32 = 1056;
-pub const MSK_RES_ERR_INVALID_FORMAT_TYPE                        : i32 = 1283;
-pub const MSK_RES_ERR_INVALID_IDX                                : i32 = 1246;
-pub const MSK_RES_ERR_INVALID_IOMODE                             : i32 = 1801;
-pub const MSK_RES_ERR_INVALID_MAX_NUM                            : i32 = 1247;
-pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE                   : i32 = 1170;
-pub const MSK_RES_ERR_INVALID_OBJ_NAME                           : i32 = 1075;
-pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE                    : i32 = 1445;
-pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE                       : i32 = 6000;
-pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME                      : i32 = 1057;
-pub const MSK_RES_ERR_INVALID_STREAM                             : i32 = 1062;
-pub const MSK_RES_ERR_INVALID_SURPLUS                            : i32 = 1275;
-pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM                        : i32 = 3950;
-pub const MSK_RES_ERR_INVALID_TASK                               : i32 = 1064;
-pub const MSK_RES_ERR_INVALID_UTF8                               : i32 = 2900;
-pub const MSK_RES_ERR_INVALID_VAR_NAME                           : i32 = 1077;
-pub const MSK_RES_ERR_INVALID_WCHAR                              : i32 = 2901;
-pub const MSK_RES_ERR_INVALID_WHICHSOL                           : i32 = 1228;
-pub const MSK_RES_ERR_JSON_DATA                                  : i32 = 1179;
-pub const MSK_RES_ERR_JSON_FORMAT                                : i32 = 1178;
-pub const MSK_RES_ERR_JSON_MISSING_DATA                          : i32 = 1180;
-pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW                       : i32 = 1177;
-pub const MSK_RES_ERR_JSON_STRING                                : i32 = 1176;
-pub const MSK_RES_ERR_JSON_SYNTAX                                : i32 = 1175;
-pub const MSK_RES_ERR_LAST                                       : i32 = 1571;
-pub const MSK_RES_ERR_LASTI                                      : i32 = 1286;
-pub const MSK_RES_ERR_LASTJ                                      : i32 = 1288;
-pub const MSK_RES_ERR_LAU_ARG_K                                  : i32 = 7012;
-pub const MSK_RES_ERR_LAU_ARG_M                                  : i32 = 7010;
-pub const MSK_RES_ERR_LAU_ARG_N                                  : i32 = 7011;
-pub const MSK_RES_ERR_LAU_ARG_TRANS                              : i32 = 7018;
-pub const MSK_RES_ERR_LAU_ARG_TRANSA                             : i32 = 7015;
-pub const MSK_RES_ERR_LAU_ARG_TRANSB                             : i32 = 7016;
-pub const MSK_RES_ERR_LAU_ARG_UPLO                               : i32 = 7017;
-pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX        : i32 = 7002;
-pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX        : i32 = 7019;
-pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE                  : i32 = 7001;
-pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX                        : i32 = 7000;
-pub const MSK_RES_ERR_LAU_UNKNOWN                                : i32 = 7005;
-pub const MSK_RES_ERR_LICENSE                                    : i32 = 1000;
-pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE                    : i32 = 1020;
-pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT                     : i32 = 1021;
-pub const MSK_RES_ERR_LICENSE_EXPIRED                            : i32 = 1001;
-pub const MSK_RES_ERR_LICENSE_FEATURE                            : i32 = 1018;
-pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID                     : i32 = 1025;
-pub const MSK_RES_ERR_LICENSE_MAX                                : i32 = 1016;
-pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON                     : i32 = 1017;
-pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE                     : i32 = 1028;
-pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT                  : i32 = 1027;
-pub const MSK_RES_ERR_LICENSE_SERVER                             : i32 = 1015;
-pub const MSK_RES_ERR_LICENSE_SERVER_VERSION                     : i32 = 1026;
-pub const MSK_RES_ERR_LICENSE_VERSION                            : i32 = 1002;
-pub const MSK_RES_ERR_LINK_FILE_DLL                              : i32 = 1040;
-pub const MSK_RES_ERR_LIVING_TASKS                               : i32 = 1066;
-pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN                       : i32 = 1390;
-pub const MSK_RES_ERR_LP_DUP_SLACK_NAME                          : i32 = 1152;
-pub const MSK_RES_ERR_LP_EMPTY                                   : i32 = 1151;
-pub const MSK_RES_ERR_LP_FILE_FORMAT                             : i32 = 1157;
-pub const MSK_RES_ERR_LP_FORMAT                                  : i32 = 1160;
-pub const MSK_RES_ERR_LP_FREE_CONSTRAINT                         : i32 = 1155;
-pub const MSK_RES_ERR_LP_INCOMPATIBLE                            : i32 = 1150;
-pub const MSK_RES_ERR_LP_INVALID_CON_NAME                        : i32 = 1171;
-pub const MSK_RES_ERR_LP_INVALID_VAR_NAME                        : i32 = 1154;
-pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM                     : i32 = 1163;
-pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM                      : i32 = 1164;
-pub const MSK_RES_ERR_LU_MAX_NUM_TRIES                           : i32 = 2800;
-pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL                       : i32 = 1289;
-pub const MSK_RES_ERR_MAXNUMBARVAR                               : i32 = 1242;
-pub const MSK_RES_ERR_MAXNUMCON                                  : i32 = 1240;
-pub const MSK_RES_ERR_MAXNUMCONE                                 : i32 = 1304;
-pub const MSK_RES_ERR_MAXNUMQNZ                                  : i32 = 1243;
-pub const MSK_RES_ERR_MAXNUMVAR                                  : i32 = 1241;
-pub const MSK_RES_ERR_MIO_INTERNAL                               : i32 = 5010;
-pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER                 : i32 = 7701;
-pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER                 : i32 = 7700;
-pub const MSK_RES_ERR_MIO_NO_OPTIMIZER                           : i32 = 1551;
-pub const MSK_RES_ERR_MISSING_LICENSE_FILE                       : i32 = 1008;
-pub const MSK_RES_ERR_MIXED_CONIC_AND_NL                         : i32 = 1501;
-pub const MSK_RES_ERR_MPS_CONE_OVERLAP                           : i32 = 1118;
-pub const MSK_RES_ERR_MPS_CONE_REPEAT                            : i32 = 1119;
-pub const MSK_RES_ERR_MPS_CONE_TYPE                              : i32 = 1117;
-pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT                    : i32 = 1121;
-pub const MSK_RES_ERR_MPS_FILE                                   : i32 = 1100;
-pub const MSK_RES_ERR_MPS_INV_BOUND_KEY                          : i32 = 1108;
-pub const MSK_RES_ERR_MPS_INV_CON_KEY                            : i32 = 1107;
-pub const MSK_RES_ERR_MPS_INV_FIELD                              : i32 = 1101;
-pub const MSK_RES_ERR_MPS_INV_MARKER                             : i32 = 1102;
-pub const MSK_RES_ERR_MPS_INV_SEC_NAME                           : i32 = 1109;
-pub const MSK_RES_ERR_MPS_INV_SEC_ORDER                          : i32 = 1115;
-pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME                       : i32 = 1128;
-pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE                       : i32 = 1122;
-pub const MSK_RES_ERR_MPS_MUL_CON_NAME                           : i32 = 1112;
-pub const MSK_RES_ERR_MPS_MUL_CSEC                               : i32 = 1116;
-pub const MSK_RES_ERR_MPS_MUL_QOBJ                               : i32 = 1114;
-pub const MSK_RES_ERR_MPS_MUL_QSEC                               : i32 = 1113;
-pub const MSK_RES_ERR_MPS_NO_OBJECTIVE                           : i32 = 1110;
-pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q                        : i32 = 1120;
-pub const MSK_RES_ERR_MPS_NULL_CON_NAME                          : i32 = 1103;
-pub const MSK_RES_ERR_MPS_NULL_VAR_NAME                          : i32 = 1104;
-pub const MSK_RES_ERR_MPS_SPLITTED_VAR                           : i32 = 1111;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2                          : i32 = 1125;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                          : i32 = 1126;
-pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                          : i32 = 1127;
-pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                         : i32 = 1105;
-pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                         : i32 = 1106;
-pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE          : i32 = 7750;
-pub const MSK_RES_ERR_MUL_A_ELEMENT                              : i32 = 1254;
-pub const MSK_RES_ERR_NAME_IS_NULL                               : i32 = 1760;
-pub const MSK_RES_ERR_NAME_MAX_LEN                               : i32 = 1750;
-pub const MSK_RES_ERR_NAN_IN_BLC                                 : i32 = 1461;
-pub const MSK_RES_ERR_NAN_IN_BLX                                 : i32 = 1471;
-pub const MSK_RES_ERR_NAN_IN_BUC                                 : i32 = 1462;
-pub const MSK_RES_ERR_NAN_IN_BUX                                 : i32 = 1472;
-pub const MSK_RES_ERR_NAN_IN_C                                   : i32 = 1470;
-pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA                         : i32 = 1450;
-pub const MSK_RES_ERR_NEGATIVE_APPEND                            : i32 = 1578;
-pub const MSK_RES_ERR_NEGATIVE_SURPLUS                           : i32 = 1573;
-pub const MSK_RES_ERR_NEWER_DLL                                  : i32 = 1036;
-pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION                       : i32 = 3916;
-pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION                       : i32 = 3915;
-pub const MSK_RES_ERR_NO_BASIS_SOL                               : i32 = 1600;
-pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL                        : i32 = 2950;
-pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER                         : i32 = 2001;
-pub const MSK_RES_ERR_NO_INIT_ENV                                : i32 = 1063;
-pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE                      : i32 = 1552;
-pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER                       : i32 = 2000;
-pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL                         : i32 = 2953;
-pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK                    : i32 = 2500;
-pub const MSK_RES_ERR_NON_UNIQUE_ARRAY                           : i32 = 5000;
-pub const MSK_RES_ERR_NONCONVEX                                  : i32 = 1291;
-pub const MSK_RES_ERR_NONLINEAR_EQUALITY                         : i32 = 1290;
-pub const MSK_RES_ERR_NONLINEAR_RANGED                           : i32 = 1292;
-pub const MSK_RES_ERR_NULL_ENV                                   : i32 = 1060;
-pub const MSK_RES_ERR_NULL_POINTER                               : i32 = 1065;
-pub const MSK_RES_ERR_NULL_TASK                                  : i32 = 1061;
-pub const MSK_RES_ERR_NUM_ARGUMENTS                              : i32 = 1199;
-pub const MSK_RES_ERR_NUMCONLIM                                  : i32 = 1250;
-pub const MSK_RES_ERR_NUMVARLIM                                  : i32 = 1251;
-pub const MSK_RES_ERR_OBJ_Q_NOT_NSD                              : i32 = 1296;
-pub const MSK_RES_ERR_OBJ_Q_NOT_PSD                              : i32 = 1295;
-pub const MSK_RES_ERR_OBJECTIVE_RANGE                            : i32 = 1260;
-pub const MSK_RES_ERR_OLDER_DLL                                  : i32 = 1035;
-pub const MSK_RES_ERR_OPF_FORMAT                                 : i32 = 1168;
-pub const MSK_RES_ERR_OPF_NEW_VARIABLE                           : i32 = 1169;
-pub const MSK_RES_ERR_OPF_PREMATURE_EOF                          : i32 = 1172;
-pub const MSK_RES_ERR_OPTIMIZER_LICENSE                          : i32 = 1013;
-pub const MSK_RES_ERR_OVERFLOW                                   : i32 = 1590;
-pub const MSK_RES_ERR_PARAM_INDEX                                : i32 = 1210;
-pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE                         : i32 = 1215;
-pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL                         : i32 = 1216;
-pub const MSK_RES_ERR_PARAM_NAME                                 : i32 = 1205;
-pub const MSK_RES_ERR_PARAM_NAME_DOU                             : i32 = 1206;
-pub const MSK_RES_ERR_PARAM_NAME_INT                             : i32 = 1207;
-pub const MSK_RES_ERR_PARAM_NAME_STR                             : i32 = 1208;
-pub const MSK_RES_ERR_PARAM_TYPE                                 : i32 = 1218;
-pub const MSK_RES_ERR_PARAM_VALUE_STR                            : i32 = 1217;
-pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED                      : i32 = 1019;
-pub const MSK_RES_ERR_POSTSOLVE                                  : i32 = 1580;
-pub const MSK_RES_ERR_PRO_ITEM                                   : i32 = 1281;
-pub const MSK_RES_ERR_PROB_LICENSE                               : i32 = 1006;
-pub const MSK_RES_ERR_PTF_FORMAT                                 : i32 = 1167;
-pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE                        : i32 = 1409;
-pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL                        : i32 = 1408;
-pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE                        : i32 = 1417;
-pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE                        : i32 = 1415;
-pub const MSK_RES_ERR_READ_FORMAT                                : i32 = 1090;
-pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG                    : i32 = 1159;
-pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME                   : i32 = 1162;
-pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE                       : i32 = 1310;
-pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM                     : i32 = 1710;
-pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED                 : i32 = 1711;
-pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO                       : i32 = 3054;
-pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP                       : i32 = 3053;
-pub const MSK_RES_ERR_SEN_FORMAT                                 : i32 = 3050;
-pub const MSK_RES_ERR_SEN_INDEX_INVALID                          : i32 = 3055;
-pub const MSK_RES_ERR_SEN_INDEX_RANGE                            : i32 = 3052;
-pub const MSK_RES_ERR_SEN_INVALID_REGEXP                         : i32 = 3056;
-pub const MSK_RES_ERR_SEN_NUMERICAL                              : i32 = 3058;
-pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
-pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
-pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
-pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN                        : i32 = 8007;
-pub const MSK_RES_ERR_SERVER_ADDRESS                             : i32 = 8004;
-pub const MSK_RES_ERR_SERVER_CERTIFICATE                         : i32 = 8005;
-pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
-pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
-pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
-pub const MSK_RES_ERR_SERVER_TLS_CLIENT                          : i32 = 8006;
-pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
-pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE                         : i32 = 1202;
-pub const MSK_RES_ERR_SIZE_LICENSE                               : i32 = 1005;
-pub const MSK_RES_ERR_SIZE_LICENSE_CON                           : i32 = 1010;
-pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR                        : i32 = 1012;
-pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES                      : i32 = 3900;
-pub const MSK_RES_ERR_SIZE_LICENSE_VAR                           : i32 = 1011;
-pub const MSK_RES_ERR_SLICE_SIZE                                 : i32 = 1572;
-pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER                    : i32 = 1350;
-pub const MSK_RES_ERR_SOLITEM                                    : i32 = 1237;
-pub const MSK_RES_ERR_SOLVER_PROBTYPE                            : i32 = 1259;
-pub const MSK_RES_ERR_SPACE                                      : i32 = 1051;
-pub const MSK_RES_ERR_SPACE_LEAKING                              : i32 = 1080;
-pub const MSK_RES_ERR_SPACE_NO_INFO                              : i32 = 1081;
-pub const MSK_RES_ERR_SYM_MAT_DUPLICATE                          : i32 = 3944;
-pub const MSK_RES_ERR_SYM_MAT_HUGE                               : i32 = 1482;
-pub const MSK_RES_ERR_SYM_MAT_INVALID                            : i32 = 1480;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX                  : i32 = 3941;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX                  : i32 = 3940;
-pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE                      : i32 = 3943;
-pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR                : i32 = 3942;
-pub const MSK_RES_ERR_TASK_INCOMPATIBLE                          : i32 = 2560;
-pub const MSK_RES_ERR_TASK_INVALID                               : i32 = 2561;
-pub const MSK_RES_ERR_TASK_WRITE                                 : i32 = 2562;
-pub const MSK_RES_ERR_THREAD_COND_INIT                           : i32 = 1049;
-pub const MSK_RES_ERR_THREAD_CREATE                              : i32 = 1048;
-pub const MSK_RES_ERR_THREAD_MUTEX_INIT                          : i32 = 1045;
-pub const MSK_RES_ERR_THREAD_MUTEX_LOCK                          : i32 = 1046;
-pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK                        : i32 = 1047;
-pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC                   : i32 = 7803;
-pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD                   : i32 = 7800;
-pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX                      : i32 = 7801;
-pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA                      : i32 = 7802;
-pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD                  : i32 = 7804;
-pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE               : i32 = 1421;
-pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ                       : i32 = 1245;
-pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ                        : i32 = 1252;
-pub const MSK_RES_ERR_UNB_STEP_SIZE                              : i32 = 3100;
-pub const MSK_RES_ERR_UNDEF_SOLUTION                             : i32 = 1265;
-pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE                  : i32 = 1446;
-pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS                  : i32 = 6010;
-pub const MSK_RES_ERR_UNKNOWN                                    : i32 = 1050;
-pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN                       : i32 = 1391;
-pub const MSK_RES_ERR_UPPER_TRIANGLE                             : i32 = 6020;
-pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED                      : i32 = 1238;
-pub const MSK_RES_ERR_WHICHSOL                                   : i32 = 1236;
-pub const MSK_RES_ERR_WRITE_LP_FORMAT                            : i32 = 1158;
-pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME                   : i32 = 1161;
-pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME                     : i32 = 1153;
-pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME                 : i32 = 1156;
-pub const MSK_RES_ERR_WRITING_FILE                               : i32 = 1166;
-pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE                   : i32 = 3600;
-pub const MSK_RES_ERR_Y_IS_UNDEFINED                             : i32 = 1449;
-pub const MSK_RES_OK                                             : i32 = 0;
-pub const MSK_RES_TRM_INTERNAL                                   : i32 = 10030;
-pub const MSK_RES_TRM_INTERNAL_STOP                              : i32 = 10031;
-pub const MSK_RES_TRM_MAX_ITERATIONS                             : i32 = 10000;
-pub const MSK_RES_TRM_MAX_NUM_SETBACKS                           : i32 = 10020;
-pub const MSK_RES_TRM_MAX_TIME                                   : i32 = 10001;
-pub const MSK_RES_TRM_MIO_NUM_BRANCHES                           : i32 = 10009;
-pub const MSK_RES_TRM_MIO_NUM_RELAXS                             : i32 = 10008;
-pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS                  : i32 = 10015;
-pub const MSK_RES_TRM_NUMERICAL_PROBLEM                          : i32 = 10025;
-pub const MSK_RES_TRM_OBJECTIVE_RANGE                            : i32 = 10002;
-pub const MSK_RES_TRM_STALL                                      : i32 = 10006;
-pub const MSK_RES_TRM_USER_CALLBACK                              : i32 = 10007;
-pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS                      : i32 = 904;
-pub const MSK_RES_WRN_ANA_C_ZERO                                 : i32 = 901;
-pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS                           : i32 = 903;
-pub const MSK_RES_WRN_ANA_EMPTY_COLS                             : i32 = 902;
-pub const MSK_RES_WRN_ANA_LARGE_BOUNDS                           : i32 = 900;
-pub const MSK_RES_WRN_DROPPED_NZ_QOBJ                            : i32 = 201;
-pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES                : i32 = 852;
-pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES                       : i32 = 853;
-pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES                 : i32 = 850;
-pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES                   : i32 = 851;
-pub const MSK_RES_WRN_ELIMINATOR_SPACE                           : i32 = 801;
-pub const MSK_RES_WRN_EMPTY_NAME                                 : i32 = 502;
-pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO     : i32 = 932;
-pub const MSK_RES_WRN_IGNORE_INTEGER                             : i32 = 250;
-pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800;
-pub const MSK_RES_WRN_INVALID_MPS_NAME                           : i32 = 504;
-pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                       : i32 = 505;
-pub const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62;
-pub const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51;
-pub const MSK_RES_WRN_LARGE_CJ                                   : i32 = 57;
-pub const MSK_RES_WRN_LARGE_CON_FX                               : i32 = 54;
-pub const MSK_RES_WRN_LARGE_LO_BOUND                             : i32 = 52;
-pub const MSK_RES_WRN_LARGE_UP_BOUND                             : i32 = 53;
-pub const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500;
-pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 509;
-pub const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501;
-pub const MSK_RES_WRN_LP_DROP_VARIABLE                           : i32 = 85;
-pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                         : i32 = 80;
-pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL                       : i32 = 270;
-pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR                       : i32 = 72;
-pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR                       : i32 = 71;
-pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR                       : i32 = 70;
-pub const MSK_RES_WRN_NAME_MAX_LEN                               : i32 = 65;
-pub const MSK_RES_WRN_NO_DUALIZER                                : i32 = 950;
-pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER                        : i32 = 251;
-pub const MSK_RES_WRN_NZ_IN_UPR_TRI                              : i32 = 200;
-pub const MSK_RES_WRN_OPEN_PARAM_FILE                            : i32 = 50;
-pub const MSK_RES_WRN_PARAM_IGNORED_CMIO                         : i32 = 516;
-pub const MSK_RES_WRN_PARAM_NAME_DOU                             : i32 = 510;
-pub const MSK_RES_WRN_PARAM_NAME_INT                             : i32 = 511;
-pub const MSK_RES_WRN_PARAM_NAME_STR                             : i32 = 512;
-pub const MSK_RES_WRN_PARAM_STR_VALUE                            : i32 = 515;
-pub const MSK_RES_WRN_POW_CONES_WITH_ROOT_FIXED_AT_ZERO          : i32 = 933;
-pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE                        : i32 = 802;
-pub const MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO         : i32 = 930;
-pub const MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO        : i32 = 931;
-pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON                       : i32 = 351;
-pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR                       : i32 = 352;
-pub const MSK_RES_WRN_SOL_FILTER                                 : i32 = 300;
-pub const MSK_RES_WRN_SPAR_MAX_LEN                               : i32 = 66;
-pub const MSK_RES_WRN_SYM_MAT_LARGE                              : i32 = 960;
-pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS                         : i32 = 400;
-pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS                        : i32 = 405;
-pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME                        : i32 = 350;
-pub const MSK_RES_WRN_USING_GENERIC_NAMES                        : i32 = 503;
-pub const MSK_RES_WRN_WRITE_CHANGED_NAMES                        : i32 = 803;
-pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX                       : i32 = 804;
-pub const MSK_RES_WRN_ZERO_AIJ                                   : i32 = 63;
-pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL                        : i32 = 710;
-pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW                        : i32 = 705;
+pub const MSK_RES_ERR_ACC_AFE_DOMAIN_MISMATCH                          : i32 = 20601;
+pub const MSK_RES_ERR_ACC_INVALID_INDEX                                : i32 = 20600;
+pub const MSK_RES_ERR_AD_INVALID_CODELIST                              : i32 = 3102;
+pub const MSK_RES_ERR_AFE_INVALID_INDEX                                : i32 = 20500;
+pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL                              : i32 = 3001;
+pub const MSK_RES_ERR_API_CB_CONNECT                                   : i32 = 3002;
+pub const MSK_RES_ERR_API_FATAL_ERROR                                  : i32 = 3005;
+pub const MSK_RES_ERR_API_INTERNAL                                     : i32 = 3999;
+pub const MSK_RES_ERR_APPENDING_TOO_BIG_CONE                           : i32 = 1311;
+pub const MSK_RES_ERR_ARG_IS_TOO_LARGE                                 : i32 = 1227;
+pub const MSK_RES_ERR_ARG_IS_TOO_SMALL                                 : i32 = 1226;
+pub const MSK_RES_ERR_ARGUMENT_DIMENSION                               : i32 = 1201;
+pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE                            : i32 = 5005;
+pub const MSK_RES_ERR_ARGUMENT_LENNEQ                                  : i32 = 1197;
+pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY                              : i32 = 1299;
+pub const MSK_RES_ERR_ARGUMENT_TYPE                                    : i32 = 1198;
+pub const MSK_RES_ERR_BAR_VAR_DIM                                      : i32 = 3920;
+pub const MSK_RES_ERR_BASIS                                            : i32 = 1266;
+pub const MSK_RES_ERR_BASIS_FACTOR                                     : i32 = 1610;
+pub const MSK_RES_ERR_BASIS_SINGULAR                                   : i32 = 1615;
+pub const MSK_RES_ERR_BLANK_NAME                                       : i32 = 1070;
+pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                             : i32 = 7116;
+pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                             : i32 = 7115;
+pub const MSK_RES_ERR_CBF_DUPLICATE_CON                                : i32 = 7108;
+pub const MSK_RES_ERR_CBF_DUPLICATE_INT                                : i32 = 7110;
+pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ                                : i32 = 7107;
+pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD                          : i32 = 7114;
+pub const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES                          : i32 = 7130;
+pub const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES                     : i32 = 7131;
+pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR                             : i32 = 7123;
+pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                                : i32 = 7109;
+pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                             : i32 = 7112;
+pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES                   : i32 = 7741;
+pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION                     : i32 = 7113;
+pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION                        : i32 = 7126;
+pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX                            : i32 = 7121;
+pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES                      : i32 = 7740;
+pub const MSK_RES_ERR_CBF_INVALID_POWER                                : i32 = 7132;
+pub const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX                     : i32 = 7134;
+pub const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX                : i32 = 7135;
+pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION                     : i32 = 7124;
+pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                             : i32 = 7111;
+pub const MSK_RES_ERR_CBF_NO_VARIABLES                                 : i32 = 7102;
+pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED                         : i32 = 7105;
+pub const MSK_RES_ERR_CBF_OBJ_SENSE                                    : i32 = 7101;
+pub const MSK_RES_ERR_CBF_PARSE                                        : i32 = 7100;
+pub const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG                       : i32 = 7133;
+pub const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH                          : i32 = 7138;
+pub const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH                     : i32 = 7139;
+pub const MSK_RES_ERR_CBF_SYNTAX                                       : i32 = 7106;
+pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS                          : i32 = 7118;
+pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                                 : i32 = 7119;
+pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR                               : i32 = 7125;
+pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES                            : i32 = 7117;
+pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS                         : i32 = 7103;
+pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                                : i32 = 7120;
+pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES                           : i32 = 7104;
+pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE                    : i32 = 7136;
+pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE               : i32 = 7137;
+pub const MSK_RES_ERR_CBF_UNSUPPORTED                                  : i32 = 7122;
+pub const MSK_RES_ERR_CON_Q_NOT_NSD                                    : i32 = 1294;
+pub const MSK_RES_ERR_CON_Q_NOT_PSD                                    : i32 = 1293;
+pub const MSK_RES_ERR_CONE_INDEX                                       : i32 = 1300;
+pub const MSK_RES_ERR_CONE_OVERLAP                                     : i32 = 1302;
+pub const MSK_RES_ERR_CONE_OVERLAP_APPEND                              : i32 = 1307;
+pub const MSK_RES_ERR_CONE_PARAMETER                                   : i32 = 1320;
+pub const MSK_RES_ERR_CONE_REP_VAR                                     : i32 = 1303;
+pub const MSK_RES_ERR_CONE_SIZE                                        : i32 = 1301;
+pub const MSK_RES_ERR_CONE_TYPE                                        : i32 = 1305;
+pub const MSK_RES_ERR_CONE_TYPE_STR                                    : i32 = 1306;
+pub const MSK_RES_ERR_DATA_FILE_EXT                                    : i32 = 1055;
+pub const MSK_RES_ERR_DJC_AFE_DOMAIN_MISMATCH                          : i32 = 20702;
+pub const MSK_RES_ERR_DJC_DOMAIN_TERMSIZE_MISMATCH                     : i32 = 20704;
+pub const MSK_RES_ERR_DJC_INVALID_INDEX                                : i32 = 20700;
+pub const MSK_RES_ERR_DJC_INVALID_TERM_SIZE                            : i32 = 20703;
+pub const MSK_RES_ERR_DJC_UNSUPPORTED_DOMAIN_TYPE                      : i32 = 20701;
+pub const MSK_RES_ERR_DOMAIN_DIMENSION                                 : i32 = 20402;
+pub const MSK_RES_ERR_DOMAIN_DIMENSION_PSD                             : i32 = 20403;
+pub const MSK_RES_ERR_DOMAIN_INVALID_INDEX                             : i32 = 20400;
+pub const MSK_RES_ERR_DOMAIN_TO_32BIT_CAST                             : i32 = 20401;
+pub const MSK_RES_ERR_DUP_NAME                                         : i32 = 1071;
+pub const MSK_RES_ERR_DUPLICATE_AIJ                                    : i32 = 1385;
+pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES                      : i32 = 4502;
+pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES                             : i32 = 4503;
+pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES                       : i32 = 4500;
+pub const MSK_RES_ERR_DUPLICATE_DJC_NAMES                              : i32 = 4505;
+pub const MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES                           : i32 = 4504;
+pub const MSK_RES_ERR_DUPLICATE_FIJ                                    : i32 = 20100;
+pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES                         : i32 = 4501;
+pub const MSK_RES_ERR_END_OF_FILE                                      : i32 = 1059;
+pub const MSK_RES_ERR_FACTOR                                           : i32 = 1650;
+pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX                          : i32 = 1700;
+pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND                    : i32 = 1702;
+pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED                       : i32 = 1701;
+pub const MSK_RES_ERR_FILE_LICENSE                                     : i32 = 1007;
+pub const MSK_RES_ERR_FILE_OPEN                                        : i32 = 1052;
+pub const MSK_RES_ERR_FILE_READ                                        : i32 = 1053;
+pub const MSK_RES_ERR_FILE_WRITE                                       : i32 = 1054;
+pub const MSK_RES_ERR_FINAL_SOLUTION                                   : i32 = 1560;
+pub const MSK_RES_ERR_FIRST                                            : i32 = 1570;
+pub const MSK_RES_ERR_FIRSTI                                           : i32 = 1285;
+pub const MSK_RES_ERR_FIRSTJ                                           : i32 = 1287;
+pub const MSK_RES_ERR_FIXED_BOUND_VALUES                               : i32 = 1420;
+pub const MSK_RES_ERR_FLEXLM                                           : i32 = 1014;
+pub const MSK_RES_ERR_FORMAT_STRING                                    : i32 = 1072;
+pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM                         : i32 = 1503;
+pub const MSK_RES_ERR_HUGE_AIJ                                         : i32 = 1380;
+pub const MSK_RES_ERR_HUGE_C                                           : i32 = 1375;
+pub const MSK_RES_ERR_HUGE_FIJ                                         : i32 = 20102;
+pub const MSK_RES_ERR_IDENTICAL_TASKS                                  : i32 = 3101;
+pub const MSK_RES_ERR_IN_ARGUMENT                                      : i32 = 1200;
+pub const MSK_RES_ERR_INDEX                                            : i32 = 1235;
+pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE                           : i32 = 1222;
+pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL                           : i32 = 1221;
+pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                               : i32 = 1204;
+pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                               : i32 = 1203;
+pub const MSK_RES_ERR_INF_DOU_INDEX                                    : i32 = 1219;
+pub const MSK_RES_ERR_INF_DOU_NAME                                     : i32 = 1230;
+pub const MSK_RES_ERR_INF_INT_INDEX                                    : i32 = 1220;
+pub const MSK_RES_ERR_INF_INT_NAME                                     : i32 = 1231;
+pub const MSK_RES_ERR_INF_LINT_INDEX                                   : i32 = 1225;
+pub const MSK_RES_ERR_INF_LINT_NAME                                    : i32 = 1234;
+pub const MSK_RES_ERR_INF_TYPE                                         : i32 = 1232;
+pub const MSK_RES_ERR_INFEAS_UNDEFINED                                 : i32 = 3910;
+pub const MSK_RES_ERR_INFINITE_BOUND                                   : i32 = 1400;
+pub const MSK_RES_ERR_INT64_TO_INT32_CAST                              : i32 = 3800;
+pub const MSK_RES_ERR_INTERNAL                                         : i32 = 3000;
+pub const MSK_RES_ERR_INTERNAL_TEST_FAILED                             : i32 = 3500;
+pub const MSK_RES_ERR_INV_APTRE                                        : i32 = 1253;
+pub const MSK_RES_ERR_INV_BK                                           : i32 = 1255;
+pub const MSK_RES_ERR_INV_BKC                                          : i32 = 1256;
+pub const MSK_RES_ERR_INV_BKX                                          : i32 = 1257;
+pub const MSK_RES_ERR_INV_CONE_TYPE                                    : i32 = 1272;
+pub const MSK_RES_ERR_INV_CONE_TYPE_STR                                : i32 = 1271;
+pub const MSK_RES_ERR_INV_MARKI                                        : i32 = 2501;
+pub const MSK_RES_ERR_INV_MARKJ                                        : i32 = 2502;
+pub const MSK_RES_ERR_INV_NAME_ITEM                                    : i32 = 1280;
+pub const MSK_RES_ERR_INV_NUMI                                         : i32 = 2503;
+pub const MSK_RES_ERR_INV_NUMJ                                         : i32 = 2504;
+pub const MSK_RES_ERR_INV_OPTIMIZER                                    : i32 = 1550;
+pub const MSK_RES_ERR_INV_PROBLEM                                      : i32 = 1500;
+pub const MSK_RES_ERR_INV_QCON_SUBI                                    : i32 = 1405;
+pub const MSK_RES_ERR_INV_QCON_SUBJ                                    : i32 = 1406;
+pub const MSK_RES_ERR_INV_QCON_SUBK                                    : i32 = 1404;
+pub const MSK_RES_ERR_INV_QCON_VAL                                     : i32 = 1407;
+pub const MSK_RES_ERR_INV_QOBJ_SUBI                                    : i32 = 1401;
+pub const MSK_RES_ERR_INV_QOBJ_SUBJ                                    : i32 = 1402;
+pub const MSK_RES_ERR_INV_QOBJ_VAL                                     : i32 = 1403;
+pub const MSK_RES_ERR_INV_SK                                           : i32 = 1270;
+pub const MSK_RES_ERR_INV_SK_STR                                       : i32 = 1269;
+pub const MSK_RES_ERR_INV_SKC                                          : i32 = 1267;
+pub const MSK_RES_ERR_INV_SKN                                          : i32 = 1274;
+pub const MSK_RES_ERR_INV_SKX                                          : i32 = 1268;
+pub const MSK_RES_ERR_INV_VAR_TYPE                                     : i32 = 1258;
+pub const MSK_RES_ERR_INVALID_AIJ                                      : i32 = 1473;
+pub const MSK_RES_ERR_INVALID_AMPL_STUB                                : i32 = 3700;
+pub const MSK_RES_ERR_INVALID_BARVAR_NAME                              : i32 = 1079;
+pub const MSK_RES_ERR_INVALID_COMPRESSION                              : i32 = 1800;
+pub const MSK_RES_ERR_INVALID_CON_NAME                                 : i32 = 1076;
+pub const MSK_RES_ERR_INVALID_CONE_NAME                                : i32 = 1078;
+pub const MSK_RES_ERR_INVALID_FIJ                                      : i32 = 20101;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS : i32 = 4012;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX                     : i32 = 4001;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES                    : i32 = 4005;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS  : i32 = 4011;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS         : i32 = 4003;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR                : i32 = 4010;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS       : i32 = 4002;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT                  : i32 = 4000;
+pub const MSK_RES_ERR_INVALID_FILE_NAME                                : i32 = 1056;
+pub const MSK_RES_ERR_INVALID_FORMAT_TYPE                              : i32 = 1283;
+pub const MSK_RES_ERR_INVALID_IDX                                      : i32 = 1246;
+pub const MSK_RES_ERR_INVALID_IOMODE                                   : i32 = 1801;
+pub const MSK_RES_ERR_INVALID_MAX_NUM                                  : i32 = 1247;
+pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE                         : i32 = 1170;
+pub const MSK_RES_ERR_INVALID_OBJ_NAME                                 : i32 = 1075;
+pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE                          : i32 = 1445;
+pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE                             : i32 = 6000;
+pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME                            : i32 = 1057;
+pub const MSK_RES_ERR_INVALID_STREAM                                   : i32 = 1062;
+pub const MSK_RES_ERR_INVALID_SURPLUS                                  : i32 = 1275;
+pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM                              : i32 = 3950;
+pub const MSK_RES_ERR_INVALID_TASK                                     : i32 = 1064;
+pub const MSK_RES_ERR_INVALID_UTF8                                     : i32 = 2900;
+pub const MSK_RES_ERR_INVALID_VAR_NAME                                 : i32 = 1077;
+pub const MSK_RES_ERR_INVALID_WCHAR                                    : i32 = 2901;
+pub const MSK_RES_ERR_INVALID_WHICHSOL                                 : i32 = 1228;
+pub const MSK_RES_ERR_JSON_DATA                                        : i32 = 1179;
+pub const MSK_RES_ERR_JSON_FORMAT                                      : i32 = 1178;
+pub const MSK_RES_ERR_JSON_MISSING_DATA                                : i32 = 1180;
+pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW                             : i32 = 1177;
+pub const MSK_RES_ERR_JSON_STRING                                      : i32 = 1176;
+pub const MSK_RES_ERR_JSON_SYNTAX                                      : i32 = 1175;
+pub const MSK_RES_ERR_LAST                                             : i32 = 1571;
+pub const MSK_RES_ERR_LASTI                                            : i32 = 1286;
+pub const MSK_RES_ERR_LASTJ                                            : i32 = 1288;
+pub const MSK_RES_ERR_LAU_ARG_K                                        : i32 = 7012;
+pub const MSK_RES_ERR_LAU_ARG_M                                        : i32 = 7010;
+pub const MSK_RES_ERR_LAU_ARG_N                                        : i32 = 7011;
+pub const MSK_RES_ERR_LAU_ARG_TRANS                                    : i32 = 7018;
+pub const MSK_RES_ERR_LAU_ARG_TRANSA                                   : i32 = 7015;
+pub const MSK_RES_ERR_LAU_ARG_TRANSB                                   : i32 = 7016;
+pub const MSK_RES_ERR_LAU_ARG_UPLO                                     : i32 = 7017;
+pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX              : i32 = 7002;
+pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX              : i32 = 7019;
+pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE                        : i32 = 7001;
+pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX                              : i32 = 7000;
+pub const MSK_RES_ERR_LAU_UNKNOWN                                      : i32 = 7005;
+pub const MSK_RES_ERR_LICENSE                                          : i32 = 1000;
+pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE                          : i32 = 1020;
+pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT                           : i32 = 1021;
+pub const MSK_RES_ERR_LICENSE_EXPIRED                                  : i32 = 1001;
+pub const MSK_RES_ERR_LICENSE_FEATURE                                  : i32 = 1018;
+pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID                           : i32 = 1025;
+pub const MSK_RES_ERR_LICENSE_MAX                                      : i32 = 1016;
+pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON                           : i32 = 1017;
+pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE                           : i32 = 1028;
+pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT                        : i32 = 1027;
+pub const MSK_RES_ERR_LICENSE_SERVER                                   : i32 = 1015;
+pub const MSK_RES_ERR_LICENSE_SERVER_VERSION                           : i32 = 1026;
+pub const MSK_RES_ERR_LICENSE_VERSION                                  : i32 = 1002;
+pub const MSK_RES_ERR_LINK_FILE_DLL                                    : i32 = 1040;
+pub const MSK_RES_ERR_LIVING_TASKS                                     : i32 = 1066;
+pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN                             : i32 = 1390;
+pub const MSK_RES_ERR_LP_DUP_SLACK_NAME                                : i32 = 1152;
+pub const MSK_RES_ERR_LP_EMPTY                                         : i32 = 1151;
+pub const MSK_RES_ERR_LP_FILE_FORMAT                                   : i32 = 1157;
+pub const MSK_RES_ERR_LP_FORMAT                                        : i32 = 1160;
+pub const MSK_RES_ERR_LP_FREE_CONSTRAINT                               : i32 = 1155;
+pub const MSK_RES_ERR_LP_INCOMPATIBLE                                  : i32 = 1150;
+pub const MSK_RES_ERR_LP_INVALID_CON_NAME                              : i32 = 1171;
+pub const MSK_RES_ERR_LP_INVALID_VAR_NAME                              : i32 = 1154;
+pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM                           : i32 = 1163;
+pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM                            : i32 = 1164;
+pub const MSK_RES_ERR_LU_MAX_NUM_TRIES                                 : i32 = 2800;
+pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL                             : i32 = 1289;
+pub const MSK_RES_ERR_MAXNUMBARVAR                                     : i32 = 1242;
+pub const MSK_RES_ERR_MAXNUMCON                                        : i32 = 1240;
+pub const MSK_RES_ERR_MAXNUMCONE                                       : i32 = 1304;
+pub const MSK_RES_ERR_MAXNUMQNZ                                        : i32 = 1243;
+pub const MSK_RES_ERR_MAXNUMVAR                                        : i32 = 1241;
+pub const MSK_RES_ERR_MIO_INTERNAL                                     : i32 = 5010;
+pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER                       : i32 = 7701;
+pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER                       : i32 = 7700;
+pub const MSK_RES_ERR_MIO_NO_OPTIMIZER                                 : i32 = 1551;
+pub const MSK_RES_ERR_MISSING_LICENSE_FILE                             : i32 = 1008;
+pub const MSK_RES_ERR_MIXED_CONIC_AND_NL                               : i32 = 1501;
+pub const MSK_RES_ERR_MPS_CONE_OVERLAP                                 : i32 = 1118;
+pub const MSK_RES_ERR_MPS_CONE_REPEAT                                  : i32 = 1119;
+pub const MSK_RES_ERR_MPS_CONE_TYPE                                    : i32 = 1117;
+pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT                          : i32 = 1121;
+pub const MSK_RES_ERR_MPS_FILE                                         : i32 = 1100;
+pub const MSK_RES_ERR_MPS_INV_FIELD                                    : i32 = 1101;
+pub const MSK_RES_ERR_MPS_INV_MARKER                                   : i32 = 1102;
+pub const MSK_RES_ERR_MPS_INV_SEC_ORDER                                : i32 = 1115;
+pub const MSK_RES_ERR_MPS_INVALID_BOUND_KEY                            : i32 = 1108;
+pub const MSK_RES_ERR_MPS_INVALID_CON_KEY                              : i32 = 1107;
+pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_CONSTRAINT                 : i32 = 1130;
+pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT       : i32 = 1133;
+pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE                      : i32 = 1132;
+pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE                   : i32 = 1131;
+pub const MSK_RES_ERR_MPS_INVALID_KEY                                  : i32 = 1129;
+pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME                             : i32 = 1128;
+pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE                             : i32 = 1122;
+pub const MSK_RES_ERR_MPS_INVALID_SEC_NAME                             : i32 = 1109;
+pub const MSK_RES_ERR_MPS_MUL_CON_NAME                                 : i32 = 1112;
+pub const MSK_RES_ERR_MPS_MUL_CSEC                                     : i32 = 1116;
+pub const MSK_RES_ERR_MPS_MUL_QOBJ                                     : i32 = 1114;
+pub const MSK_RES_ERR_MPS_MUL_QSEC                                     : i32 = 1113;
+pub const MSK_RES_ERR_MPS_NO_OBJECTIVE                                 : i32 = 1110;
+pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q                              : i32 = 1120;
+pub const MSK_RES_ERR_MPS_NULL_CON_NAME                                : i32 = 1103;
+pub const MSK_RES_ERR_MPS_NULL_VAR_NAME                                : i32 = 1104;
+pub const MSK_RES_ERR_MPS_SPLITTED_VAR                                 : i32 = 1111;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2                                : i32 = 1125;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3                                : i32 = 1126;
+pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5                                : i32 = 1127;
+pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME                               : i32 = 1105;
+pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                               : i32 = 1106;
+pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE                : i32 = 7750;
+pub const MSK_RES_ERR_MUL_A_ELEMENT                                    : i32 = 1254;
+pub const MSK_RES_ERR_NAME_IS_NULL                                     : i32 = 1760;
+pub const MSK_RES_ERR_NAME_MAX_LEN                                     : i32 = 1750;
+pub const MSK_RES_ERR_NAN_IN_BLC                                       : i32 = 1461;
+pub const MSK_RES_ERR_NAN_IN_BLX                                       : i32 = 1471;
+pub const MSK_RES_ERR_NAN_IN_BUC                                       : i32 = 1462;
+pub const MSK_RES_ERR_NAN_IN_BUX                                       : i32 = 1472;
+pub const MSK_RES_ERR_NAN_IN_C                                         : i32 = 1470;
+pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA                               : i32 = 1450;
+pub const MSK_RES_ERR_NEGATIVE_APPEND                                  : i32 = 1578;
+pub const MSK_RES_ERR_NEGATIVE_SURPLUS                                 : i32 = 1573;
+pub const MSK_RES_ERR_NEWER_DLL                                        : i32 = 1036;
+pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION                             : i32 = 3916;
+pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION                             : i32 = 3915;
+pub const MSK_RES_ERR_NO_BASIS_SOL                                     : i32 = 1600;
+pub const MSK_RES_ERR_NO_DOTY                                          : i32 = 22010;
+pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL                              : i32 = 2950;
+pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER                               : i32 = 2001;
+pub const MSK_RES_ERR_NO_INIT_ENV                                      : i32 = 1063;
+pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE                            : i32 = 1552;
+pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER                             : i32 = 2000;
+pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL                               : i32 = 2953;
+pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK                          : i32 = 2500;
+pub const MSK_RES_ERR_NON_UNIQUE_ARRAY                                 : i32 = 5000;
+pub const MSK_RES_ERR_NONCONVEX                                        : i32 = 1291;
+pub const MSK_RES_ERR_NONLINEAR_EQUALITY                               : i32 = 1290;
+pub const MSK_RES_ERR_NONLINEAR_RANGED                                 : i32 = 1292;
+pub const MSK_RES_ERR_NULL_ENV                                         : i32 = 1060;
+pub const MSK_RES_ERR_NULL_POINTER                                     : i32 = 1065;
+pub const MSK_RES_ERR_NULL_TASK                                        : i32 = 1061;
+pub const MSK_RES_ERR_NUM_ARGUMENTS                                    : i32 = 1199;
+pub const MSK_RES_ERR_NUMCONLIM                                        : i32 = 1250;
+pub const MSK_RES_ERR_NUMVARLIM                                        : i32 = 1251;
+pub const MSK_RES_ERR_OBJ_Q_NOT_NSD                                    : i32 = 1296;
+pub const MSK_RES_ERR_OBJ_Q_NOT_PSD                                    : i32 = 1295;
+pub const MSK_RES_ERR_OBJECTIVE_RANGE                                  : i32 = 1260;
+pub const MSK_RES_ERR_OLDER_DLL                                        : i32 = 1035;
+pub const MSK_RES_ERR_OPF_FORMAT                                       : i32 = 1168;
+pub const MSK_RES_ERR_OPF_NEW_VARIABLE                                 : i32 = 1169;
+pub const MSK_RES_ERR_OPF_PREMATURE_EOF                                : i32 = 1172;
+pub const MSK_RES_ERR_OPTIMIZER_LICENSE                                : i32 = 1013;
+pub const MSK_RES_ERR_OVERFLOW                                         : i32 = 1590;
+pub const MSK_RES_ERR_PARAM_INDEX                                      : i32 = 1210;
+pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE                               : i32 = 1215;
+pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL                               : i32 = 1216;
+pub const MSK_RES_ERR_PARAM_NAME                                       : i32 = 1205;
+pub const MSK_RES_ERR_PARAM_NAME_DOU                                   : i32 = 1206;
+pub const MSK_RES_ERR_PARAM_NAME_INT                                   : i32 = 1207;
+pub const MSK_RES_ERR_PARAM_NAME_STR                                   : i32 = 1208;
+pub const MSK_RES_ERR_PARAM_TYPE                                       : i32 = 1218;
+pub const MSK_RES_ERR_PARAM_VALUE_STR                                  : i32 = 1217;
+pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED                            : i32 = 1019;
+pub const MSK_RES_ERR_POSTSOLVE                                        : i32 = 1580;
+pub const MSK_RES_ERR_PRO_ITEM                                         : i32 = 1281;
+pub const MSK_RES_ERR_PROB_LICENSE                                     : i32 = 1006;
+pub const MSK_RES_ERR_PTF_FORMAT                                       : i32 = 1167;
+pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE                              : i32 = 1409;
+pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL                              : i32 = 1408;
+pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE                              : i32 = 1417;
+pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE                              : i32 = 1415;
+pub const MSK_RES_ERR_READ_FORMAT                                      : i32 = 1090;
+pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG                          : i32 = 1159;
+pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME                         : i32 = 1162;
+pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE                             : i32 = 1310;
+pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM                           : i32 = 1710;
+pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED                       : i32 = 1711;
+pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO                             : i32 = 3054;
+pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP                             : i32 = 3053;
+pub const MSK_RES_ERR_SEN_FORMAT                                       : i32 = 3050;
+pub const MSK_RES_ERR_SEN_INDEX_INVALID                                : i32 = 3055;
+pub const MSK_RES_ERR_SEN_INDEX_RANGE                                  : i32 = 3052;
+pub const MSK_RES_ERR_SEN_INVALID_REGEXP                               : i32 = 3056;
+pub const MSK_RES_ERR_SEN_NUMERICAL                                    : i32 = 3058;
+pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                              : i32 = 3057;
+pub const MSK_RES_ERR_SEN_UNDEF_NAME                                   : i32 = 3051;
+pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                       : i32 = 3080;
+pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN                              : i32 = 8007;
+pub const MSK_RES_ERR_SERVER_ADDRESS                                   : i32 = 8004;
+pub const MSK_RES_ERR_SERVER_CERTIFICATE                               : i32 = 8005;
+pub const MSK_RES_ERR_SERVER_CONNECT                                   : i32 = 8000;
+pub const MSK_RES_ERR_SERVER_PROBLEM_SIZE                              : i32 = 8008;
+pub const MSK_RES_ERR_SERVER_PROTOCOL                                  : i32 = 8001;
+pub const MSK_RES_ERR_SERVER_STATUS                                    : i32 = 8002;
+pub const MSK_RES_ERR_SERVER_TLS_CLIENT                                : i32 = 8006;
+pub const MSK_RES_ERR_SERVER_TOKEN                                     : i32 = 8003;
+pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE                               : i32 = 1202;
+pub const MSK_RES_ERR_SIZE_LICENSE                                     : i32 = 1005;
+pub const MSK_RES_ERR_SIZE_LICENSE_CON                                 : i32 = 1010;
+pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR                              : i32 = 1012;
+pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES                            : i32 = 3900;
+pub const MSK_RES_ERR_SIZE_LICENSE_VAR                                 : i32 = 1011;
+pub const MSK_RES_ERR_SLICE_SIZE                                       : i32 = 1572;
+pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER                          : i32 = 1350;
+pub const MSK_RES_ERR_SOLITEM                                          : i32 = 1237;
+pub const MSK_RES_ERR_SOLVER_PROBTYPE                                  : i32 = 1259;
+pub const MSK_RES_ERR_SPACE                                            : i32 = 1051;
+pub const MSK_RES_ERR_SPACE_LEAKING                                    : i32 = 1080;
+pub const MSK_RES_ERR_SPACE_NO_INFO                                    : i32 = 1081;
+pub const MSK_RES_ERR_SYM_MAT_DUPLICATE                                : i32 = 3944;
+pub const MSK_RES_ERR_SYM_MAT_HUGE                                     : i32 = 1482;
+pub const MSK_RES_ERR_SYM_MAT_INVALID                                  : i32 = 1480;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX                        : i32 = 3941;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX                        : i32 = 3940;
+pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE                            : i32 = 3943;
+pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR                      : i32 = 3942;
+pub const MSK_RES_ERR_TASK_INCOMPATIBLE                                : i32 = 2560;
+pub const MSK_RES_ERR_TASK_INVALID                                     : i32 = 2561;
+pub const MSK_RES_ERR_TASK_WRITE                                       : i32 = 2562;
+pub const MSK_RES_ERR_THREAD_COND_INIT                                 : i32 = 1049;
+pub const MSK_RES_ERR_THREAD_CREATE                                    : i32 = 1048;
+pub const MSK_RES_ERR_THREAD_MUTEX_INIT                                : i32 = 1045;
+pub const MSK_RES_ERR_THREAD_MUTEX_LOCK                                : i32 = 1046;
+pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK                              : i32 = 1047;
+pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC                         : i32 = 7803;
+pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD                         : i32 = 7800;
+pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX                            : i32 = 7801;
+pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA                            : i32 = 7802;
+pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD                        : i32 = 7804;
+pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE                     : i32 = 1421;
+pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ                             : i32 = 1245;
+pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ                              : i32 = 1252;
+pub const MSK_RES_ERR_UNB_STEP_SIZE                                    : i32 = 3100;
+pub const MSK_RES_ERR_UNDEF_SOLUTION                                   : i32 = 22000;
+pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE                        : i32 = 1446;
+pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS                        : i32 = 6010;
+pub const MSK_RES_ERR_UNKNOWN                                          : i32 = 1050;
+pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN                             : i32 = 1391;
+pub const MSK_RES_ERR_UPPER_TRIANGLE                                   : i32 = 6020;
+pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED                            : i32 = 1238;
+pub const MSK_RES_ERR_WHICHSOL                                         : i32 = 1236;
+pub const MSK_RES_ERR_WRITE_LP_FORMAT                                  : i32 = 1158;
+pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME                         : i32 = 1161;
+pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME                           : i32 = 1153;
+pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME                       : i32 = 1156;
+pub const MSK_RES_ERR_WRITING_FILE                                     : i32 = 1166;
+pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE                         : i32 = 3600;
+pub const MSK_RES_ERR_Y_IS_UNDEFINED                                   : i32 = 1449;
+pub const MSK_RES_OK                                                   : i32 = 0;
+pub const MSK_RES_TRM_INTERNAL                                         : i32 = 100030;
+pub const MSK_RES_TRM_INTERNAL_STOP                                    : i32 = 100031;
+pub const MSK_RES_TRM_MAX_ITERATIONS                                   : i32 = 100000;
+pub const MSK_RES_TRM_MAX_NUM_SETBACKS                                 : i32 = 100020;
+pub const MSK_RES_TRM_MAX_TIME                                         : i32 = 100001;
+pub const MSK_RES_TRM_MIO_NUM_BRANCHES                                 : i32 = 100009;
+pub const MSK_RES_TRM_MIO_NUM_RELAXS                                   : i32 = 100008;
+pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS                        : i32 = 100015;
+pub const MSK_RES_TRM_NUMERICAL_PROBLEM                                : i32 = 100025;
+pub const MSK_RES_TRM_OBJECTIVE_RANGE                                  : i32 = 100002;
+pub const MSK_RES_TRM_STALL                                            : i32 = 100006;
+pub const MSK_RES_TRM_USER_CALLBACK                                    : i32 = 100007;
+pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS                            : i32 = 904;
+pub const MSK_RES_WRN_ANA_C_ZERO                                       : i32 = 901;
+pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS                                 : i32 = 903;
+pub const MSK_RES_WRN_ANA_EMPTY_COLS                                   : i32 = 902;
+pub const MSK_RES_WRN_ANA_LARGE_BOUNDS                                 : i32 = 900;
+pub const MSK_RES_WRN_DROPPED_NZ_QOBJ                                  : i32 = 201;
+pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES                      : i32 = 852;
+pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES                             : i32 = 853;
+pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES                       : i32 = 850;
+pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES                         : i32 = 851;
+pub const MSK_RES_WRN_ELIMINATOR_SPACE                                 : i32 = 801;
+pub const MSK_RES_WRN_EMPTY_NAME                                       : i32 = 502;
+pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO           : i32 = 932;
+pub const MSK_RES_WRN_IGNORE_INTEGER                                   : i32 = 250;
+pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK               : i32 = 800;
+pub const MSK_RES_WRN_INVALID_MPS_NAME                                 : i32 = 504;
+pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                             : i32 = 505;
+pub const MSK_RES_WRN_LARGE_AIJ                                        : i32 = 62;
+pub const MSK_RES_WRN_LARGE_BOUND                                      : i32 = 51;
+pub const MSK_RES_WRN_LARGE_CJ                                         : i32 = 57;
+pub const MSK_RES_WRN_LARGE_CON_FX                                     : i32 = 54;
+pub const MSK_RES_WRN_LARGE_FIJ                                        : i32 = 980;
+pub const MSK_RES_WRN_LARGE_LO_BOUND                                   : i32 = 52;
+pub const MSK_RES_WRN_LARGE_UP_BOUND                                   : i32 = 53;
+pub const MSK_RES_WRN_LICENSE_EXPIRE                                   : i32 = 500;
+pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                           : i32 = 509;
+pub const MSK_RES_WRN_LICENSE_SERVER                                   : i32 = 501;
+pub const MSK_RES_WRN_LP_DROP_VARIABLE                                 : i32 = 85;
+pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT                               : i32 = 80;
+pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL                             : i32 = 270;
+pub const MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER                        : i32 = 970;
+pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR                             : i32 = 72;
+pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR                             : i32 = 71;
+pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR                             : i32 = 70;
+pub const MSK_RES_WRN_NAME_MAX_LEN                                     : i32 = 65;
+pub const MSK_RES_WRN_NO_DUALIZER                                      : i32 = 950;
+pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER                              : i32 = 251;
+pub const MSK_RES_WRN_NZ_IN_UPR_TRI                                    : i32 = 200;
+pub const MSK_RES_WRN_OPEN_PARAM_FILE                                  : i32 = 50;
+pub const MSK_RES_WRN_PARAM_IGNORED_CMIO                               : i32 = 516;
+pub const MSK_RES_WRN_PARAM_NAME_DOU                                   : i32 = 510;
+pub const MSK_RES_WRN_PARAM_NAME_INT                                   : i32 = 511;
+pub const MSK_RES_WRN_PARAM_NAME_STR                                   : i32 = 512;
+pub const MSK_RES_WRN_PARAM_STR_VALUE                                  : i32 = 515;
+pub const MSK_RES_WRN_POW_CONES_WITH_ROOT_FIXED_AT_ZERO                : i32 = 933;
+pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE                              : i32 = 802;
+pub const MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO               : i32 = 930;
+pub const MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO              : i32 = 931;
+pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON                             : i32 = 351;
+pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR                             : i32 = 352;
+pub const MSK_RES_WRN_SOL_FILTER                                       : i32 = 300;
+pub const MSK_RES_WRN_SPAR_MAX_LEN                                     : i32 = 66;
+pub const MSK_RES_WRN_SYM_MAT_LARGE                                    : i32 = 960;
+pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS                               : i32 = 400;
+pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS                              : i32 = 405;
+pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME                              : i32 = 350;
+pub const MSK_RES_WRN_USING_GENERIC_NAMES                              : i32 = 503;
+pub const MSK_RES_WRN_WRITE_CHANGED_NAMES                              : i32 = 803;
+pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX                             : i32 = 804;
+pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES                     : i32 = 857;
+pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES                     : i32 = 855;
+pub const MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES                       : i32 = 856;
+pub const MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES                       : i32 = 854;
+pub const MSK_RES_WRN_ZERO_AIJ                                         : i32 = 63;
+pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL                              : i32 = 710;
+pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW                              : i32 = 705;
 
 // rescodetype
 pub const MSK_RESPONSE_ERR : i32 = 3;
@@ -1647,21 +1776,10 @@ pub const MSK_SCALING_METHOD_BEGIN : i32 = 0;
 pub const MSK_SCALING_METHOD_END   : i32 = 2;
 
 // scalingtype
-pub const MSK_SCALING_AGGRESSIVE : i32 = 3;
-pub const MSK_SCALING_FREE       : i32 = 0;
-pub const MSK_SCALING_MODERATE   : i32 = 2;
-pub const MSK_SCALING_NONE       : i32 = 1;
+pub const MSK_SCALING_FREE : i32 = 0;
+pub const MSK_SCALING_NONE : i32 = 1;
 pub const MSK_SCALING_BEGIN : i32 = 0;
-pub const MSK_SCALING_END   : i32 = 4;
-
-// scopr
-pub const MSK_OPR_ENT  : i32 = 0;
-pub const MSK_OPR_EXP  : i32 = 1;
-pub const MSK_OPR_LOG  : i32 = 2;
-pub const MSK_OPR_POW  : i32 = 3;
-pub const MSK_OPR_SQRT : i32 = 4;
-pub const MSK_OPR_BEGIN : i32 = 0;
-pub const MSK_OPR_END   : i32 = 5;
+pub const MSK_SCALING_END   : i32 = 2;
 
 // sensitivitytype
 pub const MSK_SENSITIVITY_TYPE_BASIS : i32 = 0;
@@ -1771,12 +1889,11 @@ pub const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 17;
 pub const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 18;
 pub const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 19;
 pub const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 20;
-pub const MSK_SPAR_STAT_FILE_NAME            : i32 = 21;
-pub const MSK_SPAR_STAT_KEY                  : i32 = 22;
-pub const MSK_SPAR_STAT_NAME                 : i32 = 23;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 24;
+pub const MSK_SPAR_STAT_KEY                  : i32 = 21;
+pub const MSK_SPAR_STAT_NAME                 : i32 = 22;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 23;
 pub const MSK_SPAR_BEGIN : i32 = 0;
-pub const MSK_SPAR_END   : i32 = 25;
+pub const MSK_SPAR_END   : i32 = 24;
 
 // stakey
 pub const MSK_SK_BAS    : i32 = 1;
@@ -2363,6 +2480,64 @@ impl Task
       return Result::Ok(());
     }
     
+    // appendacc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_acc(& mut self,domainidx_ : i32,afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
+    {
+      let mut numafeidx_ = afeidxlist_.len();
+      if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_acc'".to_string()) }
+      let call_res = unsafe { (MSK_appendacc64(self.ptr,domainidx_ as i32,numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
+      self.handle_res(call_res,"appendacc64")?;
+      return Result::Ok(());
+    }
+    
+    // appendaccs64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_accs(& mut self,domainidxs_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
+    {
+      let mut numaccs_ = domainidxs_.len();
+      let mut numafeidx_ = afeidxlist_.len();
+      if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_accs'".to_string()) }
+      let call_res = unsafe { (MSK_appendaccs64(self.ptr,numaccs_ as i64,domainidxs_.as_ptr(),numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
+      self.handle_res(call_res,"appendaccs64")?;
+      return Result::Ok(());
+    }
+    
+    // appendaccseq64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_acc_seq(& mut self,domainidx_ : i32,afeidxfirst_ : i64,b_ : & [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getdomainn64(self.ptr,domainidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getdomainn64")?;
+      let numafeidx_ = tmp_var_3__;
+      if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_acc_seq'".to_string()) }
+      let call_res = unsafe { (MSK_appendaccseq64(self.ptr,domainidx_ as i32,numafeidx_ as i64,afeidxfirst_ as i64,b_.as_ptr())) };
+      self.handle_res(call_res,"appendaccseq64")?;
+      return Result::Ok(());
+    }
+    
+    // appendafes64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_afes(& mut self,num_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_appendafes64(self.ptr,num_ as i64)) };
+      self.handle_res(call_res,"appendafes64")?;
+      return Result::Ok(());
+    }
+    
     // appendbarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2426,6 +2601,187 @@ impl Task
       let call_res = unsafe { (MSK_appendcons(self.ptr,num_ as i32)) };
       self.handle_res(call_res,"appendcons")?;
       return Result::Ok(());
+    }
+    
+    // appenddjcs64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_djcs(& mut self,num_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_appenddjcs64(self.ptr,num_ as i64)) };
+      self.handle_res(call_res,"appenddjcs64")?;
+      return Result::Ok(());
+    }
+    
+    // appenddualexpconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_exp_cone_domain(& mut self) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appenddualexpconedomain(self.ptr,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appenddualexpconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appenddualgeomeanconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_geo_mean_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appenddualgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appenddualgeomeanconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendinfnormconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_inf_norm_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendinfnormconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendinfnormconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendonenormconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_one_norm_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendonenormconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendonenormconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendprimalexpconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_exp_cone_domain(& mut self) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendprimalexpconedomain(self.ptr,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendprimalexpconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendprimalgeomeanconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_geo_mean_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendprimalgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendprimalgeomeanconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendpsdconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_psd_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendpsdconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendpsdconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendquadraticconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_quadratic_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendquadraticconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendquadraticconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendrdomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_r_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendrdomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendrminusdomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_rminus_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrminusdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendrminusdomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendrplusdomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_rplus_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrplusdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendrplusdomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendrquadraticconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_r_quadratic_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrquadraticconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendrquadraticconedomain")?;
+      return Result::Ok((_ref_idx_ as i32));
+    }
+    
+    // appendrzerodomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_rzero_domain(& mut self,n_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrzerodomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendrzerodomain")?;
+      return Result::Ok((_ref_idx_ as i32));
     }
     
     // appendsparsesymmat
@@ -2709,6 +3065,148 @@ impl Task
       return Result::Ok(());
     }
     
+    // getaccafeidxlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_afe_idx_list(& mut self,accidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getaccn64(self.ptr,accidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getaccn64")?;
+      if afeidxlist_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'afeidxlist_' is too short in call to 'get_acc_afe_idx_list'".to_string()) }
+      let call_res = unsafe { (MSK_getaccafeidxlist64(self.ptr,accidx_ as i64,afeidxlist_.as_mut_ptr())) };
+      self.handle_res(call_res,"getaccafeidxlist64")?;
+      return Result::Ok(());
+    }
+    
+    // getaccb64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_b(& mut self,accidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getaccn64(self.ptr,accidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getaccn64")?;
+      if b_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'b_' is too short in call to 'get_acc_b'".to_string()) }
+      let call_res = unsafe { (MSK_getaccb64(self.ptr,accidx_ as i64,b_.as_mut_ptr())) };
+      self.handle_res(call_res,"getaccb64")?;
+      return Result::Ok(());
+    }
+    
+    // getaccdomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_domain(& mut self,accidx_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getaccdomain64(self.ptr,accidx_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"getaccdomain64")?;
+      return Result::Ok((_ref_domidx_ as i32));
+    }
+    
+    // getaccdoty64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getaccn64(self.ptr,accidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getaccn64")?;
+      if doty_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'doty_' is too short in call to 'get_acc_dot_y'".to_string()) }
+      let call_res = unsafe { (MSK_getaccdoty64(self.ptr,whichsol_,accidx_ as i64,doty_.as_mut_ptr())) };
+      self.handle_res(call_res,"getaccdoty64")?;
+      return Result::Ok(());
+    }
+    
+    // getaccn64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_n(& mut self,accidx_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_n_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getaccn64(self.ptr,accidx_ as i64,& mut _ref_n_)) };
+      self.handle_res(call_res,"getaccn64")?;
+      return Result::Ok((_ref_n_ as i64));
+    }
+    
+    // getaccname64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_name(&self,accidx_ : i64) -> Result<String,String>
+    {
+      let mut tmp_var_5__ : i32 = 0 as i32;
+      let tmp_var_3__ = unsafe { MSK_getaccnamelen64(self.ptr,accidx_,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_3__,"getaccnamelen64")?;
+      let sizename_ = 1 + tmp_var_5__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      let call_res = unsafe { (MSK_getaccname64(self.ptr,accidx_ as i64,sizename_ as i32,_name__bytes.as_mut_ptr())) };
+      self.handle_res(call_res,"getaccname64")?;
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
+    }
+    
+    // getaccnamelen64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_name_len(&self,accidx_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_len_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getaccnamelen64(self.ptr,accidx_ as i64,& mut _ref_len_)) };
+      self.handle_res(call_res,"getaccnamelen64")?;
+      return Result::Ok((_ref_len_ as i32));
+    }
+    
+    // getaccntot64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_acc_n_tot(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_n_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getaccntot64(self.ptr,& mut _ref_n_)) };
+      self.handle_res(call_res,"getaccntot64")?;
+      return Result::Ok((_ref_n_ as i64));
+    }
+    
+    // getaccs64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_accs(& mut self,domainidxlist_ : & mut [i32],afeidxlist_ : & mut [i64],b_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_2__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getnumacc64(self.ptr,& mut tmp_var_2__) };
+      self.handle_res(tmp_var_1__,"getnumacc64")?;
+      if domainidxlist_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'domainidxlist_' is too short in call to 'get_accs'".to_string()) }
+      let mut tmp_var_5__ : i64 = 0 as i64;
+      let tmp_var_4__ = unsafe { MSK_getaccntot64(self.ptr,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_4__,"getaccntot64")?;
+      if afeidxlist_.len() != ((tmp_var_5__) as usize) { return Result::Err("Argument 'afeidxlist_' is too short in call to 'get_accs'".to_string()) }
+      let mut tmp_var_8__ : i64 = 0 as i64;
+      let tmp_var_7__ = unsafe { MSK_getaccntot64(self.ptr,& mut tmp_var_8__) };
+      self.handle_res(tmp_var_7__,"getaccntot64")?;
+      if b_.len() != ((tmp_var_8__) as usize) { return Result::Err("Argument 'b_' is too short in call to 'get_accs'".to_string()) }
+      let call_res = unsafe { (MSK_getaccs64(self.ptr,domainidxlist_.as_mut_ptr(),afeidxlist_.as_mut_ptr(),b_.as_mut_ptr())) };
+      self.handle_res(call_res,"getaccs64")?;
+      return Result::Ok(());
+    }
+    
     // getacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2750,6 +3248,106 @@ impl Task
       let call_res = unsafe { (MSK_getacolslicenumnz64(self.ptr,first_ as i32,last_ as i32,& mut _ref_numnz_)) };
       self.handle_res(call_res,"getacolslicenumnz64")?;
       return Result::Ok((_ref_numnz_ as i64));
+    }
+    
+    // getafebarfnumrowentries64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_barf_num_row_entries(& mut self,afeidx_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_numentries_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getafebarfnumrowentries64(self.ptr,afeidx_ as i64,& mut _ref_numentries_)) };
+      self.handle_res(call_res,"getafebarfnumrowentries64")?;
+      return Result::Ok((_ref_numentries_ as i32));
+    }
+    
+    // getafebarfrowinfo64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_barf_row_info(& mut self,afeidx_ : i64) -> Result<(i32,i64),String>
+    {
+      let mut _ref_numentries_ : i32 = 0 as i32;
+      let mut _ref_numterms_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getafebarfrowinfo64(self.ptr,afeidx_ as i64,& mut _ref_numentries_,& mut _ref_numterms_)) };
+      self.handle_res(call_res,"getafebarfrowinfo64")?;
+      return Result::Ok((_ref_numentries_ as i32,_ref_numterms_ as i64));
+    }
+    
+    // getafefnumnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_f_num_nz(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_numfnz_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getafefnumnz64(self.ptr,& mut _ref_numfnz_)) };
+      self.handle_res(call_res,"getafefnumnz64")?;
+      return Result::Ok((_ref_numfnz_ as i64));
+    }
+    
+    // getafefrow64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_f_row(& mut self,i_ : i64,subi_ : & mut [i32],vali_ : & mut [f64]) -> Result<i32,String>
+    {
+      let mut _ref_nzi_ : i32 = 0 as i32;
+      let mut tmp_var_3__ : i32 = 0 as i32;
+      let tmp_var_1__ = unsafe { MSK_getafefrownumnz64(self.ptr,i_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getafefrownumnz64")?;
+      if subi_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_afe_f_row'".to_string()) }
+      let mut tmp_var_7__ : i32 = 0 as i32;
+      let tmp_var_5__ = unsafe { MSK_getafefrownumnz64(self.ptr,i_,& mut tmp_var_7__) };
+      self.handle_res(tmp_var_5__,"getafefrownumnz64")?;
+      if vali_.len() != ((tmp_var_7__) as usize) { return Result::Err("Argument 'vali_' is too short in call to 'get_afe_f_row'".to_string()) }
+      let call_res = unsafe { (MSK_getafefrow64(self.ptr,i_ as i64,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr())) };
+      self.handle_res(call_res,"getafefrow64")?;
+      return Result::Ok((_ref_nzi_ as i32));
+    }
+    
+    // getafefrownumnz64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_f_row_num_nz(& mut self,i_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_nzi_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getafefrownumnz64(self.ptr,i_ as i64,& mut _ref_nzi_)) };
+      self.handle_res(call_res,"getafefrownumnz64")?;
+      return Result::Ok((_ref_nzi_ as i32));
+    }
+    
+    // getafeg64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_g(& mut self,i_ : i64) -> Result<f64,String>
+    {
+      let mut _ref_g_ : f64 = 0 as f64;
+      let call_res = unsafe { (MSK_getafeg64(self.ptr,i_ as i64,& mut _ref_g_)) };
+      self.handle_res(call_res,"getafeg64")?;
+      return Result::Ok((_ref_g_ as f64));
+    }
+    
+    // getafegslice64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_g_slice(&self,first_ : i64,last_ : i64,g_ : & mut [f64]) -> Result<(),String>
+    {
+      if g_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'g_' is too short in call to 'get_afe_g_slice'".to_string()) }
+      let call_res = unsafe { (MSK_getafegslice64(self.ptr,first_ as i64,last_ as i64,g_.as_mut_ptr())) };
+      self.handle_res(call_res,"getafegslice64")?;
+      return Result::Ok(());
     }
     
     // getaij
@@ -3320,6 +3918,197 @@ impl Task
       return Result::Ok((_ref_dimbarvarj_ as i32));
     }
     
+    // getdjcafeidxlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_afe_idx_list(& mut self,djcidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getdjcnumafe64(self.ptr,djcidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getdjcnumafe64")?;
+      if afeidxlist_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'afeidxlist_' is too short in call to 'get_djc_afe_idx_list'".to_string()) }
+      let call_res = unsafe { (MSK_getdjcafeidxlist64(self.ptr,djcidx_ as i64,afeidxlist_.as_mut_ptr())) };
+      self.handle_res(call_res,"getdjcafeidxlist64")?;
+      return Result::Ok(());
+    }
+    
+    // getdjcb64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_b(& mut self,djcidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getdjcnumafe64(self.ptr,djcidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getdjcnumafe64")?;
+      if b_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'b_' is too short in call to 'get_djc_b'".to_string()) }
+      let call_res = unsafe { (MSK_getdjcb64(self.ptr,djcidx_ as i64,b_.as_mut_ptr())) };
+      self.handle_res(call_res,"getdjcb64")?;
+      return Result::Ok(());
+    }
+    
+    // getdjcdomainidxlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_domain_idx_list(& mut self,djcidx_ : i64,domidxlist_ : & mut [i32]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getdjcnumdomain64(self.ptr,djcidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getdjcnumdomain64")?;
+      if domidxlist_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'domidxlist_' is too short in call to 'get_djc_domain_idx_list'".to_string()) }
+      let call_res = unsafe { (MSK_getdjcdomainidxlist64(self.ptr,djcidx_ as i64,domidxlist_.as_mut_ptr())) };
+      self.handle_res(call_res,"getdjcdomainidxlist64")?;
+      return Result::Ok(());
+    }
+    
+    // getdjcname64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_name(&self,djcidx_ : i64) -> Result<String,String>
+    {
+      let mut tmp_var_5__ : i32 = 0 as i32;
+      let tmp_var_3__ = unsafe { MSK_getdjcnamelen64(self.ptr,djcidx_,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_3__,"getdjcnamelen64")?;
+      let sizename_ = 1 + tmp_var_5__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      let call_res = unsafe { (MSK_getdjcname64(self.ptr,djcidx_ as i64,sizename_ as i32,_name__bytes.as_mut_ptr())) };
+      self.handle_res(call_res,"getdjcname64")?;
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
+    }
+    
+    // getdjcnamelen64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_name_len(&self,djcidx_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_len_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getdjcnamelen64(self.ptr,djcidx_ as i64,& mut _ref_len_)) };
+      self.handle_res(call_res,"getdjcnamelen64")?;
+      return Result::Ok((_ref_len_ as i32));
+    }
+    
+    // getdjcnumafe64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_num_afe(& mut self,idjc_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_numafe_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getdjcnumafe64(self.ptr,idjc_ as i64,& mut _ref_numafe_)) };
+      self.handle_res(call_res,"getdjcnumafe64")?;
+      return Result::Ok((_ref_numafe_ as i64));
+    }
+    
+    // getdjcnumdomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_num_domain(& mut self,idjc_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_numdomain_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getdjcnumdomain64(self.ptr,idjc_ as i64,& mut _ref_numdomain_)) };
+      self.handle_res(call_res,"getdjcnumdomain64")?;
+      return Result::Ok((_ref_numdomain_ as i64));
+    }
+    
+    // getdjcnumterm64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_num_term(& mut self,idjc_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_numterm_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getdjcnumterm64(self.ptr,idjc_ as i64,& mut _ref_numterm_)) };
+      self.handle_res(call_res,"getdjcnumterm64")?;
+      return Result::Ok((_ref_numterm_ as i64));
+    }
+    
+    // getdjctermsizelist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_djc_term_size_list(& mut self,djcidx_ : i64,termsizelist_ : & mut [i64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getdjcnumterm64(self.ptr,djcidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getdjcnumterm64")?;
+      if termsizelist_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'termsizelist_' is too short in call to 'get_djc_term_size_list'".to_string()) }
+      let call_res = unsafe { (MSK_getdjctermsizelist64(self.ptr,djcidx_ as i64,termsizelist_.as_mut_ptr())) };
+      self.handle_res(call_res,"getdjctermsizelist64")?;
+      return Result::Ok(());
+    }
+    
+    // getdomainn64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_domain_n(& mut self,domidx_ : i32) -> Result<i64,String>
+    {
+      let mut _ref_n_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getdomainn64(self.ptr,domidx_ as i32,& mut _ref_n_)) };
+      self.handle_res(call_res,"getdomainn64")?;
+      return Result::Ok((_ref_n_ as i64));
+    }
+    
+    // getdomainname32
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_domain_name(&self,domidx_ : i32) -> Result<String,String>
+    {
+      let mut tmp_var_5__ : i32 = 0 as i32;
+      let tmp_var_3__ = unsafe { MSK_getdomainnamelen32(self.ptr,domidx_,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_3__,"getdomainnamelen32")?;
+      let sizename_ = 1 + tmp_var_5__;
+      let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
+      let call_res = unsafe { (MSK_getdomainname32(self.ptr,domidx_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr())) };
+      self.handle_res(call_res,"getdomainname32")?;
+      unsafe { _name__bytes.set_len((sizename_) as usize) };
+      return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
+    }
+    
+    // getdomainnamelen32
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_domain_name_len(&self,domidx_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_len_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getdomainnamelen32(self.ptr,domidx_ as i32,& mut _ref_len_)) };
+      self.handle_res(call_res,"getdomainnamelen32")?;
+      return Result::Ok((_ref_len_ as i32));
+    }
+    
+    // getdomaintype
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_domain_type(& mut self,k_ : i32) -> Result<i32,String>
+    {
+      let mut _ref_domaintype_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getdomaintype(self.ptr,k_ as i32,& mut _ref_domaintype_)) };
+      self.handle_res(call_res,"getdomaintype")?;
+      return Result::Ok((_ref_domaintype_ as i32));
+    }
+    
     // getdouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3376,6 +4165,20 @@ impl Task
       let call_res = unsafe { (MSK_getdualsolutionnorms(self.ptr,whichsol_,& mut _ref_nrmy_,& mut _ref_nrmslc_,& mut _ref_nrmsuc_,& mut _ref_nrmslx_,& mut _ref_nrmsux_,& mut _ref_nrmsnx_,& mut _ref_nrmbars_)) };
       self.handle_res(call_res,"getdualsolutionnorms")?;
       return Result::Ok((_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64));
+    }
+    
+    // getdviolacc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_dviol_acc(&self,whichsol_ : i32,accidxlist_ : & [i64],viol_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut numaccidx_ = accidxlist_.len();
+      if viol_.len() != ((numaccidx_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_dviol_acc'".to_string()) }
+      let call_res = unsafe { (MSK_getdviolacc64(self.ptr,whichsol_,numaccidx_ as i64,accidxlist_.as_ptr(),viol_.as_mut_ptr())) };
+      self.handle_res(call_res,"getdviolacc64")?;
+      return Result::Ok(());
     }
     
     // getdviolbarvar
@@ -3698,6 +4501,32 @@ impl Task
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()));
     }
     
+    // getnumacc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_num_acc(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_num_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getnumacc64(self.ptr,& mut _ref_num_)) };
+      self.handle_res(call_res,"getnumacc64")?;
+      return Result::Ok((_ref_num_ as i64));
+    }
+    
+    // getnumafe64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_num_afe(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_numafe_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getnumafe64(self.ptr,& mut _ref_numafe_)) };
+      self.handle_res(call_res,"getnumafe64")?;
+      return Result::Ok((_ref_numafe_ as i64));
+    }
+    
     // getnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3826,6 +4655,32 @@ impl Task
       let call_res = unsafe { (MSK_getnumconemem(self.ptr,k_ as i32,& mut _ref_nummem_)) };
       self.handle_res(call_res,"getnumconemem")?;
       return Result::Ok((_ref_nummem_ as i32));
+    }
+    
+    // getnumdjc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_num_djc(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_num_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getnumdjc64(self.ptr,& mut _ref_num_)) };
+      self.handle_res(call_res,"getnumdjc64")?;
+      return Result::Ok((_ref_num_ as i64));
+    }
+    
+    // getnumdomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_num_domain(& mut self) -> Result<i32,String>
+    {
+      let mut _ref_numdomain_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getnumdomain(self.ptr,& mut _ref_numdomain_)) };
+      self.handle_res(call_res,"getnumdomain")?;
+      return Result::Ok((_ref_numdomain_ as i32));
     }
     
     // getnumintvar
@@ -4027,6 +4882,20 @@ impl Task
       let call_res = unsafe { (MSK_getprosta(self.ptr,whichsol_,& mut _ref_prosta_)) };
       self.handle_res(call_res,"getprosta")?;
       return Result::Ok((_ref_prosta_ as i32));
+    }
+    
+    // getpviolacc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_pviol_acc(&self,whichsol_ : i32,accidxlist_ : & [i64],viol_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut numaccidx_ = accidxlist_.len();
+      if viol_.len() != ((numaccidx_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_acc'".to_string()) }
+      let call_res = unsafe { (MSK_getpviolacc64(self.ptr,whichsol_,numaccidx_ as i64,accidxlist_.as_ptr(),viol_.as_mut_ptr())) };
+      self.handle_res(call_res,"getpviolacc64")?;
+      return Result::Ok(());
     }
     
     // getpviolbarvar
@@ -4330,6 +5199,71 @@ impl Task
       let call_res = unsafe { (MSK_getsolutioninfo(self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_)) };
       self.handle_res(call_res,"getsolutioninfo")?;
       return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64));
+    }
+    
+    // getsolutioninfonew
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_solution_info_new(&self,whichsol_ : i32) -> Result<(f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64),String>
+    {
+      let mut _ref_pobj_ : f64 = 0 as f64;
+      let mut _ref_pviolcon_ : f64 = 0 as f64;
+      let mut _ref_pviolvar_ : f64 = 0 as f64;
+      let mut _ref_pviolbarvar_ : f64 = 0 as f64;
+      let mut _ref_pviolcone_ : f64 = 0 as f64;
+      let mut _ref_pviolacc_ : f64 = 0 as f64;
+      let mut _ref_pviolitg_ : f64 = 0 as f64;
+      let mut _ref_dobj_ : f64 = 0 as f64;
+      let mut _ref_dviolcon_ : f64 = 0 as f64;
+      let mut _ref_dviolvar_ : f64 = 0 as f64;
+      let mut _ref_dviolbarvar_ : f64 = 0 as f64;
+      let mut _ref_dviolcone_ : f64 = 0 as f64;
+      let mut _ref_dviolacc_ : f64 = 0 as f64;
+      let call_res = unsafe { (MSK_getsolutioninfonew(self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolacc_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_,& mut _ref_dviolacc_)) };
+      self.handle_res(call_res,"getsolutioninfonew")?;
+      return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolacc_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64,_ref_dviolacc_ as f64));
+    }
+    
+    // getsolutionnew
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_solution_new(&self,whichsol_ : i32,skc_ : & mut [i32],skx_ : & mut [i32],skn_ : & mut [i32],xc_ : & mut [f64],xx_ : & mut [f64],y_ : & mut [f64],slc_ : & mut [f64],suc_ : & mut [f64],slx_ : & mut [f64],sux_ : & mut [f64],snx_ : & mut [f64],doty_ : & mut [f64]) -> Result<(i32,i32),String>
+    {
+      let mut _ref_prosta_ : i32 = 0 as i32;
+      let mut _ref_solsta_ : i32 = 0 as i32;
+      let tmp_var_1__ = self.get_num_con()?;
+      if skc_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'skc_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_3__ = self.get_num_var()?;
+      if skx_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'skx_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_5__ = self.get_num_cone()?;
+      if skn_.len() != ((tmp_var_5__) as usize) { return Result::Err("Argument 'skn_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_7__ = self.get_num_con()?;
+      if xc_.len() != ((tmp_var_7__) as usize) { return Result::Err("Argument 'xc_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_9__ = self.get_num_var()?;
+      if xx_.len() != ((tmp_var_9__) as usize) { return Result::Err("Argument 'xx_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_11__ = self.get_num_con()?;
+      if y_.len() != ((tmp_var_11__) as usize) { return Result::Err("Argument 'y_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_13__ = self.get_num_con()?;
+      if slc_.len() != ((tmp_var_13__) as usize) { return Result::Err("Argument 'slc_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_15__ = self.get_num_con()?;
+      if suc_.len() != ((tmp_var_15__) as usize) { return Result::Err("Argument 'suc_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_17__ = self.get_num_var()?;
+      if slx_.len() != ((tmp_var_17__) as usize) { return Result::Err("Argument 'slx_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_19__ = self.get_num_var()?;
+      if sux_.len() != ((tmp_var_19__) as usize) { return Result::Err("Argument 'sux_' is too short in call to 'get_solution_new'".to_string()) }
+      let tmp_var_21__ = self.get_num_var()?;
+      if snx_.len() != ((tmp_var_21__) as usize) { return Result::Err("Argument 'snx_' is too short in call to 'get_solution_new'".to_string()) }
+      let mut tmp_var_24__ : i64 = 0 as i64;
+      let tmp_var_23__ = unsafe { MSK_getaccntot64(self.ptr,& mut tmp_var_24__) };
+      self.handle_res(tmp_var_23__,"getaccntot64")?;
+      if doty_.len() != ((tmp_var_24__) as usize) { return Result::Err("Argument 'doty_' is too short in call to 'get_solution_new'".to_string()) }
+      let call_res = unsafe { (MSK_getsolutionnew(self.ptr,whichsol_,& mut _ref_prosta_,& mut _ref_solsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr(),doty_.as_mut_ptr())) };
+      self.handle_res(call_res,"getsolutionnew")?;
+      return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32));
     }
     
     // getsolutionslice
@@ -4694,8 +5628,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn init_basis_solve(& mut self,basis_ : & mut [i32]) -> Result<(),String>
     {
-      let tmp_var_1__ = self.get_num_con()?;
-      if basis_.len() != ((tmp_var_1__) as usize) { return Result::Err("Argument 'basis_' is too short in call to 'init_basis_solve'".to_string()) }
+      let mut tmp_var_2__ : i32 = 0 as i32;
+      let tmp_var_1__ = unsafe { MSK_getnumcon(self.ptr,& mut tmp_var_2__) };
+      self.handle_res(tmp_var_1__,"getnumcon")?;
+      if basis_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'basis_' is too short in call to 'init_basis_solve'".to_string()) }
       let call_res = unsafe { (MSK_initbasissolve(self.ptr,basis_.as_mut_ptr())) };
       self.handle_res(call_res,"initbasissolve")?;
       return Result::Ok(());
@@ -4909,6 +5845,34 @@ impl Task
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
     
+    // putaccdoty64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getaccn64(self.ptr,accidx_,& mut tmp_var_3__) };
+      self.handle_res(tmp_var_1__,"getaccn64")?;
+      if doty_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'doty_' is too short in call to 'put_acc_dot_y'".to_string()) }
+      let call_res = unsafe { (MSK_putaccdoty64(self.ptr,whichsol_,accidx_ as i64,doty_.as_mut_ptr())) };
+      self.handle_res(call_res,"putaccdoty64")?;
+      return Result::Ok(());
+    }
+    
+    // putaccname64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_acc_name(& mut self,accidx_ : i64,name_ : &str) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putaccname64(self.ptr,accidx_ as i64,CString::new(name_).unwrap().as_ptr())) };
+      self.handle_res(call_res,"putaccname64")?;
+      return Result::Ok(());
+    }
+    
     // putacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4951,6 +5915,76 @@ impl Task
       if ! ptre_.iter().all(|i| *i >= 0 && *i <= asub_.len() as i64 && *i <= aval_.len() as i64) { return Err("Invalid index in argument ptre".to_string()) }
       let call_res = unsafe { (MSK_putacolslice64(self.ptr,first_ as i32,last_ as i32,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr())) };
       self.handle_res(call_res,"putacolslice64")?;
+      return Result::Ok(());
+    }
+    
+    // putafebarfblocktriplet64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_barf_block_triplet(& mut self,num_ : i64,afeidx_ : & [i64],barvaridx_ : & [i32],subk_ : & [i32],subl_ : & [i32],valkl_ : & [f64]) -> Result<(),String>
+    {
+      if afeidx_.len() != ((num_) as usize) { return Result::Err("Argument 'afeidx_' is too short in call to 'put_afe_barf_block_triplet'".to_string()) }
+      if barvaridx_.len() != ((num_) as usize) { return Result::Err("Argument 'barvaridx_' is too short in call to 'put_afe_barf_block_triplet'".to_string()) }
+      if subk_.len() != ((num_) as usize) { return Result::Err("Argument 'subk_' is too short in call to 'put_afe_barf_block_triplet'".to_string()) }
+      if subl_.len() != ((num_) as usize) { return Result::Err("Argument 'subl_' is too short in call to 'put_afe_barf_block_triplet'".to_string()) }
+      if valkl_.len() != ((num_) as usize) { return Result::Err("Argument 'valkl_' is too short in call to 'put_afe_barf_block_triplet'".to_string()) }
+      let call_res = unsafe { (MSK_putafebarfblocktriplet64(self.ptr,num_ as i64,afeidx_.as_ptr(),barvaridx_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valkl_.as_ptr())) };
+      self.handle_res(call_res,"putafebarfblocktriplet64")?;
+      return Result::Ok(());
+    }
+    
+    // putafebarfentry64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_barf_entry(& mut self,afeidx_ : i64,barvaridx_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    {
+      let mut num_ = sub_.len();
+      if weights_.len() < num_ { num_ = weights_.len() };
+      let call_res = unsafe { (MSK_putafebarfentry64(self.ptr,afeidx_ as i64,barvaridx_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr())) };
+      self.handle_res(call_res,"putafebarfentry64")?;
+      return Result::Ok(());
+    }
+    
+    // putafefrow64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_f_row(& mut self,i_ : i64,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
+    {
+      let mut nzi_ = subi_.len();
+      if vali_.len() < nzi_ { nzi_ = vali_.len() };
+      let call_res = unsafe { (MSK_putafefrow64(self.ptr,i_ as i64,nzi_ as i32,subi_.as_ptr(),vali_.as_ptr())) };
+      self.handle_res(call_res,"putafefrow64")?;
+      return Result::Ok(());
+    }
+    
+    // putafeg64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_g(& mut self,i_ : i64,gi_ : f64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putafeg64(self.ptr,i_ as i64,gi_ as f64)) };
+      self.handle_res(call_res,"putafeg64")?;
+      return Result::Ok(());
+    }
+    
+    // putafegslice64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_g_slice(& mut self,first_ : i64,last_ : i64,slice_ : & mut [f64]) -> Result<(),String>
+    {
+      if slice_.len() != ((last_ - first_) as usize) { return Result::Err("Argument 'slice_' is too short in call to 'put_afe_g_slice'".to_string()) }
+      let call_res = unsafe { (MSK_putafegslice64(self.ptr,first_ as i64,last_ as i64,slice_.as_mut_ptr())) };
+      self.handle_res(call_res,"putafegslice64")?;
       return Result::Ok(());
     }
     
@@ -5350,6 +6384,63 @@ impl Task
       return Result::Ok(());
     }
     
+    // putdjc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_djc(& mut self,djcidx_ : i64,domidxlist_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64]) -> Result<(),String>
+    {
+      let mut numdomidx_ = domidxlist_.len();
+      let mut numafeidx_ = afeidxlist_.len();
+      if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'put_djc'".to_string()) }
+      let mut numterms_ = termsizelist_.len();
+      let call_res = unsafe { (MSK_putdjc64(self.ptr,djcidx_ as i64,numdomidx_ as i64,domidxlist_.as_ptr(),numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_ as i64,termsizelist_.as_ptr())) };
+      self.handle_res(call_res,"putdjc64")?;
+      return Result::Ok(());
+    }
+    
+    // putdjcname64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_djc_name(& mut self,djcidx_ : i64,name_ : &str) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putdjcname64(self.ptr,djcidx_ as i64,CString::new(name_).unwrap().as_ptr())) };
+      self.handle_res(call_res,"putdjcname64")?;
+      return Result::Ok(());
+    }
+    
+    // putdjcslice64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_djc_slice(& mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64],termsindjc_ : & [i64]) -> Result<(),String>
+    {
+      let mut numdomidx_ = domidxlist_.len();
+      let mut numafeidx_ = afeidxlist_.len();
+      if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'put_djc_slice'".to_string()) }
+      let mut numterms_ = termsizelist_.len();
+      if termsindjc_.len() != ((idxlast_ - idxfirst_) as usize) { return Result::Err("Argument 'termsindjc_' is too short in call to 'put_djc_slice'".to_string()) }
+      let call_res = unsafe { (MSK_putdjcslice64(self.ptr,idxfirst_ as i64,idxlast_ as i64,numdomidx_ as i64,domidxlist_.as_ptr(),numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_ as i64,termsizelist_.as_ptr(),termsindjc_.as_ptr())) };
+      self.handle_res(call_res,"putdjcslice64")?;
+      return Result::Ok(());
+    }
+    
+    // putdomainname32
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_domain_name(& mut self,domidx_ : i32,name_ : &str) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putdomainname32(self.ptr,domidx_ as i32,CString::new(name_).unwrap().as_ptr())) };
+      self.handle_res(call_res,"putdomainname32")?;
+      return Result::Ok(());
+    }
+    
     // putdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5371,6 +6462,30 @@ impl Task
     {
       let call_res = unsafe { (MSK_putintparam(self.ptr,param_,parvalue_ as i32)) };
       self.handle_res(call_res,"putintparam")?;
+      return Result::Ok(());
+    }
+    
+    // putmaxnumacc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_max_num_acc_64(& mut self,maxnumacc_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putmaxnumacc64(self.ptr,maxnumacc_ as i64)) };
+      self.handle_res(call_res,"putmaxnumacc64")?;
+      return Result::Ok(());
+    }
+    
+    // putmaxnumafe64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_max_num_afe(& mut self,maxnumafe_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putmaxnumafe64(self.ptr,maxnumafe_ as i64)) };
+      self.handle_res(call_res,"putmaxnumafe64")?;
       return Result::Ok(());
     }
     
@@ -5419,6 +6534,30 @@ impl Task
     {
       let call_res = unsafe { (MSK_putmaxnumcone(self.ptr,maxnumcone_ as i32)) };
       self.handle_res(call_res,"putmaxnumcone")?;
+      return Result::Ok(());
+    }
+    
+    // putmaxnumdjc64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_max_num_djc(& mut self,maxnumdjc_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putmaxnumdjc64(self.ptr,maxnumdjc_ as i64)) };
+      self.handle_res(call_res,"putmaxnumdjc64")?;
+      return Result::Ok(());
+    }
+    
+    // putmaxnumdomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_max_num_domain(& mut self,maxnumdomain_ : i32) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putmaxnumdomain(self.ptr,maxnumdomain_ as i32)) };
+      self.handle_res(call_res,"putmaxnumdomain")?;
       return Result::Ok(());
     }
     
@@ -5503,6 +6642,18 @@ impl Task
     {
       let call_res = unsafe { (MSK_putobjsense(self.ptr,sense_)) };
       self.handle_res(call_res,"putobjsense")?;
+      return Result::Ok(());
+    }
+    
+    // putoptserverhost
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_optserver_host(& mut self,host_ : &str) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putoptserverhost(self.ptr,CString::new(host_).unwrap().as_ptr())) };
+      self.handle_res(call_res,"putoptserverhost")?;
       return Result::Ok(());
     }
     
@@ -5719,6 +6870,18 @@ impl Task
     {
       let call_res = unsafe { (MSK_putsolution(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr())) };
       self.handle_res(call_res,"putsolution")?;
+      return Result::Ok(());
+    }
+    
+    // putsolutionnew
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_solution_new(& mut self,whichsol_ : i32,skc_ : & [i32],skx_ : & [i32],skn_ : & [i32],xc_ : & [f64],xx_ : & [f64],y_ : & [f64],slc_ : & [f64],suc_ : & [f64],slx_ : & [f64],sux_ : & [f64],snx_ : & [f64],doty_ : & [f64]) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putsolutionnew(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr(),doty_.as_ptr())) };
+      self.handle_res(call_res,"putsolutionnew")?;
       return Result::Ok(());
     }
     
