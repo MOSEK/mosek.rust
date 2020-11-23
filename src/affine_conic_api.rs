@@ -85,7 +85,7 @@ impl IndexManager {
             self.link[self.first_free as usize + 1] = -1; // previous if free[first] = -1;
         }
 
-        self.link[head*2+1] = -2;
+        self.link[head*2+1] = -((n+1) as isize);
 
         head
     }
@@ -93,10 +93,11 @@ impl IndexManager {
     // Free the block pointed to by head, placing it at the end of the
     // current free list
     pub fn release(& mut self, head : usize) {
-        if head >= self.n || self.link[head*2+1] != -2 {
+        if head >= self.n || self.link[head*2+1] > -2 {
             panic!("Index is not head of an allocated block");
         }
 
+        let blocksize = (-self.link[head*2+1]-1) as usize;
         let mut blocklast = head;
         let mut n : usize = 1;
         unsafe {
@@ -105,9 +106,11 @@ impl IndexManager {
                 n += 1;
             }
         }
-        self.link[head*2] -= 1;
+        if blocksize != n {
+            panic!("Internal inconsistency in linked list");
+        }
 
-
+        self.link[head*2] = -1;
         self.link[head*2+1] = self.last_free; // prev[head] = last_free
 
         if self.first_free < 0 {
@@ -131,11 +134,22 @@ impl IndexManager {
         return maxi as usize;
     }
 
-    pub fn get(&self, p : usize, idxs : & mut Vec<usize>) {
-        let mut i = p as isize;
-        while i >= 0 {
-            idxs.push(i as usize);
-            i = self.link[(i as usize)*2];
+    pub fn get(&self, head : usize, idxs : & mut [usize]) {
+        if head >= self.n || self.link[head*2+1] > -2 {
+            panic!("Index is not head of an allocated block");
+        }
+
+        let blocksize = (-self.link[head*2+1]-1) as usize;
+        if (idxs.len() < blocksize) {
+            panic!("index out of bounds in idxs");
+        }
+
+        unsafe {
+            let mut p = head;
+            for i in 0..blocksize {
+                *idxs.get_unchecked_mut(i) = p;
+                p = *self.link.get_unchecked(p*2+1) as usize;
+            }
         }
     }
 }
@@ -176,7 +190,7 @@ impl BlockManager {
     pub fn capacity(&self) -> usize { self.idxs.capacity() }
 
 
-    pub fn get(&self, blockid : usize,  idxs : & mut Vec<usize> ) { self.idxs.get(self.heads[blockid],idxs) }
+    pub fn get(&self, blockid : usize,  idxs : & mut [usize] ) { self.idxs.get(self.heads[blockid],idxs) }
     pub fn blockmaxindex(&self, blockid : usize) -> usize { self.idxs.blockmaxindex(self.heads[blockid]) }
 }
 
@@ -418,14 +432,11 @@ impl Model {
         let varid = self.linearvar_allocate(n);
         let accid = self.acc_allocate(numcone);
         self.var_block_acc_id[varid] = MaybeUsize::some(accid);
-        let mut varelmidxs : Vec<usize> = Vec::new();
-        let mut accelmidxs : Vec<usize> = Vec::new();
-        self.var_block_map.get(varid, & mut varelmidxs);
-        self.acc_block_map.get(accid, & mut accelmidxs);
+        let mut varelmidxs : Vec<usize> = vec![0usize; n];
+        let mut accelmidxs : Vec<usize> = vec![0usize; n];
+        self.var_block_map.get(varid, varelmidxs.as_mut_slice());
+        self.acc_block_map.get(accid, accelmidxs.as_mut_slice());
         unsafe {
-            //let (accidxptr,accofsptr) = (self.var_block_acc_idx.as_mut_ptr(),self.var_block_acc_ofs.as_mut_ptr());
-            //let varelmidxsptr = varelmidxs.as_ptr();
-            //let accelmidxsptr = accelmidxs.as_ptr();
             let mut k : usize = 0;
             for i in 0..numcone {
                 for j in 0..conesize {
@@ -452,13 +463,11 @@ impl Model {
         self.barvar_elm_ofs.resize(newnumbarvarelm,0);
 
         unsafe {
-            //let ptrp = self.barvar_ptr.as_mut_ptr();
             let mut p = firstelm;
             for i in first..first+n {
                 *self.barvar_ptr.get_unchecked_mut(i) = p;
                 p += conedim*(conedim+1)/2;
             }
-            //let (elmidxptr,elmofsptr) = (self.barvar_elm_idx.as_mut_ptr(),self.barvar_elm_ofs.as_mut_ptr());
             let mut k = 0;
             for i in 0..n {
                 for j in 0..conedim*(conedim+1)/2 {
@@ -472,15 +481,83 @@ impl Model {
     }
 
     fn con_allocate(& mut self, n : usize) -> usize {
-        0
+        let conid     = self.con_blocks.allocate(n);
+        let minnumcon = self.con_blocks.blockmaxindex(conid)+1;
+        let numcon    = self.task.get_num_con().unwrap() as usize;
+
+        if numcon < minnumcon {
+            let addnumcon = minnumcon - numcon;
+            self.task.append_cons(addnumcon as i32).unwrap();
+        }
+        conid
+    }
+
+    fn afe_allocate(& mut self, n : usize) -> usize {
+        let afeid = self.afe_blocks.allocate(n);
+        let minnumafe = self.afe_blocks.blockmaxindex(afeid)+1;
+        let numafe    = self.task.get_num_afe().unwrap() as usize;
+
+        if numafe < minnumafe {
+            let addnumafe = minnumafe - numafe;
+            self.task.append_afes(addnumafe as i64).unwrap();
+        }
+        afeid
     }
 
     fn acon_allocate(& mut self, numcone : usize, conesize : usize) -> usize {
-        0
+        let n = numcone * conesize;
+
+        let mut afeidxs = vec![0usize; n];
+        let mut conidxs = vec![0usize; n];
+        let mut accidxs = vec![0usize; numcone];
+
+        let afeid = self.afe_allocate(n);
+        let conid = self.acon_block_map.allocate(n);
+        let accid = self.acc_allocate(numcone);
+        self.afe_blocks.get(afeid,afeidxs.as_mut_slice());
+        self.acon_block_map.get(conid,conidxs.as_mut_slice());
+        self.acc_block_map.get(accid,accidxs.as_mut_slice());
+
+        let acon_block_cap = self.acon_block_map.block_capacity();
+        if self.acon_acc.len() < acon_block_cap {
+            self.acon_acc.resize(acon_block_cap,0);
+            self.acon_afe.resize(acon_block_cap,0);
+        }
+        let acon_cap = self.acon_block_map.block_capacity();
+        if self.acon_elm_accid.len() < acon_cap {
+            self.acon_elm_accid.resize(acon_cap,0);
+            self.acon_elm_ofs.resize(acon_cap,0);
+        }
+
+        self.acon_acc[conid] = accid;
+        self.acon_afe[conid] = afeid;
+
+        unsafe {
+            let mut  k = 0usize;
+            for i in 0..numcone {
+                let coneidx = *accidxs.get_unchecked(i);
+                for j in 0..conesize {
+                    *self.acon_elm_accid.get_unchecked_mut(k) = coneidx;
+                    *self.acon_elm_ofs.get_unchecked_mut(k) = j;
+                    k += 1;
+                }
+            }
+        }
+
+        conid
     }
 
     fn acc_allocate(& mut self, numcone : usize) -> usize {
-        0
+        let accid = self.acc_block_map.allocate(numcone);
+        let minnumacc = self.acc_block_map.blockmaxindex(accid)+1;
+        let numacc    = self.task.get_num_acc().unwrap() as usize;
+        if numacc < minnumacc {
+            let domidxs = vec![0; minnumacc-numacc];
+            let afeidxs : [i64;0] = [];
+            let b       : [f64;0] = [];
+            self.task.append_accs(domidxs.as_slice(),&afeidxs,&b);
+        }
+        accid
     }
 
 }
