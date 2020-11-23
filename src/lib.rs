@@ -5,6 +5,7 @@ use std::ffi::CStr;
 use libc::c_void;
 
 pub mod conic_solver_mosek;
+pub mod affine_conic_api;
 mod namegen;
 
 //#[link(name = "mosek64")]
@@ -30,9 +31,9 @@ extern {
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
-    fn MSK_appendacc64(task_ : * const u8,domainidx_ : i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
-    fn MSK_appendaccs64(task_ : * const u8,numaccs_ : i64,domainidxs_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
-    fn MSK_appendaccseq64(task_ : * const u8,domainidx_ : i32,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    fn MSK_appendacc64(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    fn MSK_appendaccs64(task_ : * const u8,numaccs_ : i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    fn MSK_appendaccseq64(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
     fn MSK_appendafes64(task_ : * const u8,num_ : i64) -> i32;
     fn MSK_appendbarvars(task_ : * const u8,num_ : i32,dim_ : * const i32) -> i32;
     fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
@@ -40,19 +41,32 @@ extern {
     fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
     fn MSK_appenddjcs64(task_ : * const u8,num_ : i64) -> i32;
-    fn MSK_appenddualexpconedomain(task_ : * const u8,idx_ : & mut i32) -> i32;
-    fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendinfnormconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appenddualexpconedomain(task_ : * const u8,domidx_ : & mut i32) -> i32;
+    fn MSK_appenddualexpconedomain64(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i32,domidx_ : & mut i32) -> i32;
+    fn MSK_appenddualgeomeanconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appenddualpowerconedomain(task_ : * const u8,n_ : i32,nleft_ : i32,alpha_ : * const f64,idx_ : & mut i32) -> i32;
+    fn MSK_appenddualpowerconedomain64(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendinfnormconedomain(task_ : * const u8,n_ : i32,domidx_ : & mut i32) -> i32;
+    fn MSK_appendinfnormconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendonenormconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendprimalexpconedomain(task_ : * const u8,idx_ : & mut i32) -> i32;
-    fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendonenormconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendprimalexpconedomain(task_ : * const u8,domidx_ : & mut i32) -> i32;
+    fn MSK_appendprimalexpconedomain64(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i32,domidx_ : & mut i32) -> i32;
+    fn MSK_appendprimalgeomeanconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendprimalpowerconedomain(task_ : * const u8,n_ : i32,nleft_ : i32,alpha_ : * const f64,idx_ : & mut i32) -> i32;
+    fn MSK_appendprimalpowerconedomain64(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
     fn MSK_appendpsdconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendpsdconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendquadraticconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendrdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendrminusdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendrplusdomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendrquadraticconedomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
-    fn MSK_appendrzerodomain(task_ : * const u8,n_ : i32,idx_ : & mut i32) -> i32;
+    fn MSK_appendquadraticconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendrdomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendrminusdomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendrplusdomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendrquadraticconedomain(task_ : * const u8,n_ : i32,domidx_ : & mut i32) -> i32;
+    fn MSK_appendrquadraticconedomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    fn MSK_appendrzerodomain64(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
@@ -80,6 +94,10 @@ extern {
     fn MSK_echoenv(env_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
     fn MSK_echointro(env_ : * const u8,longver_ : i32) -> i32;
     fn MSK_echotask(task_ : * const u8,whichstream_ : i32,format_ : * const libc::c_char) -> i32;
+    fn MSK_emptyafebarfrow64(task_ : * const u8,afeidx_ : i64) -> i32;
+    fn MSK_emptyafebarfrowlist64(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64) -> i32;
+    fn MSK_emptyafefrow64(task_ : * const u8,afeidx_ : i64) -> i32;
+    fn MSK_emptyafefrowlist64(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64) -> i32;
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
     fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
@@ -87,22 +105,23 @@ extern {
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_getaccafeidxlist64(task_ : * const u8,accidx_ : i64,afeidxlist_ : * mut i64) -> i32;
     fn MSK_getaccb64(task_ : * const u8,accidx_ : i64,b_ : * mut f64) -> i32;
-    fn MSK_getaccdomain64(task_ : * const u8,accidx_ : i64,domidx_ : & mut i32) -> i32;
+    fn MSK_getaccdomain64(task_ : * const u8,accidx_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_getaccdoty64(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
     fn MSK_getaccn64(task_ : * const u8,accidx_ : i64,n_ : & mut i64) -> i32;
     fn MSK_getaccname64(task_ : * const u8,accidx_ : i64,sizename_ : i32,name_ : * const u8) -> i32;
     fn MSK_getaccnamelen64(task_ : * const u8,accidx_ : i64,len_ : & mut i32) -> i32;
     fn MSK_getaccntot64(task_ : * const u8,n_ : & mut i64) -> i32;
-    fn MSK_getaccs64(task_ : * const u8,domainidxlist_ : * mut i32,afeidxlist_ : * mut i64,b_ : * mut f64) -> i32;
+    fn MSK_getaccs64(task_ : * const u8,domidxlist_ : * mut i64,afeidxlist_ : * mut i64,b_ : * mut f64) -> i32;
     fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
     fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
     fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
     fn MSK_getafebarfnumrowentries64(task_ : * const u8,afeidx_ : i64,numentries_ : & mut i32) -> i32;
+    fn MSK_getafebarfrow64(task_ : * const u8,afeidx_ : i64,barvaridx_ : * mut i32,termptr_ : * mut i64,numterms_ : * mut i64,termidx_ : * mut i64,termweight_ : * mut f64) -> i32;
     fn MSK_getafebarfrowinfo64(task_ : * const u8,afeidx_ : i64,numentries_ : & mut i32,numterms_ : & mut i64) -> i32;
     fn MSK_getafefnumnz64(task_ : * const u8,numfnz_ : & mut i64) -> i32;
-    fn MSK_getafefrow64(task_ : * const u8,i_ : i64,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
-    fn MSK_getafefrownumnz64(task_ : * const u8,i_ : i64,nzi_ : & mut i32) -> i32;
-    fn MSK_getafeg64(task_ : * const u8,i_ : i64,g_ : & mut f64) -> i32;
+    fn MSK_getafefrow64(task_ : * const u8,afeidx_ : i64,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
+    fn MSK_getafefrownumnz64(task_ : * const u8,afeidx_ : i64,nzi_ : & mut i32) -> i32;
+    fn MSK_getafeg64(task_ : * const u8,afeidx_ : i64,g_ : & mut f64) -> i32;
     fn MSK_getafegslice64(task_ : * const u8,first_ : i64,last_ : i64,g_ : * mut f64) -> i32;
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
@@ -147,17 +166,18 @@ extern {
     fn MSK_getdimbarvarj(task_ : * const u8,j_ : i32,dimbarvarj_ : & mut i32) -> i32;
     fn MSK_getdjcafeidxlist64(task_ : * const u8,djcidx_ : i64,afeidxlist_ : * mut i64) -> i32;
     fn MSK_getdjcb64(task_ : * const u8,djcidx_ : i64,b_ : * mut f64) -> i32;
-    fn MSK_getdjcdomainidxlist64(task_ : * const u8,djcidx_ : i64,domidxlist_ : * mut i32) -> i32;
+    fn MSK_getdjcdomainidxlist64(task_ : * const u8,djcidx_ : i64,domidxlist_ : * mut i64) -> i32;
     fn MSK_getdjcname64(task_ : * const u8,djcidx_ : i64,sizename_ : i32,name_ : * const u8) -> i32;
     fn MSK_getdjcnamelen64(task_ : * const u8,djcidx_ : i64,len_ : & mut i32) -> i32;
     fn MSK_getdjcnumafe64(task_ : * const u8,idjc_ : i64,numafe_ : & mut i64) -> i32;
     fn MSK_getdjcnumdomain64(task_ : * const u8,idjc_ : i64,numdomain_ : & mut i64) -> i32;
     fn MSK_getdjcnumterm64(task_ : * const u8,idjc_ : i64,numterm_ : & mut i64) -> i32;
     fn MSK_getdjctermsizelist64(task_ : * const u8,djcidx_ : i64,termsizelist_ : * mut i64) -> i32;
-    fn MSK_getdomainn64(task_ : * const u8,domidx_ : i32,n_ : & mut i64) -> i32;
-    fn MSK_getdomainname32(task_ : * const u8,domidx_ : i32,sizename_ : i32,name_ : * const u8) -> i32;
-    fn MSK_getdomainnamelen32(task_ : * const u8,domidx_ : i32,len_ : & mut i32) -> i32;
+    fn MSK_getdomainn64(task_ : * const u8,domidx_ : i64,n_ : & mut i64) -> i32;
+    fn MSK_getdomainname64(task_ : * const u8,domidx_ : i64,sizename_ : i32,name_ : * const u8) -> i32;
+    fn MSK_getdomainnamelen64(task_ : * const u8,domidx_ : i64,len_ : & mut i32) -> i32;
     fn MSK_getdomaintype(task_ : * const u8,k_ : i32,domaintype_ : & mut i32) -> i32;
+    fn MSK_getdomaintype64(task_ : * const u8,domidx_ : i64,domaintype_ : & mut i32) -> i32;
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
@@ -201,6 +221,7 @@ extern {
     fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
     fn MSK_getnumdjc64(task_ : * const u8,num_ : & mut i64) -> i32;
     fn MSK_getnumdomain(task_ : * const u8,numdomain_ : & mut i32) -> i32;
+    fn MSK_getnumdomain64(task_ : * const u8,numdomain_ : & mut i64) -> i32;
     fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
     fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
     fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut i64) -> i32;
@@ -212,6 +233,8 @@ extern {
     fn MSK_getobjsense(task_ : * const u8,sense_ : & mut i32) -> i32;
     fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut i32) -> i32;
     fn MSK_getparamname(task_ : * const u8,partype_ : i32,param_ : i32,parname_ : * const u8) -> i32;
+    fn MSK_getpowerdomainalpha(task_ : * const u8,domidx_ : i64,alpha_ : * mut f64) -> i32;
+    fn MSK_getpowerdomaininfo(task_ : * const u8,domidx_ : i64,n_ : & mut i32,nleft_ : & mut i32) -> i32;
     fn MSK_getprimalobj(task_ : * const u8,whichsol_ : i32,primalobj_ : & mut f64) -> i32;
     fn MSK_getprimalsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmxc_ : & mut f64,nrmxx_ : & mut f64,nrmbarx_ : & mut f64) -> i32;
     fn MSK_getprobtype(task_ : * const u8,probtype_ : & mut i32) -> i32;
@@ -220,6 +243,7 @@ extern {
     fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    fn MSK_getpvioldjc(task_ : * const u8,whichsol_ : i32,numdjcidx_ : i64,djcidxlist_ : * const i64,viol_ : * mut f64) -> i32;
     fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     fn MSK_getqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : & mut f64) -> i32;
     fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : * mut f64) -> i32;
@@ -238,7 +262,7 @@ extern {
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solsta_ : & mut i32) -> i32;
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
-    fn MSK_getsolutioninfonew(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolacc_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64,dviolacc_ : & mut f64) -> i32;
+    fn MSK_getsolutioninfonew(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolacc_ : & mut f64,pvioldjc_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64,dviolacc_ : & mut f64) -> i32;
     fn MSK_getsolutionnew(task_ : * const u8,whichsol_ : i32,prosta_ : & mut i32,solsta_ : & mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64,doty_ : * mut f64) -> i32;
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
     fn MSK_getsparsesymmat(task_ : * const u8,idx_ : i64,maxlen_ : i64,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
@@ -291,9 +315,13 @@ extern {
     fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
     fn MSK_putafebarfblocktriplet64(task_ : * const u8,num_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,subk_ : * const i32,subl_ : * const i32,valkl_ : * const f64) -> i32;
-    fn MSK_putafebarfentry64(task_ : * const u8,afeidx_ : i64,barvaridx_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
-    fn MSK_putafefrow64(task_ : * const u8,i_ : i64,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
-    fn MSK_putafeg64(task_ : * const u8,i_ : i64,gi_ : f64) -> i32;
+    fn MSK_putafebarfentry64(task_ : * const u8,afeidx_ : i64,barvaridx_ : i32,numterms_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    fn MSK_putafebarfentrylist64(task_ : * const u8,lenlist_ : i64,afeidxlist_ : * const i64,barvaridxlist_ : * const i32,numtermslist_ : * const i64,ptrtermslist_ : * const i64,lenterms_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    fn MSK_putafefentry64(task_ : * const u8,afeidx_ : i64,j_ : i32,value_ : f64) -> i32;
+    fn MSK_putafefrow64(task_ : * const u8,afeidx_ : i64,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
+    fn MSK_putafefrowlist64(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64,nzrow_ : * const i32,ptrrow_ : * const i64,lenidxval_ : i64,idxrow_ : * const i32,valrow_ : * const f64) -> i32;
+    fn MSK_putafeg64(task_ : * const u8,afeidx_ : i64,gi_ : f64) -> i32;
+    fn MSK_putafeglist64(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64,glist_ : * const f64) -> i32;
     fn MSK_putafegslice64(task_ : * const u8,first_ : i64,last_ : i64,slice_ : * mut f64) -> i32;
     fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
     fn MSK_putaijlist64(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
@@ -323,10 +351,10 @@ extern {
     fn MSK_putconname(task_ : * const u8,i_ : i32,name_ : * const libc::c_char) -> i32;
     fn MSK_putconsolutioni(task_ : * const u8,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
     fn MSK_putcslice(task_ : * const u8,first_ : i32,last_ : i32,slice_ : * const f64) -> i32;
-    fn MSK_putdjc64(task_ : * const u8,djcidx_ : i64,numdomidx_ : i64,domidxlist_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64) -> i32;
+    fn MSK_putdjc64(task_ : * const u8,djcidx_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64) -> i32;
     fn MSK_putdjcname64(task_ : * const u8,djcidx_ : i64,name_ : * const libc::c_char) -> i32;
-    fn MSK_putdjcslice64(task_ : * const u8,idxfirst_ : i64,idxlast_ : i64,numdomidx_ : i64,domidxlist_ : * const i32,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64,termsindjc_ : * const i64) -> i32;
-    fn MSK_putdomainname32(task_ : * const u8,domidx_ : i32,name_ : * const libc::c_char) -> i32;
+    fn MSK_putdjcslice64(task_ : * const u8,idxfirst_ : i64,idxlast_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64,termsindjc_ : * const i64) -> i32;
+    fn MSK_putdomainname64(task_ : * const u8,domidx_ : i64,name_ : * const libc::c_char) -> i32;
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
     fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
@@ -1129,11 +1157,13 @@ pub const MSK_LIINF_MIO_ANZ                  : i32 = 7;
 pub const MSK_LIINF_MIO_INTPNT_ITER          : i32 = 8;
 pub const MSK_LIINF_MIO_PRESOLVED_ANZ        : i32 = 9;
 pub const MSK_LIINF_MIO_SIMPLEX_ITER         : i32 = 10;
-pub const MSK_LIINF_RD_NUMANZ                : i32 = 11;
-pub const MSK_LIINF_RD_NUMQNZ                : i32 = 12;
-pub const MSK_LIINF_SIMPLEX_ITER             : i32 = 13;
+pub const MSK_LIINF_RD_NUMACC                : i32 = 11;
+pub const MSK_LIINF_RD_NUMANZ                : i32 = 12;
+pub const MSK_LIINF_RD_NUMDJC                : i32 = 13;
+pub const MSK_LIINF_RD_NUMQNZ                : i32 = 14;
+pub const MSK_LIINF_SIMPLEX_ITER             : i32 = 15;
 pub const MSK_LIINF_BEGIN : i32 = 0;
-pub const MSK_LIINF_END   : i32 = 14;
+pub const MSK_LIINF_END   : i32 = 16;
 
 // mark
 pub const MSK_MARK_LO : i32 = 0;
@@ -1284,27 +1314,33 @@ pub const MSK_RES_ERR_BASIS                                            : i32 = 1
 pub const MSK_RES_ERR_BASIS_FACTOR                                     : i32 = 1610;
 pub const MSK_RES_ERR_BASIS_SINGULAR                                   : i32 = 1615;
 pub const MSK_RES_ERR_BLANK_NAME                                       : i32 = 1070;
-pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                             : i32 = 7116;
-pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                             : i32 = 7115;
+pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD                             : i32 = 7117;
+pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD                             : i32 = 7116;
 pub const MSK_RES_ERR_CBF_DUPLICATE_CON                                : i32 = 7108;
-pub const MSK_RES_ERR_CBF_DUPLICATE_INT                                : i32 = 7110;
+pub const MSK_RES_ERR_CBF_DUPLICATE_INT                                : i32 = 7111;
 pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ                                : i32 = 7107;
-pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD                          : i32 = 7114;
+pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD                          : i32 = 7115;
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES                          : i32 = 7130;
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES                     : i32 = 7131;
-pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR                             : i32 = 7123;
-pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                                : i32 = 7109;
-pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                             : i32 = 7112;
-pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES                   : i32 = 7741;
-pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION                     : i32 = 7113;
-pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION                        : i32 = 7126;
-pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX                            : i32 = 7121;
-pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES                      : i32 = 7740;
+pub const MSK_RES_ERR_CBF_DUPLICATE_PSDCON                             : i32 = 7201;
+pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR                             : i32 = 7124;
+pub const MSK_RES_ERR_CBF_DUPLICATE_VAR                                : i32 = 7110;
+pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE                             : i32 = 7113;
+pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES                   : i32 = 7141;
+pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON                  : i32 = 7202;
+pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION                     : i32 = 7114;
+pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION                        : i32 = 7127;
+pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX                            : i32 = 7122;
+pub const MSK_RES_ERR_CBF_INVALID_NUM_PSDCON                           : i32 = 7200;
+pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES                      : i32 = 7140;
 pub const MSK_RES_ERR_CBF_INVALID_POWER                                : i32 = 7132;
 pub const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX                     : i32 = 7134;
 pub const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX                : i32 = 7135;
-pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION                     : i32 = 7124;
-pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                             : i32 = 7111;
+pub const MSK_RES_ERR_CBF_INVALID_PSDCON_BLOCK_INDEX                   : i32 = 7205;
+pub const MSK_RES_ERR_CBF_INVALID_PSDCON_INDEX                         : i32 = 7203;
+pub const MSK_RES_ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX                : i32 = 7204;
+pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION                     : i32 = 7125;
+pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE                             : i32 = 7112;
 pub const MSK_RES_ERR_CBF_NO_VARIABLES                                 : i32 = 7102;
 pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED                         : i32 = 7105;
 pub const MSK_RES_ERR_CBF_OBJ_SENSE                                    : i32 = 7101;
@@ -1313,16 +1349,16 @@ pub const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG                       : i32 = 7
 pub const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH                          : i32 = 7138;
 pub const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH                     : i32 = 7139;
 pub const MSK_RES_ERR_CBF_SYNTAX                                       : i32 = 7106;
-pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS                          : i32 = 7118;
-pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                                 : i32 = 7119;
-pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR                               : i32 = 7125;
-pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES                            : i32 = 7117;
+pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS                          : i32 = 7119;
+pub const MSK_RES_ERR_CBF_TOO_FEW_INTS                                 : i32 = 7120;
+pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR                               : i32 = 7126;
+pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES                            : i32 = 7118;
 pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS                         : i32 = 7103;
-pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                                : i32 = 7120;
+pub const MSK_RES_ERR_CBF_TOO_MANY_INTS                                : i32 = 7121;
 pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES                           : i32 = 7104;
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE                    : i32 = 7136;
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE               : i32 = 7137;
-pub const MSK_RES_ERR_CBF_UNSUPPORTED                                  : i32 = 7122;
+pub const MSK_RES_ERR_CBF_UNSUPPORTED                                  : i32 = 7123;
 pub const MSK_RES_ERR_CON_Q_NOT_NSD                                    : i32 = 1294;
 pub const MSK_RES_ERR_CON_Q_NOT_PSD                                    : i32 = 1293;
 pub const MSK_RES_ERR_CONE_INDEX                                       : i32 = 1300;
@@ -1377,6 +1413,7 @@ pub const MSK_RES_ERR_IN_ARGUMENT                                      : i32 = 1
 pub const MSK_RES_ERR_INDEX                                            : i32 = 1235;
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE                           : i32 = 1222;
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL                           : i32 = 1221;
+pub const MSK_RES_ERR_INDEX_IS_NOT_UNIQUE                              : i32 = 1205;
 pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                               : i32 = 1204;
 pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                               : i32 = 1203;
 pub const MSK_RES_ERR_INF_DOU_INDEX                                    : i32 = 1219;
@@ -1570,6 +1607,7 @@ pub const MSK_RES_ERR_NON_UNIQUE_ARRAY                                 : i32 = 5
 pub const MSK_RES_ERR_NONCONVEX                                        : i32 = 1291;
 pub const MSK_RES_ERR_NONLINEAR_EQUALITY                               : i32 = 1290;
 pub const MSK_RES_ERR_NONLINEAR_RANGED                                 : i32 = 1292;
+pub const MSK_RES_ERR_NOT_POWER_DOMAIN                                 : i32 = 20404;
 pub const MSK_RES_ERR_NULL_ENV                                         : i32 = 1060;
 pub const MSK_RES_ERR_NULL_POINTER                                     : i32 = 1065;
 pub const MSK_RES_ERR_NULL_TASK                                        : i32 = 1061;
@@ -1588,10 +1626,10 @@ pub const MSK_RES_ERR_OVERFLOW                                         : i32 = 1
 pub const MSK_RES_ERR_PARAM_INDEX                                      : i32 = 1210;
 pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE                               : i32 = 1215;
 pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL                               : i32 = 1216;
-pub const MSK_RES_ERR_PARAM_NAME                                       : i32 = 1205;
-pub const MSK_RES_ERR_PARAM_NAME_DOU                                   : i32 = 1206;
-pub const MSK_RES_ERR_PARAM_NAME_INT                                   : i32 = 1207;
-pub const MSK_RES_ERR_PARAM_NAME_STR                                   : i32 = 1208;
+pub const MSK_RES_ERR_PARAM_NAME                                       : i32 = 1206;
+pub const MSK_RES_ERR_PARAM_NAME_DOU                                   : i32 = 1207;
+pub const MSK_RES_ERR_PARAM_NAME_INT                                   : i32 = 1208;
+pub const MSK_RES_ERR_PARAM_NAME_STR                                   : i32 = 1209;
 pub const MSK_RES_ERR_PARAM_TYPE                                       : i32 = 1218;
 pub const MSK_RES_ERR_PARAM_VALUE_STR                                  : i32 = 1217;
 pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED                            : i32 = 1019;
@@ -1599,6 +1637,9 @@ pub const MSK_RES_ERR_POSTSOLVE                                        : i32 = 1
 pub const MSK_RES_ERR_PRO_ITEM                                         : i32 = 1281;
 pub const MSK_RES_ERR_PROB_LICENSE                                     : i32 = 1006;
 pub const MSK_RES_ERR_PTF_FORMAT                                       : i32 = 1167;
+pub const MSK_RES_ERR_PTF_INCOMPATIBILITY                              : i32 = 1181;
+pub const MSK_RES_ERR_PTF_INCONSISTENCY                                : i32 = 1174;
+pub const MSK_RES_ERR_PTF_UNDEFINED_ITEM                               : i32 = 1173;
 pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE                              : i32 = 1409;
 pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL                              : i32 = 1408;
 pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE                              : i32 = 1417;
@@ -1664,6 +1705,7 @@ pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD                        : i32 = 7
 pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE                     : i32 = 1421;
 pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ                             : i32 = 1245;
 pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ                              : i32 = 1252;
+pub const MSK_RES_ERR_UNALLOWED_WHICHSOL                               : i32 = 1248;
 pub const MSK_RES_ERR_UNB_STEP_SIZE                                    : i32 = 3100;
 pub const MSK_RES_ERR_UNDEF_SOLUTION                                   : i32 = 22000;
 pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE                        : i32 = 1446;
@@ -2022,7 +2064,7 @@ impl Env
         return handle_res_static(r,funname);
     }
 
-    
+
     // axpy
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2036,7 +2078,7 @@ impl Env
       self.handle_res(call_res,"axpy")?;
       return Result::Ok(());
     }
-    
+
     // checkinall
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2048,7 +2090,7 @@ impl Env
       self.handle_res(call_res,"checkinall")?;
       return Result::Ok(());
     }
-    
+
     // checkinlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2060,7 +2102,7 @@ impl Env
       self.handle_res(call_res,"checkinlicense")?;
       return Result::Ok(());
     }
-    
+
     // checkmemenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2072,7 +2114,7 @@ impl Env
       self.handle_res(call_res,"checkmemenv")?;
       return Result::Ok(());
     }
-    
+
     // checkoutlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2084,7 +2126,7 @@ impl Env
       self.handle_res(call_res,"checkoutlicense")?;
       return Result::Ok(());
     }
-    
+
     // checkversion
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2096,7 +2138,7 @@ impl Env
       self.handle_res(call_res,"checkversion")?;
       return Result::Ok(());
     }
-    
+
     // dot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2111,7 +2153,7 @@ impl Env
       self.handle_res(call_res,"dot")?;
       return Result::Ok((_ref_xty_ as f64));
     }
-    
+
     // echoenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2123,7 +2165,7 @@ impl Env
       self.handle_res(call_res,"echoenv")?;
       return Result::Ok(());
     }
-    
+
     // echointro
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2135,7 +2177,7 @@ impl Env
       self.handle_res(call_res,"echointro")?;
       return Result::Ok(());
     }
-    
+
     // gemm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2150,7 +2192,7 @@ impl Env
       self.handle_res(call_res,"gemm")?;
       return Result::Ok(());
     }
-    
+
     // gemv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2159,14 +2201,14 @@ impl Env
     pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64]) -> Result<(),String>
     {
       if a_.len() != ((n_ * m_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_3__ = 
+      let tmp_var_3__ =
         if (transa_ == MSK_TRANSPOSE_NO) {
           n_
         }  else {
           m_
         };
       if x_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'x_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_9__ = 
+      let tmp_var_9__ =
         if (transa_ == MSK_TRANSPOSE_NO) {
           m_
         }  else {
@@ -2177,7 +2219,7 @@ impl Env
       self.handle_res(call_res,"gemv")?;
       return Result::Ok(());
     }
-    
+
     // linkfiletoenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2189,7 +2231,7 @@ impl Env
       self.handle_res(call_res,"linkfiletoenvstream")?;
       return Result::Ok(());
     }
-    
+
     // potrf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2202,7 +2244,7 @@ impl Env
       self.handle_res(call_res,"potrf")?;
       return Result::Ok(());
     }
-    
+
     // putlicensecode
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2215,7 +2257,7 @@ impl Env
       self.handle_res(call_res,"putlicensecode")?;
       return Result::Ok(());
     }
-    
+
     // putlicensedebug
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2227,7 +2269,7 @@ impl Env
       self.handle_res(call_res,"putlicensedebug")?;
       return Result::Ok(());
     }
-    
+
     // putlicensepath
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2239,7 +2281,7 @@ impl Env
       self.handle_res(call_res,"putlicensepath")?;
       return Result::Ok(());
     }
-    
+
     // putlicensewait
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2251,7 +2293,7 @@ impl Env
       self.handle_res(call_res,"putlicensewait")?;
       return Result::Ok(());
     }
-    
+
     // setupthreads
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2263,7 +2305,7 @@ impl Env
       self.handle_res(call_res,"setupthreads")?;
       return Result::Ok(());
     }
-    
+
     // sparsetriangularsolvedense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2285,7 +2327,7 @@ impl Env
       self.handle_res(call_res,"sparsetriangularsolvedense")?;
       return Result::Ok(());
     }
-    
+
     // syeig
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2299,7 +2341,7 @@ impl Env
       self.handle_res(call_res,"syeig")?;
       return Result::Ok(());
     }
-    
+
     // syevd
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2313,7 +2355,7 @@ impl Env
       self.handle_res(call_res,"syevd")?;
       return Result::Ok(());
     }
-    
+
     // syrk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2327,7 +2369,7 @@ impl Env
       self.handle_res(call_res,"syrk")?;
       return Result::Ok(());
     }
-    
+
     // unlinkfuncfromenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2443,7 +2485,7 @@ impl Task
         return Ok(());
     }
 
-    
+
     // analyzenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2455,7 +2497,7 @@ impl Task
       self.handle_res(call_res,"analyzenames")?;
       return Result::Ok(());
     }
-    
+
     // analyzeproblem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2467,7 +2509,7 @@ impl Task
       self.handle_res(call_res,"analyzeproblem")?;
       return Result::Ok(());
     }
-    
+
     // analyzesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2479,53 +2521,53 @@ impl Task
       self.handle_res(call_res,"analyzesolution")?;
       return Result::Ok(());
     }
-    
+
     // appendacc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_acc(& mut self,domainidx_ : i32,afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
+    pub fn append_acc(& mut self,domidx_ : i64,afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
     {
       let mut numafeidx_ = afeidxlist_.len();
       if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_acc'".to_string()) }
-      let call_res = unsafe { (MSK_appendacc64(self.ptr,domainidx_ as i32,numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
+      let call_res = unsafe { (MSK_appendacc64(self.ptr,domidx_ as i64,numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
       self.handle_res(call_res,"appendacc64")?;
       return Result::Ok(());
     }
-    
+
     // appendaccs64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_accs(& mut self,domainidxs_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
+    pub fn append_accs(& mut self,domidxs_ : & [i64],afeidxlist_ : & [i64],b_ : & [f64]) -> Result<(),String>
     {
-      let mut numaccs_ = domainidxs_.len();
+      let mut numaccs_ = domidxs_.len();
       let mut numafeidx_ = afeidxlist_.len();
       if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_accs'".to_string()) }
-      let call_res = unsafe { (MSK_appendaccs64(self.ptr,numaccs_ as i64,domainidxs_.as_ptr(),numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
+      let call_res = unsafe { (MSK_appendaccs64(self.ptr,numaccs_ as i64,domidxs_.as_ptr(),numafeidx_ as i64,afeidxlist_.as_ptr(),b_.as_ptr())) };
       self.handle_res(call_res,"appendaccs64")?;
       return Result::Ok(());
     }
-    
+
     // appendaccseq64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_acc_seq(& mut self,domainidx_ : i32,afeidxfirst_ : i64,b_ : & [f64]) -> Result<(),String>
+    pub fn append_acc_seq(& mut self,domidx_ : i64,afeidxfirst_ : i64,b_ : & [f64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
-      let tmp_var_1__ = unsafe { MSK_getdomainn64(self.ptr,domainidx_,& mut tmp_var_3__) };
+      let tmp_var_1__ = unsafe { MSK_getdomainn64(self.ptr,domidx_,& mut tmp_var_3__) };
       self.handle_res(tmp_var_1__,"getdomainn64")?;
       let numafeidx_ = tmp_var_3__;
       if b_.len() != ((numafeidx_) as usize) { return Result::Err("Argument 'b_' is too short in call to 'append_acc_seq'".to_string()) }
-      let call_res = unsafe { (MSK_appendaccseq64(self.ptr,domainidx_ as i32,numafeidx_ as i64,afeidxfirst_ as i64,b_.as_ptr())) };
+      let call_res = unsafe { (MSK_appendaccseq64(self.ptr,domidx_ as i64,numafeidx_ as i64,afeidxfirst_ as i64,b_.as_ptr())) };
       self.handle_res(call_res,"appendaccseq64")?;
       return Result::Ok(());
     }
-    
+
     // appendafes64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2537,7 +2579,7 @@ impl Task
       self.handle_res(call_res,"appendafes64")?;
       return Result::Ok(());
     }
-    
+
     // appendbarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2550,7 +2592,7 @@ impl Task
       self.handle_res(call_res,"appendbarvars")?;
       return Result::Ok(());
     }
-    
+
     // appendcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2563,7 +2605,7 @@ impl Task
       self.handle_res(call_res,"appendcone")?;
       return Result::Ok(());
     }
-    
+
     // appendconeseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2575,7 +2617,7 @@ impl Task
       self.handle_res(call_res,"appendconeseq")?;
       return Result::Ok(());
     }
-    
+
     // appendconesseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2590,7 +2632,7 @@ impl Task
       self.handle_res(call_res,"appendconesseq")?;
       return Result::Ok(());
     }
-    
+
     // appendcons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2602,7 +2644,7 @@ impl Task
       self.handle_res(call_res,"appendcons")?;
       return Result::Ok(());
     }
-    
+
     // appenddjcs64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2614,7 +2656,7 @@ impl Task
       self.handle_res(call_res,"appenddjcs64")?;
       return Result::Ok(());
     }
-    
+
     // appenddualexpconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2622,12 +2664,25 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_dual_exp_cone_domain(& mut self) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appenddualexpconedomain(self.ptr,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appenddualexpconedomain(self.ptr,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appenddualexpconedomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      return Result::Ok((_ref_domidx_ as i32));
     }
-    
+
+    // appenddualexpconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_exp_cone_domain_64(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appenddualexpconedomain64(self.ptr,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appenddualexpconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appenddualgeomeanconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2635,12 +2690,53 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_dual_geo_mean_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appenddualgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appenddualgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appenddualgeomeanconedomain")?;
+      return Result::Ok((_ref_domidx_ as i32));
+    }
+
+    // appenddualgeomeanconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_geo_mean_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appenddualgeomeanconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appenddualgeomeanconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
+    // appenddualpowerconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_power_cone_domain(& mut self,n_ : i32,alpha_ : & [f64]) -> Result<i32,String>
+    {
+      let mut nleft_ = alpha_.len();
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appenddualpowerconedomain(self.ptr,n_ as i32,nleft_ as i32,alpha_.as_ptr(),& mut _ref_idx_)) };
+      self.handle_res(call_res,"appenddualpowerconedomain")?;
       return Result::Ok((_ref_idx_ as i32));
     }
-    
+
+    // appenddualpowerconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_dual_power_cone_domain_64(& mut self,n_ : i64,alpha_ : & [f64]) -> Result<i64,String>
+    {
+      let mut nleft_ = alpha_.len();
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appenddualpowerconedomain64(self.ptr,n_ as i64,nleft_ as i64,alpha_.as_ptr(),& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appenddualpowerconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendinfnormconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2648,12 +2744,25 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_inf_norm_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendinfnormconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendinfnormconedomain(self.ptr,n_ as i32,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appendinfnormconedomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      return Result::Ok((_ref_domidx_ as i32));
     }
-    
+
+    // appendinfnormconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_inf_norm_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendinfnormconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendinfnormconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendonenormconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2666,7 +2775,20 @@ impl Task
       self.handle_res(call_res,"appendonenormconedomain")?;
       return Result::Ok((_ref_idx_ as i32));
     }
-    
+
+    // appendonenormconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_one_norm_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendonenormconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendonenormconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendprimalexpconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2674,12 +2796,25 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_primal_exp_cone_domain(& mut self) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendprimalexpconedomain(self.ptr,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendprimalexpconedomain(self.ptr,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appendprimalexpconedomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      return Result::Ok((_ref_domidx_ as i32));
     }
-    
+
+    // appendprimalexpconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_exp_cone_domain_64(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendprimalexpconedomain64(self.ptr,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendprimalexpconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendprimalgeomeanconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2687,12 +2822,53 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_primal_geo_mean_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendprimalgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendprimalgeomeanconedomain(self.ptr,n_ as i32,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appendprimalgeomeanconedomain")?;
+      return Result::Ok((_ref_domidx_ as i32));
+    }
+
+    // appendprimalgeomeanconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_geo_mean_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendprimalgeomeanconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendprimalgeomeanconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
+    // appendprimalpowerconedomain
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_power_cone_domain(& mut self,n_ : i32,alpha_ : & [f64]) -> Result<i32,String>
+    {
+      let mut nleft_ = alpha_.len();
+      let mut _ref_idx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendprimalpowerconedomain(self.ptr,n_ as i32,nleft_ as i32,alpha_.as_ptr(),& mut _ref_idx_)) };
+      self.handle_res(call_res,"appendprimalpowerconedomain")?;
       return Result::Ok((_ref_idx_ as i32));
     }
-    
+
+    // appendprimalpowerconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_primal_power_cone_domain_64(& mut self,n_ : i64,alpha_ : & [f64]) -> Result<i64,String>
+    {
+      let mut nleft_ = alpha_.len();
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendprimalpowerconedomain64(self.ptr,n_ as i64,nleft_ as i64,alpha_.as_ptr(),& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendprimalpowerconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendpsdconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2705,7 +2881,20 @@ impl Task
       self.handle_res(call_res,"appendpsdconedomain")?;
       return Result::Ok((_ref_idx_ as i32));
     }
-    
+
+    // appendpsdconedomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_psd_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendpsdconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendpsdconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendquadraticconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2718,46 +2907,59 @@ impl Task
       self.handle_res(call_res,"appendquadraticconedomain")?;
       return Result::Ok((_ref_idx_ as i32));
     }
-    
-    // appendrdomain
+
+    // appendquadraticconedomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_r_domain(& mut self,n_ : i32) -> Result<i32,String>
+    pub fn append_quadratic_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendrdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
-      self.handle_res(call_res,"appendrdomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendquadraticconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendquadraticconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
     }
-    
-    // appendrminusdomain
+
+    // appendrdomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_rminus_domain(& mut self,n_ : i32) -> Result<i32,String>
+    pub fn append_r_domain(& mut self,n_ : i64) -> Result<i64,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendrminusdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
-      self.handle_res(call_res,"appendrminusdomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendrdomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendrdomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
     }
-    
-    // appendrplusdomain
+
+    // appendrminusdomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_rplus_domain(& mut self,n_ : i32) -> Result<i32,String>
+    pub fn append_rminus_domain(& mut self,n_ : i64) -> Result<i64,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendrplusdomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
-      self.handle_res(call_res,"appendrplusdomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendrminusdomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendrminusdomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
     }
-    
+
+    // appendrplusdomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_rplus_domain(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendrplusdomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendrplusdomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendrquadraticconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2765,25 +2967,38 @@ impl Task
     #[allow(unused_variables)]
     pub fn append_r_quadratic_cone_domain(& mut self,n_ : i32) -> Result<i32,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendrquadraticconedomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
+      let mut _ref_domidx_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_appendrquadraticconedomain(self.ptr,n_ as i32,& mut _ref_domidx_)) };
       self.handle_res(call_res,"appendrquadraticconedomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      return Result::Ok((_ref_domidx_ as i32));
     }
-    
-    // appendrzerodomain
+
+    // appendrquadraticconedomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn append_rzero_domain(& mut self,n_ : i32) -> Result<i32,String>
+    pub fn append_r_quadratic_cone_domain_64(& mut self,n_ : i64) -> Result<i64,String>
     {
-      let mut _ref_idx_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_appendrzerodomain(self.ptr,n_ as i32,& mut _ref_idx_)) };
-      self.handle_res(call_res,"appendrzerodomain")?;
-      return Result::Ok((_ref_idx_ as i32));
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendrquadraticconedomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendrquadraticconedomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
     }
-    
+
+    // appendrzerodomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn append_rzero_domain(& mut self,n_ : i64) -> Result<i64,String>
+    {
+      let mut _ref_domidx_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_appendrzerodomain64(self.ptr,n_ as i64,& mut _ref_domidx_)) };
+      self.handle_res(call_res,"appendrzerodomain64")?;
+      return Result::Ok((_ref_domidx_ as i64));
+    }
+
     // appendsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2799,7 +3014,7 @@ impl Task
       self.handle_res(call_res,"appendsparsesymmat")?;
       return Result::Ok((_ref_idx_ as i64));
     }
-    
+
     // appendsparsesymmatlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2820,7 +3035,7 @@ impl Task
       self.handle_res(call_res,"appendsparsesymmatlist")?;
       return Result::Ok(());
     }
-    
+
     // appendvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2832,7 +3047,7 @@ impl Task
       self.handle_res(call_res,"appendvars")?;
       return Result::Ok(());
     }
-    
+
     // asyncgetresult
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2847,7 +3062,7 @@ impl Task
       self.handle_res(call_res,"asyncgetresult")?;
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32));
     }
-    
+
     // asyncoptimize
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2861,7 +3076,7 @@ impl Task
       unsafe { _token__bytes.set_len((33) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()));
     }
-    
+
     // asyncpoll
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2876,7 +3091,7 @@ impl Task
       self.handle_res(call_res,"asyncpoll")?;
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32));
     }
-    
+
     // asyncstop
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2888,7 +3103,7 @@ impl Task
       self.handle_res(call_res,"asyncstop")?;
       return Result::Ok(());
     }
-    
+
     // basiscond
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2902,7 +3117,7 @@ impl Task
       self.handle_res(call_res,"basiscond")?;
       return Result::Ok((_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64));
     }
-    
+
     // bktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2916,7 +3131,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // checkmemtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2928,7 +3143,7 @@ impl Task
       self.handle_res(call_res,"checkmemtask")?;
       return Result::Ok(());
     }
-    
+
     // chgconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2940,7 +3155,7 @@ impl Task
       self.handle_res(call_res,"chgconbound")?;
       return Result::Ok(());
     }
-    
+
     // chgvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2952,7 +3167,7 @@ impl Task
       self.handle_res(call_res,"chgvarbound")?;
       return Result::Ok(());
     }
-    
+
     // commitchanges
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2964,7 +3179,7 @@ impl Task
       self.handle_res(call_res,"commitchanges")?;
       return Result::Ok(());
     }
-    
+
     // conetypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2978,7 +3193,7 @@ impl Task
       unsafe { _str__bytes.set_len((1024) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // deletesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2990,7 +3205,7 @@ impl Task
       self.handle_res(call_res,"deletesolution")?;
       return Result::Ok(());
     }
-    
+
     // dualsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3007,7 +3222,7 @@ impl Task
       self.handle_res(call_res,"dualsensitivity")?;
       return Result::Ok(());
     }
-    
+
     // echotask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3019,7 +3234,57 @@ impl Task
       self.handle_res(call_res,"echotask")?;
       return Result::Ok(());
     }
-    
+
+    // emptyafebarfrow64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn empty_afe_barf_row(& mut self,afeidx_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_emptyafebarfrow64(self.ptr,afeidx_ as i64)) };
+      self.handle_res(call_res,"emptyafebarfrow64")?;
+      return Result::Ok(());
+    }
+
+    // emptyafebarfrowlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn empty_afe_barf_row_list(& mut self,afeidxlist_ : & [i64]) -> Result<(),String>
+    {
+      let mut numafeidx_ = afeidxlist_.len();
+      let call_res = unsafe { (MSK_emptyafebarfrowlist64(self.ptr,numafeidx_ as i64,afeidxlist_.as_ptr())) };
+      self.handle_res(call_res,"emptyafebarfrowlist64")?;
+      return Result::Ok(());
+    }
+
+    // emptyafefrow64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn empty_afe_f_row(& mut self,afeidx_ : i64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_emptyafefrow64(self.ptr,afeidx_ as i64)) };
+      self.handle_res(call_res,"emptyafefrow64")?;
+      return Result::Ok(());
+    }
+
+    // emptyafefrowlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn empty_afe_f_row_list(& mut self,afeidxlist_ : & [i64]) -> Result<(),String>
+    {
+      let mut numafeidx_ = afeidxlist_.len();
+      let call_res = unsafe { (MSK_emptyafefrowlist64(self.ptr,numafeidx_ as i64,afeidxlist_.as_ptr())) };
+      self.handle_res(call_res,"emptyafefrowlist64")?;
+      return Result::Ok(());
+    }
+
     // generateconenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3034,7 +3299,7 @@ impl Task
       self.handle_res(call_res,"generateconenames")?;
       return Result::Ok(());
     }
-    
+
     // generateconnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3049,7 +3314,7 @@ impl Task
       self.handle_res(call_res,"generateconnames")?;
       return Result::Ok(());
     }
-    
+
     // generatevarnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3064,7 +3329,7 @@ impl Task
       self.handle_res(call_res,"generatevarnames")?;
       return Result::Ok(());
     }
-    
+
     // getaccafeidxlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3080,7 +3345,7 @@ impl Task
       self.handle_res(call_res,"getaccafeidxlist64")?;
       return Result::Ok(());
     }
-    
+
     // getaccb64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3096,20 +3361,20 @@ impl Task
       self.handle_res(call_res,"getaccb64")?;
       return Result::Ok(());
     }
-    
+
     // getaccdomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_acc_domain(& mut self,accidx_ : i64) -> Result<i32,String>
+    pub fn get_acc_domain(& mut self,accidx_ : i64) -> Result<i64,String>
     {
-      let mut _ref_domidx_ : i32 = 0 as i32;
+      let mut _ref_domidx_ : i64 = 0 as i64;
       let call_res = unsafe { (MSK_getaccdomain64(self.ptr,accidx_ as i64,& mut _ref_domidx_)) };
       self.handle_res(call_res,"getaccdomain64")?;
-      return Result::Ok((_ref_domidx_ as i32));
+      return Result::Ok((_ref_domidx_ as i64));
     }
-    
+
     // getaccdoty64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3125,7 +3390,7 @@ impl Task
       self.handle_res(call_res,"getaccdoty64")?;
       return Result::Ok(());
     }
-    
+
     // getaccn64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3138,7 +3403,7 @@ impl Task
       self.handle_res(call_res,"getaccn64")?;
       return Result::Ok((_ref_n_ as i64));
     }
-    
+
     // getaccname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3156,7 +3421,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getaccnamelen64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3169,7 +3434,7 @@ impl Task
       self.handle_res(call_res,"getaccnamelen64")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getaccntot64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3182,18 +3447,18 @@ impl Task
       self.handle_res(call_res,"getaccntot64")?;
       return Result::Ok((_ref_n_ as i64));
     }
-    
+
     // getaccs64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_accs(& mut self,domainidxlist_ : & mut [i32],afeidxlist_ : & mut [i64],b_ : & mut [f64]) -> Result<(),String>
+    pub fn get_accs(& mut self,domidxlist_ : & mut [i64],afeidxlist_ : & mut [i64],b_ : & mut [f64]) -> Result<(),String>
     {
       let mut tmp_var_2__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getnumacc64(self.ptr,& mut tmp_var_2__) };
       self.handle_res(tmp_var_1__,"getnumacc64")?;
-      if domainidxlist_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'domainidxlist_' is too short in call to 'get_accs'".to_string()) }
+      if domidxlist_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'domidxlist_' is too short in call to 'get_accs'".to_string()) }
       let mut tmp_var_5__ : i64 = 0 as i64;
       let tmp_var_4__ = unsafe { MSK_getaccntot64(self.ptr,& mut tmp_var_5__) };
       self.handle_res(tmp_var_4__,"getaccntot64")?;
@@ -3202,11 +3467,11 @@ impl Task
       let tmp_var_7__ = unsafe { MSK_getaccntot64(self.ptr,& mut tmp_var_8__) };
       self.handle_res(tmp_var_7__,"getaccntot64")?;
       if b_.len() != ((tmp_var_8__) as usize) { return Result::Err("Argument 'b_' is too short in call to 'get_accs'".to_string()) }
-      let call_res = unsafe { (MSK_getaccs64(self.ptr,domainidxlist_.as_mut_ptr(),afeidxlist_.as_mut_ptr(),b_.as_mut_ptr())) };
+      let call_res = unsafe { (MSK_getaccs64(self.ptr,domidxlist_.as_mut_ptr(),afeidxlist_.as_mut_ptr(),b_.as_mut_ptr())) };
       self.handle_res(call_res,"getaccs64")?;
       return Result::Ok(());
     }
-    
+
     // getacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3223,7 +3488,7 @@ impl Task
       self.handle_res(call_res,"getacol")?;
       return Result::Ok((_ref_nzj_ as i32));
     }
-    
+
     // getacolnumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3236,7 +3501,7 @@ impl Task
       self.handle_res(call_res,"getacolnumnz")?;
       return Result::Ok((_ref_nzj_ as i32));
     }
-    
+
     // getacolslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3249,7 +3514,7 @@ impl Task
       self.handle_res(call_res,"getacolslicenumnz64")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-    
+
     // getafebarfnumrowentries64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3262,7 +3527,44 @@ impl Task
       self.handle_res(call_res,"getafebarfnumrowentries64")?;
       return Result::Ok((_ref_numentries_ as i32));
     }
-    
+
+    // getafebarfrow64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_barf_row(& mut self,afeidx_ : i64,barvaridx_ : & mut [i32],termptr_ : & mut [i64],numterms_ : & mut [i64],termidx_ : & mut [i64],termweight_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i32 = 0 as i32;
+      let mut tmp_var_4__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getafebarfrowinfo64(self.ptr,afeidx_,& mut tmp_var_3__,& mut tmp_var_4__) };
+      self.handle_res(tmp_var_1__,"getafebarfrowinfo64")?;
+      if barvaridx_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'barvaridx_' is too short in call to 'get_afe_barf_row'".to_string()) }
+      let mut tmp_var_8__ : i32 = 0 as i32;
+      let mut tmp_var_9__ : i64 = 0 as i64;
+      let tmp_var_6__ = unsafe { MSK_getafebarfrowinfo64(self.ptr,afeidx_,& mut tmp_var_8__,& mut tmp_var_9__) };
+      self.handle_res(tmp_var_6__,"getafebarfrowinfo64")?;
+      if termptr_.len() != ((tmp_var_8__) as usize) { return Result::Err("Argument 'termptr_' is too short in call to 'get_afe_barf_row'".to_string()) }
+      let mut tmp_var_13__ : i32 = 0 as i32;
+      let mut tmp_var_14__ : i64 = 0 as i64;
+      let tmp_var_11__ = unsafe { MSK_getafebarfrowinfo64(self.ptr,afeidx_,& mut tmp_var_13__,& mut tmp_var_14__) };
+      self.handle_res(tmp_var_11__,"getafebarfrowinfo64")?;
+      if numterms_.len() != ((tmp_var_13__) as usize) { return Result::Err("Argument 'numterms_' is too short in call to 'get_afe_barf_row'".to_string()) }
+      let mut tmp_var_18__ : i32 = 0 as i32;
+      let mut tmp_var_19__ : i64 = 0 as i64;
+      let tmp_var_16__ = unsafe { MSK_getafebarfrowinfo64(self.ptr,afeidx_,& mut tmp_var_18__,& mut tmp_var_19__) };
+      self.handle_res(tmp_var_16__,"getafebarfrowinfo64")?;
+      if termidx_.len() != ((tmp_var_19__) as usize) { return Result::Err("Argument 'termidx_' is too short in call to 'get_afe_barf_row'".to_string()) }
+      let mut tmp_var_23__ : i32 = 0 as i32;
+      let mut tmp_var_24__ : i64 = 0 as i64;
+      let tmp_var_21__ = unsafe { MSK_getafebarfrowinfo64(self.ptr,afeidx_,& mut tmp_var_23__,& mut tmp_var_24__) };
+      self.handle_res(tmp_var_21__,"getafebarfrowinfo64")?;
+      if termweight_.len() != ((tmp_var_24__) as usize) { return Result::Err("Argument 'termweight_' is too short in call to 'get_afe_barf_row'".to_string()) }
+      let call_res = unsafe { (MSK_getafebarfrow64(self.ptr,afeidx_ as i64,barvaridx_.as_mut_ptr(),termptr_.as_mut_ptr(),numterms_.as_mut_ptr(),termidx_.as_mut_ptr(),termweight_.as_mut_ptr())) };
+      self.handle_res(call_res,"getafebarfrow64")?;
+      return Result::Ok(());
+    }
+
     // getafebarfrowinfo64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3276,7 +3578,7 @@ impl Task
       self.handle_res(call_res,"getafebarfrowinfo64")?;
       return Result::Ok((_ref_numentries_ as i32,_ref_numterms_ as i64));
     }
-    
+
     // getafefnumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3289,54 +3591,54 @@ impl Task
       self.handle_res(call_res,"getafefnumnz64")?;
       return Result::Ok((_ref_numfnz_ as i64));
     }
-    
+
     // getafefrow64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_afe_f_row(& mut self,i_ : i64,subi_ : & mut [i32],vali_ : & mut [f64]) -> Result<i32,String>
+    pub fn get_afe_f_row(& mut self,afeidx_ : i64,subi_ : & mut [i32],vali_ : & mut [f64]) -> Result<i32,String>
     {
       let mut _ref_nzi_ : i32 = 0 as i32;
       let mut tmp_var_3__ : i32 = 0 as i32;
-      let tmp_var_1__ = unsafe { MSK_getafefrownumnz64(self.ptr,i_,& mut tmp_var_3__) };
+      let tmp_var_1__ = unsafe { MSK_getafefrownumnz64(self.ptr,afeidx_,& mut tmp_var_3__) };
       self.handle_res(tmp_var_1__,"getafefrownumnz64")?;
       if subi_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_afe_f_row'".to_string()) }
       let mut tmp_var_7__ : i32 = 0 as i32;
-      let tmp_var_5__ = unsafe { MSK_getafefrownumnz64(self.ptr,i_,& mut tmp_var_7__) };
+      let tmp_var_5__ = unsafe { MSK_getafefrownumnz64(self.ptr,afeidx_,& mut tmp_var_7__) };
       self.handle_res(tmp_var_5__,"getafefrownumnz64")?;
       if vali_.len() != ((tmp_var_7__) as usize) { return Result::Err("Argument 'vali_' is too short in call to 'get_afe_f_row'".to_string()) }
-      let call_res = unsafe { (MSK_getafefrow64(self.ptr,i_ as i64,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr())) };
+      let call_res = unsafe { (MSK_getafefrow64(self.ptr,afeidx_ as i64,& mut _ref_nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr())) };
       self.handle_res(call_res,"getafefrow64")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-    
+
     // getafefrownumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_afe_f_row_num_nz(& mut self,i_ : i64) -> Result<i32,String>
+    pub fn get_afe_f_row_num_nz(& mut self,afeidx_ : i64) -> Result<i32,String>
     {
       let mut _ref_nzi_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_getafefrownumnz64(self.ptr,i_ as i64,& mut _ref_nzi_)) };
+      let call_res = unsafe { (MSK_getafefrownumnz64(self.ptr,afeidx_ as i64,& mut _ref_nzi_)) };
       self.handle_res(call_res,"getafefrownumnz64")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-    
+
     // getafeg64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_afe_g(& mut self,i_ : i64) -> Result<f64,String>
+    pub fn get_afe_g(& mut self,afeidx_ : i64) -> Result<f64,String>
     {
       let mut _ref_g_ : f64 = 0 as f64;
-      let call_res = unsafe { (MSK_getafeg64(self.ptr,i_ as i64,& mut _ref_g_)) };
+      let call_res = unsafe { (MSK_getafeg64(self.ptr,afeidx_ as i64,& mut _ref_g_)) };
       self.handle_res(call_res,"getafeg64")?;
       return Result::Ok((_ref_g_ as f64));
     }
-    
+
     // getafegslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3349,7 +3651,7 @@ impl Task
       self.handle_res(call_res,"getafegslice64")?;
       return Result::Ok(());
     }
-    
+
     // getaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3362,7 +3664,7 @@ impl Task
       self.handle_res(call_res,"getaij")?;
       return Result::Ok((_ref_aij_ as f64));
     }
-    
+
     // getapiecenumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3375,7 +3677,7 @@ impl Task
       self.handle_res(call_res,"getapiecenumnz")?;
       return Result::Ok((_ref_numnz_ as i32));
     }
-    
+
     // getarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3392,7 +3694,7 @@ impl Task
       self.handle_res(call_res,"getarow")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-    
+
     // getarownumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3405,7 +3707,7 @@ impl Task
       self.handle_res(call_res,"getarownumnz")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-    
+
     // getarowslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3418,7 +3720,7 @@ impl Task
       self.handle_res(call_res,"getarowslicenumnz64")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-    
+
     // getatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3431,7 +3733,7 @@ impl Task
       self.handle_res(call_res,"getatruncatetol")?;
       return Result::Ok(());
     }
-    
+
     // getbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3451,7 +3753,7 @@ impl Task
       self.handle_res(call_res,"getbarablocktriplet")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getbaraidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3470,7 +3772,7 @@ impl Task
       self.handle_res(call_res,"getbaraidx")?;
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64));
     }
-    
+
     // getbaraidxij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3484,7 +3786,7 @@ impl Task
       self.handle_res(call_res,"getbaraidxij")?;
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32));
     }
-    
+
     // getbaraidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3497,7 +3799,7 @@ impl Task
       self.handle_res(call_res,"getbaraidxinfo")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getbarasparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3513,7 +3815,7 @@ impl Task
       self.handle_res(call_res,"getbarasparsity")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-    
+
     // getbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3532,7 +3834,7 @@ impl Task
       self.handle_res(call_res,"getbarcblocktriplet")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getbarcidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3550,7 +3852,7 @@ impl Task
       self.handle_res(call_res,"getbarcidx")?;
       return Result::Ok((_ref_j_ as i32,_ref_num_ as i64));
     }
-    
+
     // getbarcidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3563,7 +3865,7 @@ impl Task
       self.handle_res(call_res,"getbarcidxinfo")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getbarcidxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3576,7 +3878,7 @@ impl Task
       self.handle_res(call_res,"getbarcidxj")?;
       return Result::Ok((_ref_j_ as i32));
     }
-    
+
     // getbarcsparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3592,7 +3894,7 @@ impl Task
       self.handle_res(call_res,"getbarcsparsity")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-    
+
     // getbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3606,7 +3908,7 @@ impl Task
       self.handle_res(call_res,"getbarsj")?;
       return Result::Ok(());
     }
-    
+
     // getbarsslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3619,7 +3921,7 @@ impl Task
       self.handle_res(call_res,"getbarsslice")?;
       return Result::Ok(());
     }
-    
+
     // getbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3635,7 +3937,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getbarvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3649,7 +3951,7 @@ impl Task
       self.handle_res(call_res,"getbarvarnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-    
+
     // getbarvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3662,7 +3964,7 @@ impl Task
       self.handle_res(call_res,"getbarvarnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3676,7 +3978,7 @@ impl Task
       self.handle_res(call_res,"getbarxj")?;
       return Result::Ok(());
     }
-    
+
     // getbarxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3689,7 +3991,7 @@ impl Task
       self.handle_res(call_res,"getbarxslice")?;
       return Result::Ok(());
     }
-    
+
     // getc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3703,7 +4005,7 @@ impl Task
       self.handle_res(call_res,"getc")?;
       return Result::Ok(());
     }
-    
+
     // getcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3716,7 +4018,7 @@ impl Task
       self.handle_res(call_res,"getcfix")?;
       return Result::Ok((_ref_cfix_ as f64));
     }
-    
+
     // getcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3729,7 +4031,7 @@ impl Task
       self.handle_res(call_res,"getcj")?;
       return Result::Ok((_ref_cj_ as f64));
     }
-    
+
     // getclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3743,7 +4045,7 @@ impl Task
       self.handle_res(call_res,"getclist")?;
       return Result::Ok(());
     }
-    
+
     // getconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3758,7 +4060,7 @@ impl Task
       self.handle_res(call_res,"getconbound")?;
       return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64));
     }
-    
+
     // getconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3773,7 +4075,7 @@ impl Task
       self.handle_res(call_res,"getconboundslice")?;
       return Result::Ok(());
     }
-    
+
     // getcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3790,7 +4092,7 @@ impl Task
       self.handle_res(call_res,"getcone")?;
       return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32));
     }
-    
+
     // getconeinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3805,7 +4107,7 @@ impl Task
       self.handle_res(call_res,"getconeinfo")?;
       return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32));
     }
-    
+
     // getconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3821,7 +4123,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getconenameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3835,7 +4137,7 @@ impl Task
       self.handle_res(call_res,"getconenameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-    
+
     // getconenamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3848,7 +4150,7 @@ impl Task
       self.handle_res(call_res,"getconenamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3864,7 +4166,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getconnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3878,7 +4180,7 @@ impl Task
       self.handle_res(call_res,"getconnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-    
+
     // getconnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3891,7 +4193,7 @@ impl Task
       self.handle_res(call_res,"getconnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3904,7 +4206,7 @@ impl Task
       self.handle_res(call_res,"getcslice")?;
       return Result::Ok(());
     }
-    
+
     // getdimbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3917,7 +4219,7 @@ impl Task
       self.handle_res(call_res,"getdimbarvarj")?;
       return Result::Ok((_ref_dimbarvarj_ as i32));
     }
-    
+
     // getdjcafeidxlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3933,7 +4235,7 @@ impl Task
       self.handle_res(call_res,"getdjcafeidxlist64")?;
       return Result::Ok(());
     }
-    
+
     // getdjcb64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3949,13 +4251,13 @@ impl Task
       self.handle_res(call_res,"getdjcb64")?;
       return Result::Ok(());
     }
-    
+
     // getdjcdomainidxlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djc_domain_idx_list(& mut self,djcidx_ : i64,domidxlist_ : & mut [i32]) -> Result<(),String>
+    pub fn get_djc_domain_idx_list(& mut self,djcidx_ : i64,domidxlist_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumdomain64(self.ptr,djcidx_,& mut tmp_var_3__) };
@@ -3965,7 +4267,7 @@ impl Task
       self.handle_res(call_res,"getdjcdomainidxlist64")?;
       return Result::Ok(());
     }
-    
+
     // getdjcname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3983,7 +4285,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getdjcnamelen64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3996,7 +4298,7 @@ impl Task
       self.handle_res(call_res,"getdjcnamelen64")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getdjcnumafe64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4009,7 +4311,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumafe64")?;
       return Result::Ok((_ref_numafe_ as i64));
     }
-    
+
     // getdjcnumdomain64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4022,7 +4324,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumdomain64")?;
       return Result::Ok((_ref_numdomain_ as i64));
     }
-    
+
     // getdjcnumterm64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4035,7 +4337,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumterm64")?;
       return Result::Ok((_ref_numterm_ as i64));
     }
-    
+
     // getdjctermsizelist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4051,51 +4353,51 @@ impl Task
       self.handle_res(call_res,"getdjctermsizelist64")?;
       return Result::Ok(());
     }
-    
+
     // getdomainn64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_domain_n(& mut self,domidx_ : i32) -> Result<i64,String>
+    pub fn get_domain_n(& mut self,domidx_ : i64) -> Result<i64,String>
     {
       let mut _ref_n_ : i64 = 0 as i64;
-      let call_res = unsafe { (MSK_getdomainn64(self.ptr,domidx_ as i32,& mut _ref_n_)) };
+      let call_res = unsafe { (MSK_getdomainn64(self.ptr,domidx_ as i64,& mut _ref_n_)) };
       self.handle_res(call_res,"getdomainn64")?;
       return Result::Ok((_ref_n_ as i64));
     }
-    
-    // getdomainname32
+
+    // getdomainname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_domain_name(&self,domidx_ : i32) -> Result<String,String>
+    pub fn get_domain_name(&self,domidx_ : i64) -> Result<String,String>
     {
       let mut tmp_var_5__ : i32 = 0 as i32;
-      let tmp_var_3__ = unsafe { MSK_getdomainnamelen32(self.ptr,domidx_,& mut tmp_var_5__) };
-      self.handle_res(tmp_var_3__,"getdomainnamelen32")?;
+      let tmp_var_3__ = unsafe { MSK_getdomainnamelen64(self.ptr,domidx_,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_3__,"getdomainnamelen64")?;
       let sizename_ = 1 + tmp_var_5__;
       let mut _name__bytes = Vec::with_capacity(sizename_ as usize);
-      let call_res = unsafe { (MSK_getdomainname32(self.ptr,domidx_ as i32,sizename_ as i32,_name__bytes.as_mut_ptr())) };
-      self.handle_res(call_res,"getdomainname32")?;
+      let call_res = unsafe { (MSK_getdomainname64(self.ptr,domidx_ as i64,sizename_ as i32,_name__bytes.as_mut_ptr())) };
+      self.handle_res(call_res,"getdomainname64")?;
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
-    // getdomainnamelen32
+
+    // getdomainnamelen64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_domain_name_len(&self,domidx_ : i32) -> Result<i32,String>
+    pub fn get_domain_name_len(&self,domidx_ : i64) -> Result<i32,String>
     {
       let mut _ref_len_ : i32 = 0 as i32;
-      let call_res = unsafe { (MSK_getdomainnamelen32(self.ptr,domidx_ as i32,& mut _ref_len_)) };
-      self.handle_res(call_res,"getdomainnamelen32")?;
+      let call_res = unsafe { (MSK_getdomainnamelen64(self.ptr,domidx_ as i64,& mut _ref_len_)) };
+      self.handle_res(call_res,"getdomainnamelen64")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getdomaintype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4108,7 +4410,20 @@ impl Task
       self.handle_res(call_res,"getdomaintype")?;
       return Result::Ok((_ref_domaintype_ as i32));
     }
-    
+
+    // getdomaintype64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_domain_type_64(& mut self,domidx_ : i64) -> Result<i32,String>
+    {
+      let mut _ref_domaintype_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getdomaintype64(self.ptr,domidx_ as i64,& mut _ref_domaintype_)) };
+      self.handle_res(call_res,"getdomaintype64")?;
+      return Result::Ok((_ref_domaintype_ as i32));
+    }
+
     // getdouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4121,7 +4436,7 @@ impl Task
       self.handle_res(call_res,"getdouinf")?;
       return Result::Ok((_ref_dvalue_ as f64));
     }
-    
+
     // getdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4134,7 +4449,7 @@ impl Task
       self.handle_res(call_res,"getdouparam")?;
       return Result::Ok((_ref_parvalue_ as f64));
     }
-    
+
     // getdualobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4147,7 +4462,7 @@ impl Task
       self.handle_res(call_res,"getdualobj")?;
       return Result::Ok((_ref_dualobj_ as f64));
     }
-    
+
     // getdualsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4166,7 +4481,7 @@ impl Task
       self.handle_res(call_res,"getdualsolutionnorms")?;
       return Result::Ok((_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64));
     }
-    
+
     // getdviolacc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4180,7 +4495,7 @@ impl Task
       self.handle_res(call_res,"getdviolacc64")?;
       return Result::Ok(());
     }
-    
+
     // getdviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4194,7 +4509,7 @@ impl Task
       self.handle_res(call_res,"getdviolbarvar")?;
       return Result::Ok(());
     }
-    
+
     // getdviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4208,7 +4523,7 @@ impl Task
       self.handle_res(call_res,"getdviolcon")?;
       return Result::Ok(());
     }
-    
+
     // getdviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4222,7 +4537,7 @@ impl Task
       self.handle_res(call_res,"getdviolcones")?;
       return Result::Ok(());
     }
-    
+
     // getdviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4236,7 +4551,7 @@ impl Task
       self.handle_res(call_res,"getdviolvar")?;
       return Result::Ok(());
     }
-    
+
     // getinfindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4249,7 +4564,7 @@ impl Task
       self.handle_res(call_res,"getinfindex")?;
       return Result::Ok((_ref_infindex_ as i32));
     }
-    
+
     // getinfmax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4262,7 +4577,7 @@ impl Task
       self.handle_res(call_res,"getinfmax")?;
       return Result::Ok(());
     }
-    
+
     // getinfname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4276,7 +4591,7 @@ impl Task
       unsafe { _infname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_infname__bytes[..]).into_owned()));
     }
-    
+
     // getintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4289,7 +4604,7 @@ impl Task
       self.handle_res(call_res,"getintinf")?;
       return Result::Ok((_ref_ivalue_ as i32));
     }
-    
+
     // getintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4302,7 +4617,7 @@ impl Task
       self.handle_res(call_res,"getintparam")?;
       return Result::Ok((_ref_parvalue_ as i32));
     }
-    
+
     // getlenbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4315,7 +4630,7 @@ impl Task
       self.handle_res(call_res,"getlenbarvarj")?;
       return Result::Ok((_ref_lenbarvarj_ as i64));
     }
-    
+
     // getlintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4328,7 +4643,7 @@ impl Task
       self.handle_res(call_res,"getlintinf")?;
       return Result::Ok((_ref_ivalue_ as i64));
     }
-    
+
     // getmaxnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4341,7 +4656,7 @@ impl Task
       self.handle_res(call_res,"getmaxnamelen")?;
       return Result::Ok((_ref_maxlen_ as i32));
     }
-    
+
     // getmaxnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4354,7 +4669,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumanz64")?;
       return Result::Ok((_ref_maxnumanz_ as i64));
     }
-    
+
     // getmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4367,7 +4682,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumbarvar")?;
       return Result::Ok((_ref_maxnumbarvar_ as i32));
     }
-    
+
     // getmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4380,7 +4695,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumcon")?;
       return Result::Ok((_ref_maxnumcon_ as i32));
     }
-    
+
     // getmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4393,7 +4708,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumcone")?;
       return Result::Ok((_ref_maxnumcone_ as i32));
     }
-    
+
     // getmaxnumqnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4406,7 +4721,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumqnz64")?;
       return Result::Ok((_ref_maxnumqnz_ as i64));
     }
-    
+
     // getmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4419,7 +4734,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumvar")?;
       return Result::Ok((_ref_maxnumvar_ as i32));
     }
-    
+
     // getmemusagetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4433,7 +4748,7 @@ impl Task
       self.handle_res(call_res,"getmemusagetask")?;
       return Result::Ok((_ref_meminuse_ as i64,_ref_maxmemuse_ as i64));
     }
-    
+
     // getnadouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4446,7 +4761,7 @@ impl Task
       self.handle_res(call_res,"getnadouinf")?;
       return Result::Ok((_ref_dvalue_ as f64));
     }
-    
+
     // getnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4459,7 +4774,7 @@ impl Task
       self.handle_res(call_res,"getnadouparam")?;
       return Result::Ok((_ref_parvalue_ as f64));
     }
-    
+
     // getnaintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4472,7 +4787,7 @@ impl Task
       self.handle_res(call_res,"getnaintinf")?;
       return Result::Ok((_ref_ivalue_ as i32));
     }
-    
+
     // getnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4485,7 +4800,7 @@ impl Task
       self.handle_res(call_res,"getnaintparam")?;
       return Result::Ok((_ref_parvalue_ as i32));
     }
-    
+
     // getnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4500,7 +4815,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()));
     }
-    
+
     // getnumacc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4513,7 +4828,7 @@ impl Task
       self.handle_res(call_res,"getnumacc64")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getnumafe64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4526,7 +4841,7 @@ impl Task
       self.handle_res(call_res,"getnumafe64")?;
       return Result::Ok((_ref_numafe_ as i64));
     }
-    
+
     // getnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4539,7 +4854,7 @@ impl Task
       self.handle_res(call_res,"getnumanz")?;
       return Result::Ok((_ref_numanz_ as i32));
     }
-    
+
     // getnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4552,7 +4867,7 @@ impl Task
       self.handle_res(call_res,"getnumanz64")?;
       return Result::Ok((_ref_numanz_ as i64));
     }
-    
+
     // getnumbarablocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4565,7 +4880,7 @@ impl Task
       self.handle_res(call_res,"getnumbarablocktriplets")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getnumbaranz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4578,7 +4893,7 @@ impl Task
       self.handle_res(call_res,"getnumbaranz")?;
       return Result::Ok((_ref_nz_ as i64));
     }
-    
+
     // getnumbarcblocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4591,7 +4906,7 @@ impl Task
       self.handle_res(call_res,"getnumbarcblocktriplets")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getnumbarcnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4604,7 +4919,7 @@ impl Task
       self.handle_res(call_res,"getnumbarcnz")?;
       return Result::Ok((_ref_nz_ as i64));
     }
-    
+
     // getnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4617,7 +4932,7 @@ impl Task
       self.handle_res(call_res,"getnumbarvar")?;
       return Result::Ok((_ref_numbarvar_ as i32));
     }
-    
+
     // getnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4630,7 +4945,7 @@ impl Task
       self.handle_res(call_res,"getnumcon")?;
       return Result::Ok((_ref_numcon_ as i32));
     }
-    
+
     // getnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4643,7 +4958,7 @@ impl Task
       self.handle_res(call_res,"getnumcone")?;
       return Result::Ok((_ref_numcone_ as i32));
     }
-    
+
     // getnumconemem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4656,7 +4971,7 @@ impl Task
       self.handle_res(call_res,"getnumconemem")?;
       return Result::Ok((_ref_nummem_ as i32));
     }
-    
+
     // getnumdjc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4669,7 +4984,7 @@ impl Task
       self.handle_res(call_res,"getnumdjc64")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getnumdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4682,7 +4997,20 @@ impl Task
       self.handle_res(call_res,"getnumdomain")?;
       return Result::Ok((_ref_numdomain_ as i32));
     }
-    
+
+    // getnumdomain64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_num_domain_64(& mut self) -> Result<i64,String>
+    {
+      let mut _ref_numdomain_ : i64 = 0 as i64;
+      let call_res = unsafe { (MSK_getnumdomain64(self.ptr,& mut _ref_numdomain_)) };
+      self.handle_res(call_res,"getnumdomain64")?;
+      return Result::Ok((_ref_numdomain_ as i64));
+    }
+
     // getnumintvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4695,7 +5023,7 @@ impl Task
       self.handle_res(call_res,"getnumintvar")?;
       return Result::Ok((_ref_numintvar_ as i32));
     }
-    
+
     // getnumparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4708,7 +5036,7 @@ impl Task
       self.handle_res(call_res,"getnumparam")?;
       return Result::Ok((_ref_numparam_ as i32));
     }
-    
+
     // getnumqconknz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4721,7 +5049,7 @@ impl Task
       self.handle_res(call_res,"getnumqconknz64")?;
       return Result::Ok((_ref_numqcnz_ as i64));
     }
-    
+
     // getnumqobjnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4734,7 +5062,7 @@ impl Task
       self.handle_res(call_res,"getnumqobjnz64")?;
       return Result::Ok((_ref_numqonz_ as i64));
     }
-    
+
     // getnumsymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4747,7 +5075,7 @@ impl Task
       self.handle_res(call_res,"getnumsymmat")?;
       return Result::Ok((_ref_num_ as i64));
     }
-    
+
     // getnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4760,7 +5088,7 @@ impl Task
       self.handle_res(call_res,"getnumvar")?;
       return Result::Ok((_ref_numvar_ as i32));
     }
-    
+
     // getobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4776,7 +5104,7 @@ impl Task
       unsafe { _objname__bytes.set_len((sizeobjname_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_objname__bytes[..]).into_owned()));
     }
-    
+
     // getobjnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4789,7 +5117,7 @@ impl Task
       self.handle_res(call_res,"getobjnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4802,7 +5130,7 @@ impl Task
       self.handle_res(call_res,"getobjsense")?;
       return Result::Ok((_ref_sense_ as i32));
     }
-    
+
     // getparammax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4815,7 +5143,7 @@ impl Task
       self.handle_res(call_res,"getparammax")?;
       return Result::Ok((_ref_parammax_ as i32));
     }
-    
+
     // getparamname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4829,7 +5157,38 @@ impl Task
       unsafe { _parname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_parname__bytes[..]).into_owned()));
     }
-    
+
+    // getpowerdomainalpha
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_power_domain_alpha(& mut self,domidx_ : i64,alpha_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_3__ : i32 = 0 as i32;
+      let mut tmp_var_4__ : i32 = 0 as i32;
+      let tmp_var_1__ = unsafe { MSK_getpowerdomaininfo(self.ptr,domidx_,& mut tmp_var_3__,& mut tmp_var_4__) };
+      self.handle_res(tmp_var_1__,"getpowerdomaininfo")?;
+      if alpha_.len() != ((tmp_var_4__) as usize) { return Result::Err("Argument 'alpha_' is too short in call to 'get_power_domain_alpha'".to_string()) }
+      let call_res = unsafe { (MSK_getpowerdomainalpha(self.ptr,domidx_ as i64,alpha_.as_mut_ptr())) };
+      self.handle_res(call_res,"getpowerdomainalpha")?;
+      return Result::Ok(());
+    }
+
+    // getpowerdomaininfo
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_power_domain_info(& mut self,domidx_ : i64) -> Result<(i32,i32),String>
+    {
+      let mut _ref_n_ : i32 = 0 as i32;
+      let mut _ref_nleft_ : i32 = 0 as i32;
+      let call_res = unsafe { (MSK_getpowerdomaininfo(self.ptr,domidx_ as i64,& mut _ref_n_,& mut _ref_nleft_)) };
+      self.handle_res(call_res,"getpowerdomaininfo")?;
+      return Result::Ok((_ref_n_ as i32,_ref_nleft_ as i32));
+    }
+
     // getprimalobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4842,7 +5201,7 @@ impl Task
       self.handle_res(call_res,"getprimalobj")?;
       return Result::Ok((_ref_primalobj_ as f64));
     }
-    
+
     // getprimalsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4857,7 +5216,7 @@ impl Task
       self.handle_res(call_res,"getprimalsolutionnorms")?;
       return Result::Ok((_ref_nrmxc_ as f64,_ref_nrmxx_ as f64,_ref_nrmbarx_ as f64));
     }
-    
+
     // getprobtype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4870,7 +5229,7 @@ impl Task
       self.handle_res(call_res,"getprobtype")?;
       return Result::Ok((_ref_probtype_ as i32));
     }
-    
+
     // getprosta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4883,7 +5242,7 @@ impl Task
       self.handle_res(call_res,"getprosta")?;
       return Result::Ok((_ref_prosta_ as i32));
     }
-    
+
     // getpviolacc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4897,7 +5256,7 @@ impl Task
       self.handle_res(call_res,"getpviolacc64")?;
       return Result::Ok(());
     }
-    
+
     // getpviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4911,7 +5270,7 @@ impl Task
       self.handle_res(call_res,"getpviolbarvar")?;
       return Result::Ok(());
     }
-    
+
     // getpviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4925,7 +5284,7 @@ impl Task
       self.handle_res(call_res,"getpviolcon")?;
       return Result::Ok(());
     }
-    
+
     // getpviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4939,7 +5298,21 @@ impl Task
       self.handle_res(call_res,"getpviolcones")?;
       return Result::Ok(());
     }
-    
+
+    // getpvioldjc
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_pviol_djc(&self,whichsol_ : i32,djcidxlist_ : & [i64],viol_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut numdjcidx_ = djcidxlist_.len();
+      if viol_.len() != ((numdjcidx_) as usize) { return Result::Err("Argument 'viol_' is too short in call to 'get_pviol_djc'".to_string()) }
+      let call_res = unsafe { (MSK_getpvioldjc(self.ptr,whichsol_,numdjcidx_ as i64,djcidxlist_.as_ptr(),viol_.as_mut_ptr())) };
+      self.handle_res(call_res,"getpvioldjc")?;
+      return Result::Ok(());
+    }
+
     // getpviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4953,7 +5326,7 @@ impl Task
       self.handle_res(call_res,"getpviolvar")?;
       return Result::Ok(());
     }
-    
+
     // getqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4966,7 +5339,7 @@ impl Task
       self.handle_res(call_res,"getqobjij")?;
       return Result::Ok((_ref_qoij_ as f64));
     }
-    
+
     // getreducedcosts
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4979,7 +5352,7 @@ impl Task
       self.handle_res(call_res,"getreducedcosts")?;
       return Result::Ok(());
     }
-    
+
     // getskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4993,7 +5366,7 @@ impl Task
       self.handle_res(call_res,"getskc")?;
       return Result::Ok(());
     }
-    
+
     // getskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5006,7 +5379,7 @@ impl Task
       self.handle_res(call_res,"getskcslice")?;
       return Result::Ok(());
     }
-    
+
     // getskn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5020,7 +5393,7 @@ impl Task
       self.handle_res(call_res,"getskn")?;
       return Result::Ok(());
     }
-    
+
     // getskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5034,7 +5407,7 @@ impl Task
       self.handle_res(call_res,"getskx")?;
       return Result::Ok(());
     }
-    
+
     // getskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5047,7 +5420,7 @@ impl Task
       self.handle_res(call_res,"getskxslice")?;
       return Result::Ok(());
     }
-    
+
     // getslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5061,7 +5434,7 @@ impl Task
       self.handle_res(call_res,"getslc")?;
       return Result::Ok(());
     }
-    
+
     // getslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5074,7 +5447,7 @@ impl Task
       self.handle_res(call_res,"getslcslice")?;
       return Result::Ok(());
     }
-    
+
     // getslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5088,7 +5461,7 @@ impl Task
       self.handle_res(call_res,"getslx")?;
       return Result::Ok(());
     }
-    
+
     // getslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5101,7 +5474,7 @@ impl Task
       self.handle_res(call_res,"getslxslice")?;
       return Result::Ok(());
     }
-    
+
     // getsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5115,7 +5488,7 @@ impl Task
       self.handle_res(call_res,"getsnx")?;
       return Result::Ok(());
     }
-    
+
     // getsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5128,7 +5501,7 @@ impl Task
       self.handle_res(call_res,"getsnxslice")?;
       return Result::Ok(());
     }
-    
+
     // getsolsta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5141,7 +5514,7 @@ impl Task
       self.handle_res(call_res,"getsolsta")?;
       return Result::Ok((_ref_solsta_ as i32));
     }
-    
+
     // getsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5177,7 +5550,7 @@ impl Task
       self.handle_res(call_res,"getsolution")?;
       return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32));
     }
-    
+
     // getsolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5200,13 +5573,13 @@ impl Task
       self.handle_res(call_res,"getsolutioninfo")?;
       return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64));
     }
-    
+
     // getsolutioninfonew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_solution_info_new(&self,whichsol_ : i32) -> Result<(f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64),String>
+    pub fn get_solution_info_new(&self,whichsol_ : i32) -> Result<(f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64,f64),String>
     {
       let mut _ref_pobj_ : f64 = 0 as f64;
       let mut _ref_pviolcon_ : f64 = 0 as f64;
@@ -5214,6 +5587,7 @@ impl Task
       let mut _ref_pviolbarvar_ : f64 = 0 as f64;
       let mut _ref_pviolcone_ : f64 = 0 as f64;
       let mut _ref_pviolacc_ : f64 = 0 as f64;
+      let mut _ref_pvioldjc_ : f64 = 0 as f64;
       let mut _ref_pviolitg_ : f64 = 0 as f64;
       let mut _ref_dobj_ : f64 = 0 as f64;
       let mut _ref_dviolcon_ : f64 = 0 as f64;
@@ -5221,11 +5595,11 @@ impl Task
       let mut _ref_dviolbarvar_ : f64 = 0 as f64;
       let mut _ref_dviolcone_ : f64 = 0 as f64;
       let mut _ref_dviolacc_ : f64 = 0 as f64;
-      let call_res = unsafe { (MSK_getsolutioninfonew(self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolacc_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_,& mut _ref_dviolacc_)) };
+      let call_res = unsafe { (MSK_getsolutioninfonew(self.ptr,whichsol_,& mut _ref_pobj_,& mut _ref_pviolcon_,& mut _ref_pviolvar_,& mut _ref_pviolbarvar_,& mut _ref_pviolcone_,& mut _ref_pviolacc_,& mut _ref_pvioldjc_,& mut _ref_pviolitg_,& mut _ref_dobj_,& mut _ref_dviolcon_,& mut _ref_dviolvar_,& mut _ref_dviolbarvar_,& mut _ref_dviolcone_,& mut _ref_dviolacc_)) };
       self.handle_res(call_res,"getsolutioninfonew")?;
-      return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolacc_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64,_ref_dviolacc_ as f64));
+      return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolacc_ as f64,_ref_pvioldjc_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64,_ref_dviolacc_ as f64));
     }
-    
+
     // getsolutionnew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5265,7 +5639,7 @@ impl Task
       self.handle_res(call_res,"getsolutionnew")?;
       return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32));
     }
-    
+
     // getsolutionslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5278,7 +5652,7 @@ impl Task
       self.handle_res(call_res,"getsolutionslice")?;
       return Result::Ok(());
     }
-    
+
     // getsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5295,7 +5669,7 @@ impl Task
       self.handle_res(call_res,"getsparsesymmat")?;
       return Result::Ok(());
     }
-    
+
     // getstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5312,7 +5686,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((maxlen_) as usize) };
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()));
     }
-    
+
     // getstrparamlen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5325,7 +5699,7 @@ impl Task
       self.handle_res(call_res,"getstrparamlen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5339,7 +5713,7 @@ impl Task
       self.handle_res(call_res,"getsuc")?;
       return Result::Ok(());
     }
-    
+
     // getsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5352,7 +5726,7 @@ impl Task
       self.handle_res(call_res,"getsucslice")?;
       return Result::Ok(());
     }
-    
+
     // getsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5366,7 +5740,7 @@ impl Task
       self.handle_res(call_res,"getsux")?;
       return Result::Ok(());
     }
-    
+
     // getsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5379,7 +5753,7 @@ impl Task
       self.handle_res(call_res,"getsuxslice")?;
       return Result::Ok(());
     }
-    
+
     // getsymbcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5395,7 +5769,7 @@ impl Task
       unsafe { _name__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32));
     }
-    
+
     // getsymmatinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5410,7 +5784,7 @@ impl Task
       self.handle_res(call_res,"getsymmatinfo")?;
       return Result::Ok((_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32));
     }
-    
+
     // gettaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5426,7 +5800,7 @@ impl Task
       unsafe { _taskname__bytes.set_len((sizetaskname_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()));
     }
-    
+
     // gettasknamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5439,7 +5813,7 @@ impl Task
       self.handle_res(call_res,"gettasknamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5454,7 +5828,7 @@ impl Task
       self.handle_res(call_res,"getvarbound")?;
       return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64));
     }
-    
+
     // getvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5469,7 +5843,7 @@ impl Task
       self.handle_res(call_res,"getvarboundslice")?;
       return Result::Ok(());
     }
-    
+
     // getvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5485,7 +5859,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-    
+
     // getvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5499,7 +5873,7 @@ impl Task
       self.handle_res(call_res,"getvarnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-    
+
     // getvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5512,7 +5886,7 @@ impl Task
       self.handle_res(call_res,"getvarnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-    
+
     // getvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5525,7 +5899,7 @@ impl Task
       self.handle_res(call_res,"getvartype")?;
       return Result::Ok((_ref_vartype_ as i32));
     }
-    
+
     // getvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5539,7 +5913,7 @@ impl Task
       self.handle_res(call_res,"getvartypelist")?;
       return Result::Ok(());
     }
-    
+
     // getxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5553,7 +5927,7 @@ impl Task
       self.handle_res(call_res,"getxc")?;
       return Result::Ok(());
     }
-    
+
     // getxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5566,7 +5940,7 @@ impl Task
       self.handle_res(call_res,"getxcslice")?;
       return Result::Ok(());
     }
-    
+
     // getxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5580,7 +5954,7 @@ impl Task
       self.handle_res(call_res,"getxx")?;
       return Result::Ok(());
     }
-    
+
     // getxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5593,7 +5967,7 @@ impl Task
       self.handle_res(call_res,"getxxslice")?;
       return Result::Ok(());
     }
-    
+
     // gety
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5607,7 +5981,7 @@ impl Task
       self.handle_res(call_res,"gety")?;
       return Result::Ok(());
     }
-    
+
     // getyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5620,7 +5994,7 @@ impl Task
       self.handle_res(call_res,"getyslice")?;
       return Result::Ok(());
     }
-    
+
     // initbasissolve
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5636,7 +6010,7 @@ impl Task
       self.handle_res(call_res,"initbasissolve")?;
       return Result::Ok(());
     }
-    
+
     // inputdata64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5659,7 +6033,7 @@ impl Task
       self.handle_res(call_res,"inputdata64")?;
       return Result::Ok(());
     }
-    
+
     // isdouparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5672,7 +6046,7 @@ impl Task
       self.handle_res(call_res,"isdouparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-    
+
     // isintparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5685,7 +6059,7 @@ impl Task
       self.handle_res(call_res,"isintparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-    
+
     // isstrparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5698,7 +6072,7 @@ impl Task
       self.handle_res(call_res,"isstrparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-    
+
     // linkfiletotaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5710,7 +6084,7 @@ impl Task
       self.handle_res(call_res,"linkfiletotaskstream")?;
       return Result::Ok(());
     }
-    
+
     // onesolutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5722,7 +6096,7 @@ impl Task
       self.handle_res(call_res,"onesolutionsummary")?;
       return Result::Ok(());
     }
-    
+
     // optimizermt
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5735,7 +6109,7 @@ impl Task
       self.handle_res(call_res,"optimizermt")?;
       return Result::Ok((_ref_trmcode_ as i32));
     }
-    
+
     // optimizersummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5747,7 +6121,7 @@ impl Task
       self.handle_res(call_res,"optimizersummary")?;
       return Result::Ok(());
     }
-    
+
     // optimizetrm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5760,7 +6134,7 @@ impl Task
       self.handle_res(call_res,"optimizetrm")?;
       return Result::Ok((_ref_trmcode_ as i32));
     }
-    
+
     // primalrepair
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5780,7 +6154,7 @@ impl Task
       self.handle_res(call_res,"primalrepair")?;
       return Result::Ok(());
     }
-    
+
     // primalsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5804,7 +6178,7 @@ impl Task
       self.handle_res(call_res,"primalsensitivity")?;
       return Result::Ok(());
     }
-    
+
     // printparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5816,7 +6190,7 @@ impl Task
       self.handle_res(call_res,"printparam")?;
       return Result::Ok(());
     }
-    
+
     // probtypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5830,7 +6204,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // prostatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5844,7 +6218,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // putaccdoty64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5860,7 +6234,7 @@ impl Task
       self.handle_res(call_res,"putaccdoty64")?;
       return Result::Ok(());
     }
-    
+
     // putaccname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5872,7 +6246,7 @@ impl Task
       self.handle_res(call_res,"putaccname64")?;
       return Result::Ok(());
     }
-    
+
     // putacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5886,7 +6260,7 @@ impl Task
       self.handle_res(call_res,"putacol")?;
       return Result::Ok(());
     }
-    
+
     // putacollist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5903,7 +6277,7 @@ impl Task
       self.handle_res(call_res,"putacollist64")?;
       return Result::Ok(());
     }
-    
+
     // putacolslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5917,7 +6291,7 @@ impl Task
       self.handle_res(call_res,"putacolslice64")?;
       return Result::Ok(());
     }
-    
+
     // putafebarfblocktriplet64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5934,47 +6308,108 @@ impl Task
       self.handle_res(call_res,"putafebarfblocktriplet64")?;
       return Result::Ok(());
     }
-    
+
     // putafebarfentry64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_afe_barf_entry(& mut self,afeidx_ : i64,barvaridx_ : i32,sub_ : & [i64],weights_ : & [f64]) -> Result<(),String>
+    pub fn put_afe_barf_entry(& mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : & [i64],termweight_ : & [f64]) -> Result<(),String>
     {
-      let mut num_ = sub_.len();
-      if weights_.len() < num_ { num_ = weights_.len() };
-      let call_res = unsafe { (MSK_putafebarfentry64(self.ptr,afeidx_ as i64,barvaridx_ as i32,num_ as i64,sub_.as_ptr(),weights_.as_ptr())) };
+      let mut numterms_ = termidx_.len();
+      if termweight_.len() < numterms_ { numterms_ = termweight_.len() };
+      let call_res = unsafe { (MSK_putafebarfentry64(self.ptr,afeidx_ as i64,barvaridx_ as i32,numterms_ as i64,termidx_.as_ptr(),termweight_.as_ptr())) };
       self.handle_res(call_res,"putafebarfentry64")?;
       return Result::Ok(());
     }
-    
+
+    // putafebarfentrylist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_barf_entry_list(& mut self,afeidxlist_ : & [i64],barvaridxlist_ : & [i32],numtermslist_ : & [i64],ptrtermslist_ : & [i64],termidx_ : & [i64],termweight_ : & [f64]) -> Result<(),String>
+    {
+      let mut lenlist_ = afeidxlist_.len();
+      if barvaridxlist_.len() < lenlist_ { lenlist_ = barvaridxlist_.len() };
+      if numtermslist_.len() < lenlist_ { lenlist_ = numtermslist_.len() };
+      if ptrtermslist_.len() < lenlist_ { lenlist_ = ptrtermslist_.len() };
+      let mut lenterms_ = termidx_.len();
+      if termweight_.len() < lenterms_ { lenterms_ = termweight_.len() };
+      let call_res = unsafe { (MSK_putafebarfentrylist64(self.ptr,lenlist_ as i64,afeidxlist_.as_ptr(),barvaridxlist_.as_ptr(),numtermslist_.as_ptr(),ptrtermslist_.as_ptr(),lenterms_ as i64,termidx_.as_ptr(),termweight_.as_ptr())) };
+      self.handle_res(call_res,"putafebarfentrylist64")?;
+      return Result::Ok(());
+    }
+
+    // putafefentry64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_f_entry(& mut self,afeidx_ : i64,j_ : i32,value_ : f64) -> Result<(),String>
+    {
+      let call_res = unsafe { (MSK_putafefentry64(self.ptr,afeidx_ as i64,j_ as i32,value_ as f64)) };
+      self.handle_res(call_res,"putafefentry64")?;
+      return Result::Ok(());
+    }
+
     // putafefrow64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_afe_f_row(& mut self,i_ : i64,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
+    pub fn put_afe_f_row(& mut self,afeidx_ : i64,subi_ : & [i32],vali_ : & [f64]) -> Result<(),String>
     {
       let mut nzi_ = subi_.len();
       if vali_.len() < nzi_ { nzi_ = vali_.len() };
-      let call_res = unsafe { (MSK_putafefrow64(self.ptr,i_ as i64,nzi_ as i32,subi_.as_ptr(),vali_.as_ptr())) };
+      let call_res = unsafe { (MSK_putafefrow64(self.ptr,afeidx_ as i64,nzi_ as i32,subi_.as_ptr(),vali_.as_ptr())) };
       self.handle_res(call_res,"putafefrow64")?;
       return Result::Ok(());
     }
-    
+
+    // putafefrowlist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_f_row_list(& mut self,afeidxlist_ : & [i64],nzrow_ : & [i32],ptrrow_ : & [i64],idxrow_ : & [i32],valrow_ : & [f64]) -> Result<(),String>
+    {
+      let mut numafeidx_ = afeidxlist_.len();
+      if nzrow_.len() < numafeidx_ { numafeidx_ = nzrow_.len() };
+      if ptrrow_.len() < numafeidx_ { numafeidx_ = ptrrow_.len() };
+      let mut lenidxval_ = idxrow_.len();
+      if valrow_.len() < lenidxval_ { lenidxval_ = valrow_.len() };
+      let call_res = unsafe { (MSK_putafefrowlist64(self.ptr,numafeidx_ as i64,afeidxlist_.as_ptr(),nzrow_.as_ptr(),ptrrow_.as_ptr(),lenidxval_ as i64,idxrow_.as_ptr(),valrow_.as_ptr())) };
+      self.handle_res(call_res,"putafefrowlist64")?;
+      return Result::Ok(());
+    }
+
     // putafeg64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_afe_g(& mut self,i_ : i64,gi_ : f64) -> Result<(),String>
+    pub fn put_afe_g(& mut self,afeidx_ : i64,gi_ : f64) -> Result<(),String>
     {
-      let call_res = unsafe { (MSK_putafeg64(self.ptr,i_ as i64,gi_ as f64)) };
+      let call_res = unsafe { (MSK_putafeg64(self.ptr,afeidx_ as i64,gi_ as f64)) };
       self.handle_res(call_res,"putafeg64")?;
       return Result::Ok(());
     }
-    
+
+    // putafeglist64
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_g_list(& mut self,afeidxlist_ : & [i64],glist_ : & [f64]) -> Result<(),String>
+    {
+      let mut numafeidx_ = afeidxlist_.len();
+      if glist_.len() < numafeidx_ { numafeidx_ = glist_.len() };
+      let call_res = unsafe { (MSK_putafeglist64(self.ptr,numafeidx_ as i64,afeidxlist_.as_ptr(),glist_.as_ptr())) };
+      self.handle_res(call_res,"putafeglist64")?;
+      return Result::Ok(());
+    }
+
     // putafegslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5987,7 +6422,7 @@ impl Task
       self.handle_res(call_res,"putafegslice64")?;
       return Result::Ok(());
     }
-    
+
     // putaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5999,7 +6434,7 @@ impl Task
       self.handle_res(call_res,"putaij")?;
       return Result::Ok(());
     }
-    
+
     // putaijlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6014,7 +6449,7 @@ impl Task
       self.handle_res(call_res,"putaijlist64")?;
       return Result::Ok(());
     }
-    
+
     // putarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6028,7 +6463,7 @@ impl Task
       self.handle_res(call_res,"putarow")?;
       return Result::Ok(());
     }
-    
+
     // putarowlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6045,7 +6480,7 @@ impl Task
       self.handle_res(call_res,"putarowlist64")?;
       return Result::Ok(());
     }
-    
+
     // putarowslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6061,7 +6496,7 @@ impl Task
       self.handle_res(call_res,"putarowslice64")?;
       return Result::Ok(());
     }
-    
+
     // putatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6073,7 +6508,7 @@ impl Task
       self.handle_res(call_res,"putatruncatetol")?;
       return Result::Ok(());
     }
-    
+
     // putbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6090,7 +6525,7 @@ impl Task
       self.handle_res(call_res,"putbarablocktriplet")?;
       return Result::Ok(());
     }
-    
+
     // putbaraij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6104,7 +6539,7 @@ impl Task
       self.handle_res(call_res,"putbaraij")?;
       return Result::Ok(());
     }
-    
+
     // putbaraijlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6122,7 +6557,7 @@ impl Task
       self.handle_res(call_res,"putbaraijlist")?;
       return Result::Ok(());
     }
-    
+
     // putbararowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6145,7 +6580,7 @@ impl Task
       self.handle_res(call_res,"putbararowlist")?;
       return Result::Ok(());
     }
-    
+
     // putbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6161,7 +6596,7 @@ impl Task
       self.handle_res(call_res,"putbarcblocktriplet")?;
       return Result::Ok(());
     }
-    
+
     // putbarcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6175,7 +6610,7 @@ impl Task
       self.handle_res(call_res,"putbarcj")?;
       return Result::Ok(());
     }
-    
+
     // putbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6189,7 +6624,7 @@ impl Task
       self.handle_res(call_res,"putbarsj")?;
       return Result::Ok(());
     }
-    
+
     // putbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6201,7 +6636,7 @@ impl Task
       self.handle_res(call_res,"putbarvarname")?;
       return Result::Ok(());
     }
-    
+
     // putbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6215,7 +6650,7 @@ impl Task
       self.handle_res(call_res,"putbarxj")?;
       return Result::Ok(());
     }
-    
+
     // putcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6227,7 +6662,7 @@ impl Task
       self.handle_res(call_res,"putcfix")?;
       return Result::Ok(());
     }
-    
+
     // putcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6239,7 +6674,7 @@ impl Task
       self.handle_res(call_res,"putcj")?;
       return Result::Ok(());
     }
-    
+
     // putclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6253,7 +6688,7 @@ impl Task
       self.handle_res(call_res,"putclist")?;
       return Result::Ok(());
     }
-    
+
     // putconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6265,7 +6700,7 @@ impl Task
       self.handle_res(call_res,"putconbound")?;
       return Result::Ok(());
     }
-    
+
     // putconboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6281,7 +6716,7 @@ impl Task
       self.handle_res(call_res,"putconboundlist")?;
       return Result::Ok(());
     }
-    
+
     // putconboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6294,7 +6729,7 @@ impl Task
       self.handle_res(call_res,"putconboundlistconst")?;
       return Result::Ok(());
     }
-    
+
     // putconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6309,7 +6744,7 @@ impl Task
       self.handle_res(call_res,"putconboundslice")?;
       return Result::Ok(());
     }
-    
+
     // putconboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6321,7 +6756,7 @@ impl Task
       self.handle_res(call_res,"putconboundsliceconst")?;
       return Result::Ok(());
     }
-    
+
     // putcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6334,7 +6769,7 @@ impl Task
       self.handle_res(call_res,"putcone")?;
       return Result::Ok(());
     }
-    
+
     // putconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6346,7 +6781,7 @@ impl Task
       self.handle_res(call_res,"putconename")?;
       return Result::Ok(());
     }
-    
+
     // putconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6358,7 +6793,7 @@ impl Task
       self.handle_res(call_res,"putconname")?;
       return Result::Ok(());
     }
-    
+
     // putconsolutioni
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6370,7 +6805,7 @@ impl Task
       self.handle_res(call_res,"putconsolutioni")?;
       return Result::Ok(());
     }
-    
+
     // putcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6383,13 +6818,13 @@ impl Task
       self.handle_res(call_res,"putcslice")?;
       return Result::Ok(());
     }
-    
+
     // putdjc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_djc(& mut self,djcidx_ : i64,domidxlist_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64]) -> Result<(),String>
+    pub fn put_djc(& mut self,djcidx_ : i64,domidxlist_ : & [i64],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64]) -> Result<(),String>
     {
       let mut numdomidx_ = domidxlist_.len();
       let mut numafeidx_ = afeidxlist_.len();
@@ -6399,7 +6834,7 @@ impl Task
       self.handle_res(call_res,"putdjc64")?;
       return Result::Ok(());
     }
-    
+
     // putdjcname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6411,13 +6846,13 @@ impl Task
       self.handle_res(call_res,"putdjcname64")?;
       return Result::Ok(());
     }
-    
+
     // putdjcslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_djc_slice(& mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : & [i32],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64],termsindjc_ : & [i64]) -> Result<(),String>
+    pub fn put_djc_slice(& mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : & [i64],afeidxlist_ : & [i64],b_ : & [f64],termsizelist_ : & [i64],termsindjc_ : & [i64]) -> Result<(),String>
     {
       let mut numdomidx_ = domidxlist_.len();
       let mut numafeidx_ = afeidxlist_.len();
@@ -6428,19 +6863,19 @@ impl Task
       self.handle_res(call_res,"putdjcslice64")?;
       return Result::Ok(());
     }
-    
-    // putdomainname32
+
+    // putdomainname64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_domain_name(& mut self,domidx_ : i32,name_ : &str) -> Result<(),String>
+    pub fn put_domain_name(& mut self,domidx_ : i64,name_ : &str) -> Result<(),String>
     {
-      let call_res = unsafe { (MSK_putdomainname32(self.ptr,domidx_ as i32,CString::new(name_).unwrap().as_ptr())) };
-      self.handle_res(call_res,"putdomainname32")?;
+      let call_res = unsafe { (MSK_putdomainname64(self.ptr,domidx_ as i64,CString::new(name_).unwrap().as_ptr())) };
+      self.handle_res(call_res,"putdomainname64")?;
       return Result::Ok(());
     }
-    
+
     // putdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6452,7 +6887,7 @@ impl Task
       self.handle_res(call_res,"putdouparam")?;
       return Result::Ok(());
     }
-    
+
     // putintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6464,19 +6899,19 @@ impl Task
       self.handle_res(call_res,"putintparam")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumacc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn put_max_num_acc_64(& mut self,maxnumacc_ : i64) -> Result<(),String>
+    pub fn put_max_num_acc(& mut self,maxnumacc_ : i64) -> Result<(),String>
     {
       let call_res = unsafe { (MSK_putmaxnumacc64(self.ptr,maxnumacc_ as i64)) };
       self.handle_res(call_res,"putmaxnumacc64")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumafe64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6488,7 +6923,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumafe64")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6500,7 +6935,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumanz")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6512,7 +6947,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumbarvar")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6524,7 +6959,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumcon")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6536,7 +6971,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumcone")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumdjc64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6548,7 +6983,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumdjc64")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6560,7 +6995,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumdomain")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumqnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6572,7 +7007,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumqnz")?;
       return Result::Ok(());
     }
-    
+
     // putmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6584,7 +7019,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumvar")?;
       return Result::Ok(());
     }
-    
+
     // putnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6596,7 +7031,7 @@ impl Task
       self.handle_res(call_res,"putnadouparam")?;
       return Result::Ok(());
     }
-    
+
     // putnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6608,7 +7043,7 @@ impl Task
       self.handle_res(call_res,"putnaintparam")?;
       return Result::Ok(());
     }
-    
+
     // putnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6620,7 +7055,7 @@ impl Task
       self.handle_res(call_res,"putnastrparam")?;
       return Result::Ok(());
     }
-    
+
     // putobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6632,7 +7067,7 @@ impl Task
       self.handle_res(call_res,"putobjname")?;
       return Result::Ok(());
     }
-    
+
     // putobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6644,7 +7079,7 @@ impl Task
       self.handle_res(call_res,"putobjsense")?;
       return Result::Ok(());
     }
-    
+
     // putoptserverhost
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6656,7 +7091,7 @@ impl Task
       self.handle_res(call_res,"putoptserverhost")?;
       return Result::Ok(());
     }
-    
+
     // putparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6668,7 +7103,7 @@ impl Task
       self.handle_res(call_res,"putparam")?;
       return Result::Ok(());
     }
-    
+
     // putqcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6683,7 +7118,7 @@ impl Task
       self.handle_res(call_res,"putqcon")?;
       return Result::Ok(());
     }
-    
+
     // putqconk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6698,7 +7133,7 @@ impl Task
       self.handle_res(call_res,"putqconk")?;
       return Result::Ok(());
     }
-    
+
     // putqobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6713,7 +7148,7 @@ impl Task
       self.handle_res(call_res,"putqobj")?;
       return Result::Ok(());
     }
-    
+
     // putqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6725,7 +7160,7 @@ impl Task
       self.handle_res(call_res,"putqobjij")?;
       return Result::Ok(());
     }
-    
+
     // putskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6739,7 +7174,7 @@ impl Task
       self.handle_res(call_res,"putskc")?;
       return Result::Ok(());
     }
-    
+
     // putskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6752,7 +7187,7 @@ impl Task
       self.handle_res(call_res,"putskcslice")?;
       return Result::Ok(());
     }
-    
+
     // putskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6766,7 +7201,7 @@ impl Task
       self.handle_res(call_res,"putskx")?;
       return Result::Ok(());
     }
-    
+
     // putskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6779,7 +7214,7 @@ impl Task
       self.handle_res(call_res,"putskxslice")?;
       return Result::Ok(());
     }
-    
+
     // putslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6793,7 +7228,7 @@ impl Task
       self.handle_res(call_res,"putslc")?;
       return Result::Ok(());
     }
-    
+
     // putslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6806,7 +7241,7 @@ impl Task
       self.handle_res(call_res,"putslcslice")?;
       return Result::Ok(());
     }
-    
+
     // putslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6820,7 +7255,7 @@ impl Task
       self.handle_res(call_res,"putslx")?;
       return Result::Ok(());
     }
-    
+
     // putslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6833,7 +7268,7 @@ impl Task
       self.handle_res(call_res,"putslxslice")?;
       return Result::Ok(());
     }
-    
+
     // putsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6847,7 +7282,7 @@ impl Task
       self.handle_res(call_res,"putsnx")?;
       return Result::Ok(());
     }
-    
+
     // putsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6860,7 +7295,7 @@ impl Task
       self.handle_res(call_res,"putsnxslice")?;
       return Result::Ok(());
     }
-    
+
     // putsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6872,7 +7307,7 @@ impl Task
       self.handle_res(call_res,"putsolution")?;
       return Result::Ok(());
     }
-    
+
     // putsolutionnew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6884,7 +7319,7 @@ impl Task
       self.handle_res(call_res,"putsolutionnew")?;
       return Result::Ok(());
     }
-    
+
     // putsolutionyi
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6896,7 +7331,7 @@ impl Task
       self.handle_res(call_res,"putsolutionyi")?;
       return Result::Ok(());
     }
-    
+
     // putstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6908,7 +7343,7 @@ impl Task
       self.handle_res(call_res,"putstrparam")?;
       return Result::Ok(());
     }
-    
+
     // putsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6922,7 +7357,7 @@ impl Task
       self.handle_res(call_res,"putsuc")?;
       return Result::Ok(());
     }
-    
+
     // putsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6935,7 +7370,7 @@ impl Task
       self.handle_res(call_res,"putsucslice")?;
       return Result::Ok(());
     }
-    
+
     // putsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6949,7 +7384,7 @@ impl Task
       self.handle_res(call_res,"putsux")?;
       return Result::Ok(());
     }
-    
+
     // putsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6962,7 +7397,7 @@ impl Task
       self.handle_res(call_res,"putsuxslice")?;
       return Result::Ok(());
     }
-    
+
     // puttaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6974,7 +7409,7 @@ impl Task
       self.handle_res(call_res,"puttaskname")?;
       return Result::Ok(());
     }
-    
+
     // putvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6986,7 +7421,7 @@ impl Task
       self.handle_res(call_res,"putvarbound")?;
       return Result::Ok(());
     }
-    
+
     // putvarboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7002,7 +7437,7 @@ impl Task
       self.handle_res(call_res,"putvarboundlist")?;
       return Result::Ok(());
     }
-    
+
     // putvarboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7015,7 +7450,7 @@ impl Task
       self.handle_res(call_res,"putvarboundlistconst")?;
       return Result::Ok(());
     }
-    
+
     // putvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7030,7 +7465,7 @@ impl Task
       self.handle_res(call_res,"putvarboundslice")?;
       return Result::Ok(());
     }
-    
+
     // putvarboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7042,7 +7477,7 @@ impl Task
       self.handle_res(call_res,"putvarboundsliceconst")?;
       return Result::Ok(());
     }
-    
+
     // putvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7054,7 +7489,7 @@ impl Task
       self.handle_res(call_res,"putvarname")?;
       return Result::Ok(());
     }
-    
+
     // putvarsolutionj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7066,7 +7501,7 @@ impl Task
       self.handle_res(call_res,"putvarsolutionj")?;
       return Result::Ok(());
     }
-    
+
     // putvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7078,7 +7513,7 @@ impl Task
       self.handle_res(call_res,"putvartype")?;
       return Result::Ok(());
     }
-    
+
     // putvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7092,7 +7527,7 @@ impl Task
       self.handle_res(call_res,"putvartypelist")?;
       return Result::Ok(());
     }
-    
+
     // putxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7106,7 +7541,7 @@ impl Task
       self.handle_res(call_res,"putxc")?;
       return Result::Ok(());
     }
-    
+
     // putxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7119,7 +7554,7 @@ impl Task
       self.handle_res(call_res,"putxcslice")?;
       return Result::Ok(());
     }
-    
+
     // putxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7133,7 +7568,7 @@ impl Task
       self.handle_res(call_res,"putxx")?;
       return Result::Ok(());
     }
-    
+
     // putxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7146,7 +7581,7 @@ impl Task
       self.handle_res(call_res,"putxxslice")?;
       return Result::Ok(());
     }
-    
+
     // puty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7160,7 +7595,7 @@ impl Task
       self.handle_res(call_res,"puty")?;
       return Result::Ok(());
     }
-    
+
     // putyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7173,7 +7608,7 @@ impl Task
       self.handle_res(call_res,"putyslice")?;
       return Result::Ok(());
     }
-    
+
     // readdataautoformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7185,7 +7620,7 @@ impl Task
       self.handle_res(call_res,"readdataautoformat")?;
       return Result::Ok(());
     }
-    
+
     // readdataformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7197,7 +7632,7 @@ impl Task
       self.handle_res(call_res,"readdataformat")?;
       return Result::Ok(());
     }
-    
+
     // readjsonstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7209,7 +7644,7 @@ impl Task
       self.handle_res(call_res,"readjsonstring")?;
       return Result::Ok(());
     }
-    
+
     // readlpstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7221,7 +7656,7 @@ impl Task
       self.handle_res(call_res,"readlpstring")?;
       return Result::Ok(());
     }
-    
+
     // readopfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7233,7 +7668,7 @@ impl Task
       self.handle_res(call_res,"readopfstring")?;
       return Result::Ok(());
     }
-    
+
     // readparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7245,7 +7680,7 @@ impl Task
       self.handle_res(call_res,"readparamfile")?;
       return Result::Ok(());
     }
-    
+
     // readptfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7257,7 +7692,7 @@ impl Task
       self.handle_res(call_res,"readptfstring")?;
       return Result::Ok(());
     }
-    
+
     // readsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7269,7 +7704,7 @@ impl Task
       self.handle_res(call_res,"readsolution")?;
       return Result::Ok(());
     }
-    
+
     // readsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7281,7 +7716,7 @@ impl Task
       self.handle_res(call_res,"readsummary")?;
       return Result::Ok(());
     }
-    
+
     // readtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7293,7 +7728,7 @@ impl Task
       self.handle_res(call_res,"readtask")?;
       return Result::Ok(());
     }
-    
+
     // removebarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7306,7 +7741,7 @@ impl Task
       self.handle_res(call_res,"removebarvars")?;
       return Result::Ok(());
     }
-    
+
     // removecones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7319,7 +7754,7 @@ impl Task
       self.handle_res(call_res,"removecones")?;
       return Result::Ok(());
     }
-    
+
     // removecons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7332,7 +7767,7 @@ impl Task
       self.handle_res(call_res,"removecons")?;
       return Result::Ok(());
     }
-    
+
     // removevars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7345,7 +7780,7 @@ impl Task
       self.handle_res(call_res,"removevars")?;
       return Result::Ok(());
     }
-    
+
     // resizetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7357,7 +7792,7 @@ impl Task
       self.handle_res(call_res,"resizetask")?;
       return Result::Ok(());
     }
-    
+
     // sensitivityreport
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7369,7 +7804,7 @@ impl Task
       self.handle_res(call_res,"sensitivityreport")?;
       return Result::Ok(());
     }
-    
+
     // setdefaults
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7381,7 +7816,7 @@ impl Task
       self.handle_res(call_res,"setdefaults")?;
       return Result::Ok(());
     }
-    
+
     // sktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7395,7 +7830,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // solstatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7409,7 +7844,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-    
+
     // solutiondef
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7422,7 +7857,7 @@ impl Task
       self.handle_res(call_res,"solutiondef")?;
       return Result::Ok((_ref_isdef_ != 0));
     }
-    
+
     // solutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7434,7 +7869,7 @@ impl Task
       self.handle_res(call_res,"solutionsummary")?;
       return Result::Ok(());
     }
-    
+
     // solvewithbasis
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7451,7 +7886,7 @@ impl Task
       self.handle_res(call_res,"solvewithbasis")?;
       return Result::Ok((_ref_numnz_ as i32));
     }
-    
+
     // strduptask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7463,7 +7898,7 @@ impl Task
       self.handle_res(call_res,"strduptask")?;
       return Result::Ok(());
     }
-    
+
     // strtoconetype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7476,7 +7911,7 @@ impl Task
       self.handle_res(call_res,"strtoconetype")?;
       return Result::Ok((_ref_conetype_ as i32));
     }
-    
+
     // strtosk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7489,7 +7924,7 @@ impl Task
       self.handle_res(call_res,"strtosk")?;
       return Result::Ok((_ref_sk_ as i32));
     }
-    
+
     // toconic
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7501,7 +7936,7 @@ impl Task
       self.handle_res(call_res,"toconic")?;
       return Result::Ok(());
     }
-    
+
     // unlinkfuncfromtaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7513,7 +7948,7 @@ impl Task
       self.handle_res(call_res,"unlinkfuncfromtaskstream")?;
       return Result::Ok(());
     }
-    
+
     // updatesolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7525,7 +7960,7 @@ impl Task
       self.handle_res(call_res,"updatesolutioninfo")?;
       return Result::Ok(());
     }
-    
+
     // whichparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7539,7 +7974,7 @@ impl Task
       self.handle_res(call_res,"whichparam")?;
       return Result::Ok((_ref_partype_ as i32,_ref_param_ as i32));
     }
-    
+
     // writedata
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7551,7 +7986,7 @@ impl Task
       self.handle_res(call_res,"writedata")?;
       return Result::Ok(());
     }
-    
+
     // writejsonsol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7563,7 +7998,7 @@ impl Task
       self.handle_res(call_res,"writejsonsol")?;
       return Result::Ok(());
     }
-    
+
     // writeparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7575,7 +8010,7 @@ impl Task
       self.handle_res(call_res,"writeparamfile")?;
       return Result::Ok(());
     }
-    
+
     // writesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7587,7 +8022,7 @@ impl Task
       self.handle_res(call_res,"writesolution")?;
       return Result::Ok(());
     }
-    
+
     // writetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
