@@ -31,6 +31,35 @@ pub struct IndexManager {
 //     }
 // }
 
+struct KeyGenerator<'a> {
+    shape : & 'a [usize],
+    index : Vec<usize>
+}
+
+impl<'a> KeyGenerator<'a> {
+    fn new<'b>(shape :  & 'b [usize]) -> KeyGenerator<'b> { KeyGenerator{ shape : shape, index : vec![0;shape.len()]} }
+    fn inc(& mut self) {
+        let mut i = self.shape.len();
+        if self.index.len() > 0 {
+            self.index[i-1] += 1;
+            while i > 1 && self.index[i-1] == self.shape[i-1] {
+                self.index[i-1] = 0;
+                self.index[i-2] += 1;
+                i -= 1;
+            }
+        }
+    }
+    fn get(& self) -> &[usize] { self.index.as_slice() }
+    fn append_to_str(& self, s : & mut String) {
+        if self.index.len() > 0 {
+            s.push_str(format!("{}",self.index[0]).as_str());
+            for i in self.index[1..].iter() {
+                s.push_str(format!(",{}",*i).as_str());
+            }
+        }
+    }
+}
+
 
 impl IndexManager {
     pub fn validate(&self) -> Result<(),String> {
@@ -742,28 +771,67 @@ impl Model {
             let varidxs : Vec<i32> = varelmidx.iter().map(|v| *v as i32).collect();
             let n = domsize as i64;
 
-            let domidxs = match dt {
-                DomainType::R                    => (vec![self.task.append_r_domain(n).unwrap()]),
-                DomainType::RMinus               => (vec![self.task.append_rminus_domain(n).unwrap()]),
-                DomainType::RPlus                => (vec![self.task.append_rminus_domain(n).unwrap()]),
-                DomainType::RZero                => (vec![self.task.append_rminus_domain(n).unwrap()]),
-                DomainType::QuadraticCone        => (vec![self.task.append_quadratic_cone_domain(n).unwrap()]),
-                DomainType::RotatedQuadraticCone => (vec![self.task.append_r_quadratic_cone_domain(n).unwrap()]),
-                DomainType::PrimalExpCone        => (vec![self.task.append_primal_exp_cone_domain().unwrap()]),
-                DomainType::DualExpCone          => (vec![self.task.append_dual_exp_cone_domain().unwrap()]),
-                DomainType::PrimalPowerCone      => (vec![self.task.append_primal_power_cone_domain(n,par.unwrap().as_slice()).unwrap()]),
-                DomainType::DualPowerCone        => (vec![self.task.append_dual_power_cone_domain(n,par.unwrap().as_slice()).unwrap()]),
-                DomainType::PrimalGeometricMeanCone => (vec![self.task.append_primal_geo_mean_cone_domain(n).unwrap()]),
-                DomainType::DualGeometricMeanCone => (vec![self.task.append_dual_geo_mean_cone_domain(n).unwrap()]),
-                DomainType::InfNormCone          => (vec![self.task.append_dual_geo_mean_cone_domain(n).unwrap()]),
-                DomainType::OneNormCone          => (vec![self.task.append_one_norm_cone_domain(n).unwrap()]),
-                DomainType::PSDCone              => (vec![self.task.append_psd_cone_domain(n).unwrap()]),
+            let domidxs = match (dt,par) {
+                (DomainType::R,_)                       => (vec![self.task.append_r_domain(domsize as i64).unwrap()]),
+                (DomainType::RMinus,_)                  => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+                (DomainType::RPlus,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+                (DomainType::RZero,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+                (DomainType::QuadraticCone,_)           => (0..numcone).map(|_i| self.task.append_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::RotatedQuadraticCone,_)    => (0..numcone).map(|_i| self.task.append_r_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::PrimalExpCone,_)           => (0..numcone).map(|_i| self.task.append_primal_exp_cone_domain().unwrap()).collect(),
+                (DomainType::DualExpCone,_)             => (0..numcone).map(|_i| self.task.append_dual_exp_cone_domain().unwrap()).collect(),
+                (DomainType::PrimalGeometricMeanCone,_) => (0..numcone).map(|_i| self.task.append_primal_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::DualGeometricMeanCone,_)   => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::InfNormCone,_)             => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::OneNormCone,_)             => (0..numcone).map(|_i| self.task.append_one_norm_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::PSDCone,_)                 => (0..numcone).map(|_i| self.task.append_psd_cone_domain(conesize as i64).unwrap()).collect(),
+                (DomainType::PrimalPowerCone,Some(ref par)) => (0..numcone).map(|_i| self.task.append_primal_power_cone_domain(conesize as i64, par.as_slice()).unwrap()).collect(),
+                (DomainType::DualPowerCone,Some(ref par))   => (0..numcone).map(|_i| self.task.append_dual_power_cone_domain(conesize as i64,par.as_slice()).unwrap()).collect(),
+                (DomainType::PrimalPowerCone,None)     => panic!("Missing parameter for cone"),
+                (DomainType::DualPowerCone,Nonoe)      => panic!("Missing parameter for cone")
+
             };
 
             self.task.put_acc_list(accidxs.as_slice(),domidxs.as_slice(),afeidxs.as_slice(),rhs.as_slice());
         }
 
+        match name {
+            Some(name) => {
+                {
+                    let mut varnamegen = KeyGenerator::new(shape.as_slice());
+                    let mut fmt : String = String::new();
+                    fmt.push_str(name);
+                    fmt.push('[');
+                    let baselen = fmt.len();
+                    for i in 0..domsize {
+                        fmt.truncate(baselen);
+                        varnamegen.append_to_str(& mut fmt);
+                        varnamegen.inc();
+                        fmt.push(']');
 
+                        self.task.put_var_name(varelmidx[i] as i32, fmt.as_str());
+                    }
+                }
+                {
+                    let accshape : Vec<usize> = shape[0..conedim].iter().chain(shape[conedim+1..nd].iter()).map(|v| *v).collect();
+                    let accdomsize : usize = accshape.iter().product();
+                    let mut accnamegen = KeyGenerator::new(accshape.as_slice());
+                    let mut fmt : String = String::new();
+                    fmt.push_str(name);
+                    fmt.push('[');
+                    let baselen = fmt.len();
+                    for i in 0..accdomsize {
+                        fmt.truncate(baselen);
+                        accnamegen.append_to_str(& mut fmt);
+                        accnamegen.inc();
+                        fmt.push(']');
+
+                        self.task.put_acc_name(accelmidx[i] as i64, fmt.as_str());
+                    }
+                }
+            }
+            None => { }
+        }
 
 
         if conedim == shape.len()-1 {
