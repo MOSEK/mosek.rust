@@ -524,6 +524,14 @@ pub struct Model {
     barvar_elm_ofs : Vec<usize>
 }
 
+fn inv_tril_idx(d:usize,ofs:usize) -> (usize,usize) {
+    let 2d_1 = (2*d+1) as f64;
+    let j = (2d_1-(2d_1*2d_1-8.0*p as f64).sqrt()/2.0).floor() as usize;
+    let i = ofs-j;
+
+    (i,j)
+}
+
 impl Model {
     pub fn new() -> Model {
         let env : super::Env = super::Env::new().unwrap();
@@ -748,6 +756,29 @@ impl Model {
 
     //
 
+    fn add_domain(& mut self, dt : DomainType, domsize : usize, par : Option<Vec<f64>>) -> Vec<i64> {
+        let n = domsize as i64;
+        match (dt,par) {
+            (DomainType::R,_)                       => (vec![self.task.append_r_domain(domsize as i64).unwrap()]),
+            (DomainType::RMinus,_)                  => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+            (DomainType::RPlus,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+            (DomainType::RZero,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
+            (DomainType::QuadraticCone,_)           => (0..numcone).map(|_i| self.task.append_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::RotatedQuadraticCone,_)    => (0..numcone).map(|_i| self.task.append_r_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::PrimalExpCone,_)           => (0..numcone).map(|_i| self.task.append_primal_exp_cone_domain().unwrap()).collect(),
+            (DomainType::DualExpCone,_)             => (0..numcone).map(|_i| self.task.append_dual_exp_cone_domain().unwrap()).collect(),
+            (DomainType::PrimalGeometricMeanCone,_) => (0..numcone).map(|_i| self.task.append_primal_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::DualGeometricMeanCone,_)   => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::InfNormCone,_)             => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::OneNormCone,_)             => (0..numcone).map(|_i| self.task.append_one_norm_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::PSDCone,_)                 => (0..numcone).map(|_i| self.task.append_psd_cone_domain(conesize as i64).unwrap()).collect(),
+            (DomainType::PrimalPowerCone,Some(ref par)) => (0..numcone).map(|_i| self.task.append_primal_power_cone_domain(conesize as i64, par.as_slice()).unwrap()).collect(),
+            (DomainType::DualPowerCone,Some(ref par))   => (0..numcone).map(|_i| self.task.append_dual_power_cone_domain(conesize as i64,par.as_slice()).unwrap()).collect(),
+            (DomainType::PrimalPowerCone,None)     => panic!("Missing parameter for cone"),
+            (DomainType::DualPowerCone,Nonoe)      => panic!("Missing parameter for cone")
+        }
+    }
+
     pub fn variable(& mut self, name : Option<&str>, dom : Domain) -> Variable {
         let (dt,shape,conedim,rhs,par) = dom.unwrap();
         let domsize = shape.iter().product::<usize>();
@@ -769,29 +800,8 @@ impl Model {
             let accidxs : Vec<i64> = accelmidx.iter().map(|v| *v as i64).collect();
             let afeidxs : Vec<i64> = afeelmidx.iter().map(|v| *v as i64).collect();
             let varidxs : Vec<i32> = varelmidx.iter().map(|v| *v as i32).collect();
-            let n = domsize as i64;
 
-            let domidxs = match (dt,par) {
-                (DomainType::R,_)                       => (vec![self.task.append_r_domain(domsize as i64).unwrap()]),
-                (DomainType::RMinus,_)                  => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
-                (DomainType::RPlus,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
-                (DomainType::RZero,_)                   => (vec![self.task.append_rminus_domain(domsize as i64).unwrap()]),
-                (DomainType::QuadraticCone,_)           => (0..numcone).map(|_i| self.task.append_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::RotatedQuadraticCone,_)    => (0..numcone).map(|_i| self.task.append_r_quadratic_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::PrimalExpCone,_)           => (0..numcone).map(|_i| self.task.append_primal_exp_cone_domain().unwrap()).collect(),
-                (DomainType::DualExpCone,_)             => (0..numcone).map(|_i| self.task.append_dual_exp_cone_domain().unwrap()).collect(),
-                (DomainType::PrimalGeometricMeanCone,_) => (0..numcone).map(|_i| self.task.append_primal_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::DualGeometricMeanCone,_)   => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::InfNormCone,_)             => (0..numcone).map(|_i| self.task.append_dual_geo_mean_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::OneNormCone,_)             => (0..numcone).map(|_i| self.task.append_one_norm_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::PSDCone,_)                 => (0..numcone).map(|_i| self.task.append_psd_cone_domain(conesize as i64).unwrap()).collect(),
-                (DomainType::PrimalPowerCone,Some(ref par)) => (0..numcone).map(|_i| self.task.append_primal_power_cone_domain(conesize as i64, par.as_slice()).unwrap()).collect(),
-                (DomainType::DualPowerCone,Some(ref par))   => (0..numcone).map(|_i| self.task.append_dual_power_cone_domain(conesize as i64,par.as_slice()).unwrap()).collect(),
-                (DomainType::PrimalPowerCone,None)     => panic!("Missing parameter for cone"),
-                (DomainType::DualPowerCone,Nonoe)      => panic!("Missing parameter for cone")
-
-            };
-
+            let domidxs = self.add_domain(dt,domsize,par);
             self.task.put_acc_list(accidxs.as_slice(),domidxs.as_slice(),afeidxs.as_slice(),rhs.as_slice());
         }
 
@@ -858,6 +868,153 @@ impl Model {
         }
     }
 
+    pub fn constraint(& mut self, name : Option<&str>, expr : Expression, dom : Domain) -> Constraint {
+        let (dt,shape,conedim,rhs,par) = dom.unwrap();
+        let domsize = shape.iter().product::<usize>();
+        let conesize = shape[conedim];
+        let numcone = domsize / conesize;
+        let nd = shape.len();
+
+        let mut aconelmidx : Vec<usize> = vec![0; domsize];
+        let mut accelmidx : Vec<usize> = vec![0; numcone];
+        let mut afeelmidx : Vec<usize> = vec![0; domsize];
+        let aconid = self.acon_allocate(numcone,conesize);
+        let accid = self.var_block_acc_id[aconid];
+        let afeid = self.var_block_acc_id[aconid];
+        self.acon_block_map.get(aconid, aconelmidx.as_mut_slice());
+        self.acc_block_map.get(accid, accelmidx.as_mut_slice());
+        self.afe_blocks.get(afeid, afeelmidx.as_mut_slice());
+
+        let domidxs = self.add_domain(dt,domsize,par);
+
+        {
+            let accidxs : Vec<i64> = accelmidx.iter().map(|v| *v as i64).collect();
+            let afeidxs : Vec<i64> = afeelmidx.iter().map(|v| *v as i64).collect();
+
+            let (rowptr,subj,cof,fix,shape) = expr.unwrap();
+            let nrows = rowptr.len()-1;
+            let mut ptrb : Vec<i64> = vec![0; nrows];
+            let mut nzrow : Vec<i32> = vec![0; nrows];
+            let mut nnz = 0usize;
+
+            for i in 0..nrows {
+                ptrb[i] = nnz as i64;
+                nzrow[i] = subj[rowptr[i]..rowptr[i+1]].iter().filter(|sub| sub >= 0).count();
+                nnz += rownz[i] as i32;
+            }
+
+            let linsubj : Vec<i32> = subj.iter().filter(|j| j >= 0).map(|j| j as i32).collect();
+            let linval  : Vec<f64> = subj.iter().zip(cof.iter()).filter(|(j,c)| j >= 0).map(|(_,c)| c).collect();
+
+            self.task.put_acc_list(accidxs.as_slice(),domidxs.as_slice(),afeidxs.as_slice(),rhs.as_slice()).unwrap();
+            if nnz < cof.len() {
+                let barnnz = cof.len() - nnz;
+                let barptr = vec![0usize; nrows+1];
+                for i in 0..nrows {
+                    barptr[i+1] = barptr[i] + subj[rowptr[i]..rowptr[i+1]].iter().filter(|j| j < 0).count();
+                }
+
+                let barelmidx = subj.iter().filter(|j| j < 0).map(|j| (-(j+1)) as usize).collect();
+                let barsubj   : Vec<i32> = barelmidx.iter().map(|k| self.barvar_elm_idx[k] as i32).collect();
+                let barvardim : Vec<i32> = barsubj.iter().map(|j| self.task.getdimbarvarj(j as i32).unwrap());
+                let barofs    : Vec<i32> = barelmidx.iter().map(|k| self.barvar_elm_ofs[k] as i32).collect();
+
+                let barsubk : Vec<i32> = barofs.iter().zip(barvardim.iter()).map(|(p,d)| inv_tril_idx(d,p).0).collect();
+                let barsubl : Vec<i32> = barofs.iter().zip(barvardim.iter()).map(|(p,d)| inv_tril_idx(d,p).1).collect();
+                let barval  : Vec<f64> = subj.iter().zip(cof.iter()).filter(|(j,c)| j < 0).map(|(_,c)| c).collect();
+
+                let mut barafej   : Vec<i32> = Vec::new();
+                let mut barafeidx : Vec<i64> = Vec::new();
+                let mut matidx    : Vec<i64> = Vec::new();
+
+                for (i,(b,e)) in barptr[0..nrows].iter().zip(barptr[1..nrows+1].zip()).enumerate() {
+                    if b<e {
+                        let mut p = b;
+                        let mut pe = b+1;
+                        let mut barj = barsubj[p];
+                        let mut bardim = barvardim[p];
+                        while pe < e && unsafe { barsubj.get_unchecked(pe) } == barj { ++pe; }
+                        matidx.push(self.task.append_sparse_sym_mat(bardim,& barsubk[p..pe], &barsubl[p..pe], &barval[p..pe])).unwrap();
+                        barafeidx.push(afeidxs[i]);
+                        barafej.push(barj);
+                    }
+                }
+                let numbarnz = barafej.len();
+
+                self.task.put_afe_barf_entry_list(barafeidx.as_slice(),
+                                                  barafej.as_slice(),
+                                                  vec![1; numbarnz].as_slice(),
+                                                  (0..numbarnz).collect().as_slice(),
+                                                  matidx.as_slice(),
+                                                  vec![1.0; numbarnz].as_slice()).unwrap();
+            }
+            self.task.put_afe_f_row_list(afeidxs.as_slice(),nzrow.as_slice(),ptrb.as_slice(),linsubj,linval.as_slice()).unwrap();
+        }
+
+        match name {
+            Some(name) => {
+                {
+                    let mut varnamegen = KeyGenerator::new(shape.as_slice());
+                    let mut fmt : String = String::new();
+                    fmt.push_str(name);
+                    fmt.push('[');
+                    let baselen = fmt.len();
+                    for i in 0..domsize {
+                        fmt.truncate(baselen);
+                        varnamegen.append_to_str(& mut fmt);
+                        varnamegen.inc();
+                        fmt.push(']');
+
+                        self.task.put_var_name(varelmidx[i] as i32, fmt.as_str());
+                    }
+                }
+                {
+                    let accshape : Vec<usize> = shape[0..conedim].iter().chain(shape[conedim+1..nd].iter()).map(|v| *v).collect();
+                    let accdomsize : usize = accshape.iter().product();
+                    let mut accnamegen = KeyGenerator::new(accshape.as_slice());
+                    let mut fmt : String = String::new();
+                    fmt.push_str(name);
+                    fmt.push('[');
+                    let baselen = fmt.len();
+                    for i in 0..accdomsize {
+                        fmt.truncate(baselen);
+                        accnamegen.append_to_str(& mut fmt);
+                        accnamegen.inc();
+                        fmt.push(']');
+
+                        self.task.put_acc_name(accelmidx[i] as i64, fmt.as_str());
+                    }
+                }
+            }
+            None => { }
+        }
+
+
+        if conedim == shape.len()-1 {
+            Variable{id : Some(varid as isize), shape : shape, idxs : varelmidx.iter().map(|v| (*v as isize)).collect() }
+        }
+        else {
+            let mut permvarelmidx : Vec<isize> = vec![0; domsize];
+            let d0 = shape[0..conedim].iter().product();
+            let d1 = conesize;
+            let d2 = shape[conedim+1..nd].iter().product();
+            let mut k : usize = 0;
+            for i0 in 0..d0 {
+                for i1 in 0..d1 {
+                    for i2 in 0..d2 {
+                        let idx = i0*d1*d2+i2*d1+i1;
+                        unsafe {
+                            *permvarelmidx.get_unchecked_mut(k) = *varelmidx.get_unchecked(idx) as isize;
+                        }
+                        k += 1;
+                    }
+                }
+            }
+            Variable{id : Some(varid as isize), shape : shape, idxs : permvarelmidx }
+        }
+
+    }
+
 
     // fn named_constraint(& mut self, name : & str, expr : &Expression, dom : &Domain) -> Constraint {
     //     Constraint
@@ -868,15 +1025,15 @@ impl Model {
 }
 
 pub struct Expression {
-    shape  : Vec<usize>,
     rowptr : Vec<usize>,
     subj   : Vec<i64>,
     cof    : Vec<f64>,
-    fix    : Vec<f64>
+    fix    : Vec<f64>,
+    shape  : Vec<usize>
 }
 
 impl Expression {
-    fn new(rowptr : &[usize], subj : &[i64], cof : &[f64], fix : &[f64]) -> Expression {
+    pub fn new(rowptr : &[usize], subj : &[i64], cof : &[f64], fix : &[f64]) -> Expression {
         let n = rowptr.len()-2;
         if n != fix.len() { panic!("Mismatching array lengths"); }
         if subj.len() != cof.len() { panic!("Mismatching array lengths"); }
@@ -889,6 +1046,60 @@ impl Expression {
             subj : subj.to_vec(),
             cof : cof.to_vec(),
             fix : fix.to_vec()
+        }
+    }
+    pub fn unwrap(self) -> (Vec<usize>,Vec<i64>,Vec<f64>,Vec<f64>,Vec<usize>) {
+        let domsize = self.shape.iter().product();
+        let nnz     = self.subj.len();
+        if self.fix.len() != domsize { panic!("Invalid Expression");  }
+        if self.rowptr.len()-1 != domsize { panic!("Invalid Expression");  }
+        if self.subj.len() != self.cof.len() { panic!("Invalid Expression");  }
+        if self.rowptr[self.rowptr.len()-1] != nnz { panic!("Invalid Expression");  }
+
+        if ! rowptr[0..domsize].iter().zip(rowptr[1..domsize+1].iter()).all(|(a,b)| *a <= *b) { panic!("Invalid Expression");  }
+
+        // reorder and compress if necessary
+        let is_ordered = self.rowptr[0..domsize].iter().zip(self.rowptr[1..domsize+1].iter()).all(|(b,e)| b+1 >= e || self.subj[b..e-1].iter().zip(self.subj[b+1..e].iter()).all(|(a,b)| a < b));
+
+        if is_ordered {
+            (self.rowptr,self.subj,self.cof,self.fix,self.shape)
+        }
+        else {
+            let mut rowptr : Vec<usize> = Vec::new(); rowptr.reserve(domsize+1); rowptr.push(0);
+            let mut subj   : Vec<i64> = Vec::new(); subj.reserve(nnz);
+            let mut cof    : Vec<f64> = Vec::new(); cof.reserve(nnz);
+            let mut nnz : usize = 0;
+
+            let perm : Vec<usize> = (0..nnz).collect();
+
+            let mut nzi = 0;
+            for (b,e) in self.rowptr[0..domsize].iter().zip(self.rowptr[1..domsize+1]).iter() {
+                if b == e {
+                }
+                else if e-b == 1 {
+                    rowptr.push(nnz+1);
+                        subj.push( unsafe { self.subj.get_unchecked(b) });
+                    ++nzi;
+                }
+                else {
+                    (& mut perm[b..e]).sort_by_key(|i| unsafe{ *self.subj.get_unchecked(i) } );
+                    subj.push(unsafe { *self.subj.get_unchecked(*perm.get_unchecked(b)) });
+                    cof.push(unsafe { *self.cof.get_unchecked(*perm.get_unchecked(b)) });
+
+                    for (pp,pi) in perm[b..e-1].iter().zip(perm[b+1..e].iter()) {
+                        if pp < pi {
+                            subj.push(unsafe { *self.subj.get_unchecked(*perm.get_unchecked(pi)) });
+                            cof.push(unsafe { *self.cof.get_unchecked(*perm.get_unchecked(pi)) });
+                            ++nzi;
+                        }
+                        else {
+                            cof[nzi-1] += unsafe { *self.cof.get_unchecked(*perm.get_unchecked(pi)) }
+                        }
+                    }
+                }
+            }
+
+            (rowptr,subj,cof,self.fix,self.shape)
         }
     }
 }
