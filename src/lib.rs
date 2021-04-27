@@ -1,11 +1,10 @@
-// Generated for MOSEK v10.0.2
+// Generated for MOSEK v10.0.4
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
 pub mod conic_solver_mosek;
-pub mod affine_conic_api;
 mod namegen;
 
 //#[link(name = "mosek64")]
@@ -43,12 +42,8 @@ extern {
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
     fn MSK_appenddjcs(task_ : * const u8,num_ : i64) -> i32;
     fn MSK_appenddualexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
-    fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appenddualpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
-    fn MSK_appendinfnormconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
-    fn MSK_appendonenormconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendprimalexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
-    fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendprimalpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
     fn MSK_appendpsdconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendquadraticconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
@@ -94,6 +89,7 @@ extern {
     fn MSK_evaluateaccs(task_ : * const u8,whichsol_ : i32,activity_ : * mut f64) -> i32;
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
     fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
+    fn MSK_generateaccnames(task_ : * const u8,num_ : i64,sub_ : * const i64,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32) -> i32;
     fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64) -> i32;
@@ -115,6 +111,7 @@ extern {
     fn MSK_getafefnumnz(task_ : * const u8,numfnz_ : & mut i64) -> i32;
     fn MSK_getafefrow(task_ : * const u8,afeidx_ : i64,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
     fn MSK_getafefrownumnz(task_ : * const u8,afeidx_ : i64,nzi_ : & mut i32) -> i32;
+    fn MSK_getafeftrip(task_ : * const u8,subi_ : * mut i64,subj_ : * mut i32,vali_ : * mut f64) -> i32;
     fn MSK_getafeg(task_ : * const u8,afeidx_ : i64,g_ : & mut f64) -> i32;
     fn MSK_getafegslice(task_ : * const u8,first_ : i64,last_ : i64,g_ : * mut f64) -> i32;
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
@@ -319,6 +316,7 @@ extern {
     fn MSK_putafebarfentrylist(task_ : * const u8,lenlist_ : i64,afeidxlist_ : * const i64,barvaridxlist_ : * const i32,numtermslist_ : * const i64,ptrtermslist_ : * const i64,lenterms_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
     fn MSK_putafebarfrow(task_ : * const u8,afeidx_ : i64,numentries_ : i32,barvaridxlist_ : * const i32,numtermlist_ : * const i64,ptrtermlist_ : * const i64,lenterms_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
     fn MSK_putafefentry(task_ : * const u8,afeidx_ : i64,j_ : i32,value_ : f64) -> i32;
+    fn MSK_putafefentrylist(task_ : * const u8,numentries_ : i64,afeidx_ : * const i64,j_ : * const i32,value_ : * const f64) -> i32;
     fn MSK_putafefrow(task_ : * const u8,afeidx_ : i64,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
     fn MSK_putafefrowlist(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64,nzrow_ : * const i32,ptrrow_ : * const i64,lenidxval_ : i64,idxrow_ : * const i32,valrow_ : * const f64) -> i32;
     fn MSK_putafeg(task_ : * const u8,afeidx_ : i64,gi_ : f64) -> i32;
@@ -537,75 +535,77 @@ pub const MSK_CALLBACK_BEGIN_READ               : i32 = 20;
 pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN        : i32 = 21;
 pub const MSK_CALLBACK_BEGIN_SIMPLEX            : i32 = 22;
 pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI         : i32 = 23;
-pub const MSK_CALLBACK_BEGIN_TO_CONIC           : i32 = 24;
-pub const MSK_CALLBACK_BEGIN_WRITE              : i32 = 25;
-pub const MSK_CALLBACK_CONIC                    : i32 = 26;
-pub const MSK_CALLBACK_DUAL_SIMPLEX             : i32 = 27;
-pub const MSK_CALLBACK_END_BI                   : i32 = 28;
-pub const MSK_CALLBACK_END_CONIC                : i32 = 29;
-pub const MSK_CALLBACK_END_DUAL_BI              : i32 = 30;
-pub const MSK_CALLBACK_END_DUAL_SENSITIVITY     : i32 = 31;
-pub const MSK_CALLBACK_END_DUAL_SETUP_BI        : i32 = 32;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX         : i32 = 33;
-pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI      : i32 = 34;
-pub const MSK_CALLBACK_END_INFEAS_ANA           : i32 = 35;
-pub const MSK_CALLBACK_END_INTPNT               : i32 = 36;
-pub const MSK_CALLBACK_END_LICENSE_WAIT         : i32 = 37;
-pub const MSK_CALLBACK_END_MIO                  : i32 = 38;
-pub const MSK_CALLBACK_END_OPTIMIZER            : i32 = 39;
-pub const MSK_CALLBACK_END_PRESOLVE             : i32 = 40;
-pub const MSK_CALLBACK_END_PRIMAL_BI            : i32 = 41;
-pub const MSK_CALLBACK_END_PRIMAL_REPAIR        : i32 = 42;
-pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY   : i32 = 43;
-pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI      : i32 = 44;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX       : i32 = 45;
-pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI    : i32 = 46;
-pub const MSK_CALLBACK_END_QCQO_REFORMULATE     : i32 = 47;
-pub const MSK_CALLBACK_END_READ                 : i32 = 48;
-pub const MSK_CALLBACK_END_ROOT_CUTGEN          : i32 = 49;
-pub const MSK_CALLBACK_END_SIMPLEX              : i32 = 50;
-pub const MSK_CALLBACK_END_SIMPLEX_BI           : i32 = 51;
-pub const MSK_CALLBACK_END_TO_CONIC             : i32 = 52;
-pub const MSK_CALLBACK_END_WRITE                : i32 = 53;
-pub const MSK_CALLBACK_IM_BI                    : i32 = 54;
-pub const MSK_CALLBACK_IM_CONIC                 : i32 = 55;
-pub const MSK_CALLBACK_IM_DUAL_BI               : i32 = 56;
-pub const MSK_CALLBACK_IM_DUAL_SENSIVITY        : i32 = 57;
-pub const MSK_CALLBACK_IM_DUAL_SIMPLEX          : i32 = 58;
-pub const MSK_CALLBACK_IM_INTPNT                : i32 = 59;
-pub const MSK_CALLBACK_IM_LICENSE_WAIT          : i32 = 60;
-pub const MSK_CALLBACK_IM_LU                    : i32 = 61;
-pub const MSK_CALLBACK_IM_MIO                   : i32 = 62;
-pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX      : i32 = 63;
-pub const MSK_CALLBACK_IM_MIO_INTPNT            : i32 = 64;
-pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX    : i32 = 65;
-pub const MSK_CALLBACK_IM_ORDER                 : i32 = 66;
-pub const MSK_CALLBACK_IM_PRESOLVE              : i32 = 67;
-pub const MSK_CALLBACK_IM_PRIMAL_BI             : i32 = 68;
-pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY      : i32 = 69;
-pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX        : i32 = 70;
-pub const MSK_CALLBACK_IM_QO_REFORMULATE        : i32 = 71;
-pub const MSK_CALLBACK_IM_READ                  : i32 = 72;
-pub const MSK_CALLBACK_IM_ROOT_CUTGEN           : i32 = 73;
-pub const MSK_CALLBACK_IM_SIMPLEX               : i32 = 74;
-pub const MSK_CALLBACK_IM_SIMPLEX_BI            : i32 = 75;
-pub const MSK_CALLBACK_INTPNT                   : i32 = 76;
-pub const MSK_CALLBACK_NEW_INT_MIO              : i32 = 77;
-pub const MSK_CALLBACK_PRIMAL_SIMPLEX           : i32 = 78;
-pub const MSK_CALLBACK_READ_OPF                 : i32 = 79;
-pub const MSK_CALLBACK_READ_OPF_SECTION         : i32 = 80;
-pub const MSK_CALLBACK_SOLVING_REMOTE           : i32 = 81;
-pub const MSK_CALLBACK_UPDATE_DUAL_BI           : i32 = 82;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX      : i32 = 83;
-pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI   : i32 = 84;
-pub const MSK_CALLBACK_UPDATE_PRESOLVE          : i32 = 85;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_BI         : i32 = 86;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX    : i32 = 87;
-pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI : i32 = 88;
-pub const MSK_CALLBACK_UPDATE_SIMPLEX           : i32 = 89;
-pub const MSK_CALLBACK_WRITE_OPF                : i32 = 90;
+pub const MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX   : i32 = 24;
+pub const MSK_CALLBACK_BEGIN_TO_CONIC           : i32 = 25;
+pub const MSK_CALLBACK_BEGIN_WRITE              : i32 = 26;
+pub const MSK_CALLBACK_CONIC                    : i32 = 27;
+pub const MSK_CALLBACK_DUAL_SIMPLEX             : i32 = 28;
+pub const MSK_CALLBACK_END_BI                   : i32 = 29;
+pub const MSK_CALLBACK_END_CONIC                : i32 = 30;
+pub const MSK_CALLBACK_END_DUAL_BI              : i32 = 31;
+pub const MSK_CALLBACK_END_DUAL_SENSITIVITY     : i32 = 32;
+pub const MSK_CALLBACK_END_DUAL_SETUP_BI        : i32 = 33;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX         : i32 = 34;
+pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI      : i32 = 35;
+pub const MSK_CALLBACK_END_INFEAS_ANA           : i32 = 36;
+pub const MSK_CALLBACK_END_INTPNT               : i32 = 37;
+pub const MSK_CALLBACK_END_LICENSE_WAIT         : i32 = 38;
+pub const MSK_CALLBACK_END_MIO                  : i32 = 39;
+pub const MSK_CALLBACK_END_OPTIMIZER            : i32 = 40;
+pub const MSK_CALLBACK_END_PRESOLVE             : i32 = 41;
+pub const MSK_CALLBACK_END_PRIMAL_BI            : i32 = 42;
+pub const MSK_CALLBACK_END_PRIMAL_REPAIR        : i32 = 43;
+pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY   : i32 = 44;
+pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI      : i32 = 45;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX       : i32 = 46;
+pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI    : i32 = 47;
+pub const MSK_CALLBACK_END_QCQO_REFORMULATE     : i32 = 48;
+pub const MSK_CALLBACK_END_READ                 : i32 = 49;
+pub const MSK_CALLBACK_END_ROOT_CUTGEN          : i32 = 50;
+pub const MSK_CALLBACK_END_SIMPLEX              : i32 = 51;
+pub const MSK_CALLBACK_END_SIMPLEX_BI           : i32 = 52;
+pub const MSK_CALLBACK_END_SOLVE_ROOT_RELAX     : i32 = 53;
+pub const MSK_CALLBACK_END_TO_CONIC             : i32 = 54;
+pub const MSK_CALLBACK_END_WRITE                : i32 = 55;
+pub const MSK_CALLBACK_IM_BI                    : i32 = 56;
+pub const MSK_CALLBACK_IM_CONIC                 : i32 = 57;
+pub const MSK_CALLBACK_IM_DUAL_BI               : i32 = 58;
+pub const MSK_CALLBACK_IM_DUAL_SENSIVITY        : i32 = 59;
+pub const MSK_CALLBACK_IM_DUAL_SIMPLEX          : i32 = 60;
+pub const MSK_CALLBACK_IM_INTPNT                : i32 = 61;
+pub const MSK_CALLBACK_IM_LICENSE_WAIT          : i32 = 62;
+pub const MSK_CALLBACK_IM_LU                    : i32 = 63;
+pub const MSK_CALLBACK_IM_MIO                   : i32 = 64;
+pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX      : i32 = 65;
+pub const MSK_CALLBACK_IM_MIO_INTPNT            : i32 = 66;
+pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX    : i32 = 67;
+pub const MSK_CALLBACK_IM_ORDER                 : i32 = 68;
+pub const MSK_CALLBACK_IM_PRESOLVE              : i32 = 69;
+pub const MSK_CALLBACK_IM_PRIMAL_BI             : i32 = 70;
+pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY      : i32 = 71;
+pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX        : i32 = 72;
+pub const MSK_CALLBACK_IM_QO_REFORMULATE        : i32 = 73;
+pub const MSK_CALLBACK_IM_READ                  : i32 = 74;
+pub const MSK_CALLBACK_IM_ROOT_CUTGEN           : i32 = 75;
+pub const MSK_CALLBACK_IM_SIMPLEX               : i32 = 76;
+pub const MSK_CALLBACK_IM_SIMPLEX_BI            : i32 = 77;
+pub const MSK_CALLBACK_INTPNT                   : i32 = 78;
+pub const MSK_CALLBACK_NEW_INT_MIO              : i32 = 79;
+pub const MSK_CALLBACK_PRIMAL_SIMPLEX           : i32 = 80;
+pub const MSK_CALLBACK_READ_OPF                 : i32 = 81;
+pub const MSK_CALLBACK_READ_OPF_SECTION         : i32 = 82;
+pub const MSK_CALLBACK_SOLVING_REMOTE           : i32 = 83;
+pub const MSK_CALLBACK_UPDATE_DUAL_BI           : i32 = 84;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX      : i32 = 85;
+pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI   : i32 = 86;
+pub const MSK_CALLBACK_UPDATE_PRESOLVE          : i32 = 87;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_BI         : i32 = 88;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX    : i32 = 89;
+pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI : i32 = 90;
+pub const MSK_CALLBACK_UPDATE_SIMPLEX           : i32 = 91;
+pub const MSK_CALLBACK_WRITE_OPF                : i32 = 92;
 pub const MSK_CALLBACK_BEGIN : i32 = 0;
-pub const MSK_CALLBACK_END   : i32 = 91;
+pub const MSK_CALLBACK_END   : i32 = 93;
 
 // checkconvexitytype
 pub const MSK_CHECK_CONVEXITY_FULL   : i32 = 2;
@@ -672,79 +672,81 @@ pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE                  : i32 = 17;
 pub const MSK_DINF_MIO_GMI_SEPARATION_TIME                        : i32 = 18;
 pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME                         : i32 = 19;
 pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME             : i32 = 20;
-pub const MSK_DINF_MIO_OBJ_ABS_GAP                                : i32 = 21;
-pub const MSK_DINF_MIO_OBJ_BOUND                                  : i32 = 22;
-pub const MSK_DINF_MIO_OBJ_INT                                    : i32 = 23;
-pub const MSK_DINF_MIO_OBJ_REL_GAP                                : i32 = 24;
-pub const MSK_DINF_MIO_PROBING_TIME                               : i32 = 25;
-pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME                           : i32 = 26;
-pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME                        : i32 = 27;
-pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME                         : i32 = 28;
-pub const MSK_DINF_MIO_TIME                                       : i32 = 29;
-pub const MSK_DINF_MIO_USER_OBJ_CUT                               : i32 = 30;
-pub const MSK_DINF_OPTIMIZER_TIME                                 : i32 = 31;
-pub const MSK_DINF_PRESOLVE_ELI_TIME                              : i32 = 32;
-pub const MSK_DINF_PRESOLVE_LINDEP_TIME                           : i32 = 33;
-pub const MSK_DINF_PRESOLVE_TIME                                  : i32 = 34;
-pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ                      : i32 = 35;
-pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION              : i32 = 36;
-pub const MSK_DINF_QCQO_REFORMULATE_TIME                          : i32 = 37;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 38;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING   : i32 = 39;
-pub const MSK_DINF_RD_TIME                                        : i32 = 40;
-pub const MSK_DINF_SIM_DUAL_TIME                                  : i32 = 41;
-pub const MSK_DINF_SIM_FEAS                                       : i32 = 42;
-pub const MSK_DINF_SIM_OBJ                                        : i32 = 43;
-pub const MSK_DINF_SIM_PRIMAL_TIME                                : i32 = 44;
-pub const MSK_DINF_SIM_TIME                                       : i32 = 45;
-pub const MSK_DINF_SOL_BAS_DUAL_OBJ                               : i32 = 46;
-pub const MSK_DINF_SOL_BAS_DVIOLCON                               : i32 = 47;
-pub const MSK_DINF_SOL_BAS_DVIOLVAR                               : i32 = 48;
-pub const MSK_DINF_SOL_BAS_NRM_BARX                               : i32 = 49;
-pub const MSK_DINF_SOL_BAS_NRM_SLC                                : i32 = 50;
-pub const MSK_DINF_SOL_BAS_NRM_SLX                                : i32 = 51;
-pub const MSK_DINF_SOL_BAS_NRM_SUC                                : i32 = 52;
-pub const MSK_DINF_SOL_BAS_NRM_SUX                                : i32 = 53;
-pub const MSK_DINF_SOL_BAS_NRM_XC                                 : i32 = 54;
-pub const MSK_DINF_SOL_BAS_NRM_XX                                 : i32 = 55;
-pub const MSK_DINF_SOL_BAS_NRM_Y                                  : i32 = 56;
-pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ                             : i32 = 57;
-pub const MSK_DINF_SOL_BAS_PVIOLCON                               : i32 = 58;
-pub const MSK_DINF_SOL_BAS_PVIOLVAR                               : i32 = 59;
-pub const MSK_DINF_SOL_ITG_NRM_BARX                               : i32 = 60;
-pub const MSK_DINF_SOL_ITG_NRM_XC                                 : i32 = 61;
-pub const MSK_DINF_SOL_ITG_NRM_XX                                 : i32 = 62;
-pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ                             : i32 = 63;
-pub const MSK_DINF_SOL_ITG_PVIOLBARVAR                            : i32 = 64;
-pub const MSK_DINF_SOL_ITG_PVIOLCON                               : i32 = 65;
-pub const MSK_DINF_SOL_ITG_PVIOLCONES                             : i32 = 66;
-pub const MSK_DINF_SOL_ITG_PVIOLITG                               : i32 = 67;
-pub const MSK_DINF_SOL_ITG_PVIOLVAR                               : i32 = 68;
-pub const MSK_DINF_SOL_ITR_DUAL_OBJ                               : i32 = 69;
-pub const MSK_DINF_SOL_ITR_DVIOLACC                               : i32 = 70;
-pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 71;
-pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 72;
-pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 73;
-pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 74;
-pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 75;
-pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 76;
-pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 77;
-pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 78;
-pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 79;
-pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 80;
-pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 81;
-pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 82;
-pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 83;
-pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 84;
-pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 85;
-pub const MSK_DINF_SOL_ITR_PVIOLACC                               : i32 = 86;
-pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 87;
-pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 88;
-pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 89;
-pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 90;
-pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 91;
+pub const MSK_DINF_MIO_LIPRO_SEPARATION_TIME                      : i32 = 21;
+pub const MSK_DINF_MIO_OBJ_ABS_GAP                                : i32 = 22;
+pub const MSK_DINF_MIO_OBJ_BOUND                                  : i32 = 23;
+pub const MSK_DINF_MIO_OBJ_INT                                    : i32 = 24;
+pub const MSK_DINF_MIO_OBJ_REL_GAP                                : i32 = 25;
+pub const MSK_DINF_MIO_PROBING_TIME                               : i32 = 26;
+pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME                           : i32 = 27;
+pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME                        : i32 = 28;
+pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME                         : i32 = 29;
+pub const MSK_DINF_MIO_ROOT_TIME                                  : i32 = 30;
+pub const MSK_DINF_MIO_TIME                                       : i32 = 31;
+pub const MSK_DINF_MIO_USER_OBJ_CUT                               : i32 = 32;
+pub const MSK_DINF_OPTIMIZER_TIME                                 : i32 = 33;
+pub const MSK_DINF_PRESOLVE_ELI_TIME                              : i32 = 34;
+pub const MSK_DINF_PRESOLVE_LINDEP_TIME                           : i32 = 35;
+pub const MSK_DINF_PRESOLVE_TIME                                  : i32 = 36;
+pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ                      : i32 = 37;
+pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION              : i32 = 38;
+pub const MSK_DINF_QCQO_REFORMULATE_TIME                          : i32 = 39;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 40;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING   : i32 = 41;
+pub const MSK_DINF_RD_TIME                                        : i32 = 42;
+pub const MSK_DINF_SIM_DUAL_TIME                                  : i32 = 43;
+pub const MSK_DINF_SIM_FEAS                                       : i32 = 44;
+pub const MSK_DINF_SIM_OBJ                                        : i32 = 45;
+pub const MSK_DINF_SIM_PRIMAL_TIME                                : i32 = 46;
+pub const MSK_DINF_SIM_TIME                                       : i32 = 47;
+pub const MSK_DINF_SOL_BAS_DUAL_OBJ                               : i32 = 48;
+pub const MSK_DINF_SOL_BAS_DVIOLCON                               : i32 = 49;
+pub const MSK_DINF_SOL_BAS_DVIOLVAR                               : i32 = 50;
+pub const MSK_DINF_SOL_BAS_NRM_BARX                               : i32 = 51;
+pub const MSK_DINF_SOL_BAS_NRM_SLC                                : i32 = 52;
+pub const MSK_DINF_SOL_BAS_NRM_SLX                                : i32 = 53;
+pub const MSK_DINF_SOL_BAS_NRM_SUC                                : i32 = 54;
+pub const MSK_DINF_SOL_BAS_NRM_SUX                                : i32 = 55;
+pub const MSK_DINF_SOL_BAS_NRM_XC                                 : i32 = 56;
+pub const MSK_DINF_SOL_BAS_NRM_XX                                 : i32 = 57;
+pub const MSK_DINF_SOL_BAS_NRM_Y                                  : i32 = 58;
+pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ                             : i32 = 59;
+pub const MSK_DINF_SOL_BAS_PVIOLCON                               : i32 = 60;
+pub const MSK_DINF_SOL_BAS_PVIOLVAR                               : i32 = 61;
+pub const MSK_DINF_SOL_ITG_NRM_BARX                               : i32 = 62;
+pub const MSK_DINF_SOL_ITG_NRM_XC                                 : i32 = 63;
+pub const MSK_DINF_SOL_ITG_NRM_XX                                 : i32 = 64;
+pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ                             : i32 = 65;
+pub const MSK_DINF_SOL_ITG_PVIOLBARVAR                            : i32 = 66;
+pub const MSK_DINF_SOL_ITG_PVIOLCON                               : i32 = 67;
+pub const MSK_DINF_SOL_ITG_PVIOLCONES                             : i32 = 68;
+pub const MSK_DINF_SOL_ITG_PVIOLITG                               : i32 = 69;
+pub const MSK_DINF_SOL_ITG_PVIOLVAR                               : i32 = 70;
+pub const MSK_DINF_SOL_ITR_DUAL_OBJ                               : i32 = 71;
+pub const MSK_DINF_SOL_ITR_DVIOLACC                               : i32 = 72;
+pub const MSK_DINF_SOL_ITR_DVIOLBARVAR                            : i32 = 73;
+pub const MSK_DINF_SOL_ITR_DVIOLCON                               : i32 = 74;
+pub const MSK_DINF_SOL_ITR_DVIOLCONES                             : i32 = 75;
+pub const MSK_DINF_SOL_ITR_DVIOLVAR                               : i32 = 76;
+pub const MSK_DINF_SOL_ITR_NRM_BARS                               : i32 = 77;
+pub const MSK_DINF_SOL_ITR_NRM_BARX                               : i32 = 78;
+pub const MSK_DINF_SOL_ITR_NRM_SLC                                : i32 = 79;
+pub const MSK_DINF_SOL_ITR_NRM_SLX                                : i32 = 80;
+pub const MSK_DINF_SOL_ITR_NRM_SNX                                : i32 = 81;
+pub const MSK_DINF_SOL_ITR_NRM_SUC                                : i32 = 82;
+pub const MSK_DINF_SOL_ITR_NRM_SUX                                : i32 = 83;
+pub const MSK_DINF_SOL_ITR_NRM_XC                                 : i32 = 84;
+pub const MSK_DINF_SOL_ITR_NRM_XX                                 : i32 = 85;
+pub const MSK_DINF_SOL_ITR_NRM_Y                                  : i32 = 86;
+pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ                             : i32 = 87;
+pub const MSK_DINF_SOL_ITR_PVIOLACC                               : i32 = 88;
+pub const MSK_DINF_SOL_ITR_PVIOLBARVAR                            : i32 = 89;
+pub const MSK_DINF_SOL_ITR_PVIOLCON                               : i32 = 90;
+pub const MSK_DINF_SOL_ITR_PVIOLCONES                             : i32 = 91;
+pub const MSK_DINF_SOL_ITR_PVIOLVAR                               : i32 = 92;
+pub const MSK_DINF_TO_CONIC_TIME                                  : i32 = 93;
 pub const MSK_DINF_BEGIN : i32 = 0;
-pub const MSK_DINF_END   : i32 = 92;
+pub const MSK_DINF_END   : i32 = 94;
 
 // domaintype
 pub const MSK_DOMAIN_DUAL_EXP_CONE        : i32 = 7;
@@ -806,27 +808,29 @@ pub const MSK_DPAR_INTPNT_TOL_REL_STEP                : i32 = 36;
 pub const MSK_DPAR_INTPNT_TOL_STEP_SIZE               : i32 = 37;
 pub const MSK_DPAR_LOWER_OBJ_CUT                      : i32 = 38;
 pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH           : i32 = 39;
-pub const MSK_DPAR_MIO_MAX_TIME                       : i32 = 40;
-pub const MSK_DPAR_MIO_REL_GAP_CONST                  : i32 = 41;
-pub const MSK_DPAR_MIO_TOL_ABS_GAP                    : i32 = 42;
-pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT              : i32 = 43;
-pub const MSK_DPAR_MIO_TOL_FEAS                       : i32 = 44;
-pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 45;
-pub const MSK_DPAR_MIO_TOL_REL_GAP                    : i32 = 46;
-pub const MSK_DPAR_OPTIMIZER_MAX_TIME                 : i32 = 47;
-pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP            : i32 = 48;
-pub const MSK_DPAR_PRESOLVE_TOL_AIJ                   : i32 = 49;
-pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP            : i32 = 50;
-pub const MSK_DPAR_PRESOLVE_TOL_S                     : i32 = 51;
-pub const MSK_DPAR_PRESOLVE_TOL_X                     : i32 = 52;
-pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL      : i32 = 53;
-pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX            : i32 = 54;
-pub const MSK_DPAR_SIM_LU_TOL_REL_PIV                 : i32 = 55;
-pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV                : i32 = 56;
-pub const MSK_DPAR_UPPER_OBJ_CUT                      : i32 = 57;
-pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH           : i32 = 58;
+pub const MSK_DPAR_MIO_DJC_MAX_BIGM                   : i32 = 40;
+pub const MSK_DPAR_MIO_MAX_TIME                       : i32 = 41;
+pub const MSK_DPAR_MIO_PRESOLVE_AGGREGATOR_TOL_PIVOT  : i32 = 42;
+pub const MSK_DPAR_MIO_REL_GAP_CONST                  : i32 = 43;
+pub const MSK_DPAR_MIO_TOL_ABS_GAP                    : i32 = 44;
+pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT              : i32 = 45;
+pub const MSK_DPAR_MIO_TOL_FEAS                       : i32 = 46;
+pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 47;
+pub const MSK_DPAR_MIO_TOL_REL_GAP                    : i32 = 48;
+pub const MSK_DPAR_OPTIMIZER_MAX_TIME                 : i32 = 49;
+pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP            : i32 = 50;
+pub const MSK_DPAR_PRESOLVE_TOL_AIJ                   : i32 = 51;
+pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP            : i32 = 52;
+pub const MSK_DPAR_PRESOLVE_TOL_S                     : i32 = 53;
+pub const MSK_DPAR_PRESOLVE_TOL_X                     : i32 = 54;
+pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL      : i32 = 55;
+pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX            : i32 = 56;
+pub const MSK_DPAR_SIM_LU_TOL_REL_PIV                 : i32 = 57;
+pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV                : i32 = 58;
+pub const MSK_DPAR_UPPER_OBJ_CUT                      : i32 = 59;
+pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH           : i32 = 60;
 pub const MSK_DPAR_BEGIN : i32 = 0;
-pub const MSK_DPAR_END   : i32 = 59;
+pub const MSK_DPAR_END   : i32 = 61;
 
 // feature
 pub const MSK_FEATURE_PTON : i32 = 1;
@@ -866,78 +870,81 @@ pub const MSK_IINF_MIO_NUM_GOMORY_CUTS          : i32 = 27;
 pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS   : i32 = 28;
 pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS        : i32 = 29;
 pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS  : i32 = 30;
-pub const MSK_IINF_MIO_NUM_RELAX                : i32 = 31;
-pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE    : i32 = 32;
-pub const MSK_IINF_MIO_NUMBIN                   : i32 = 33;
-pub const MSK_IINF_MIO_NUMBINCONEVAR            : i32 = 34;
-pub const MSK_IINF_MIO_NUMCON                   : i32 = 35;
-pub const MSK_IINF_MIO_NUMCONE                  : i32 = 36;
-pub const MSK_IINF_MIO_NUMCONEVAR               : i32 = 37;
-pub const MSK_IINF_MIO_NUMCONT                  : i32 = 38;
-pub const MSK_IINF_MIO_NUMCONTCONEVAR           : i32 = 39;
-pub const MSK_IINF_MIO_NUMDEXPCONES             : i32 = 40;
-pub const MSK_IINF_MIO_NUMDPOWCONES             : i32 = 41;
-pub const MSK_IINF_MIO_NUMINT                   : i32 = 42;
-pub const MSK_IINF_MIO_NUMINTCONEVAR            : i32 = 43;
-pub const MSK_IINF_MIO_NUMPEXPCONES             : i32 = 44;
-pub const MSK_IINF_MIO_NUMPPOWCONES             : i32 = 45;
-pub const MSK_IINF_MIO_NUMQCONES                : i32 = 46;
-pub const MSK_IINF_MIO_NUMRQCONES               : i32 = 47;
-pub const MSK_IINF_MIO_NUMVAR                   : i32 = 48;
-pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED        : i32 = 49;
-pub const MSK_IINF_MIO_PRESOLVED_NUMBIN         : i32 = 50;
-pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR  : i32 = 51;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCON         : i32 = 52;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONE        : i32 = 53;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR     : i32 = 54;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONT        : i32 = 55;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 56;
-pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES   : i32 = 57;
-pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES   : i32 = 58;
-pub const MSK_IINF_MIO_PRESOLVED_NUMINT         : i32 = 59;
-pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR  : i32 = 60;
-pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES   : i32 = 61;
-pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES   : i32 = 62;
-pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES      : i32 = 63;
-pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES     : i32 = 64;
-pub const MSK_IINF_MIO_PRESOLVED_NUMVAR         : i32 = 65;
-pub const MSK_IINF_MIO_RELGAP_SATISFIED         : i32 = 66;
-pub const MSK_IINF_MIO_TOTAL_NUM_CUTS           : i32 = 67;
-pub const MSK_IINF_MIO_USER_OBJ_CUT             : i32 = 68;
-pub const MSK_IINF_OPT_NUMCON                   : i32 = 69;
-pub const MSK_IINF_OPT_NUMVAR                   : i32 = 70;
-pub const MSK_IINF_OPTIMIZE_RESPONSE            : i32 = 71;
-pub const MSK_IINF_PURIFY_DUAL_SUCCESS          : i32 = 72;
-pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS        : i32 = 73;
-pub const MSK_IINF_RD_NUMBARVAR                 : i32 = 74;
-pub const MSK_IINF_RD_NUMCON                    : i32 = 75;
-pub const MSK_IINF_RD_NUMCONE                   : i32 = 76;
-pub const MSK_IINF_RD_NUMINTVAR                 : i32 = 77;
-pub const MSK_IINF_RD_NUMQ                      : i32 = 78;
-pub const MSK_IINF_RD_NUMVAR                    : i32 = 79;
-pub const MSK_IINF_RD_PROTYPE                   : i32 = 80;
-pub const MSK_IINF_SIM_DUAL_DEG_ITER            : i32 = 81;
-pub const MSK_IINF_SIM_DUAL_HOTSTART            : i32 = 82;
-pub const MSK_IINF_SIM_DUAL_HOTSTART_LU         : i32 = 83;
-pub const MSK_IINF_SIM_DUAL_INF_ITER            : i32 = 84;
-pub const MSK_IINF_SIM_DUAL_ITER                : i32 = 85;
-pub const MSK_IINF_SIM_NUMCON                   : i32 = 86;
-pub const MSK_IINF_SIM_NUMVAR                   : i32 = 87;
-pub const MSK_IINF_SIM_PRIMAL_DEG_ITER          : i32 = 88;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART          : i32 = 89;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU       : i32 = 90;
-pub const MSK_IINF_SIM_PRIMAL_INF_ITER          : i32 = 91;
-pub const MSK_IINF_SIM_PRIMAL_ITER              : i32 = 92;
-pub const MSK_IINF_SIM_SOLVE_DUAL               : i32 = 93;
-pub const MSK_IINF_SOL_BAS_PROSTA               : i32 = 94;
-pub const MSK_IINF_SOL_BAS_SOLSTA               : i32 = 95;
-pub const MSK_IINF_SOL_ITG_PROSTA               : i32 = 96;
-pub const MSK_IINF_SOL_ITG_SOLSTA               : i32 = 97;
-pub const MSK_IINF_SOL_ITR_PROSTA               : i32 = 98;
-pub const MSK_IINF_SOL_ITR_SOLSTA               : i32 = 99;
-pub const MSK_IINF_STO_NUM_A_REALLOC            : i32 = 100;
+pub const MSK_IINF_MIO_NUM_LIPRO_CUTS           : i32 = 31;
+pub const MSK_IINF_MIO_NUM_RELAX                : i32 = 32;
+pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE    : i32 = 33;
+pub const MSK_IINF_MIO_NUMBIN                   : i32 = 34;
+pub const MSK_IINF_MIO_NUMBINCONEVAR            : i32 = 35;
+pub const MSK_IINF_MIO_NUMCON                   : i32 = 36;
+pub const MSK_IINF_MIO_NUMCONE                  : i32 = 37;
+pub const MSK_IINF_MIO_NUMCONEVAR               : i32 = 38;
+pub const MSK_IINF_MIO_NUMCONT                  : i32 = 39;
+pub const MSK_IINF_MIO_NUMCONTCONEVAR           : i32 = 40;
+pub const MSK_IINF_MIO_NUMDEXPCONES             : i32 = 41;
+pub const MSK_IINF_MIO_NUMDJC                   : i32 = 42;
+pub const MSK_IINF_MIO_NUMDPOWCONES             : i32 = 43;
+pub const MSK_IINF_MIO_NUMINT                   : i32 = 44;
+pub const MSK_IINF_MIO_NUMINTCONEVAR            : i32 = 45;
+pub const MSK_IINF_MIO_NUMPEXPCONES             : i32 = 46;
+pub const MSK_IINF_MIO_NUMPPOWCONES             : i32 = 47;
+pub const MSK_IINF_MIO_NUMQCONES                : i32 = 48;
+pub const MSK_IINF_MIO_NUMRQCONES               : i32 = 49;
+pub const MSK_IINF_MIO_NUMVAR                   : i32 = 50;
+pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED        : i32 = 51;
+pub const MSK_IINF_MIO_PRESOLVED_NUMBIN         : i32 = 52;
+pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR  : i32 = 53;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCON         : i32 = 54;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONE        : i32 = 55;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR     : i32 = 56;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONT        : i32 = 57;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 58;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES   : i32 = 59;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDJC         : i32 = 60;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES   : i32 = 61;
+pub const MSK_IINF_MIO_PRESOLVED_NUMINT         : i32 = 62;
+pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR  : i32 = 63;
+pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES   : i32 = 64;
+pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES   : i32 = 65;
+pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES      : i32 = 66;
+pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES     : i32 = 67;
+pub const MSK_IINF_MIO_PRESOLVED_NUMVAR         : i32 = 68;
+pub const MSK_IINF_MIO_RELGAP_SATISFIED         : i32 = 69;
+pub const MSK_IINF_MIO_TOTAL_NUM_CUTS           : i32 = 70;
+pub const MSK_IINF_MIO_USER_OBJ_CUT             : i32 = 71;
+pub const MSK_IINF_OPT_NUMCON                   : i32 = 72;
+pub const MSK_IINF_OPT_NUMVAR                   : i32 = 73;
+pub const MSK_IINF_OPTIMIZE_RESPONSE            : i32 = 74;
+pub const MSK_IINF_PURIFY_DUAL_SUCCESS          : i32 = 75;
+pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS        : i32 = 76;
+pub const MSK_IINF_RD_NUMBARVAR                 : i32 = 77;
+pub const MSK_IINF_RD_NUMCON                    : i32 = 78;
+pub const MSK_IINF_RD_NUMCONE                   : i32 = 79;
+pub const MSK_IINF_RD_NUMINTVAR                 : i32 = 80;
+pub const MSK_IINF_RD_NUMQ                      : i32 = 81;
+pub const MSK_IINF_RD_NUMVAR                    : i32 = 82;
+pub const MSK_IINF_RD_PROTYPE                   : i32 = 83;
+pub const MSK_IINF_SIM_DUAL_DEG_ITER            : i32 = 84;
+pub const MSK_IINF_SIM_DUAL_HOTSTART            : i32 = 85;
+pub const MSK_IINF_SIM_DUAL_HOTSTART_LU         : i32 = 86;
+pub const MSK_IINF_SIM_DUAL_INF_ITER            : i32 = 87;
+pub const MSK_IINF_SIM_DUAL_ITER                : i32 = 88;
+pub const MSK_IINF_SIM_NUMCON                   : i32 = 89;
+pub const MSK_IINF_SIM_NUMVAR                   : i32 = 90;
+pub const MSK_IINF_SIM_PRIMAL_DEG_ITER          : i32 = 91;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART          : i32 = 92;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU       : i32 = 93;
+pub const MSK_IINF_SIM_PRIMAL_INF_ITER          : i32 = 94;
+pub const MSK_IINF_SIM_PRIMAL_ITER              : i32 = 95;
+pub const MSK_IINF_SIM_SOLVE_DUAL               : i32 = 96;
+pub const MSK_IINF_SOL_BAS_PROSTA               : i32 = 97;
+pub const MSK_IINF_SOL_BAS_SOLSTA               : i32 = 98;
+pub const MSK_IINF_SOL_ITG_PROSTA               : i32 = 99;
+pub const MSK_IINF_SOL_ITG_SOLSTA               : i32 = 100;
+pub const MSK_IINF_SOL_ITR_PROSTA               : i32 = 101;
+pub const MSK_IINF_SOL_ITR_SOLSTA               : i32 = 102;
+pub const MSK_IINF_STO_NUM_A_REALLOC            : i32 = 103;
 pub const MSK_IINF_BEGIN : i32 = 0;
-pub const MSK_IINF_END   : i32 = 101;
+pub const MSK_IINF_END   : i32 = 104;
 
 // inftype
 pub const MSK_INF_DOU_TYPE  : i32 = 0;
@@ -1030,121 +1037,127 @@ pub const MSK_IPAR_MIO_CUT_CMIR                       : i32 = 64;
 pub const MSK_IPAR_MIO_CUT_GMI                        : i32 = 65;
 pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND              : i32 = 66;
 pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER             : i32 = 67;
-pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL            : i32 = 68;
-pub const MSK_IPAR_MIO_FEASPUMP_LEVEL                 : i32 = 69;
-pub const MSK_IPAR_MIO_HEURISTIC_LEVEL                : i32 = 70;
-pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES               : i32 = 71;
-pub const MSK_IPAR_MIO_MAX_NUM_RELAXS                 : i32 = 72;
-pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS        : i32 = 73;
-pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS              : i32 = 74;
-pub const MSK_IPAR_MIO_MODE                           : i32 = 75;
-pub const MSK_IPAR_MIO_NODE_OPTIMIZER                 : i32 = 76;
-pub const MSK_IPAR_MIO_NODE_SELECTION                 : i32 = 77;
-pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE        : i32 = 78;
-pub const MSK_IPAR_MIO_PROBING_LEVEL                  : i32 = 79;
-pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 80;
-pub const MSK_IPAR_MIO_RINS_MAX_NODES                 : i32 = 81;
-pub const MSK_IPAR_MIO_ROOT_OPTIMIZER                 : i32 = 82;
-pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL     : i32 = 83;
-pub const MSK_IPAR_MIO_SEED                           : i32 = 84;
-pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL             : i32 = 85;
-pub const MSK_IPAR_MT_SPINCOUNT                       : i32 = 86;
-pub const MSK_IPAR_NG                                 : i32 = 87;
-pub const MSK_IPAR_NUM_THREADS                        : i32 = 88;
-pub const MSK_IPAR_OPF_WRITE_HEADER                   : i32 = 89;
-pub const MSK_IPAR_OPF_WRITE_HINTS                    : i32 = 90;
-pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH              : i32 = 91;
-pub const MSK_IPAR_OPF_WRITE_PARAMETERS               : i32 = 92;
-pub const MSK_IPAR_OPF_WRITE_PROBLEM                  : i32 = 93;
-pub const MSK_IPAR_OPF_WRITE_SOL_BAS                  : i32 = 94;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITG                  : i32 = 95;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITR                  : i32 = 96;
-pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                : i32 = 97;
-pub const MSK_IPAR_OPTIMIZER                          : i32 = 98;
-pub const MSK_IPAR_PARAM_READ_CASE_NAME               : i32 = 99;
-pub const MSK_IPAR_PARAM_READ_IGN_ERROR               : i32 = 100;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       : i32 = 101;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  : i32 = 102;
-pub const MSK_IPAR_PRESOLVE_LEVEL                     : i32 = 103;
-pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       : i32 = 104;
-pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       : i32 = 105;
-pub const MSK_IPAR_PRESOLVE_LINDEP_USE                : i32 = 106;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS              : i32 = 107;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        : i32 = 108;
-pub const MSK_IPAR_PRESOLVE_USE                       : i32 = 109;
-pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            : i32 = 110;
-pub const MSK_IPAR_PTF_WRITE_TRANSFORM                : i32 = 111;
-pub const MSK_IPAR_READ_DEBUG                         : i32 = 112;
-pub const MSK_IPAR_READ_KEEP_FREE_CON                 : i32 = 113;
-pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU       : i32 = 114;
-pub const MSK_IPAR_READ_LP_QUOTED_NAMES               : i32 = 115;
-pub const MSK_IPAR_READ_MPS_FORMAT                    : i32 = 116;
-pub const MSK_IPAR_READ_MPS_WIDTH                     : i32 = 117;
-pub const MSK_IPAR_READ_TASK_IGNORE_PARAM             : i32 = 118;
-pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            : i32 = 119;
-pub const MSK_IPAR_SENSITIVITY_ALL                    : i32 = 120;
-pub const MSK_IPAR_SENSITIVITY_OPTIMIZER              : i32 = 121;
-pub const MSK_IPAR_SENSITIVITY_TYPE                   : i32 = 122;
-pub const MSK_IPAR_SIM_BASIS_FACTOR_USE               : i32 = 123;
-pub const MSK_IPAR_SIM_DEGEN                          : i32 = 124;
-pub const MSK_IPAR_SIM_DUAL_CRASH                     : i32 = 125;
-pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           : i32 = 126;
-pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        : i32 = 127;
-pub const MSK_IPAR_SIM_DUAL_SELECTION                 : i32 = 128;
-pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                 : i32 = 129;
-pub const MSK_IPAR_SIM_HOTSTART                       : i32 = 130;
-pub const MSK_IPAR_SIM_HOTSTART_LU                    : i32 = 131;
-pub const MSK_IPAR_SIM_MAX_ITERATIONS                 : i32 = 132;
-pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS               : i32 = 133;
-pub const MSK_IPAR_SIM_NON_SINGULAR                   : i32 = 134;
-pub const MSK_IPAR_SIM_PRIMAL_CRASH                   : i32 = 135;
-pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         : i32 = 136;
-pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      : i32 = 137;
-pub const MSK_IPAR_SIM_PRIMAL_SELECTION               : i32 = 138;
-pub const MSK_IPAR_SIM_REFACTOR_FREQ                  : i32 = 139;
-pub const MSK_IPAR_SIM_REFORMULATION                  : i32 = 140;
-pub const MSK_IPAR_SIM_SAVE_LU                        : i32 = 141;
-pub const MSK_IPAR_SIM_SCALING                        : i32 = 142;
-pub const MSK_IPAR_SIM_SCALING_METHOD                 : i32 = 143;
-pub const MSK_IPAR_SIM_SEED                           : i32 = 144;
-pub const MSK_IPAR_SIM_SOLVE_FORM                     : i32 = 145;
-pub const MSK_IPAR_SIM_STABILITY_PRIORITY             : i32 = 146;
-pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER               : i32 = 147;
-pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC              : i32 = 148;
-pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED             : i32 = 149;
-pub const MSK_IPAR_SOL_READ_NAME_WIDTH                : i32 = 150;
-pub const MSK_IPAR_SOL_READ_WIDTH                     : i32 = 151;
-pub const MSK_IPAR_SOLUTION_CALLBACK                  : i32 = 152;
-pub const MSK_IPAR_TIMING_LEVEL                       : i32 = 153;
-pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS              : i32 = 154;
-pub const MSK_IPAR_WRITE_BAS_HEAD                     : i32 = 155;
-pub const MSK_IPAR_WRITE_BAS_VARIABLES                : i32 = 156;
-pub const MSK_IPAR_WRITE_COMPRESSION                  : i32 = 157;
-pub const MSK_IPAR_WRITE_DATA_PARAM                   : i32 = 158;
-pub const MSK_IPAR_WRITE_FREE_CON                     : i32 = 159;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES                : i32 = 160;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO             : i32 = 161;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    : i32 = 162;
-pub const MSK_IPAR_WRITE_INT_CONSTRAINTS              : i32 = 163;
-pub const MSK_IPAR_WRITE_INT_HEAD                     : i32 = 164;
-pub const MSK_IPAR_WRITE_INT_VARIABLES                : i32 = 165;
-pub const MSK_IPAR_WRITE_LP_FULL_OBJ                  : i32 = 166;
-pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                : i32 = 167;
-pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES              : i32 = 168;
-pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT             : i32 = 169;
-pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE            : i32 = 170;
-pub const MSK_IPAR_WRITE_MPS_FORMAT                   : i32 = 171;
-pub const MSK_IPAR_WRITE_MPS_INT                      : i32 = 172;
-pub const MSK_IPAR_WRITE_PRECISION                    : i32 = 173;
-pub const MSK_IPAR_WRITE_SOL_BARVARIABLES             : i32 = 174;
-pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS              : i32 = 175;
-pub const MSK_IPAR_WRITE_SOL_HEAD                     : i32 = 176;
-pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     : i32 = 177;
-pub const MSK_IPAR_WRITE_SOL_VARIABLES                : i32 = 178;
-pub const MSK_IPAR_WRITE_TASK_INC_SOL                 : i32 = 179;
-pub const MSK_IPAR_WRITE_XML_MODE                     : i32 = 180;
+pub const MSK_IPAR_MIO_CUT_LIPRO                      : i32 = 68;
+pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL            : i32 = 69;
+pub const MSK_IPAR_MIO_DATA_PERMUTATION_METHOD        : i32 = 70;
+pub const MSK_IPAR_MIO_FEASPUMP_LEVEL                 : i32 = 71;
+pub const MSK_IPAR_MIO_HEURISTIC_LEVEL                : i32 = 72;
+pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES               : i32 = 73;
+pub const MSK_IPAR_MIO_MAX_NUM_RELAXS                 : i32 = 74;
+pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS        : i32 = 75;
+pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS              : i32 = 76;
+pub const MSK_IPAR_MIO_MODE                           : i32 = 77;
+pub const MSK_IPAR_MIO_NODE_OPTIMIZER                 : i32 = 78;
+pub const MSK_IPAR_MIO_NODE_SELECTION                 : i32 = 79;
+pub const MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL       : i32 = 80;
+pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE        : i32 = 81;
+pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_MAX_FILL   : i32 = 82;
+pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE        : i32 = 83;
+pub const MSK_IPAR_MIO_PROBING_LEVEL                  : i32 = 84;
+pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 85;
+pub const MSK_IPAR_MIO_RINS_MAX_NODES                 : i32 = 86;
+pub const MSK_IPAR_MIO_ROOT_OPTIMIZER                 : i32 = 87;
+pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL     : i32 = 88;
+pub const MSK_IPAR_MIO_SEED                           : i32 = 89;
+pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL             : i32 = 90;
+pub const MSK_IPAR_MT_SPINCOUNT                       : i32 = 91;
+pub const MSK_IPAR_NG                                 : i32 = 92;
+pub const MSK_IPAR_NUM_THREADS                        : i32 = 93;
+pub const MSK_IPAR_OPF_WRITE_HEADER                   : i32 = 94;
+pub const MSK_IPAR_OPF_WRITE_HINTS                    : i32 = 95;
+pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH              : i32 = 96;
+pub const MSK_IPAR_OPF_WRITE_PARAMETERS               : i32 = 97;
+pub const MSK_IPAR_OPF_WRITE_PROBLEM                  : i32 = 98;
+pub const MSK_IPAR_OPF_WRITE_SOL_BAS                  : i32 = 99;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITG                  : i32 = 100;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITR                  : i32 = 101;
+pub const MSK_IPAR_OPF_WRITE_SOLUTIONS                : i32 = 102;
+pub const MSK_IPAR_OPTIMIZER                          : i32 = 103;
+pub const MSK_IPAR_PARAM_READ_CASE_NAME               : i32 = 104;
+pub const MSK_IPAR_PARAM_READ_IGN_ERROR               : i32 = 105;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       : i32 = 106;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  : i32 = 107;
+pub const MSK_IPAR_PRESOLVE_LEVEL                     : i32 = 108;
+pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       : i32 = 109;
+pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       : i32 = 110;
+pub const MSK_IPAR_PRESOLVE_LINDEP_USE                : i32 = 111;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS              : i32 = 112;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        : i32 = 113;
+pub const MSK_IPAR_PRESOLVE_USE                       : i32 = 114;
+pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            : i32 = 115;
+pub const MSK_IPAR_PTF_WRITE_TRANSFORM                : i32 = 116;
+pub const MSK_IPAR_READ_DEBUG                         : i32 = 117;
+pub const MSK_IPAR_READ_KEEP_FREE_CON                 : i32 = 118;
+pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU       : i32 = 119;
+pub const MSK_IPAR_READ_LP_QUOTED_NAMES               : i32 = 120;
+pub const MSK_IPAR_READ_MPS_FORMAT                    : i32 = 121;
+pub const MSK_IPAR_READ_MPS_WIDTH                     : i32 = 122;
+pub const MSK_IPAR_READ_TASK_IGNORE_PARAM             : i32 = 123;
+pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            : i32 = 124;
+pub const MSK_IPAR_SENSITIVITY_ALL                    : i32 = 125;
+pub const MSK_IPAR_SENSITIVITY_OPTIMIZER              : i32 = 126;
+pub const MSK_IPAR_SENSITIVITY_TYPE                   : i32 = 127;
+pub const MSK_IPAR_SIM_BASIS_FACTOR_USE               : i32 = 128;
+pub const MSK_IPAR_SIM_DEGEN                          : i32 = 129;
+pub const MSK_IPAR_SIM_DUAL_CRASH                     : i32 = 130;
+pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           : i32 = 131;
+pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        : i32 = 132;
+pub const MSK_IPAR_SIM_DUAL_SELECTION                 : i32 = 133;
+pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC                 : i32 = 134;
+pub const MSK_IPAR_SIM_HOTSTART                       : i32 = 135;
+pub const MSK_IPAR_SIM_HOTSTART_LU                    : i32 = 136;
+pub const MSK_IPAR_SIM_MAX_ITERATIONS                 : i32 = 137;
+pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS               : i32 = 138;
+pub const MSK_IPAR_SIM_NON_SINGULAR                   : i32 = 139;
+pub const MSK_IPAR_SIM_PRIMAL_CRASH                   : i32 = 140;
+pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         : i32 = 141;
+pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      : i32 = 142;
+pub const MSK_IPAR_SIM_PRIMAL_SELECTION               : i32 = 143;
+pub const MSK_IPAR_SIM_REFACTOR_FREQ                  : i32 = 144;
+pub const MSK_IPAR_SIM_REFORMULATION                  : i32 = 145;
+pub const MSK_IPAR_SIM_SAVE_LU                        : i32 = 146;
+pub const MSK_IPAR_SIM_SCALING                        : i32 = 147;
+pub const MSK_IPAR_SIM_SCALING_METHOD                 : i32 = 148;
+pub const MSK_IPAR_SIM_SEED                           : i32 = 149;
+pub const MSK_IPAR_SIM_SOLVE_FORM                     : i32 = 150;
+pub const MSK_IPAR_SIM_STABILITY_PRIORITY             : i32 = 151;
+pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER               : i32 = 152;
+pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC              : i32 = 153;
+pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED             : i32 = 154;
+pub const MSK_IPAR_SOL_READ_NAME_WIDTH                : i32 = 155;
+pub const MSK_IPAR_SOL_READ_WIDTH                     : i32 = 156;
+pub const MSK_IPAR_SOLUTION_CALLBACK                  : i32 = 157;
+pub const MSK_IPAR_TIMING_LEVEL                       : i32 = 158;
+pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS              : i32 = 159;
+pub const MSK_IPAR_WRITE_BAS_HEAD                     : i32 = 160;
+pub const MSK_IPAR_WRITE_BAS_VARIABLES                : i32 = 161;
+pub const MSK_IPAR_WRITE_COMPRESSION                  : i32 = 162;
+pub const MSK_IPAR_WRITE_DATA_PARAM                   : i32 = 163;
+pub const MSK_IPAR_WRITE_FREE_CON                     : i32 = 164;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES                : i32 = 165;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO             : i32 = 166;
+pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    : i32 = 167;
+pub const MSK_IPAR_WRITE_INT_CONSTRAINTS              : i32 = 168;
+pub const MSK_IPAR_WRITE_INT_HEAD                     : i32 = 169;
+pub const MSK_IPAR_WRITE_INT_VARIABLES                : i32 = 170;
+pub const MSK_IPAR_WRITE_JSON_INDENTATION             : i32 = 171;
+pub const MSK_IPAR_WRITE_LP_FULL_OBJ                  : i32 = 172;
+pub const MSK_IPAR_WRITE_LP_LINE_WIDTH                : i32 = 173;
+pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES              : i32 = 174;
+pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT             : i32 = 175;
+pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE            : i32 = 176;
+pub const MSK_IPAR_WRITE_MPS_FORMAT                   : i32 = 177;
+pub const MSK_IPAR_WRITE_MPS_INT                      : i32 = 178;
+pub const MSK_IPAR_WRITE_PRECISION                    : i32 = 179;
+pub const MSK_IPAR_WRITE_SOL_BARVARIABLES             : i32 = 180;
+pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS              : i32 = 181;
+pub const MSK_IPAR_WRITE_SOL_HEAD                     : i32 = 182;
+pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     : i32 = 183;
+pub const MSK_IPAR_WRITE_SOL_VARIABLES                : i32 = 184;
+pub const MSK_IPAR_WRITE_TASK_INC_SOL                 : i32 = 185;
+pub const MSK_IPAR_WRITE_XML_MODE                     : i32 = 186;
 pub const MSK_IPAR_BEGIN : i32 = 0;
-pub const MSK_IPAR_END   : i32 = 181;
+pub const MSK_IPAR_END   : i32 = 187;
 
 // liinfitem
 pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER   : i32 = 0;
@@ -1179,6 +1192,13 @@ pub const MSK_MIO_CONT_SOL_NONE    : i32 = 0;
 pub const MSK_MIO_CONT_SOL_ROOT    : i32 = 1;
 pub const MSK_MIO_CONT_SOL_BEGIN : i32 = 0;
 pub const MSK_MIO_CONT_SOL_END   : i32 = 4;
+
+// miodatapermmethod
+pub const MSK_MIO_DATA_PERMUTATION_METHOD_CYCLIC_SHIFT : i32 = 1;
+pub const MSK_MIO_DATA_PERMUTATION_METHOD_NONE         : i32 = 0;
+pub const MSK_MIO_DATA_PERMUTATION_METHOD_RANDOM       : i32 = 2;
+pub const MSK_MIO_DATA_PERMUTATION_METHOD_BEGIN : i32 = 0;
+pub const MSK_MIO_DATA_PERMUTATION_METHOD_END   : i32 = 3;
 
 // miomode
 pub const MSK_MIO_MODE_IGNORED   : i32 = 0;
@@ -1308,6 +1328,7 @@ pub const MSK_RES_ERR_ARG_IS_TOO_LARGE                                 : i32 = 1
 pub const MSK_RES_ERR_ARG_IS_TOO_SMALL                                 : i32 = 1226;
 pub const MSK_RES_ERR_ARGUMENT_DIMENSION                               : i32 = 1201;
 pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE                            : i32 = 5005;
+pub const MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL                            : i32 = 5004;
 pub const MSK_RES_ERR_ARGUMENT_LENNEQ                                  : i32 = 1197;
 pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY                              : i32 = 1299;
 pub const MSK_RES_ERR_ARGUMENT_TYPE                                    : i32 = 1198;
@@ -1423,6 +1444,7 @@ pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE                               : i32 = 1
 pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL                               : i32 = 1203;
 pub const MSK_RES_ERR_INF_DOU_INDEX                                    : i32 = 1219;
 pub const MSK_RES_ERR_INF_DOU_NAME                                     : i32 = 1230;
+pub const MSK_RES_ERR_INF_IN_DOUBLE_DATA                               : i32 = 1451;
 pub const MSK_RES_ERR_INF_INT_INDEX                                    : i32 = 1220;
 pub const MSK_RES_ERR_INF_INT_NAME                                     : i32 = 1231;
 pub const MSK_RES_ERR_INF_LINT_INDEX                                   : i32 = 1225;
@@ -1463,6 +1485,7 @@ pub const MSK_RES_ERR_INVALID_AIJ                                      : i32 = 1
 pub const MSK_RES_ERR_INVALID_AMPL_STUB                                : i32 = 3700;
 pub const MSK_RES_ERR_INVALID_B                                        : i32 = 20150;
 pub const MSK_RES_ERR_INVALID_BARVAR_NAME                              : i32 = 1079;
+pub const MSK_RES_ERR_INVALID_CFIX                                     : i32 = 1469;
 pub const MSK_RES_ERR_INVALID_COMPRESSION                              : i32 = 1800;
 pub const MSK_RES_ERR_INVALID_CON_NAME                                 : i32 = 1076;
 pub const MSK_RES_ERR_INVALID_CONE_NAME                                : i32 = 1078;
@@ -2071,7 +2094,7 @@ impl Env
         return handle_res_static(r,funname);
     }
 
-
+    
     // axpy
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2085,7 +2108,7 @@ impl Env
       self.handle_res(call_res,"axpy")?;
       return Result::Ok(());
     }
-
+    
     // checkinall
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2097,7 +2120,7 @@ impl Env
       self.handle_res(call_res,"checkinall")?;
       return Result::Ok(());
     }
-
+    
     // checkinlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2109,7 +2132,7 @@ impl Env
       self.handle_res(call_res,"checkinlicense")?;
       return Result::Ok(());
     }
-
+    
     // checkmemenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2121,7 +2144,7 @@ impl Env
       self.handle_res(call_res,"checkmemenv")?;
       return Result::Ok(());
     }
-
+    
     // checkoutlicense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2133,7 +2156,7 @@ impl Env
       self.handle_res(call_res,"checkoutlicense")?;
       return Result::Ok(());
     }
-
+    
     // checkversion
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2145,7 +2168,7 @@ impl Env
       self.handle_res(call_res,"checkversion")?;
       return Result::Ok(());
     }
-
+    
     // dot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2160,7 +2183,7 @@ impl Env
       self.handle_res(call_res,"dot")?;
       return Result::Ok((_ref_xty_ as f64));
     }
-
+    
     // echoenv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2172,7 +2195,7 @@ impl Env
       self.handle_res(call_res,"echoenv")?;
       return Result::Ok(());
     }
-
+    
     // echointro
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2184,7 +2207,7 @@ impl Env
       self.handle_res(call_res,"echointro")?;
       return Result::Ok(());
     }
-
+    
     // gemm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2199,7 +2222,7 @@ impl Env
       self.handle_res(call_res,"gemm")?;
       return Result::Ok(());
     }
-
+    
     // gemv
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2208,14 +2231,14 @@ impl Env
     pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64]) -> Result<(),String>
     {
       if a_.len() != ((n_ * m_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_3__ =
+      let tmp_var_3__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           n_
         }  else {
           m_
         };
       if x_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'x_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_9__ =
+      let tmp_var_9__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           m_
         }  else {
@@ -2226,7 +2249,7 @@ impl Env
       self.handle_res(call_res,"gemv")?;
       return Result::Ok(());
     }
-
+    
     // linkfiletoenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2238,7 +2261,7 @@ impl Env
       self.handle_res(call_res,"linkfiletoenvstream")?;
       return Result::Ok(());
     }
-
+    
     // potrf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2251,7 +2274,7 @@ impl Env
       self.handle_res(call_res,"potrf")?;
       return Result::Ok(());
     }
-
+    
     // putlicensecode
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2264,7 +2287,7 @@ impl Env
       self.handle_res(call_res,"putlicensecode")?;
       return Result::Ok(());
     }
-
+    
     // putlicensedebug
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2276,7 +2299,7 @@ impl Env
       self.handle_res(call_res,"putlicensedebug")?;
       return Result::Ok(());
     }
-
+    
     // putlicensepath
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2288,7 +2311,7 @@ impl Env
       self.handle_res(call_res,"putlicensepath")?;
       return Result::Ok(());
     }
-
+    
     // putlicensewait
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2300,7 +2323,7 @@ impl Env
       self.handle_res(call_res,"putlicensewait")?;
       return Result::Ok(());
     }
-
+    
     // setupthreads
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2312,7 +2335,7 @@ impl Env
       self.handle_res(call_res,"setupthreads")?;
       return Result::Ok(());
     }
-
+    
     // sparsetriangularsolvedense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2334,7 +2357,7 @@ impl Env
       self.handle_res(call_res,"sparsetriangularsolvedense")?;
       return Result::Ok(());
     }
-
+    
     // syeig
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2348,7 +2371,7 @@ impl Env
       self.handle_res(call_res,"syeig")?;
       return Result::Ok(());
     }
-
+    
     // syevd
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2362,7 +2385,7 @@ impl Env
       self.handle_res(call_res,"syevd")?;
       return Result::Ok(());
     }
-
+    
     // syrk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2376,7 +2399,7 @@ impl Env
       self.handle_res(call_res,"syrk")?;
       return Result::Ok(());
     }
-
+    
     // unlinkfuncfromenvstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2492,7 +2515,7 @@ impl Task
         return Ok(());
     }
 
-
+    
     // analyzenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2504,7 +2527,7 @@ impl Task
       self.handle_res(call_res,"analyzenames")?;
       return Result::Ok(());
     }
-
+    
     // analyzeproblem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2516,7 +2539,7 @@ impl Task
       self.handle_res(call_res,"analyzeproblem")?;
       return Result::Ok(());
     }
-
+    
     // analyzesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2528,7 +2551,7 @@ impl Task
       self.handle_res(call_res,"analyzesolution")?;
       return Result::Ok(());
     }
-
+    
     // appendacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2542,7 +2565,7 @@ impl Task
       self.handle_res(call_res,"appendacc")?;
       return Result::Ok(());
     }
-
+    
     // appendaccs
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2557,7 +2580,7 @@ impl Task
       self.handle_res(call_res,"appendaccs")?;
       return Result::Ok(());
     }
-
+    
     // appendaccseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2574,7 +2597,7 @@ impl Task
       self.handle_res(call_res,"appendaccseq")?;
       return Result::Ok(());
     }
-
+    
     // appendaccsseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2588,7 +2611,7 @@ impl Task
       self.handle_res(call_res,"appendaccsseq")?;
       return Result::Ok(());
     }
-
+    
     // appendafes
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2600,7 +2623,7 @@ impl Task
       self.handle_res(call_res,"appendafes")?;
       return Result::Ok(());
     }
-
+    
     // appendbarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2613,7 +2636,7 @@ impl Task
       self.handle_res(call_res,"appendbarvars")?;
       return Result::Ok(());
     }
-
+    
     // appendcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2626,7 +2649,7 @@ impl Task
       self.handle_res(call_res,"appendcone")?;
       return Result::Ok(());
     }
-
+    
     // appendconeseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2638,7 +2661,7 @@ impl Task
       self.handle_res(call_res,"appendconeseq")?;
       return Result::Ok(());
     }
-
+    
     // appendconesseq
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2653,7 +2676,7 @@ impl Task
       self.handle_res(call_res,"appendconesseq")?;
       return Result::Ok(());
     }
-
+    
     // appendcons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2665,7 +2688,7 @@ impl Task
       self.handle_res(call_res,"appendcons")?;
       return Result::Ok(());
     }
-
+    
     // appenddjcs
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2677,7 +2700,7 @@ impl Task
       self.handle_res(call_res,"appenddjcs")?;
       return Result::Ok(());
     }
-
+    
     // appenddualexpconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2690,20 +2713,7 @@ impl Task
       self.handle_res(call_res,"appenddualexpconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
-    // appenddualgeomeanconedomain
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn append_dual_geo_mean_cone_domain(& mut self,n_ : i64) -> Result<i64,String>
-    {
-      let mut _ref_domidx_ : i64 = 0 as i64;
-      let call_res = unsafe { (MSK_appenddualgeomeanconedomain(self.ptr,n_ as i64,& mut _ref_domidx_)) };
-      self.handle_res(call_res,"appenddualgeomeanconedomain")?;
-      return Result::Ok((_ref_domidx_ as i64));
-    }
-
+    
     // appenddualpowerconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2717,33 +2727,7 @@ impl Task
       self.handle_res(call_res,"appenddualpowerconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
-    // appendinfnormconedomain
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn append_inf_norm_cone_domain(& mut self,n_ : i64) -> Result<i64,String>
-    {
-      let mut _ref_domidx_ : i64 = 0 as i64;
-      let call_res = unsafe { (MSK_appendinfnormconedomain(self.ptr,n_ as i64,& mut _ref_domidx_)) };
-      self.handle_res(call_res,"appendinfnormconedomain")?;
-      return Result::Ok((_ref_domidx_ as i64));
-    }
-
-    // appendonenormconedomain
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn append_one_norm_cone_domain(& mut self,n_ : i64) -> Result<i64,String>
-    {
-      let mut _ref_domidx_ : i64 = 0 as i64;
-      let call_res = unsafe { (MSK_appendonenormconedomain(self.ptr,n_ as i64,& mut _ref_domidx_)) };
-      self.handle_res(call_res,"appendonenormconedomain")?;
-      return Result::Ok((_ref_domidx_ as i64));
-    }
-
+    
     // appendprimalexpconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2756,20 +2740,7 @@ impl Task
       self.handle_res(call_res,"appendprimalexpconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
-    // appendprimalgeomeanconedomain
-    #[allow(non_snake_case)]
-    #[allow(unused_mut)]
-    #[allow(unused_parens)]
-    #[allow(unused_variables)]
-    pub fn append_primal_geo_mean_cone_domain(& mut self,n_ : i64) -> Result<i64,String>
-    {
-      let mut _ref_domidx_ : i64 = 0 as i64;
-      let call_res = unsafe { (MSK_appendprimalgeomeanconedomain(self.ptr,n_ as i64,& mut _ref_domidx_)) };
-      self.handle_res(call_res,"appendprimalgeomeanconedomain")?;
-      return Result::Ok((_ref_domidx_ as i64));
-    }
-
+    
     // appendprimalpowerconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2783,7 +2754,7 @@ impl Task
       self.handle_res(call_res,"appendprimalpowerconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendpsdconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2796,7 +2767,7 @@ impl Task
       self.handle_res(call_res,"appendpsdconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendquadraticconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2809,7 +2780,7 @@ impl Task
       self.handle_res(call_res,"appendquadraticconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendrdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2822,7 +2793,7 @@ impl Task
       self.handle_res(call_res,"appendrdomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendrminusdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2835,7 +2806,7 @@ impl Task
       self.handle_res(call_res,"appendrminusdomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendrplusdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2848,7 +2819,7 @@ impl Task
       self.handle_res(call_res,"appendrplusdomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendrquadraticconedomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2861,7 +2832,7 @@ impl Task
       self.handle_res(call_res,"appendrquadraticconedomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendrzerodomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2874,7 +2845,7 @@ impl Task
       self.handle_res(call_res,"appendrzerodomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // appendsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2890,7 +2861,7 @@ impl Task
       self.handle_res(call_res,"appendsparsesymmat")?;
       return Result::Ok((_ref_idx_ as i64));
     }
-
+    
     // appendsparsesymmatlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2911,7 +2882,7 @@ impl Task
       self.handle_res(call_res,"appendsparsesymmatlist")?;
       return Result::Ok(());
     }
-
+    
     // appendvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2923,7 +2894,7 @@ impl Task
       self.handle_res(call_res,"appendvars")?;
       return Result::Ok(());
     }
-
+    
     // asyncgetresult
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2938,7 +2909,7 @@ impl Task
       self.handle_res(call_res,"asyncgetresult")?;
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32));
     }
-
+    
     // asyncoptimize
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2952,7 +2923,7 @@ impl Task
       unsafe { _token__bytes.set_len((33) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()));
     }
-
+    
     // asyncpoll
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2967,7 +2938,7 @@ impl Task
       self.handle_res(call_res,"asyncpoll")?;
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32));
     }
-
+    
     // asyncstop
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2979,7 +2950,7 @@ impl Task
       self.handle_res(call_res,"asyncstop")?;
       return Result::Ok(());
     }
-
+    
     // basiscond
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -2993,7 +2964,7 @@ impl Task
       self.handle_res(call_res,"basiscond")?;
       return Result::Ok((_ref_nrmbasis_ as f64,_ref_nrminvbasis_ as f64));
     }
-
+    
     // bktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3007,7 +2978,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // checkmemtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3019,7 +2990,7 @@ impl Task
       self.handle_res(call_res,"checkmemtask")?;
       return Result::Ok(());
     }
-
+    
     // chgconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3031,7 +3002,7 @@ impl Task
       self.handle_res(call_res,"chgconbound")?;
       return Result::Ok(());
     }
-
+    
     // chgvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3043,7 +3014,7 @@ impl Task
       self.handle_res(call_res,"chgvarbound")?;
       return Result::Ok(());
     }
-
+    
     // commitchanges
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3055,7 +3026,7 @@ impl Task
       self.handle_res(call_res,"commitchanges")?;
       return Result::Ok(());
     }
-
+    
     // conetypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3069,7 +3040,7 @@ impl Task
       unsafe { _str__bytes.set_len((1024) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // deletesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3081,7 +3052,7 @@ impl Task
       self.handle_res(call_res,"deletesolution")?;
       return Result::Ok(());
     }
-
+    
     // dualsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3098,7 +3069,7 @@ impl Task
       self.handle_res(call_res,"dualsensitivity")?;
       return Result::Ok(());
     }
-
+    
     // echotask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3110,7 +3081,7 @@ impl Task
       self.handle_res(call_res,"echotask")?;
       return Result::Ok(());
     }
-
+    
     // emptyafebarfrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3122,7 +3093,7 @@ impl Task
       self.handle_res(call_res,"emptyafebarfrow")?;
       return Result::Ok(());
     }
-
+    
     // emptyafebarfrowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3135,7 +3106,7 @@ impl Task
       self.handle_res(call_res,"emptyafebarfrowlist")?;
       return Result::Ok(());
     }
-
+    
     // emptyafefcol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3147,7 +3118,7 @@ impl Task
       self.handle_res(call_res,"emptyafefcol")?;
       return Result::Ok(());
     }
-
+    
     // emptyafefcollist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3160,7 +3131,7 @@ impl Task
       self.handle_res(call_res,"emptyafefcollist")?;
       return Result::Ok(());
     }
-
+    
     // emptyafefrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3172,7 +3143,7 @@ impl Task
       self.handle_res(call_res,"emptyafefrow")?;
       return Result::Ok(());
     }
-
+    
     // emptyafefrowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3185,7 +3156,7 @@ impl Task
       self.handle_res(call_res,"emptyafefrowlist")?;
       return Result::Ok(());
     }
-
+    
     // evaluateacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3201,7 +3172,7 @@ impl Task
       self.handle_res(call_res,"evaluateacc")?;
       return Result::Ok(());
     }
-
+    
     // evaluateaccs
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3217,7 +3188,21 @@ impl Task
       self.handle_res(call_res,"evaluateaccs")?;
       return Result::Ok(());
     }
-
+    
+    // generateaccnames
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn generate_acc_names(& mut self,sub_ : & [i64],fmt_ : &str,dims_ : & [i32]) -> Result<(),String>
+    {
+      let mut num_ = sub_.len();
+      let mut ndims_ = dims_.len();
+      let call_res = unsafe { (MSK_generateaccnames(self.ptr,num_ as i64,sub_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr())) };
+      self.handle_res(call_res,"generateaccnames")?;
+      return Result::Ok(());
+    }
+    
     // generateconenames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3232,7 +3217,7 @@ impl Task
       self.handle_res(call_res,"generateconenames")?;
       return Result::Ok(());
     }
-
+    
     // generateconnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3247,7 +3232,7 @@ impl Task
       self.handle_res(call_res,"generateconnames")?;
       return Result::Ok(());
     }
-
+    
     // generatevarnames
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3262,7 +3247,7 @@ impl Task
       self.handle_res(call_res,"generatevarnames")?;
       return Result::Ok(());
     }
-
+    
     // getaccafeidxlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3278,7 +3263,7 @@ impl Task
       self.handle_res(call_res,"getaccafeidxlist")?;
       return Result::Ok(());
     }
-
+    
     // getaccb
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3294,7 +3279,7 @@ impl Task
       self.handle_res(call_res,"getaccb")?;
       return Result::Ok(());
     }
-
+    
     // getaccdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3307,7 +3292,7 @@ impl Task
       self.handle_res(call_res,"getaccdomain")?;
       return Result::Ok((_ref_domidx_ as i64));
     }
-
+    
     // getaccdoty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3323,7 +3308,7 @@ impl Task
       self.handle_res(call_res,"getaccdoty")?;
       return Result::Ok(());
     }
-
+    
     // getaccn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3336,7 +3321,7 @@ impl Task
       self.handle_res(call_res,"getaccn")?;
       return Result::Ok((_ref_n_ as i64));
     }
-
+    
     // getaccname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3354,7 +3339,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getaccnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3367,7 +3352,7 @@ impl Task
       self.handle_res(call_res,"getaccnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getaccntot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3380,7 +3365,7 @@ impl Task
       self.handle_res(call_res,"getaccntot")?;
       return Result::Ok((_ref_n_ as i64));
     }
-
+    
     // getaccs
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3404,7 +3389,7 @@ impl Task
       self.handle_res(call_res,"getaccs")?;
       return Result::Ok(());
     }
-
+    
     // getacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3421,7 +3406,7 @@ impl Task
       self.handle_res(call_res,"getacol")?;
       return Result::Ok((_ref_nzj_ as i32));
     }
-
+    
     // getacolnumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3434,7 +3419,7 @@ impl Task
       self.handle_res(call_res,"getacolnumnz")?;
       return Result::Ok((_ref_nzj_ as i32));
     }
-
+    
     // getacolslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3447,7 +3432,7 @@ impl Task
       self.handle_res(call_res,"getacolslicenumnz64")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-
+    
     // getafebarfnumrowentries
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3460,7 +3445,7 @@ impl Task
       self.handle_res(call_res,"getafebarfnumrowentries")?;
       return Result::Ok((_ref_numentries_ as i32));
     }
-
+    
     // getafebarfrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3497,7 +3482,7 @@ impl Task
       self.handle_res(call_res,"getafebarfrow")?;
       return Result::Ok(());
     }
-
+    
     // getafebarfrowinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3511,7 +3496,7 @@ impl Task
       self.handle_res(call_res,"getafebarfrowinfo")?;
       return Result::Ok((_ref_numentries_ as i32,_ref_numterms_ as i64));
     }
-
+    
     // getafefnumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3524,7 +3509,7 @@ impl Task
       self.handle_res(call_res,"getafefnumnz")?;
       return Result::Ok((_ref_numfnz_ as i64));
     }
-
+    
     // getafefrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3545,7 +3530,7 @@ impl Task
       self.handle_res(call_res,"getafefrow")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-
+    
     // getafefrownumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3558,7 +3543,31 @@ impl Task
       self.handle_res(call_res,"getafefrownumnz")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-
+    
+    // getafeftrip
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn get_afe_f_trip(& mut self,subi_ : & mut [i64],subj_ : & mut [i32],vali_ : & mut [f64]) -> Result<(),String>
+    {
+      let mut tmp_var_2__ : i64 = 0 as i64;
+      let tmp_var_1__ = unsafe { MSK_getafefnumnz(self.ptr,& mut tmp_var_2__) };
+      self.handle_res(tmp_var_1__,"getafefnumnz")?;
+      if subi_.len() != ((tmp_var_2__) as usize) { return Result::Err("Argument 'subi_' is too short in call to 'get_afe_f_trip'".to_string()) }
+      let mut tmp_var_5__ : i64 = 0 as i64;
+      let tmp_var_4__ = unsafe { MSK_getafefnumnz(self.ptr,& mut tmp_var_5__) };
+      self.handle_res(tmp_var_4__,"getafefnumnz")?;
+      if subj_.len() != ((tmp_var_5__) as usize) { return Result::Err("Argument 'subj_' is too short in call to 'get_afe_f_trip'".to_string()) }
+      let mut tmp_var_8__ : i64 = 0 as i64;
+      let tmp_var_7__ = unsafe { MSK_getafefnumnz(self.ptr,& mut tmp_var_8__) };
+      self.handle_res(tmp_var_7__,"getafefnumnz")?;
+      if vali_.len() != ((tmp_var_8__) as usize) { return Result::Err("Argument 'vali_' is too short in call to 'get_afe_f_trip'".to_string()) }
+      let call_res = unsafe { (MSK_getafeftrip(self.ptr,subi_.as_mut_ptr(),subj_.as_mut_ptr(),vali_.as_mut_ptr())) };
+      self.handle_res(call_res,"getafeftrip")?;
+      return Result::Ok(());
+    }
+    
     // getafeg
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3571,7 +3580,7 @@ impl Task
       self.handle_res(call_res,"getafeg")?;
       return Result::Ok((_ref_g_ as f64));
     }
-
+    
     // getafegslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3584,7 +3593,7 @@ impl Task
       self.handle_res(call_res,"getafegslice")?;
       return Result::Ok(());
     }
-
+    
     // getaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3597,7 +3606,7 @@ impl Task
       self.handle_res(call_res,"getaij")?;
       return Result::Ok((_ref_aij_ as f64));
     }
-
+    
     // getapiecenumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3610,7 +3619,7 @@ impl Task
       self.handle_res(call_res,"getapiecenumnz")?;
       return Result::Ok((_ref_numnz_ as i32));
     }
-
+    
     // getarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3627,7 +3636,7 @@ impl Task
       self.handle_res(call_res,"getarow")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-
+    
     // getarownumnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3640,7 +3649,7 @@ impl Task
       self.handle_res(call_res,"getarownumnz")?;
       return Result::Ok((_ref_nzi_ as i32));
     }
-
+    
     // getarowslicenumnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3653,7 +3662,7 @@ impl Task
       self.handle_res(call_res,"getarowslicenumnz64")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-
+    
     // getatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3666,7 +3675,7 @@ impl Task
       self.handle_res(call_res,"getatruncatetol")?;
       return Result::Ok(());
     }
-
+    
     // getbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3686,7 +3695,7 @@ impl Task
       self.handle_res(call_res,"getbarablocktriplet")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getbaraidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3705,7 +3714,7 @@ impl Task
       self.handle_res(call_res,"getbaraidx")?;
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32,_ref_num_ as i64));
     }
-
+    
     // getbaraidxij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3719,7 +3728,7 @@ impl Task
       self.handle_res(call_res,"getbaraidxij")?;
       return Result::Ok((_ref_i_ as i32,_ref_j_ as i32));
     }
-
+    
     // getbaraidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3732,7 +3741,7 @@ impl Task
       self.handle_res(call_res,"getbaraidxinfo")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getbarasparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3748,7 +3757,7 @@ impl Task
       self.handle_res(call_res,"getbarasparsity")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-
+    
     // getbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3767,7 +3776,7 @@ impl Task
       self.handle_res(call_res,"getbarcblocktriplet")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getbarcidx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3785,7 +3794,7 @@ impl Task
       self.handle_res(call_res,"getbarcidx")?;
       return Result::Ok((_ref_j_ as i32,_ref_num_ as i64));
     }
-
+    
     // getbarcidxinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3798,7 +3807,7 @@ impl Task
       self.handle_res(call_res,"getbarcidxinfo")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getbarcidxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3811,7 +3820,7 @@ impl Task
       self.handle_res(call_res,"getbarcidxj")?;
       return Result::Ok((_ref_j_ as i32));
     }
-
+    
     // getbarcsparsity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3827,7 +3836,7 @@ impl Task
       self.handle_res(call_res,"getbarcsparsity")?;
       return Result::Ok((_ref_numnz_ as i64));
     }
-
+    
     // getbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3841,7 +3850,7 @@ impl Task
       self.handle_res(call_res,"getbarsj")?;
       return Result::Ok(());
     }
-
+    
     // getbarsslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3854,7 +3863,7 @@ impl Task
       self.handle_res(call_res,"getbarsslice")?;
       return Result::Ok(());
     }
-
+    
     // getbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3870,7 +3879,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getbarvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3884,7 +3893,7 @@ impl Task
       self.handle_res(call_res,"getbarvarnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-
+    
     // getbarvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3897,7 +3906,7 @@ impl Task
       self.handle_res(call_res,"getbarvarnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3911,7 +3920,7 @@ impl Task
       self.handle_res(call_res,"getbarxj")?;
       return Result::Ok(());
     }
-
+    
     // getbarxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3924,7 +3933,7 @@ impl Task
       self.handle_res(call_res,"getbarxslice")?;
       return Result::Ok(());
     }
-
+    
     // getc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3938,7 +3947,7 @@ impl Task
       self.handle_res(call_res,"getc")?;
       return Result::Ok(());
     }
-
+    
     // getcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3951,7 +3960,7 @@ impl Task
       self.handle_res(call_res,"getcfix")?;
       return Result::Ok((_ref_cfix_ as f64));
     }
-
+    
     // getcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3964,7 +3973,7 @@ impl Task
       self.handle_res(call_res,"getcj")?;
       return Result::Ok((_ref_cj_ as f64));
     }
-
+    
     // getclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3978,7 +3987,7 @@ impl Task
       self.handle_res(call_res,"getclist")?;
       return Result::Ok(());
     }
-
+    
     // getconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -3993,7 +4002,7 @@ impl Task
       self.handle_res(call_res,"getconbound")?;
       return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64));
     }
-
+    
     // getconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4008,7 +4017,7 @@ impl Task
       self.handle_res(call_res,"getconboundslice")?;
       return Result::Ok(());
     }
-
+    
     // getcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4025,7 +4034,7 @@ impl Task
       self.handle_res(call_res,"getcone")?;
       return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32));
     }
-
+    
     // getconeinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4040,7 +4049,7 @@ impl Task
       self.handle_res(call_res,"getconeinfo")?;
       return Result::Ok((_ref_ct_ as i32,_ref_conepar_ as f64,_ref_nummem_ as i32));
     }
-
+    
     // getconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4056,7 +4065,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getconenameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4070,7 +4079,7 @@ impl Task
       self.handle_res(call_res,"getconenameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-
+    
     // getconenamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4083,7 +4092,7 @@ impl Task
       self.handle_res(call_res,"getconenamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4099,7 +4108,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getconnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4113,7 +4122,7 @@ impl Task
       self.handle_res(call_res,"getconnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-
+    
     // getconnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4126,7 +4135,7 @@ impl Task
       self.handle_res(call_res,"getconnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4139,7 +4148,7 @@ impl Task
       self.handle_res(call_res,"getcslice")?;
       return Result::Ok(());
     }
-
+    
     // getdimbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4152,7 +4161,7 @@ impl Task
       self.handle_res(call_res,"getdimbarvarj")?;
       return Result::Ok((_ref_dimbarvarj_ as i32));
     }
-
+    
     // getdjcafeidxlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4168,7 +4177,7 @@ impl Task
       self.handle_res(call_res,"getdjcafeidxlist")?;
       return Result::Ok(());
     }
-
+    
     // getdjcb
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4184,7 +4193,7 @@ impl Task
       self.handle_res(call_res,"getdjcb")?;
       return Result::Ok(());
     }
-
+    
     // getdjcdomainidxlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4200,7 +4209,7 @@ impl Task
       self.handle_res(call_res,"getdjcdomainidxlist")?;
       return Result::Ok(());
     }
-
+    
     // getdjcname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4218,7 +4227,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getdjcnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4231,7 +4240,7 @@ impl Task
       self.handle_res(call_res,"getdjcnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getdjcnumafe
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4244,7 +4253,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumafe")?;
       return Result::Ok((_ref_numafe_ as i64));
     }
-
+    
     // getdjcnumafetot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4257,7 +4266,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumafetot")?;
       return Result::Ok((_ref_numafetot_ as i64));
     }
-
+    
     // getdjcnumdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4270,7 +4279,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumdomain")?;
       return Result::Ok((_ref_numdomain_ as i64));
     }
-
+    
     // getdjcnumdomaintot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4283,7 +4292,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumdomaintot")?;
       return Result::Ok((_ref_numdomaintot_ as i64));
     }
-
+    
     // getdjcnumterm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4296,7 +4305,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumterm")?;
       return Result::Ok((_ref_numterm_ as i64));
     }
-
+    
     // getdjcnumtermtot
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4309,7 +4318,7 @@ impl Task
       self.handle_res(call_res,"getdjcnumtermtot")?;
       return Result::Ok((_ref_numtermtot_ as i64));
     }
-
+    
     // getdjcs
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4341,7 +4350,7 @@ impl Task
       self.handle_res(call_res,"getdjcs")?;
       return Result::Ok(());
     }
-
+    
     // getdjctermsizelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4357,7 +4366,7 @@ impl Task
       self.handle_res(call_res,"getdjctermsizelist")?;
       return Result::Ok(());
     }
-
+    
     // getdomainn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4370,7 +4379,7 @@ impl Task
       self.handle_res(call_res,"getdomainn")?;
       return Result::Ok((_ref_n_ as i64));
     }
-
+    
     // getdomainname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4388,7 +4397,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getdomainnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4401,7 +4410,7 @@ impl Task
       self.handle_res(call_res,"getdomainnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getdomaintype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4414,7 +4423,7 @@ impl Task
       self.handle_res(call_res,"getdomaintype")?;
       return Result::Ok((_ref_domaintype_ as i32));
     }
-
+    
     // getdouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4427,7 +4436,7 @@ impl Task
       self.handle_res(call_res,"getdouinf")?;
       return Result::Ok((_ref_dvalue_ as f64));
     }
-
+    
     // getdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4440,7 +4449,7 @@ impl Task
       self.handle_res(call_res,"getdouparam")?;
       return Result::Ok((_ref_parvalue_ as f64));
     }
-
+    
     // getdualobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4453,7 +4462,7 @@ impl Task
       self.handle_res(call_res,"getdualobj")?;
       return Result::Ok((_ref_dualobj_ as f64));
     }
-
+    
     // getdualsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4472,7 +4481,7 @@ impl Task
       self.handle_res(call_res,"getdualsolutionnorms")?;
       return Result::Ok((_ref_nrmy_ as f64,_ref_nrmslc_ as f64,_ref_nrmsuc_ as f64,_ref_nrmslx_ as f64,_ref_nrmsux_ as f64,_ref_nrmsnx_ as f64,_ref_nrmbars_ as f64));
     }
-
+    
     // getdviolacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4486,7 +4495,7 @@ impl Task
       self.handle_res(call_res,"getdviolacc")?;
       return Result::Ok(());
     }
-
+    
     // getdviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4500,7 +4509,7 @@ impl Task
       self.handle_res(call_res,"getdviolbarvar")?;
       return Result::Ok(());
     }
-
+    
     // getdviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4514,7 +4523,7 @@ impl Task
       self.handle_res(call_res,"getdviolcon")?;
       return Result::Ok(());
     }
-
+    
     // getdviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4528,7 +4537,7 @@ impl Task
       self.handle_res(call_res,"getdviolcones")?;
       return Result::Ok(());
     }
-
+    
     // getdviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4542,7 +4551,7 @@ impl Task
       self.handle_res(call_res,"getdviolvar")?;
       return Result::Ok(());
     }
-
+    
     // getinfindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4555,7 +4564,7 @@ impl Task
       self.handle_res(call_res,"getinfindex")?;
       return Result::Ok((_ref_infindex_ as i32));
     }
-
+    
     // getinfmax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4568,7 +4577,7 @@ impl Task
       self.handle_res(call_res,"getinfmax")?;
       return Result::Ok(());
     }
-
+    
     // getinfname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4582,7 +4591,7 @@ impl Task
       unsafe { _infname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_infname__bytes[..]).into_owned()));
     }
-
+    
     // getintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4595,7 +4604,7 @@ impl Task
       self.handle_res(call_res,"getintinf")?;
       return Result::Ok((_ref_ivalue_ as i32));
     }
-
+    
     // getintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4608,7 +4617,7 @@ impl Task
       self.handle_res(call_res,"getintparam")?;
       return Result::Ok((_ref_parvalue_ as i32));
     }
-
+    
     // getlenbarvarj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4621,7 +4630,7 @@ impl Task
       self.handle_res(call_res,"getlenbarvarj")?;
       return Result::Ok((_ref_lenbarvarj_ as i64));
     }
-
+    
     // getlintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4634,7 +4643,7 @@ impl Task
       self.handle_res(call_res,"getlintinf")?;
       return Result::Ok((_ref_ivalue_ as i64));
     }
-
+    
     // getmaxnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4647,7 +4656,7 @@ impl Task
       self.handle_res(call_res,"getmaxnamelen")?;
       return Result::Ok((_ref_maxlen_ as i32));
     }
-
+    
     // getmaxnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4660,7 +4669,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumanz64")?;
       return Result::Ok((_ref_maxnumanz_ as i64));
     }
-
+    
     // getmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4673,7 +4682,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumbarvar")?;
       return Result::Ok((_ref_maxnumbarvar_ as i32));
     }
-
+    
     // getmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4686,7 +4695,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumcon")?;
       return Result::Ok((_ref_maxnumcon_ as i32));
     }
-
+    
     // getmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4699,7 +4708,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumcone")?;
       return Result::Ok((_ref_maxnumcone_ as i32));
     }
-
+    
     // getmaxnumqnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4712,7 +4721,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumqnz64")?;
       return Result::Ok((_ref_maxnumqnz_ as i64));
     }
-
+    
     // getmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4725,7 +4734,7 @@ impl Task
       self.handle_res(call_res,"getmaxnumvar")?;
       return Result::Ok((_ref_maxnumvar_ as i32));
     }
-
+    
     // getmemusagetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4739,7 +4748,7 @@ impl Task
       self.handle_res(call_res,"getmemusagetask")?;
       return Result::Ok((_ref_meminuse_ as i64,_ref_maxmemuse_ as i64));
     }
-
+    
     // getnadouinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4752,7 +4761,7 @@ impl Task
       self.handle_res(call_res,"getnadouinf")?;
       return Result::Ok((_ref_dvalue_ as f64));
     }
-
+    
     // getnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4765,7 +4774,7 @@ impl Task
       self.handle_res(call_res,"getnadouparam")?;
       return Result::Ok((_ref_parvalue_ as f64));
     }
-
+    
     // getnaintinf
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4778,7 +4787,7 @@ impl Task
       self.handle_res(call_res,"getnaintinf")?;
       return Result::Ok((_ref_ivalue_ as i32));
     }
-
+    
     // getnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4791,7 +4800,7 @@ impl Task
       self.handle_res(call_res,"getnaintparam")?;
       return Result::Ok((_ref_parvalue_ as i32));
     }
-
+    
     // getnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4806,7 +4815,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()));
     }
-
+    
     // getnumacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4819,7 +4828,7 @@ impl Task
       self.handle_res(call_res,"getnumacc")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getnumafe
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4832,7 +4841,7 @@ impl Task
       self.handle_res(call_res,"getnumafe")?;
       return Result::Ok((_ref_numafe_ as i64));
     }
-
+    
     // getnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4845,7 +4854,7 @@ impl Task
       self.handle_res(call_res,"getnumanz")?;
       return Result::Ok((_ref_numanz_ as i32));
     }
-
+    
     // getnumanz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4858,7 +4867,7 @@ impl Task
       self.handle_res(call_res,"getnumanz64")?;
       return Result::Ok((_ref_numanz_ as i64));
     }
-
+    
     // getnumbarablocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4871,7 +4880,7 @@ impl Task
       self.handle_res(call_res,"getnumbarablocktriplets")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getnumbaranz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4884,7 +4893,7 @@ impl Task
       self.handle_res(call_res,"getnumbaranz")?;
       return Result::Ok((_ref_nz_ as i64));
     }
-
+    
     // getnumbarcblocktriplets
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4897,7 +4906,7 @@ impl Task
       self.handle_res(call_res,"getnumbarcblocktriplets")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getnumbarcnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4910,7 +4919,7 @@ impl Task
       self.handle_res(call_res,"getnumbarcnz")?;
       return Result::Ok((_ref_nz_ as i64));
     }
-
+    
     // getnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4923,7 +4932,7 @@ impl Task
       self.handle_res(call_res,"getnumbarvar")?;
       return Result::Ok((_ref_numbarvar_ as i32));
     }
-
+    
     // getnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4936,7 +4945,7 @@ impl Task
       self.handle_res(call_res,"getnumcon")?;
       return Result::Ok((_ref_numcon_ as i32));
     }
-
+    
     // getnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4949,7 +4958,7 @@ impl Task
       self.handle_res(call_res,"getnumcone")?;
       return Result::Ok((_ref_numcone_ as i32));
     }
-
+    
     // getnumconemem
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4962,7 +4971,7 @@ impl Task
       self.handle_res(call_res,"getnumconemem")?;
       return Result::Ok((_ref_nummem_ as i32));
     }
-
+    
     // getnumdjc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4975,7 +4984,7 @@ impl Task
       self.handle_res(call_res,"getnumdjc")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getnumdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -4988,7 +4997,7 @@ impl Task
       self.handle_res(call_res,"getnumdomain")?;
       return Result::Ok((_ref_numdomain_ as i64));
     }
-
+    
     // getnumintvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5001,7 +5010,7 @@ impl Task
       self.handle_res(call_res,"getnumintvar")?;
       return Result::Ok((_ref_numintvar_ as i32));
     }
-
+    
     // getnumparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5014,7 +5023,7 @@ impl Task
       self.handle_res(call_res,"getnumparam")?;
       return Result::Ok((_ref_numparam_ as i32));
     }
-
+    
     // getnumqconknz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5027,7 +5036,7 @@ impl Task
       self.handle_res(call_res,"getnumqconknz64")?;
       return Result::Ok((_ref_numqcnz_ as i64));
     }
-
+    
     // getnumqobjnz64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5040,7 +5049,7 @@ impl Task
       self.handle_res(call_res,"getnumqobjnz64")?;
       return Result::Ok((_ref_numqonz_ as i64));
     }
-
+    
     // getnumsymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5053,7 +5062,7 @@ impl Task
       self.handle_res(call_res,"getnumsymmat")?;
       return Result::Ok((_ref_num_ as i64));
     }
-
+    
     // getnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5066,7 +5075,7 @@ impl Task
       self.handle_res(call_res,"getnumvar")?;
       return Result::Ok((_ref_numvar_ as i32));
     }
-
+    
     // getobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5082,7 +5091,7 @@ impl Task
       unsafe { _objname__bytes.set_len((sizeobjname_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_objname__bytes[..]).into_owned()));
     }
-
+    
     // getobjnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5095,7 +5104,7 @@ impl Task
       self.handle_res(call_res,"getobjnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5108,7 +5117,7 @@ impl Task
       self.handle_res(call_res,"getobjsense")?;
       return Result::Ok((_ref_sense_ as i32));
     }
-
+    
     // getparammax
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5121,7 +5130,7 @@ impl Task
       self.handle_res(call_res,"getparammax")?;
       return Result::Ok((_ref_parammax_ as i32));
     }
-
+    
     // getparamname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5135,7 +5144,7 @@ impl Task
       unsafe { _parname__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_parname__bytes[..]).into_owned()));
     }
-
+    
     // getpowerdomainalpha
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5152,7 +5161,7 @@ impl Task
       self.handle_res(call_res,"getpowerdomainalpha")?;
       return Result::Ok(());
     }
-
+    
     // getpowerdomaininfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5166,7 +5175,7 @@ impl Task
       self.handle_res(call_res,"getpowerdomaininfo")?;
       return Result::Ok((_ref_n_ as i64,_ref_nleft_ as i64));
     }
-
+    
     // getprimalobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5179,7 +5188,7 @@ impl Task
       self.handle_res(call_res,"getprimalobj")?;
       return Result::Ok((_ref_primalobj_ as f64));
     }
-
+    
     // getprimalsolutionnorms
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5194,7 +5203,7 @@ impl Task
       self.handle_res(call_res,"getprimalsolutionnorms")?;
       return Result::Ok((_ref_nrmxc_ as f64,_ref_nrmxx_ as f64,_ref_nrmbarx_ as f64));
     }
-
+    
     // getprobtype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5207,7 +5216,7 @@ impl Task
       self.handle_res(call_res,"getprobtype")?;
       return Result::Ok((_ref_probtype_ as i32));
     }
-
+    
     // getprosta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5220,7 +5229,7 @@ impl Task
       self.handle_res(call_res,"getprosta")?;
       return Result::Ok((_ref_prosta_ as i32));
     }
-
+    
     // getpviolacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5234,7 +5243,7 @@ impl Task
       self.handle_res(call_res,"getpviolacc")?;
       return Result::Ok(());
     }
-
+    
     // getpviolbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5248,7 +5257,7 @@ impl Task
       self.handle_res(call_res,"getpviolbarvar")?;
       return Result::Ok(());
     }
-
+    
     // getpviolcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5262,7 +5271,7 @@ impl Task
       self.handle_res(call_res,"getpviolcon")?;
       return Result::Ok(());
     }
-
+    
     // getpviolcones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5276,7 +5285,7 @@ impl Task
       self.handle_res(call_res,"getpviolcones")?;
       return Result::Ok(());
     }
-
+    
     // getpvioldjc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5290,7 +5299,7 @@ impl Task
       self.handle_res(call_res,"getpvioldjc")?;
       return Result::Ok(());
     }
-
+    
     // getpviolvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5304,7 +5313,7 @@ impl Task
       self.handle_res(call_res,"getpviolvar")?;
       return Result::Ok(());
     }
-
+    
     // getqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5317,7 +5326,7 @@ impl Task
       self.handle_res(call_res,"getqobjij")?;
       return Result::Ok((_ref_qoij_ as f64));
     }
-
+    
     // getreducedcosts
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5330,7 +5339,7 @@ impl Task
       self.handle_res(call_res,"getreducedcosts")?;
       return Result::Ok(());
     }
-
+    
     // getskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5344,7 +5353,7 @@ impl Task
       self.handle_res(call_res,"getskc")?;
       return Result::Ok(());
     }
-
+    
     // getskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5357,7 +5366,7 @@ impl Task
       self.handle_res(call_res,"getskcslice")?;
       return Result::Ok(());
     }
-
+    
     // getskn
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5371,7 +5380,7 @@ impl Task
       self.handle_res(call_res,"getskn")?;
       return Result::Ok(());
     }
-
+    
     // getskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5385,7 +5394,7 @@ impl Task
       self.handle_res(call_res,"getskx")?;
       return Result::Ok(());
     }
-
+    
     // getskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5398,7 +5407,7 @@ impl Task
       self.handle_res(call_res,"getskxslice")?;
       return Result::Ok(());
     }
-
+    
     // getslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5412,7 +5421,7 @@ impl Task
       self.handle_res(call_res,"getslc")?;
       return Result::Ok(());
     }
-
+    
     // getslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5425,7 +5434,7 @@ impl Task
       self.handle_res(call_res,"getslcslice")?;
       return Result::Ok(());
     }
-
+    
     // getslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5439,7 +5448,7 @@ impl Task
       self.handle_res(call_res,"getslx")?;
       return Result::Ok(());
     }
-
+    
     // getslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5452,7 +5461,7 @@ impl Task
       self.handle_res(call_res,"getslxslice")?;
       return Result::Ok(());
     }
-
+    
     // getsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5466,7 +5475,7 @@ impl Task
       self.handle_res(call_res,"getsnx")?;
       return Result::Ok(());
     }
-
+    
     // getsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5479,7 +5488,7 @@ impl Task
       self.handle_res(call_res,"getsnxslice")?;
       return Result::Ok(());
     }
-
+    
     // getsolsta
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5492,7 +5501,7 @@ impl Task
       self.handle_res(call_res,"getsolsta")?;
       return Result::Ok((_ref_solsta_ as i32));
     }
-
+    
     // getsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5528,7 +5537,7 @@ impl Task
       self.handle_res(call_res,"getsolution")?;
       return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32));
     }
-
+    
     // getsolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5551,7 +5560,7 @@ impl Task
       self.handle_res(call_res,"getsolutioninfo")?;
       return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64));
     }
-
+    
     // getsolutioninfonew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5577,7 +5586,7 @@ impl Task
       self.handle_res(call_res,"getsolutioninfonew")?;
       return Result::Ok((_ref_pobj_ as f64,_ref_pviolcon_ as f64,_ref_pviolvar_ as f64,_ref_pviolbarvar_ as f64,_ref_pviolcone_ as f64,_ref_pviolacc_ as f64,_ref_pvioldjc_ as f64,_ref_pviolitg_ as f64,_ref_dobj_ as f64,_ref_dviolcon_ as f64,_ref_dviolvar_ as f64,_ref_dviolbarvar_ as f64,_ref_dviolcone_ as f64,_ref_dviolacc_ as f64));
     }
-
+    
     // getsolutionnew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5617,7 +5626,7 @@ impl Task
       self.handle_res(call_res,"getsolutionnew")?;
       return Result::Ok((_ref_prosta_ as i32,_ref_solsta_ as i32));
     }
-
+    
     // getsolutionslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5630,7 +5639,7 @@ impl Task
       self.handle_res(call_res,"getsolutionslice")?;
       return Result::Ok(());
     }
-
+    
     // getsparsesymmat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5647,7 +5656,7 @@ impl Task
       self.handle_res(call_res,"getsparsesymmat")?;
       return Result::Ok(());
     }
-
+    
     // getstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5664,7 +5673,7 @@ impl Task
       unsafe { _parvalue__bytes.set_len((maxlen_) as usize) };
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()));
     }
-
+    
     // getstrparamlen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5677,7 +5686,7 @@ impl Task
       self.handle_res(call_res,"getstrparamlen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5691,7 +5700,7 @@ impl Task
       self.handle_res(call_res,"getsuc")?;
       return Result::Ok(());
     }
-
+    
     // getsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5704,7 +5713,7 @@ impl Task
       self.handle_res(call_res,"getsucslice")?;
       return Result::Ok(());
     }
-
+    
     // getsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5718,7 +5727,7 @@ impl Task
       self.handle_res(call_res,"getsux")?;
       return Result::Ok(());
     }
-
+    
     // getsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5731,7 +5740,7 @@ impl Task
       self.handle_res(call_res,"getsuxslice")?;
       return Result::Ok(());
     }
-
+    
     // getsymbcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5747,7 +5756,7 @@ impl Task
       unsafe { _name__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned(),_ref_value_ as i32));
     }
-
+    
     // getsymmatinfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5762,7 +5771,7 @@ impl Task
       self.handle_res(call_res,"getsymmatinfo")?;
       return Result::Ok((_ref_dim_ as i32,_ref_nz_ as i64,_ref_type_ as i32));
     }
-
+    
     // gettaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5778,7 +5787,7 @@ impl Task
       unsafe { _taskname__bytes.set_len((sizetaskname_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_taskname__bytes[..]).into_owned()));
     }
-
+    
     // gettasknamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5791,7 +5800,7 @@ impl Task
       self.handle_res(call_res,"gettasknamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5806,7 +5815,7 @@ impl Task
       self.handle_res(call_res,"getvarbound")?;
       return Result::Ok((_ref_bk_ as i32,_ref_bl_ as f64,_ref_bu_ as f64));
     }
-
+    
     // getvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5821,7 +5830,7 @@ impl Task
       self.handle_res(call_res,"getvarboundslice")?;
       return Result::Ok(());
     }
-
+    
     // getvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5837,7 +5846,7 @@ impl Task
       unsafe { _name__bytes.set_len((sizename_) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_name__bytes[..]).into_owned()));
     }
-
+    
     // getvarnameindex
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5851,7 +5860,7 @@ impl Task
       self.handle_res(call_res,"getvarnameindex")?;
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32));
     }
-
+    
     // getvarnamelen
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5864,7 +5873,7 @@ impl Task
       self.handle_res(call_res,"getvarnamelen")?;
       return Result::Ok((_ref_len_ as i32));
     }
-
+    
     // getvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5877,7 +5886,7 @@ impl Task
       self.handle_res(call_res,"getvartype")?;
       return Result::Ok((_ref_vartype_ as i32));
     }
-
+    
     // getvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5891,7 +5900,7 @@ impl Task
       self.handle_res(call_res,"getvartypelist")?;
       return Result::Ok(());
     }
-
+    
     // getxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5905,7 +5914,7 @@ impl Task
       self.handle_res(call_res,"getxc")?;
       return Result::Ok(());
     }
-
+    
     // getxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5918,7 +5927,7 @@ impl Task
       self.handle_res(call_res,"getxcslice")?;
       return Result::Ok(());
     }
-
+    
     // getxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5932,7 +5941,7 @@ impl Task
       self.handle_res(call_res,"getxx")?;
       return Result::Ok(());
     }
-
+    
     // getxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5945,7 +5954,7 @@ impl Task
       self.handle_res(call_res,"getxxslice")?;
       return Result::Ok(());
     }
-
+    
     // gety
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5959,7 +5968,7 @@ impl Task
       self.handle_res(call_res,"gety")?;
       return Result::Ok(());
     }
-
+    
     // getyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5972,7 +5981,7 @@ impl Task
       self.handle_res(call_res,"getyslice")?;
       return Result::Ok(());
     }
-
+    
     // initbasissolve
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -5988,7 +5997,7 @@ impl Task
       self.handle_res(call_res,"initbasissolve")?;
       return Result::Ok(());
     }
-
+    
     // inputdata64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6011,7 +6020,7 @@ impl Task
       self.handle_res(call_res,"inputdata64")?;
       return Result::Ok(());
     }
-
+    
     // isdouparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6024,7 +6033,7 @@ impl Task
       self.handle_res(call_res,"isdouparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-
+    
     // isintparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6037,7 +6046,7 @@ impl Task
       self.handle_res(call_res,"isintparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-
+    
     // isstrparname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6050,7 +6059,7 @@ impl Task
       self.handle_res(call_res,"isstrparname")?;
       return Result::Ok((_ref_param_ as i32));
     }
-
+    
     // linkfiletotaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6062,7 +6071,7 @@ impl Task
       self.handle_res(call_res,"linkfiletotaskstream")?;
       return Result::Ok(());
     }
-
+    
     // onesolutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6074,7 +6083,7 @@ impl Task
       self.handle_res(call_res,"onesolutionsummary")?;
       return Result::Ok(());
     }
-
+    
     // optimizermt
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6087,7 +6096,7 @@ impl Task
       self.handle_res(call_res,"optimizermt")?;
       return Result::Ok((_ref_trmcode_ as i32));
     }
-
+    
     // optimizersummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6099,7 +6108,7 @@ impl Task
       self.handle_res(call_res,"optimizersummary")?;
       return Result::Ok(());
     }
-
+    
     // optimizetrm
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6112,7 +6121,7 @@ impl Task
       self.handle_res(call_res,"optimizetrm")?;
       return Result::Ok((_ref_trmcode_ as i32));
     }
-
+    
     // primalrepair
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6132,7 +6141,7 @@ impl Task
       self.handle_res(call_res,"primalrepair")?;
       return Result::Ok(());
     }
-
+    
     // primalsensitivity
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6156,7 +6165,7 @@ impl Task
       self.handle_res(call_res,"primalsensitivity")?;
       return Result::Ok(());
     }
-
+    
     // printparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6168,7 +6177,7 @@ impl Task
       self.handle_res(call_res,"printparam")?;
       return Result::Ok(());
     }
-
+    
     // probtypetostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6182,7 +6191,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // prostatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6196,7 +6205,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // putacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6210,7 +6219,7 @@ impl Task
       self.handle_res(call_res,"putacc")?;
       return Result::Ok(());
     }
-
+    
     // putaccb
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6223,7 +6232,7 @@ impl Task
       self.handle_res(call_res,"putaccb")?;
       return Result::Ok(());
     }
-
+    
     // putaccbj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6235,7 +6244,7 @@ impl Task
       self.handle_res(call_res,"putaccbj")?;
       return Result::Ok(());
     }
-
+    
     // putaccdoty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6251,7 +6260,7 @@ impl Task
       self.handle_res(call_res,"putaccdoty")?;
       return Result::Ok(());
     }
-
+    
     // putacclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6267,7 +6276,7 @@ impl Task
       self.handle_res(call_res,"putacclist")?;
       return Result::Ok(());
     }
-
+    
     // putaccname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6279,7 +6288,7 @@ impl Task
       self.handle_res(call_res,"putaccname")?;
       return Result::Ok(());
     }
-
+    
     // putacol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6293,7 +6302,7 @@ impl Task
       self.handle_res(call_res,"putacol")?;
       return Result::Ok(());
     }
-
+    
     // putacollist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6310,7 +6319,7 @@ impl Task
       self.handle_res(call_res,"putacollist64")?;
       return Result::Ok(());
     }
-
+    
     // putacolslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6324,7 +6333,7 @@ impl Task
       self.handle_res(call_res,"putacolslice64")?;
       return Result::Ok(());
     }
-
+    
     // putafebarfblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6341,7 +6350,7 @@ impl Task
       self.handle_res(call_res,"putafebarfblocktriplet")?;
       return Result::Ok(());
     }
-
+    
     // putafebarfentry
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6355,7 +6364,7 @@ impl Task
       self.handle_res(call_res,"putafebarfentry")?;
       return Result::Ok(());
     }
-
+    
     // putafebarfentrylist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6373,7 +6382,7 @@ impl Task
       self.handle_res(call_res,"putafebarfentrylist")?;
       return Result::Ok(());
     }
-
+    
     // putafebarfrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6390,7 +6399,7 @@ impl Task
       self.handle_res(call_res,"putafebarfrow")?;
       return Result::Ok(());
     }
-
+    
     // putafefentry
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6402,7 +6411,22 @@ impl Task
       self.handle_res(call_res,"putafefentry")?;
       return Result::Ok(());
     }
-
+    
+    // putafefentrylist
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_afe_f_entry_list(& mut self,afeidx_ : & [i64],j_ : & [i32],value_ : & [f64]) -> Result<(),String>
+    {
+      let mut numentries_ = afeidx_.len();
+      if j_.len() < numentries_ { numentries_ = j_.len() };
+      if value_.len() < numentries_ { numentries_ = value_.len() };
+      let call_res = unsafe { (MSK_putafefentrylist(self.ptr,numentries_ as i64,afeidx_.as_ptr(),j_.as_ptr(),value_.as_ptr())) };
+      self.handle_res(call_res,"putafefentrylist")?;
+      return Result::Ok(());
+    }
+    
     // putafefrow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6416,7 +6440,7 @@ impl Task
       self.handle_res(call_res,"putafefrow")?;
       return Result::Ok(());
     }
-
+    
     // putafefrowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6433,7 +6457,7 @@ impl Task
       self.handle_res(call_res,"putafefrowlist")?;
       return Result::Ok(());
     }
-
+    
     // putafeg
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6445,7 +6469,7 @@ impl Task
       self.handle_res(call_res,"putafeg")?;
       return Result::Ok(());
     }
-
+    
     // putafeglist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6459,7 +6483,7 @@ impl Task
       self.handle_res(call_res,"putafeglist")?;
       return Result::Ok(());
     }
-
+    
     // putafegslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6472,7 +6496,7 @@ impl Task
       self.handle_res(call_res,"putafegslice")?;
       return Result::Ok(());
     }
-
+    
     // putaij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6484,7 +6508,7 @@ impl Task
       self.handle_res(call_res,"putaij")?;
       return Result::Ok(());
     }
-
+    
     // putaijlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6499,7 +6523,7 @@ impl Task
       self.handle_res(call_res,"putaijlist64")?;
       return Result::Ok(());
     }
-
+    
     // putarow
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6513,7 +6537,7 @@ impl Task
       self.handle_res(call_res,"putarow")?;
       return Result::Ok(());
     }
-
+    
     // putarowlist64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6530,7 +6554,7 @@ impl Task
       self.handle_res(call_res,"putarowlist64")?;
       return Result::Ok(());
     }
-
+    
     // putarowslice64
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6546,7 +6570,7 @@ impl Task
       self.handle_res(call_res,"putarowslice64")?;
       return Result::Ok(());
     }
-
+    
     // putatruncatetol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6558,7 +6582,7 @@ impl Task
       self.handle_res(call_res,"putatruncatetol")?;
       return Result::Ok(());
     }
-
+    
     // putbarablocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6575,7 +6599,7 @@ impl Task
       self.handle_res(call_res,"putbarablocktriplet")?;
       return Result::Ok(());
     }
-
+    
     // putbaraij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6589,7 +6613,7 @@ impl Task
       self.handle_res(call_res,"putbaraij")?;
       return Result::Ok(());
     }
-
+    
     // putbaraijlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6607,7 +6631,7 @@ impl Task
       self.handle_res(call_res,"putbaraijlist")?;
       return Result::Ok(());
     }
-
+    
     // putbararowlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6630,7 +6654,7 @@ impl Task
       self.handle_res(call_res,"putbararowlist")?;
       return Result::Ok(());
     }
-
+    
     // putbarcblocktriplet
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6646,7 +6670,7 @@ impl Task
       self.handle_res(call_res,"putbarcblocktriplet")?;
       return Result::Ok(());
     }
-
+    
     // putbarcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6660,7 +6684,7 @@ impl Task
       self.handle_res(call_res,"putbarcj")?;
       return Result::Ok(());
     }
-
+    
     // putbarsj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6674,7 +6698,7 @@ impl Task
       self.handle_res(call_res,"putbarsj")?;
       return Result::Ok(());
     }
-
+    
     // putbarvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6686,7 +6710,7 @@ impl Task
       self.handle_res(call_res,"putbarvarname")?;
       return Result::Ok(());
     }
-
+    
     // putbarxj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6700,7 +6724,7 @@ impl Task
       self.handle_res(call_res,"putbarxj")?;
       return Result::Ok(());
     }
-
+    
     // putcfix
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6712,7 +6736,7 @@ impl Task
       self.handle_res(call_res,"putcfix")?;
       return Result::Ok(());
     }
-
+    
     // putcj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6724,7 +6748,7 @@ impl Task
       self.handle_res(call_res,"putcj")?;
       return Result::Ok(());
     }
-
+    
     // putclist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6738,7 +6762,7 @@ impl Task
       self.handle_res(call_res,"putclist")?;
       return Result::Ok(());
     }
-
+    
     // putconbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6750,7 +6774,7 @@ impl Task
       self.handle_res(call_res,"putconbound")?;
       return Result::Ok(());
     }
-
+    
     // putconboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6766,7 +6790,7 @@ impl Task
       self.handle_res(call_res,"putconboundlist")?;
       return Result::Ok(());
     }
-
+    
     // putconboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6779,7 +6803,7 @@ impl Task
       self.handle_res(call_res,"putconboundlistconst")?;
       return Result::Ok(());
     }
-
+    
     // putconboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6794,7 +6818,7 @@ impl Task
       self.handle_res(call_res,"putconboundslice")?;
       return Result::Ok(());
     }
-
+    
     // putconboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6806,7 +6830,7 @@ impl Task
       self.handle_res(call_res,"putconboundsliceconst")?;
       return Result::Ok(());
     }
-
+    
     // putcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6819,7 +6843,7 @@ impl Task
       self.handle_res(call_res,"putcone")?;
       return Result::Ok(());
     }
-
+    
     // putconename
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6831,7 +6855,7 @@ impl Task
       self.handle_res(call_res,"putconename")?;
       return Result::Ok(());
     }
-
+    
     // putconname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6843,7 +6867,7 @@ impl Task
       self.handle_res(call_res,"putconname")?;
       return Result::Ok(());
     }
-
+    
     // putconsolutioni
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6855,7 +6879,7 @@ impl Task
       self.handle_res(call_res,"putconsolutioni")?;
       return Result::Ok(());
     }
-
+    
     // putcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6868,7 +6892,7 @@ impl Task
       self.handle_res(call_res,"putcslice")?;
       return Result::Ok(());
     }
-
+    
     // putdjc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6884,7 +6908,7 @@ impl Task
       self.handle_res(call_res,"putdjc")?;
       return Result::Ok(());
     }
-
+    
     // putdjcname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6896,7 +6920,7 @@ impl Task
       self.handle_res(call_res,"putdjcname")?;
       return Result::Ok(());
     }
-
+    
     // putdjcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6913,7 +6937,7 @@ impl Task
       self.handle_res(call_res,"putdjcslice")?;
       return Result::Ok(());
     }
-
+    
     // putdomainname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6925,7 +6949,7 @@ impl Task
       self.handle_res(call_res,"putdomainname")?;
       return Result::Ok(());
     }
-
+    
     // putdouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6937,7 +6961,7 @@ impl Task
       self.handle_res(call_res,"putdouparam")?;
       return Result::Ok(());
     }
-
+    
     // putintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6949,7 +6973,7 @@ impl Task
       self.handle_res(call_res,"putintparam")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumacc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6961,7 +6985,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumacc")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumafe
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6973,7 +6997,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumafe")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumanz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6985,7 +7009,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumanz")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumbarvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -6997,7 +7021,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumbarvar")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7009,7 +7033,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumcon")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumcone
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7021,7 +7045,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumcone")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumdjc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7033,7 +7057,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumdjc")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumdomain
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7045,7 +7069,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumdomain")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumqnz
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7057,7 +7081,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumqnz")?;
       return Result::Ok(());
     }
-
+    
     // putmaxnumvar
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7069,7 +7093,7 @@ impl Task
       self.handle_res(call_res,"putmaxnumvar")?;
       return Result::Ok(());
     }
-
+    
     // putnadouparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7081,7 +7105,7 @@ impl Task
       self.handle_res(call_res,"putnadouparam")?;
       return Result::Ok(());
     }
-
+    
     // putnaintparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7093,7 +7117,7 @@ impl Task
       self.handle_res(call_res,"putnaintparam")?;
       return Result::Ok(());
     }
-
+    
     // putnastrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7105,7 +7129,7 @@ impl Task
       self.handle_res(call_res,"putnastrparam")?;
       return Result::Ok(());
     }
-
+    
     // putobjname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7117,7 +7141,7 @@ impl Task
       self.handle_res(call_res,"putobjname")?;
       return Result::Ok(());
     }
-
+    
     // putobjsense
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7129,7 +7153,7 @@ impl Task
       self.handle_res(call_res,"putobjsense")?;
       return Result::Ok(());
     }
-
+    
     // putoptserverhost
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7141,7 +7165,7 @@ impl Task
       self.handle_res(call_res,"putoptserverhost")?;
       return Result::Ok(());
     }
-
+    
     // putparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7153,7 +7177,7 @@ impl Task
       self.handle_res(call_res,"putparam")?;
       return Result::Ok(());
     }
-
+    
     // putqcon
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7168,7 +7192,7 @@ impl Task
       self.handle_res(call_res,"putqcon")?;
       return Result::Ok(());
     }
-
+    
     // putqconk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7183,7 +7207,7 @@ impl Task
       self.handle_res(call_res,"putqconk")?;
       return Result::Ok(());
     }
-
+    
     // putqobj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7198,7 +7222,7 @@ impl Task
       self.handle_res(call_res,"putqobj")?;
       return Result::Ok(());
     }
-
+    
     // putqobjij
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7210,7 +7234,7 @@ impl Task
       self.handle_res(call_res,"putqobjij")?;
       return Result::Ok(());
     }
-
+    
     // putskc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7224,7 +7248,7 @@ impl Task
       self.handle_res(call_res,"putskc")?;
       return Result::Ok(());
     }
-
+    
     // putskcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7237,7 +7261,7 @@ impl Task
       self.handle_res(call_res,"putskcslice")?;
       return Result::Ok(());
     }
-
+    
     // putskx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7251,7 +7275,7 @@ impl Task
       self.handle_res(call_res,"putskx")?;
       return Result::Ok(());
     }
-
+    
     // putskxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7264,7 +7288,7 @@ impl Task
       self.handle_res(call_res,"putskxslice")?;
       return Result::Ok(());
     }
-
+    
     // putslc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7278,7 +7302,7 @@ impl Task
       self.handle_res(call_res,"putslc")?;
       return Result::Ok(());
     }
-
+    
     // putslcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7291,7 +7315,7 @@ impl Task
       self.handle_res(call_res,"putslcslice")?;
       return Result::Ok(());
     }
-
+    
     // putslx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7305,7 +7329,7 @@ impl Task
       self.handle_res(call_res,"putslx")?;
       return Result::Ok(());
     }
-
+    
     // putslxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7318,7 +7342,7 @@ impl Task
       self.handle_res(call_res,"putslxslice")?;
       return Result::Ok(());
     }
-
+    
     // putsnx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7332,7 +7356,7 @@ impl Task
       self.handle_res(call_res,"putsnx")?;
       return Result::Ok(());
     }
-
+    
     // putsnxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7345,7 +7369,7 @@ impl Task
       self.handle_res(call_res,"putsnxslice")?;
       return Result::Ok(());
     }
-
+    
     // putsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7357,7 +7381,7 @@ impl Task
       self.handle_res(call_res,"putsolution")?;
       return Result::Ok(());
     }
-
+    
     // putsolutionnew
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7369,7 +7393,7 @@ impl Task
       self.handle_res(call_res,"putsolutionnew")?;
       return Result::Ok(());
     }
-
+    
     // putsolutionyi
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7381,7 +7405,7 @@ impl Task
       self.handle_res(call_res,"putsolutionyi")?;
       return Result::Ok(());
     }
-
+    
     // putstrparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7393,7 +7417,7 @@ impl Task
       self.handle_res(call_res,"putstrparam")?;
       return Result::Ok(());
     }
-
+    
     // putsuc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7407,7 +7431,7 @@ impl Task
       self.handle_res(call_res,"putsuc")?;
       return Result::Ok(());
     }
-
+    
     // putsucslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7420,7 +7444,7 @@ impl Task
       self.handle_res(call_res,"putsucslice")?;
       return Result::Ok(());
     }
-
+    
     // putsux
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7434,7 +7458,7 @@ impl Task
       self.handle_res(call_res,"putsux")?;
       return Result::Ok(());
     }
-
+    
     // putsuxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7447,7 +7471,7 @@ impl Task
       self.handle_res(call_res,"putsuxslice")?;
       return Result::Ok(());
     }
-
+    
     // puttaskname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7459,7 +7483,7 @@ impl Task
       self.handle_res(call_res,"puttaskname")?;
       return Result::Ok(());
     }
-
+    
     // putvarbound
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7471,7 +7495,7 @@ impl Task
       self.handle_res(call_res,"putvarbound")?;
       return Result::Ok(());
     }
-
+    
     // putvarboundlist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7487,7 +7511,7 @@ impl Task
       self.handle_res(call_res,"putvarboundlist")?;
       return Result::Ok(());
     }
-
+    
     // putvarboundlistconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7500,7 +7524,7 @@ impl Task
       self.handle_res(call_res,"putvarboundlistconst")?;
       return Result::Ok(());
     }
-
+    
     // putvarboundslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7515,7 +7539,7 @@ impl Task
       self.handle_res(call_res,"putvarboundslice")?;
       return Result::Ok(());
     }
-
+    
     // putvarboundsliceconst
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7527,7 +7551,7 @@ impl Task
       self.handle_res(call_res,"putvarboundsliceconst")?;
       return Result::Ok(());
     }
-
+    
     // putvarname
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7539,7 +7563,7 @@ impl Task
       self.handle_res(call_res,"putvarname")?;
       return Result::Ok(());
     }
-
+    
     // putvarsolutionj
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7551,7 +7575,7 @@ impl Task
       self.handle_res(call_res,"putvarsolutionj")?;
       return Result::Ok(());
     }
-
+    
     // putvartype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7563,7 +7587,7 @@ impl Task
       self.handle_res(call_res,"putvartype")?;
       return Result::Ok(());
     }
-
+    
     // putvartypelist
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7577,7 +7601,7 @@ impl Task
       self.handle_res(call_res,"putvartypelist")?;
       return Result::Ok(());
     }
-
+    
     // putxc
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7591,7 +7615,7 @@ impl Task
       self.handle_res(call_res,"putxc")?;
       return Result::Ok(());
     }
-
+    
     // putxcslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7604,7 +7628,7 @@ impl Task
       self.handle_res(call_res,"putxcslice")?;
       return Result::Ok(());
     }
-
+    
     // putxx
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7618,7 +7642,7 @@ impl Task
       self.handle_res(call_res,"putxx")?;
       return Result::Ok(());
     }
-
+    
     // putxxslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7631,7 +7655,7 @@ impl Task
       self.handle_res(call_res,"putxxslice")?;
       return Result::Ok(());
     }
-
+    
     // puty
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7645,7 +7669,7 @@ impl Task
       self.handle_res(call_res,"puty")?;
       return Result::Ok(());
     }
-
+    
     // putyslice
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7658,7 +7682,7 @@ impl Task
       self.handle_res(call_res,"putyslice")?;
       return Result::Ok(());
     }
-
+    
     // readdataautoformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7670,7 +7694,7 @@ impl Task
       self.handle_res(call_res,"readdataautoformat")?;
       return Result::Ok(());
     }
-
+    
     // readdataformat
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7682,7 +7706,7 @@ impl Task
       self.handle_res(call_res,"readdataformat")?;
       return Result::Ok(());
     }
-
+    
     // readjsonstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7694,7 +7718,7 @@ impl Task
       self.handle_res(call_res,"readjsonstring")?;
       return Result::Ok(());
     }
-
+    
     // readlpstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7706,7 +7730,7 @@ impl Task
       self.handle_res(call_res,"readlpstring")?;
       return Result::Ok(());
     }
-
+    
     // readopfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7718,7 +7742,7 @@ impl Task
       self.handle_res(call_res,"readopfstring")?;
       return Result::Ok(());
     }
-
+    
     // readparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7730,7 +7754,7 @@ impl Task
       self.handle_res(call_res,"readparamfile")?;
       return Result::Ok(());
     }
-
+    
     // readptfstring
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7742,7 +7766,7 @@ impl Task
       self.handle_res(call_res,"readptfstring")?;
       return Result::Ok(());
     }
-
+    
     // readsolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7754,7 +7778,7 @@ impl Task
       self.handle_res(call_res,"readsolution")?;
       return Result::Ok(());
     }
-
+    
     // readsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7766,7 +7790,7 @@ impl Task
       self.handle_res(call_res,"readsummary")?;
       return Result::Ok(());
     }
-
+    
     // readtask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7778,7 +7802,7 @@ impl Task
       self.handle_res(call_res,"readtask")?;
       return Result::Ok(());
     }
-
+    
     // removebarvars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7791,7 +7815,7 @@ impl Task
       self.handle_res(call_res,"removebarvars")?;
       return Result::Ok(());
     }
-
+    
     // removecones
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7804,7 +7828,7 @@ impl Task
       self.handle_res(call_res,"removecones")?;
       return Result::Ok(());
     }
-
+    
     // removecons
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7817,7 +7841,7 @@ impl Task
       self.handle_res(call_res,"removecons")?;
       return Result::Ok(());
     }
-
+    
     // removevars
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7830,7 +7854,7 @@ impl Task
       self.handle_res(call_res,"removevars")?;
       return Result::Ok(());
     }
-
+    
     // resizetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7842,7 +7866,7 @@ impl Task
       self.handle_res(call_res,"resizetask")?;
       return Result::Ok(());
     }
-
+    
     // sensitivityreport
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7854,7 +7878,7 @@ impl Task
       self.handle_res(call_res,"sensitivityreport")?;
       return Result::Ok(());
     }
-
+    
     // setdefaults
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7866,7 +7890,7 @@ impl Task
       self.handle_res(call_res,"setdefaults")?;
       return Result::Ok(());
     }
-
+    
     // sktostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7880,7 +7904,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // solstatostr
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7894,7 +7918,7 @@ impl Task
       unsafe { _str__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_str__bytes[..]).into_owned()));
     }
-
+    
     // solutiondef
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7907,7 +7931,7 @@ impl Task
       self.handle_res(call_res,"solutiondef")?;
       return Result::Ok((_ref_isdef_ != 0));
     }
-
+    
     // solutionsummary
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7919,7 +7943,7 @@ impl Task
       self.handle_res(call_res,"solutionsummary")?;
       return Result::Ok(());
     }
-
+    
     // solvewithbasis
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7936,7 +7960,7 @@ impl Task
       self.handle_res(call_res,"solvewithbasis")?;
       return Result::Ok((_ref_numnz_ as i32));
     }
-
+    
     // strduptask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7948,7 +7972,7 @@ impl Task
       self.handle_res(call_res,"strduptask")?;
       return Result::Ok(());
     }
-
+    
     // strtoconetype
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7961,7 +7985,7 @@ impl Task
       self.handle_res(call_res,"strtoconetype")?;
       return Result::Ok((_ref_conetype_ as i32));
     }
-
+    
     // strtosk
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7974,7 +7998,7 @@ impl Task
       self.handle_res(call_res,"strtosk")?;
       return Result::Ok((_ref_sk_ as i32));
     }
-
+    
     // toconic
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7986,7 +8010,7 @@ impl Task
       self.handle_res(call_res,"toconic")?;
       return Result::Ok(());
     }
-
+    
     // unlinkfuncfromtaskstream
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -7998,7 +8022,7 @@ impl Task
       self.handle_res(call_res,"unlinkfuncfromtaskstream")?;
       return Result::Ok(());
     }
-
+    
     // updatesolutioninfo
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8010,7 +8034,7 @@ impl Task
       self.handle_res(call_res,"updatesolutioninfo")?;
       return Result::Ok(());
     }
-
+    
     // whichparam
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8024,7 +8048,7 @@ impl Task
       self.handle_res(call_res,"whichparam")?;
       return Result::Ok((_ref_partype_ as i32,_ref_param_ as i32));
     }
-
+    
     // writedata
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8036,7 +8060,7 @@ impl Task
       self.handle_res(call_res,"writedata")?;
       return Result::Ok(());
     }
-
+    
     // writejsonsol
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8048,7 +8072,7 @@ impl Task
       self.handle_res(call_res,"writejsonsol")?;
       return Result::Ok(());
     }
-
+    
     // writeparamfile
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8060,7 +8084,7 @@ impl Task
       self.handle_res(call_res,"writeparamfile")?;
       return Result::Ok(());
     }
-
+    
     // writesolution
     #[allow(non_snake_case)]
     #[allow(unused_mut)]
@@ -8072,7 +8096,7 @@ impl Task
       self.handle_res(call_res,"writesolution")?;
       return Result::Ok(());
     }
-
+    
     // writetask
     #[allow(non_snake_case)]
     #[allow(unused_mut)]

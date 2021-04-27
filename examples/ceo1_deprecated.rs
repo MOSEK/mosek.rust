@@ -10,11 +10,10 @@
        Min x1 + x2
        Such that
            x1 + x2 + x3 = 1.0
-           |1    |   |x1|
-           |  1  | x |x2| in K_exp
-           |    1|   |x3|
+           (x1,x2,x3) in K_exp
            x1,x2,x3 are free
 */
+/*TAG:begin-code*/
 extern crate mosek;
 
 const INF : f64 = 0.0;
@@ -68,17 +67,9 @@ fn main() -> Result<(),String> {
     task.put_var_bound_slice(0, numvar, bkx.as_slice(), blx.as_slice(), bux.as_slice())?;
 
     /* Add a conic constraint */
-    task.append_afes(3)?;
-    let afeidxs = vec![0,  1,  2  ];
-    let b       = vec![0.0,0.0,0.0];
-    let domidx  = task.append_primal_exp_cone_domain()?;
-    task.put_afe_f_row_list(afeidxs.as_slice(),
-                            vec![1,1,1].as_slice(),
-                            vec![0,1,2].as_slice(),
-                            vec![0,1,2].as_slice(),
-                            vec![1.0,1.0,1.0].as_slice());
-    task.append_acc(domidx,afeidxs.as_slice(),b.as_slice())?;
-
+    task.append_cone(mosek::MSK_CT_PEXP,
+                     0.0,
+                     csub.as_slice())?;
     task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
 
     println!("optimize");
@@ -90,6 +81,7 @@ fn main() -> Result<(),String> {
 
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
+
 
     match solsta {
         mosek::MSK_SOL_STA_OPTIMAL => {
