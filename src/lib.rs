@@ -1,4 +1,4 @@
-// Generated for MOSEK v10.0.4
+// Generated for MOSEK v..
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -623,19 +623,15 @@ pub const MSK_COMPRESS_BEGIN : i32 = 0;
 pub const MSK_COMPRESS_END   : i32 = 4;
 
 // conetype
-pub const MSK_CT_DEXP     : i32 = 3;
-pub const MSK_CT_DGEOMEAN : i32 = 10;
-pub const MSK_CT_DPOW     : i32 = 5;
-pub const MSK_CT_INFNRM   : i32 = 7;
-pub const MSK_CT_ONENRM   : i32 = 8;
-pub const MSK_CT_PEXP     : i32 = 2;
-pub const MSK_CT_PGEOMEAN : i32 = 9;
-pub const MSK_CT_PPOW     : i32 = 4;
-pub const MSK_CT_QUAD     : i32 = 0;
-pub const MSK_CT_RQUAD    : i32 = 1;
-pub const MSK_CT_ZERO     : i32 = 6;
+pub const MSK_CT_DEXP  : i32 = 3;
+pub const MSK_CT_DPOW  : i32 = 5;
+pub const MSK_CT_PEXP  : i32 = 2;
+pub const MSK_CT_PPOW  : i32 = 4;
+pub const MSK_CT_QUAD  : i32 = 0;
+pub const MSK_CT_RQUAD : i32 = 1;
+pub const MSK_CT_ZERO  : i32 = 6;
 pub const MSK_CT_BEGIN : i32 = 0;
-pub const MSK_CT_END   : i32 = 11;
+pub const MSK_CT_END   : i32 = 7;
 
 // dataformat
 pub const MSK_DATA_FORMAT_CB        : i32 = 7;
@@ -749,23 +745,19 @@ pub const MSK_DINF_BEGIN : i32 = 0;
 pub const MSK_DINF_END   : i32 = 94;
 
 // domaintype
-pub const MSK_DOMAIN_DUAL_EXP_CONE        : i32 = 7;
-pub const MSK_DOMAIN_DUAL_GEO_MEAN_CONE   : i32 = 11;
-pub const MSK_DOMAIN_DUAL_POWER_CONE      : i32 = 9;
-pub const MSK_DOMAIN_INF_NORM_CONE        : i32 = 12;
-pub const MSK_DOMAIN_ONE_NORM_CONE        : i32 = 13;
-pub const MSK_DOMAIN_PRIMAL_EXP_CONE      : i32 = 6;
-pub const MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE : i32 = 10;
-pub const MSK_DOMAIN_PRIMAL_POWER_CONE    : i32 = 8;
-pub const MSK_DOMAIN_PSD_CONE             : i32 = 14;
-pub const MSK_DOMAIN_QUADRATIC_CONE       : i32 = 4;
-pub const MSK_DOMAIN_R                    : i32 = 0;
-pub const MSK_DOMAIN_RMINUS               : i32 = 3;
-pub const MSK_DOMAIN_RPLUS                : i32 = 2;
-pub const MSK_DOMAIN_RQUADRATIC_CONE      : i32 = 5;
-pub const MSK_DOMAIN_RZERO                : i32 = 1;
+pub const MSK_DOMAIN_DUAL_EXP_CONE     : i32 = 7;
+pub const MSK_DOMAIN_DUAL_POWER_CONE   : i32 = 9;
+pub const MSK_DOMAIN_PRIMAL_EXP_CONE   : i32 = 6;
+pub const MSK_DOMAIN_PRIMAL_POWER_CONE : i32 = 8;
+pub const MSK_DOMAIN_PSD_CONE          : i32 = 10;
+pub const MSK_DOMAIN_QUADRATIC_CONE    : i32 = 4;
+pub const MSK_DOMAIN_R                 : i32 = 0;
+pub const MSK_DOMAIN_RMINUS            : i32 = 3;
+pub const MSK_DOMAIN_RPLUS             : i32 = 2;
+pub const MSK_DOMAIN_RQUADRATIC_CONE   : i32 = 5;
+pub const MSK_DOMAIN_RZERO             : i32 = 1;
 pub const MSK_DOMAIN_BEGIN : i32 = 0;
-pub const MSK_DOMAIN_END   : i32 = 15;
+pub const MSK_DOMAIN_END   : i32 = 11;
 
 // dparam
 pub const MSK_DPAR_ANA_SOL_INFEAS_TOL                 : i32 = 0;
