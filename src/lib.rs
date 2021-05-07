@@ -2410,7 +2410,7 @@ impl Env
 
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
-    let h = handle as * const Box<Fn(&str)>;
+    let h = handle as * const Box<dyn Fn(&str)>;
     unsafe
     {
         let cstr = CStr::from_ptr(msg);
@@ -2428,7 +2428,7 @@ extern fn callback_proxy(_       : * const c_void,
                          intinf  : * const i32,
                          lintinf : * const i64 ) -> i32
 {
-    let h = handle as * mut Box<FnMut(i32,&[f64],&[i32],&[i64]) -> bool>;
+    let h = handle as * mut Box<dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool>;
     unsafe
     {
         let r = (*h)(caller,
