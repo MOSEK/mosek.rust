@@ -100,7 +100,7 @@ fn main() -> Result<(),String>
     }
 
     /* Run optimizer */
-    let trmcode = task.optimize()?;
+    task.optimize()?;
 
     /* Print a summary containing information
      * about the solution for debugging purposes*/

@@ -76,7 +76,7 @@ fn main() -> Result<(),String> {
                             vec![1,1,1].as_slice(),
                             vec![0,1,2].as_slice(),
                             vec![0,1,2].as_slice(),
-                            vec![1.0,1.0,1.0].as_slice());
+                            vec![1.0,1.0,1.0].as_slice())?;
     task.append_acc(domidx,afeidxs.as_slice(),b.as_slice())?;
 
     task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
@@ -86,7 +86,7 @@ fn main() -> Result<(),String> {
     task.optimize()?;
     // Print a summary containing information
     // about the solution for debugging purposes
-    task.solution_summary(mosek::MSK_STREAM_MSG);
+    task.solution_summary(mosek::MSK_STREAM_MSG)?;
 
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;

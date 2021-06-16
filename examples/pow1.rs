@@ -47,7 +47,7 @@ fn main()  -> Result<(),String> {
 
     /* Append 'numvar' variables.
     The variables will initially be fixed at zero (x=0). */
-    task.append_vars(numvar);
+    task.append_vars(numvar)?;
 
     /* Set up the linear part of the problem */
     task.put_c_list(&sub, &val)?;

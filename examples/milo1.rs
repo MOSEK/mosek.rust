@@ -99,12 +99,6 @@ fn main() -> Result<(),String> {
                 println!("x[{}]: {:.4}", j, xx[j]);
             }
         },
-        mosek::MSK_SOL_STA_OPTIMAL => {
-            println!("Optimal primal solution");
-            for j in 0..numvar {
-                println!("x[{}]: {:.4}", j, xx[j]);
-            }
-        },
         mosek::MSK_SOL_STA_PRIM_FEAS => {
             println!("Feasible primal solution");
             for j in 0..numvar {

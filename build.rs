@@ -7,13 +7,37 @@ const MSK_MINOR_VER : i32 = 0;
 
 fn get_platform_name() -> (String,String) {
     if cfg!(target_os = "windows") {
-        ("win64x86".to_string(),  format!("mosek64_{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
+        if      cfg!(target_arch = "x86_64") {
+            ("win64x86".to_string(),  format!("mosek64_{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
+        }
+        else if cfg!(target_arch = "x86") {
+            ("win32x86".to_string(),  format!("mosek{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
+        }
+        else {
+            panic!("Unsupported architecture")
+        }
     }
     else if cfg!(target_os = "linux") {
-        ("linux64x86".to_string(),"mosek64".to_string())
+        if      cfg!(target_arch = "x86_64") {
+            ("linux64x86".to_string(),"mosek64".to_string())
+        }
+        else if cfg!(target_arch = "aarch64") {
+            ("linuxaarch64".to_string(),"mosek64".to_string())
+        }
+        else {
+            panic!("Unsupported architecture")
+        }
     }
     else if cfg!(target_os = "macos") {
-        ("osx64x86".to_string(),  "mosek64".to_string())
+        if      cfg!(target_arch = "x86_64") {
+            ("osx64x86".to_string(),  "mosek64".to_string())
+        }
+        else if cfg!(target_arch = "aarch64") {
+            ("osxaarch64".to_string(),  "mosek64".to_string())
+        }
+        else {
+            panic!("Unsupported architecture")
+        }
     }
     else {
         panic!("Unsupported operating system")
