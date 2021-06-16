@@ -1,4 +1,4 @@
-// Generated for MOSEK v9.2.0
+// Generated for MOSEK v9.3.0
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -273,6 +273,7 @@ extern {
     fn MSK_putnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putobjname(task_ : * const u8,objname_ : * const libc::c_char) -> i32;
     fn MSK_putobjsense(task_ : * const u8,sense_ : i32) -> i32;
+    fn MSK_putoptserverhost(task_ : * const u8,host_ : * const libc::c_char) -> i32;
     fn MSK_putparam(task_ : * const u8,parname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
     fn MSK_putqcon(task_ : * const u8,numqcnz_ : i32,qcsubk_ : * const i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
     fn MSK_putqconk(task_ : * const u8,k_ : i32,numqcnz_ : i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
@@ -1302,6 +1303,7 @@ pub const MSK_RES_ERR_INV_VAR_TYPE                               : i32 = 1258;
 pub const MSK_RES_ERR_INVALID_AIJ                                : i32 = 1473;
 pub const MSK_RES_ERR_INVALID_AMPL_STUB                          : i32 = 3700;
 pub const MSK_RES_ERR_INVALID_BARVAR_NAME                        : i32 = 1079;
+pub const MSK_RES_ERR_INVALID_CJ                                 : i32 = 1474;
 pub const MSK_RES_ERR_INVALID_COMPRESSION                        : i32 = 1800;
 pub const MSK_RES_ERR_INVALID_CON_NAME                           : i32 = 1076;
 pub const MSK_RES_ERR_INVALID_CONE_NAME                          : i32 = 1078;
@@ -1492,6 +1494,7 @@ pub const MSK_RES_ERR_SEN_SOLUTION_STATUS                        : i32 = 3057;
 pub const MSK_RES_ERR_SEN_UNDEF_NAME                             : i32 = 3051;
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080;
 pub const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000;
+pub const MSK_RES_ERR_SERVER_PROBLEM_SIZE                        : i32 = 8008;
 pub const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001;
 pub const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002;
 pub const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003;
@@ -5204,6 +5207,17 @@ impl Task
     pub fn put_obj_sense(&self,sense_ : i32) -> Result<(),String>
     {
       callMSK!(MSK_putobjsense,self.ptr,sense_);
+      return Result::Ok(())
+    }
+    
+    // putoptserverhost
+    #[allow(non_snake_case)]
+    #[allow(unused_mut)]
+    #[allow(unused_parens)]
+    #[allow(unused_variables)]
+    pub fn put_optserver_host(&self,host_ : &str) -> Result<(),String>
+    {
+      callMSK!(MSK_putoptserverhost,self.ptr,CString::new(host_).unwrap().as_ptr());
       return Result::Ok(())
     }
     

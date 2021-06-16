@@ -3,16 +3,19 @@ use std::path::PathBuf;
 
 
 const MSK_MAJOR_VER : i32 = 9;
-const MSK_MINOR_VER : i32 = 2;
+const MSK_MINOR_VER : i32 = 3;
 
 fn get_platform_name() -> (String,String) {
-    if cfg!(target_os = "windows") {
+    if      cfg!(target_os = "windows") && cfg!(target_arch = "x86_64") {
         ("win64x86".to_string(),  format!("mosek64_{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
     }
-    else if cfg!(target_os = "linux") {
+    else if cfg!(target_os = "linux") && cfg!(target_arch = "x86_64") {
         ("linux64x86".to_string(),"mosek64".to_string())
     }
-    else if cfg!(target_os = "macos") {
+    else if cfg!(target_os = "linux") && cfg!(target_arch = "aarch64") {
+        ("linuxaarch64".to_string(),"mosek".to_string())
+    }
+    else if cfg!(target_os = "macos") && cfg!(target_arch = "x86_64") {
         ("osx64x86".to_string(),  "mosek64".to_string())
     }
     else {
