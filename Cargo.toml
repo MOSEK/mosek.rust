@@ -1,12 +1,12 @@
 [package]
 name    = "mosek"
-version = "0.4.0"
+version = "0.6.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 
 build = "build.rs"
 
 [dependencies.conic_solver_api]
-path = "deps/conicsolverapi.rs"
+#path = "deps/conicsolverapi.rs"
 
 [dependencies]
 libc = "*"
