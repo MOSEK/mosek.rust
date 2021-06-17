@@ -4,9 +4,6 @@ use std::ffi::CString;
 use std::ffi::CStr;
 use libc::c_void;
 
-pub mod conic_solver_mosek;
-mod namegen;
-
 //#[link(name = "mosek64")]
 extern {
     fn MSK_makeenv(env : * mut * const u8, dbgfile : * const libc::c_char) -> i32;
