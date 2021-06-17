@@ -9,4 +9,4 @@ build = "build.rs"
 license = "BSD-4-Clause"
 
 [dependencies]
-libc = "*"
+libc = "0.2"
