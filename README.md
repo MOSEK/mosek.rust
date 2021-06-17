@@ -12,12 +12,12 @@ The package should work on
 
 # Mosek Rust interface
 
-- Mosek optimization software: https://mosek.com/
-- Rust language: https://www.rust-lang.com
+- Mosek optimization software: [https://mosek.com](https://mosek.com)
+- Rust language: [https://www.rust-lang.com](https://www.rust-lang.com)
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
-Building the API requires the MOSEK 8.0 library.
+Building the API requires the MOSEK library. The exact version is specified in [./MOSEKVERSION](MOSEKVERSION)
 - If the environment variable `MOSEK_BINDIR_XY` (where `X` and `Y` are
   the MOSEK major an minor versions) is defined it is expected to
   point the the directory containing the MOSEK binaries,
