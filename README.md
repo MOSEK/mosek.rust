@@ -3,17 +3,18 @@
 This software is still experimental. We (MOSEK) may fix errors and bugs, but provide
 no guarantee on how or how quickly we do so.
 
+
+# Mosek 10.0 Rust interface
+
+- Mosek optimization software: https://mosek.com/
+- Rust language: https://www.rust-lang.com
+
 The package should work on
 
 - Linux x86_64
 - Linux aarch64 (RaspberryPi 4)
 - Windows x86_64
 - Mac OSX x86_64
-
-# Mosek Rust interface
-
-- Mosek optimization software: https://mosek.com/
-- Rust language: https://www.rust-lang.com
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
@@ -48,5 +49,5 @@ cargo build --examples
 
 # MOSEK / Mosek.rs versions
 
-# Mosek.rs 0.5.* -> MOSEK 9.3
-# Mosek.rs 0.6.* -> MOSEK 10.0
+# Mosek.rs 0.1 -> MOSEK 9.2
+# Mosek.rs 0.2 -> MOSEK 9.3
