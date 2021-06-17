@@ -2,9 +2,11 @@
 name    = "mosek"
 version = "0.0.1"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
+description = "Rust API for MOSEK optimization tools"
 
 build = "build.rs"
 
+license = "BSD-4-Clause"
 
 [dependencies]
 libc = "*"
