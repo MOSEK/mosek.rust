@@ -2408,6 +2408,7 @@ Constants
 .. _rescode_err_invalid_aij:
 .. _rescode_err_invalid_ampl_stub:
 .. _rescode_err_invalid_barvar_name:
+.. _rescode_err_invalid_cj:
 .. _rescode_err_invalid_compression:
 .. _rescode_err_invalid_con_name:
 .. _rescode_err_invalid_cone_name:
@@ -2522,7 +2523,6 @@ Constants
 .. _rescode_err_mps_tab_in_field5:
 .. _rescode_err_mps_undef_con_name:
 .. _rescode_err_mps_undef_var_name:
-.. _rescode_err_mps_write_cplex_invalid_cone_type:
 .. _rescode_err_mul_a_element:
 .. _rescode_err_name_is_null:
 .. _rescode_err_name_max_len:
@@ -2598,13 +2598,10 @@ Constants
 .. _rescode_err_sen_solution_status:
 .. _rescode_err_sen_undef_name:
 .. _rescode_err_sen_unhandled_problem_type:
-.. _rescode_err_server_access_token:
-.. _rescode_err_server_address:
-.. _rescode_err_server_certificate:
 .. _rescode_err_server_connect:
+.. _rescode_err_server_problem_size:
 .. _rescode_err_server_protocol:
 .. _rescode_err_server_status:
-.. _rescode_err_server_tls_client:
 .. _rescode_err_server_token:
 .. _rescode_err_shape_is_too_large:
 .. _rescode_err_size_license:
@@ -2686,8 +2683,6 @@ Constants
 .. _rescode_wrn_exp_cones_with_variables_fixed_at_zero:
 .. _rescode_wrn_ignore_integer:
 .. _rescode_wrn_incomplete_linear_dependency_check:
-.. _rescode_wrn_invalid_mps_name:
-.. _rescode_wrn_invalid_mps_obj_name:
 .. _rescode_wrn_large_aij:
 .. _rescode_wrn_large_bound:
 .. _rescode_wrn_large_cj:
@@ -3019,6 +3014,8 @@ Constants
     
 ``const MSK_RES_ERR_INVALID_BARVAR_NAME                        : i32 = 1079``
     
+``const MSK_RES_ERR_INVALID_CJ                                 : i32 = 1474``
+    
 ``const MSK_RES_ERR_INVALID_COMPRESSION                        : i32 = 1800``
     
 ``const MSK_RES_ERR_INVALID_CON_NAME                           : i32 = 1076``
@@ -3247,8 +3244,6 @@ Constants
     
 ``const MSK_RES_ERR_MPS_UNDEF_VAR_NAME                         : i32 = 1106``
     
-``const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE          : i32 = 7750``
-    
 ``const MSK_RES_ERR_MUL_A_ELEMENT                              : i32 = 1254``
     
 ``const MSK_RES_ERR_NAME_IS_NULL                               : i32 = 1760``
@@ -3399,19 +3394,13 @@ Constants
     
 ``const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE                 : i32 = 3080``
     
-``const MSK_RES_ERR_SERVER_ACCESS_TOKEN                        : i32 = 8007``
-    
-``const MSK_RES_ERR_SERVER_ADDRESS                             : i32 = 8004``
-    
-``const MSK_RES_ERR_SERVER_CERTIFICATE                         : i32 = 8005``
-    
 ``const MSK_RES_ERR_SERVER_CONNECT                             : i32 = 8000``
+    
+``const MSK_RES_ERR_SERVER_PROBLEM_SIZE                        : i32 = 8008``
     
 ``const MSK_RES_ERR_SERVER_PROTOCOL                            : i32 = 8001``
     
 ``const MSK_RES_ERR_SERVER_STATUS                              : i32 = 8002``
-    
-``const MSK_RES_ERR_SERVER_TLS_CLIENT                          : i32 = 8006``
     
 ``const MSK_RES_ERR_SERVER_TOKEN                               : i32 = 8003``
     
@@ -3575,10 +3564,6 @@ Constants
     
 ``const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK         : i32 = 800``
     
-``const MSK_RES_WRN_INVALID_MPS_NAME                           : i32 = 504``
-    
-``const MSK_RES_WRN_INVALID_MPS_OBJ_NAME                       : i32 = 505``
-    
 ``const MSK_RES_WRN_LARGE_AIJ                                  : i32 = 62``
     
 ``const MSK_RES_WRN_LARGE_BOUND                                : i32 = 51``
@@ -3593,7 +3578,7 @@ Constants
     
 ``const MSK_RES_WRN_LICENSE_EXPIRE                             : i32 = 500``
     
-``const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 509``
+``const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE                     : i32 = 505``
     
 ``const MSK_RES_WRN_LICENSE_SERVER                             : i32 = 501``
     
@@ -3993,8 +3978,7 @@ Constants
 .. _sparam_read_mps_obj_name:
 .. _sparam_read_mps_ran_name:
 .. _sparam_read_mps_rhs_name:
-.. _sparam_remote_tls_cert:
-.. _sparam_remote_tls_cert_path:
+.. _sparam_remote_access_token:
 .. _sparam_sensitivity_file_name:
 .. _sparam_sensitivity_res_file_name:
 .. _sparam_sol_filter_xc_low:
@@ -4037,29 +4021,27 @@ Constants
     
 ``const MSK_SPAR_READ_MPS_RHS_NAME         : i32 = 12``
     
-``const MSK_SPAR_REMOTE_TLS_CERT           : i32 = 13``
+``const MSK_SPAR_REMOTE_ACCESS_TOKEN       : i32 = 13``
     
-``const MSK_SPAR_REMOTE_TLS_CERT_PATH      : i32 = 14``
+``const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 14``
     
-``const MSK_SPAR_SENSITIVITY_FILE_NAME     : i32 = 15``
+``const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 15``
     
-``const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 16``
+``const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 16``
     
-``const MSK_SPAR_SOL_FILTER_XC_LOW         : i32 = 17``
+``const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 17``
     
-``const MSK_SPAR_SOL_FILTER_XC_UPR         : i32 = 18``
+``const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 18``
     
-``const MSK_SPAR_SOL_FILTER_XX_LOW         : i32 = 19``
+``const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 19``
     
-``const MSK_SPAR_SOL_FILTER_XX_UPR         : i32 = 20``
+``const MSK_SPAR_STAT_FILE_NAME            : i32 = 20``
     
-``const MSK_SPAR_STAT_FILE_NAME            : i32 = 21``
+``const MSK_SPAR_STAT_KEY                  : i32 = 21``
     
-``const MSK_SPAR_STAT_KEY                  : i32 = 22``
+``const MSK_SPAR_STAT_NAME                 : i32 = 22``
     
-``const MSK_SPAR_STAT_NAME                 : i32 = 23``
-    
-``const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 24``
+``const MSK_SPAR_WRITE_LP_GEN_VAR_NAME     : i32 = 23``
     
 .. index:: stakey
 .. index:: SK_...

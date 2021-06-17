@@ -1,12 +1,12 @@
 [package]
 name    = "mosek"
-version = "0.4.0"
+version = "0.1.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
+description = "Rust API for MOSEK optimization tools"
 
 build = "build.rs"
 
-[dependencies.conic_solver_api]
-path = "deps/conicsolverapi.rs"
+license = "BSD-4-Clause"
 
 [dependencies]
-libc = "*"
+libc = "0.2"
