@@ -1,6 +1,6 @@
 [package]
 name    = "mosek"
-version = "0.5.0"
+version = "0.0.1"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 
 build = "build.rs"

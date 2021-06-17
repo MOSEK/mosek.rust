@@ -1849,7 +1849,8 @@ impl Env
 
     pub fn new_mem_debug(dbgfile : &str) -> Option<Env> {
         let mut env : * const u8 = std::ptr::null();
-        let res = unsafe { MSK_makeenv(& mut env, CString::new(dbgfile).unwrap().as_ptr()) };
+        let dbgfile_cstr = CString::new(dbgfile).unwrap();
+        let res = unsafe { MSK_makeenv(& mut env, dbgfile_cstr.as_ptr()) };
         if res != 0 { return None; }
 
         return Some(Env { ptr : env });
@@ -1922,7 +1923,8 @@ impl Env
     #[allow(unused_variables)]
     pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_checkmemenv,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
+      let file__cstr = CString::new(file_).unwrap();
+      callMSK!(MSK_checkmemenv,self.ptr,file__cstr.as_ptr(),line_ as i32);
       return Result::Ok(())
     }
     
@@ -1969,7 +1971,8 @@ impl Env
     #[allow(unused_variables)]
     pub fn echo_env(&self,whichstream_ : i32,format_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_echoenv,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
+      let format__cstr = CString::new(format_).unwrap();
+      callMSK!(MSK_echoenv,self.ptr,whichstream_,format__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -2031,7 +2034,8 @@ impl Env
     #[allow(unused_variables)]
     pub fn link_file_to_env_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_linkfiletoenvstream,self.ptr,whichstream_,filename__cstr.as_ptr(),append_ as i32);
       return Result::Ok(())
     }
     
@@ -2077,7 +2081,8 @@ impl Env
     #[allow(unused_variables)]
     pub fn put_license_path(&self,licensepath_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putlicensepath,self.ptr,CString::new(licensepath_).unwrap().as_ptr());
+      let licensepath__cstr = CString::new(licensepath_).unwrap();
+      callMSK!(MSK_putlicensepath,self.ptr,licensepath__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -2401,10 +2406,13 @@ impl Task
     #[allow(unused_variables)]
     pub fn async_get_result(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
+      let server__cstr = CString::new(server_).unwrap();
+      let port__cstr = CString::new(port_).unwrap();
+      let token__cstr = CString::new(token_).unwrap();
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncgetresult,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncgetresult,self.ptr,server__cstr.as_ptr(),port__cstr.as_ptr(),token__cstr.as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2415,8 +2423,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn async_optimize(&self,server_ : &str,port_ : &str) -> Result<String,String>
     {
+      let server__cstr = CString::new(server_).unwrap();
+      let port__cstr = CString::new(port_).unwrap();
       let mut _token__bytes = Vec::with_capacity(33 as usize);
-      callMSK!(MSK_asyncoptimize,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),_token__bytes.as_mut_ptr());
+      callMSK!(MSK_asyncoptimize,self.ptr,server__cstr.as_ptr(),port__cstr.as_ptr(),_token__bytes.as_mut_ptr());
       unsafe { _token__bytes.set_len((33) as usize) };
       return Result::Ok((String::from_utf8_lossy(&_token__bytes[..]).into_owned()))
     }
@@ -2428,10 +2438,13 @@ impl Task
     #[allow(unused_variables)]
     pub fn async_poll(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(bool,i32,i32),String>
     {
+      let server__cstr = CString::new(server_).unwrap();
+      let port__cstr = CString::new(port_).unwrap();
+      let token__cstr = CString::new(token_).unwrap();
       let mut _ref_respavailable_ : i32 = 0 as i32;
       let mut _ref_resp_ : i32 = 0 as i32;
       let mut _ref_trm_ : i32 = 0 as i32;
-      callMSK!(MSK_asyncpoll,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
+      callMSK!(MSK_asyncpoll,self.ptr,server__cstr.as_ptr(),port__cstr.as_ptr(),token__cstr.as_ptr(),& mut _ref_respavailable_,& mut _ref_resp_,& mut _ref_trm_);
       return Result::Ok((_ref_respavailable_ != 0,_ref_resp_ as i32,_ref_trm_ as i32))
     }
     
@@ -2442,7 +2455,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn async_stop(&self,server_ : &str,port_ : &str,token_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_asyncstop,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),CString::new(token_).unwrap().as_ptr());
+      let server__cstr = CString::new(server_).unwrap();
+      let port__cstr = CString::new(port_).unwrap();
+      let token__cstr = CString::new(token_).unwrap();
+      callMSK!(MSK_asyncstop,self.ptr,server__cstr.as_ptr(),port__cstr.as_ptr(),token__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -2479,7 +2495,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn check_mem(&self,file_ : &str,line_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_checkmemtask,self.ptr,CString::new(file_).unwrap().as_ptr(),line_ as i32);
+      let file__cstr = CString::new(file_).unwrap();
+      callMSK!(MSK_checkmemtask,self.ptr,file__cstr.as_ptr(),line_ as i32);
       return Result::Ok(())
     }
     
@@ -2563,7 +2580,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn echo_task(&self,whichstream_ : i32,format_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_echotask,self.ptr,whichstream_,CString::new(format_).unwrap().as_ptr());
+      let format__cstr = CString::new(format_).unwrap();
+      callMSK!(MSK_echotask,self.ptr,whichstream_,format__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -2575,9 +2593,10 @@ impl Task
     pub fn generate_cone_names(&self,subk_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subk_.len();
+      let fmt__cstr = CString::new(fmt_).unwrap();
       let mut ndims_ = dims_.len();
       if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_cone_names'".to_string()) }
-      callMSK!(MSK_generateconenames,self.ptr,num_ as i32,subk_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      callMSK!(MSK_generateconenames,self.ptr,num_ as i32,subk_.as_ptr(),fmt__cstr.as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
       return Result::Ok(())
     }
     
@@ -2589,9 +2608,10 @@ impl Task
     pub fn generate_con_names(&self,subi_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subi_.len();
+      let fmt__cstr = CString::new(fmt_).unwrap();
       let mut ndims_ = dims_.len();
       if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_con_names'".to_string()) }
-      callMSK!(MSK_generateconnames,self.ptr,num_ as i32,subi_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      callMSK!(MSK_generateconnames,self.ptr,num_ as i32,subi_.as_ptr(),fmt__cstr.as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
       return Result::Ok(())
     }
     
@@ -2603,9 +2623,10 @@ impl Task
     pub fn generate_var_names(&self,subj_ : & [i32],fmt_ : &str,dims_ : & [i32],sp_ : & [i64]) -> Result<(),String>
     {
       let mut num_ = subj_.len();
+      let fmt__cstr = CString::new(fmt_).unwrap();
       let mut ndims_ = dims_.len();
       if sp_.len() != ((num_) as usize) { return Result::Err("Argument 'sp_' is too short in call to 'generate_var_names'".to_string()) }
-      callMSK!(MSK_generatevarnames,self.ptr,num_ as i32,subj_.as_ptr(),CString::new(fmt_).unwrap().as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
+      callMSK!(MSK_generatevarnames,self.ptr,num_ as i32,subj_.as_ptr(),fmt__cstr.as_ptr(),ndims_ as i32,dims_.as_ptr(),sp_.as_ptr());
       return Result::Ok(())
     }
     
@@ -2923,9 +2944,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_barvar_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
+      let somename__cstr = CString::new(somename_).unwrap();
       let mut _ref_asgn_ : i32 = 0 as i32;
       let mut _ref_index_ : i32 = 0 as i32;
-      callMSK!(MSK_getbarvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
+      callMSK!(MSK_getbarvarnameindex,self.ptr,somename__cstr.as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
     
@@ -3096,9 +3118,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_cone_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
+      let somename__cstr = CString::new(somename_).unwrap();
       let mut _ref_asgn_ : i32 = 0 as i32;
       let mut _ref_index_ : i32 = 0 as i32;
-      callMSK!(MSK_getconenameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
+      callMSK!(MSK_getconenameindex,self.ptr,somename__cstr.as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
     
@@ -3136,9 +3159,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_con_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
+      let somename__cstr = CString::new(somename_).unwrap();
       let mut _ref_asgn_ : i32 = 0 as i32;
       let mut _ref_index_ : i32 = 0 as i32;
-      callMSK!(MSK_getconnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
+      callMSK!(MSK_getconnameindex,self.ptr,somename__cstr.as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
     
@@ -3291,8 +3315,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str) -> Result<i32,String>
     {
+      let infname__cstr = CString::new(infname_).unwrap();
       let mut _ref_infindex_ : i32 = 0 as i32;
-      callMSK!(MSK_getinfindex,self.ptr,inftype_,CString::new(infname_).unwrap().as_ptr(),& mut _ref_infindex_);
+      callMSK!(MSK_getinfindex,self.ptr,inftype_,infname__cstr.as_ptr(),& mut _ref_infindex_);
       return Result::Ok((_ref_infindex_ as i32))
     }
     
@@ -3473,8 +3498,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_na_dou_inf(&self,infitemname_ : &str) -> Result<f64,String>
     {
+      let infitemname__cstr = CString::new(infitemname_).unwrap();
       let mut _ref_dvalue_ : f64 = 0 as f64;
-      callMSK!(MSK_getnadouinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_dvalue_);
+      callMSK!(MSK_getnadouinf,self.ptr,infitemname__cstr.as_ptr(),& mut _ref_dvalue_);
       return Result::Ok((_ref_dvalue_ as f64))
     }
     
@@ -3485,8 +3511,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_na_dou_param(&self,paramname_ : &str) -> Result<f64,String>
     {
+      let paramname__cstr = CString::new(paramname_).unwrap();
       let mut _ref_parvalue_ : f64 = 0 as f64;
-      callMSK!(MSK_getnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
+      callMSK!(MSK_getnadouparam,self.ptr,paramname__cstr.as_ptr(),& mut _ref_parvalue_);
       return Result::Ok((_ref_parvalue_ as f64))
     }
     
@@ -3497,8 +3524,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_na_int_inf(&self,infitemname_ : &str) -> Result<i32,String>
     {
+      let infitemname__cstr = CString::new(infitemname_).unwrap();
       let mut _ref_ivalue_ : i32 = 0 as i32;
-      callMSK!(MSK_getnaintinf,self.ptr,CString::new(infitemname_).unwrap().as_ptr(),& mut _ref_ivalue_);
+      callMSK!(MSK_getnaintinf,self.ptr,infitemname__cstr.as_ptr(),& mut _ref_ivalue_);
       return Result::Ok((_ref_ivalue_ as i32))
     }
     
@@ -3509,8 +3537,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_na_int_param(&self,paramname_ : &str) -> Result<i32,String>
     {
+      let paramname__cstr = CString::new(paramname_).unwrap();
       let mut _ref_parvalue_ : i32 = 0 as i32;
-      callMSK!(MSK_getnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),& mut _ref_parvalue_);
+      callMSK!(MSK_getnaintparam,self.ptr,paramname__cstr.as_ptr(),& mut _ref_parvalue_);
       return Result::Ok((_ref_parvalue_ as i32))
     }
     
@@ -3521,9 +3550,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32) -> Result<(i32,String),String>
     {
+      let paramname__cstr = CString::new(paramname_).unwrap();
       let mut _ref_len_ : i32 = 0 as i32;
       let mut _parvalue__bytes = Vec::with_capacity(sizeparamname_ as usize);
-      callMSK!(MSK_getnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),sizeparamname_ as i32,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
+      callMSK!(MSK_getnastrparam,self.ptr,paramname__cstr.as_ptr(),sizeparamname_ as i32,& mut _ref_len_,_parvalue__bytes.as_mut_ptr());
       unsafe { _parvalue__bytes.set_len((sizeparamname_) as usize) };
       return Result::Ok((_ref_len_ as i32,String::from_utf8_lossy(&_parvalue__bytes[..]).into_owned()))
     }
@@ -4329,9 +4359,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn get_var_name_index(&self,somename_ : &str) -> Result<(i32,i32),String>
     {
+      let somename__cstr = CString::new(somename_).unwrap();
       let mut _ref_asgn_ : i32 = 0 as i32;
       let mut _ref_index_ : i32 = 0 as i32;
-      callMSK!(MSK_getvarnameindex,self.ptr,CString::new(somename_).unwrap().as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
+      callMSK!(MSK_getvarnameindex,self.ptr,somename__cstr.as_ptr(),& mut _ref_asgn_,& mut _ref_index_);
       return Result::Ok((_ref_asgn_ as i32,_ref_index_ as i32))
     }
     
@@ -4489,8 +4520,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn is_dou_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
+      let parname__cstr = CString::new(parname_).unwrap();
       let mut _ref_param_ : i32 = 0 as i32;
-      callMSK!(MSK_isdouparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
+      callMSK!(MSK_isdouparname,self.ptr,parname__cstr.as_ptr(),& mut _ref_param_);
       return Result::Ok((_ref_param_ as i32))
     }
     
@@ -4501,8 +4533,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn is_int_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
+      let parname__cstr = CString::new(parname_).unwrap();
       let mut _ref_param_ : i32 = 0 as i32;
-      callMSK!(MSK_isintparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
+      callMSK!(MSK_isintparname,self.ptr,parname__cstr.as_ptr(),& mut _ref_param_);
       return Result::Ok((_ref_param_ as i32))
     }
     
@@ -4513,8 +4546,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn is_str_par_name(&self,parname_ : &str) -> Result<i32,String>
     {
+      let parname__cstr = CString::new(parname_).unwrap();
       let mut _ref_param_ : i32 = 0 as i32;
-      callMSK!(MSK_isstrparname,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_param_);
+      callMSK!(MSK_isstrparname,self.ptr,parname__cstr.as_ptr(),& mut _ref_param_);
       return Result::Ok((_ref_param_ as i32))
     }
     
@@ -4525,7 +4559,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn link_file_to_stream(&self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,CString::new(filename_).unwrap().as_ptr(),append_ as i32);
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_linkfiletotaskstream,self.ptr,whichstream_,filename__cstr.as_ptr(),append_ as i32);
       return Result::Ok(())
     }
     
@@ -4547,8 +4582,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn optimize_rmt(&self,server_ : &str,port_ : &str) -> Result<i32,String>
     {
+      let server__cstr = CString::new(server_).unwrap();
+      let port__cstr = CString::new(port_).unwrap();
       let mut _ref_trmcode_ : i32 = 0 as i32;
-      callMSK!(MSK_optimizermt,self.ptr,CString::new(server_).unwrap().as_ptr(),CString::new(port_).unwrap().as_ptr(),& mut _ref_trmcode_);
+      callMSK!(MSK_optimizermt,self.ptr,server__cstr.as_ptr(),port__cstr.as_ptr(),& mut _ref_trmcode_);
       return Result::Ok((_ref_trmcode_ as i32))
     }
     
@@ -4892,7 +4929,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_barvar_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putbarvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      let name__cstr = CString::new(name_).unwrap();
+      callMSK!(MSK_putbarvarname,self.ptr,j_ as i32,name__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5026,7 +5064,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_cone_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putconename,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      let name__cstr = CString::new(name_).unwrap();
+      callMSK!(MSK_putconename,self.ptr,j_ as i32,name__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5037,7 +5076,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_con_name(&self,i_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putconname,self.ptr,i_ as i32,CString::new(name_).unwrap().as_ptr());
+      let name__cstr = CString::new(name_).unwrap();
+      callMSK!(MSK_putconname,self.ptr,i_ as i32,name__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5159,7 +5199,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_na_dou_param(&self,paramname_ : &str,parvalue_ : f64) -> Result<(),String>
     {
-      callMSK!(MSK_putnadouparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as f64);
+      let paramname__cstr = CString::new(paramname_).unwrap();
+      callMSK!(MSK_putnadouparam,self.ptr,paramname__cstr.as_ptr(),parvalue_ as f64);
       return Result::Ok(())
     }
     
@@ -5170,7 +5211,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_na_int_param(&self,paramname_ : &str,parvalue_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_putnaintparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),parvalue_ as i32);
+      let paramname__cstr = CString::new(paramname_).unwrap();
+      callMSK!(MSK_putnaintparam,self.ptr,paramname__cstr.as_ptr(),parvalue_ as i32);
       return Result::Ok(())
     }
     
@@ -5181,7 +5223,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_na_str_param(&self,paramname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putnastrparam,self.ptr,CString::new(paramname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
+      let paramname__cstr = CString::new(paramname_).unwrap();
+      let parvalue__cstr = CString::new(parvalue_).unwrap();
+      callMSK!(MSK_putnastrparam,self.ptr,paramname__cstr.as_ptr(),parvalue__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5192,7 +5236,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_obj_name(&self,objname_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putobjname,self.ptr,CString::new(objname_).unwrap().as_ptr());
+      let objname__cstr = CString::new(objname_).unwrap();
+      callMSK!(MSK_putobjname,self.ptr,objname__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5214,7 +5259,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_optserver_host(&self,host_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putoptserverhost,self.ptr,CString::new(host_).unwrap().as_ptr());
+      let host__cstr = CString::new(host_).unwrap();
+      callMSK!(MSK_putoptserverhost,self.ptr,host__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5225,7 +5271,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_param(&self,parname_ : &str,parvalue_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),CString::new(parvalue_).unwrap().as_ptr());
+      let parname__cstr = CString::new(parname_).unwrap();
+      let parvalue__cstr = CString::new(parvalue_).unwrap();
+      callMSK!(MSK_putparam,self.ptr,parname__cstr.as_ptr(),parvalue__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5436,7 +5484,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_str_param(&self,param_ : i32,parvalue_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putstrparam,self.ptr,param_,CString::new(parvalue_).unwrap().as_ptr());
+      let parvalue__cstr = CString::new(parvalue_).unwrap();
+      callMSK!(MSK_putstrparam,self.ptr,param_,parvalue__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5497,7 +5546,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_task_name(&self,taskname_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_puttaskname,self.ptr,CString::new(taskname_).unwrap().as_ptr());
+      let taskname__cstr = CString::new(taskname_).unwrap();
+      callMSK!(MSK_puttaskname,self.ptr,taskname__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5571,7 +5621,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn put_var_name(&self,j_ : i32,name_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_putvarname,self.ptr,j_ as i32,CString::new(name_).unwrap().as_ptr());
+      let name__cstr = CString::new(name_).unwrap();
+      callMSK!(MSK_putvarname,self.ptr,j_ as i32,name__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5692,7 +5743,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_data(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readdataautoformat,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_readdataautoformat,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5703,7 +5755,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_data_format(&self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String>
     {
-      callMSK!(MSK_readdataformat,self.ptr,CString::new(filename_).unwrap().as_ptr(),format_,compress_);
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_readdataformat,self.ptr,filename__cstr.as_ptr(),format_,compress_);
       return Result::Ok(())
     }
     
@@ -5714,7 +5767,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_json_string(&self,data_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readjsonstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      let data__cstr = CString::new(data_).unwrap();
+      callMSK!(MSK_readjsonstring,self.ptr,data__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5725,7 +5779,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_lp_string(&self,data_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readlpstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      let data__cstr = CString::new(data_).unwrap();
+      callMSK!(MSK_readlpstring,self.ptr,data__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5736,7 +5791,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_opf_string(&self,data_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readopfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      let data__cstr = CString::new(data_).unwrap();
+      callMSK!(MSK_readopfstring,self.ptr,data__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5747,7 +5803,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_param_file(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_readparamfile,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5758,7 +5815,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_ptf_string(&self,data_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readptfstring,self.ptr,CString::new(data_).unwrap().as_ptr());
+      let data__cstr = CString::new(data_).unwrap();
+      callMSK!(MSK_readptfstring,self.ptr,data__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5769,7 +5827,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readsolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_readsolution,self.ptr,whichsol_,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5791,7 +5850,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn read_task(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_readtask,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_readtask,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5948,7 +6008,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn str_dup_task(&self,str_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_strduptask,self.ptr,CString::new(str_).unwrap().as_ptr());
+      let str__cstr = CString::new(str_).unwrap();
+      callMSK!(MSK_strduptask,self.ptr,str__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -5959,8 +6020,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn str_to_cone_type(&self,str_ : &str) -> Result<i32,String>
     {
+      let str__cstr = CString::new(str_).unwrap();
       let mut _ref_conetype_ : i32 = 0 as i32;
-      callMSK!(MSK_strtoconetype,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_conetype_);
+      callMSK!(MSK_strtoconetype,self.ptr,str__cstr.as_ptr(),& mut _ref_conetype_);
       return Result::Ok((_ref_conetype_ as i32))
     }
     
@@ -5971,8 +6033,9 @@ impl Task
     #[allow(unused_variables)]
     pub fn str_to_sk(&self,str_ : &str) -> Result<i32,String>
     {
+      let str__cstr = CString::new(str_).unwrap();
       let mut _ref_sk_ : i32 = 0 as i32;
-      callMSK!(MSK_strtosk,self.ptr,CString::new(str_).unwrap().as_ptr(),& mut _ref_sk_);
+      callMSK!(MSK_strtosk,self.ptr,str__cstr.as_ptr(),& mut _ref_sk_);
       return Result::Ok((_ref_sk_ as i32))
     }
     
@@ -6016,9 +6079,10 @@ impl Task
     #[allow(unused_variables)]
     pub fn which_param(&self,parname_ : &str) -> Result<(i32,i32),String>
     {
+      let parname__cstr = CString::new(parname_).unwrap();
       let mut _ref_partype_ : i32 = 0 as i32;
       let mut _ref_param_ : i32 = 0 as i32;
-      callMSK!(MSK_whichparam,self.ptr,CString::new(parname_).unwrap().as_ptr(),& mut _ref_partype_,& mut _ref_param_);
+      callMSK!(MSK_whichparam,self.ptr,parname__cstr.as_ptr(),& mut _ref_partype_,& mut _ref_param_);
       return Result::Ok((_ref_partype_ as i32,_ref_param_ as i32))
     }
     
@@ -6029,7 +6093,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn write_data(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_writedata,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_writedata,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -6040,7 +6105,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn write_json_sol(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_writejsonsol,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_writejsonsol,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -6051,7 +6117,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn write_param_file(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_writeparamfile,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_writeparamfile,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -6062,7 +6129,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn write_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_writesolution,self.ptr,whichsol_,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_writesolution,self.ptr,whichsol_,filename__cstr.as_ptr());
       return Result::Ok(())
     }
     
@@ -6073,7 +6141,8 @@ impl Task
     #[allow(unused_variables)]
     pub fn write_task(&self,filename_ : &str) -> Result<(),String>
     {
-      callMSK!(MSK_writetask,self.ptr,CString::new(filename_).unwrap().as_ptr());
+      let filename__cstr = CString::new(filename_).unwrap();
+      callMSK!(MSK_writetask,self.ptr,filename__cstr.as_ptr());
       return Result::Ok(())
     }
 }
@@ -6196,8 +6265,9 @@ pub fn licensecleanup() -> Result<(),String>
 #[allow(unused_variables)]
 pub fn sym_nam_to_value(name_ : &str) -> Result<String,String>
 {
+  let name__cstr = CString::new(name_).unwrap();
   let mut _value__bytes = Vec::with_capacity(MSK_MAX_STR_LEN as usize);
-  callMSK!(MSK_symnamtovalue,CString::new(name_).unwrap().as_ptr(),_value__bytes.as_mut_ptr());
+  callMSK!(MSK_symnamtovalue,name__cstr.as_ptr(),_value__bytes.as_mut_ptr());
   unsafe { _value__bytes.set_len((MSK_MAX_STR_LEN) as usize) };
   return Result::Ok((String::from_utf8_lossy(&_value__bytes[..]).into_owned()))
 }

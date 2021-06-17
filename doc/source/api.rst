@@ -943,13 +943,13 @@ Task methods
 .. code-block:: rust
 
     pub fn async_get_result ( &self,
-                              addr        : &str,
-                              accesstoken : &str,
-                              token       : &str) -> Result<(bool,i32,i32),String>
+                              server : &str,
+                              port   : &str,
+                              token  : &str) -> Result<(bool,i32,i32),String>
 
-``addr``
+``server``
     
-``accesstoken``
+``port``
     
 ``token``
     
@@ -972,12 +972,12 @@ Task methods
 .. code-block:: rust
 
     pub fn async_optimize ( &self,
-                            addr        : &str,
-                            accesstoken : &str) -> Result<String,String>
+                            server : &str,
+                            port   : &str) -> Result<String,String>
 
-``addr``
+``server``
     
-``accesstoken``
+``port``
     
 *Returns:* ``token``
     ``token : String``
@@ -994,13 +994,13 @@ Task methods
 .. code-block:: rust
 
     pub fn async_poll ( &self,
-                        addr        : &str,
-                        accesstoken : &str,
-                        token       : &str) -> Result<(bool,i32,i32),String>
+                        server : &str,
+                        port   : &str,
+                        token  : &str) -> Result<(bool,i32,i32),String>
 
-``addr``
+``server``
     
-``accesstoken``
+``port``
     
 ``token``
     
@@ -1023,13 +1023,13 @@ Task methods
 .. code-block:: rust
 
     pub fn async_stop ( &self,
-                        addr        : &str,
-                        accesstoken : &str,
-                        token       : &str) -> Result<(),String>
+                        server : &str,
+                        port   : &str,
+                        token  : &str) -> Result<(),String>
 
-``addr``
+``server``
     
-``accesstoken``
+``port``
     
 ``token``
     
@@ -4362,12 +4362,12 @@ Task methods
 .. code-block:: rust
 
     pub fn optimize_rmt ( &self,
-                          addr        : &str,
-                          accesstoken : &str) -> Result<i32,String>
+                          server : &str,
+                          port   : &str) -> Result<i32,String>
 
-``addr``
+``server``
     
-``accesstoken``
+``port``
     
 *Returns:* ``trmcode``
     ``trmcode : i32``
@@ -5517,6 +5517,21 @@ Task methods
     pub fn put_obj_sense ( &self,sense : i32 ) -> Result<(),String>
 
 ``sense``
+    
+
+
+.. index:: put_optserver_host
+
+.. _optimizer_task_putoptserverhost:
+
+``put_optserver_host()``
+------------------------
+
+.. code-block:: rust
+
+    pub fn put_optserver_host ( &self,host  : &str ) -> Result<(),String>
+
+``host``
     
 
 
