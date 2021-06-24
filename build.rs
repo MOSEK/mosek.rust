@@ -89,7 +89,7 @@ fn main() {
     let (pfname, libname) = get_platform_name();
     let libdir = find_mosek_installation(&pfname);
 
-    println!("cargo:rustc-link-search=[\"{}\"]",libdir);
+    println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);
 
 }
