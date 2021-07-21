@@ -2031,6 +2031,7 @@ pub const MSK_WRITE_XML_MODE_ROW : i32 = 0;
 pub const MSK_WRITE_XML_MODE_BEGIN : i32 = 0;
 pub const MSK_WRITE_XML_MODE_END   : i32 = 2;
 
+#[allow(unused_parens)]
 fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
     return
         ( if r != 0 { Err(format!("Error in call to {}: {}",r,funname)) }
@@ -2458,6 +2459,7 @@ extern fn callback_proxy(_       : * const c_void,
 
 impl Task
 {
+    #[allow(unused_parens)]
     fn handle_res(&self, r : i32, funname : &str) -> Result<(),String> {
         return (
             if 0 != r {
@@ -2502,7 +2504,7 @@ impl Task
 
     pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
         match self.streamcb[whichstream as usize] {
-            Some(ref f) => {
+            Some(ref _f) => {
                 callMSK!(MSK_unlinkfuncfromtaskstream,self.ptr, whichstream);
             }
             None => {}
