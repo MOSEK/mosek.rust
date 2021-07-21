@@ -3320,7 +3320,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_acc_afe_idx_list(& mut self,accidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
+    pub fn get_acc_afe_idx_list(&self,accidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getaccn(self.ptr,accidx_,& mut tmp_var_3__) };
@@ -3336,7 +3336,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_acc_b(& mut self,accidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
+    pub fn get_acc_b(&self,accidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getaccn(self.ptr,accidx_,& mut tmp_var_3__) };
@@ -3438,7 +3438,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_accs(& mut self,domidxlist_ : & mut [i64],afeidxlist_ : & mut [i64],b_ : & mut [f64]) -> Result<(),String>
+    pub fn get_accs(&self,domidxlist_ : & mut [i64],afeidxlist_ : & mut [i64],b_ : & mut [f64]) -> Result<(),String>
     {
       let mut tmp_var_2__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getnumacc(self.ptr,& mut tmp_var_2__) };
@@ -4346,7 +4346,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djc_afe_idx_list(& mut self,djcidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
+    pub fn get_djc_afe_idx_list(&self,djcidx_ : i64,afeidxlist_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumafe(self.ptr,djcidx_,& mut tmp_var_3__) };
@@ -4362,7 +4362,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djc_b(& mut self,djcidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
+    pub fn get_djc_b(&self,djcidx_ : i64,b_ : & mut [f64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumafe(self.ptr,djcidx_,& mut tmp_var_3__) };
@@ -4378,7 +4378,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djc_domain_idx_list(& mut self,djcidx_ : i64,domidxlist_ : & mut [i64]) -> Result<(),String>
+    pub fn get_djc_domain_idx_list(&self,djcidx_ : i64,domidxlist_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumdomain(self.ptr,djcidx_,& mut tmp_var_3__) };
@@ -4503,7 +4503,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djcs(& mut self,domidxlist_ : & mut [i64],afeidxlist_ : & mut [i64],b_ : & mut [f64],termsizelist_ : & mut [i64],numterms_ : & mut [i64]) -> Result<(),String>
+    pub fn get_djcs(&self,domidxlist_ : & mut [i64],afeidxlist_ : & mut [i64],b_ : & mut [f64],termsizelist_ : & mut [i64],numterms_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_2__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumdomaintot(self.ptr,& mut tmp_var_2__) };
@@ -4535,7 +4535,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_djc_term_size_list(& mut self,djcidx_ : i64,termsizelist_ : & mut [i64]) -> Result<(),String>
+    pub fn get_djc_term_size_list(&self,djcidx_ : i64,termsizelist_ : & mut [i64]) -> Result<(),String>
     {
       let mut tmp_var_3__ : i64 = 0 as i64;
       let tmp_var_1__ = unsafe { MSK_getdjcnumterm(self.ptr,djcidx_,& mut tmp_var_3__) };
@@ -4551,7 +4551,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_domain_n(& mut self,domidx_ : i64) -> Result<i64,String>
+    pub fn get_domain_n(&self,domidx_ : i64) -> Result<i64,String>
     {
       let mut _ref_n_ : i64 = 0 as i64;
       let call_res = unsafe { (MSK_getdomainn(self.ptr,domidx_ as i64,& mut _ref_n_)) };
@@ -4595,7 +4595,7 @@ impl Task
     #[allow(unused_mut)]
     #[allow(unused_parens)]
     #[allow(unused_variables)]
-    pub fn get_domain_type(& mut self,domidx_ : i64) -> Result<i32,String>
+    pub fn get_domain_type(&self,domidx_ : i64) -> Result<i32,String>
     {
       let mut _ref_domaintype_ : i32 = 0 as i32;
       let call_res = unsafe { (MSK_getdomaintype(self.ptr,domidx_ as i64,& mut _ref_domaintype_)) };
