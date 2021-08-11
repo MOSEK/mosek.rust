@@ -31,7 +31,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 */
 
-// Generated for MOSEK v9.3.0
+// Generated for MOSEK v9.3.1
 extern crate libc;
 use std::ffi::CString;
 use std::ffi::CStr;
@@ -2042,14 +2042,14 @@ impl Env
     pub fn gemv(&self,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : & [f64],x_ : & [f64],beta_ : f64,y_ : & mut [f64]) -> Result<(),String>
     {
       if a_.len() != ((n_ * m_) as usize) { return Result::Err("Argument 'a_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_3__ =
+      let tmp_var_3__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           n_
         }  else {
           m_
         };
       if x_.len() != ((tmp_var_3__) as usize) { return Result::Err("Argument 'x_' is too short in call to 'gemv'".to_string()) }
-      let tmp_var_9__ =
+      let tmp_var_9__ = 
         if (transa_ == MSK_TRANSPOSE_NO) {
           m_
         }  else {
@@ -2211,7 +2211,6 @@ impl Env
       callMSK!(MSK_unlinkfuncfromenvstream,self.ptr,whichstream_);
       return Result::Ok(())
     }
-
 }
 
 
