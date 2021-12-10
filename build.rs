@@ -1,17 +1,16 @@
 use std::env;
 use std::path::PathBuf;
+use std::fs::File;
+use std::str::FromStr;
+use std::io::prelude::*;
 
-
-const MSK_MAJOR_VER : i32 = 10;
-const MSK_MINOR_VER : i32 = 0;
-
-fn get_platform_name() -> (String,String) {
+fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     if cfg!(target_os = "windows") {
         if      cfg!(target_arch = "x86_64") {
-            ("win64x86".to_string(),  format!("mosek64_{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
+            ("win64x86".to_string(),  format!("mosek64_{}_{}",majorver,minorver))
         }
         else if cfg!(target_arch = "x86") {
-            ("win32x86".to_string(),  format!("mosek{}_{}",MSK_MAJOR_VER,MSK_MINOR_VER))
+            ("win32x86".to_string(),  format!("mosek{}_{}",majorver,minorver))
         }
         else {
             panic!("Unsupported architecture")
@@ -44,8 +43,8 @@ fn get_platform_name() -> (String,String) {
     }
 }
 
-fn find_mosek_installation(pfname : &String) -> String {
-    let bindirvar = format!("MOSEK_BINDIR_{}{}",MSK_MAJOR_VER,MSK_MINOR_VER);
+fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> String {
+    let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
 
     let mut bindir_b = PathBuf::new();
     match env::var_os(bindirvar.as_str()) {
@@ -69,7 +68,7 @@ fn find_mosek_installation(pfname : &String) -> String {
                 };
             bindir_b.push(inst_base);
             bindir_b.push("mosek");
-            bindir_b.push(format!("{}.{}",MSK_MAJOR_VER,MSK_MINOR_VER));
+            bindir_b.push(format!("{}.{}",majorver,minorver));
             bindir_b.push("tools");
             bindir_b.push("platform");
             bindir_b.push(pfname);
@@ -84,10 +83,29 @@ fn find_mosek_installation(pfname : &String) -> String {
     bindir_b.as_path().to_str().unwrap().to_string()
 }
 
+fn readversion(filename : &str) -> (i32,i32) {
+    let mut mosekverstr = String::new();
+    match File::open(filename) {
+        Err(_) => panic!("Failed to open version file '{}'",filename),
+        Ok(mut f) => { let _ = f.read_to_string(& mut mosekverstr).unwrap(); }
+    }
+    match mosekverstr.find('.') {
+        None => panic!("Invalid version file '{}'",filename),
+        Some(p) => {
+            let vmajor : i32 = FromStr::from_str(&mosekverstr[0..p]).unwrap();
+            let vminor : i32 = FromStr::from_str(&mosekverstr[p+1..mosekverstr.len()-1]).unwrap();
+
+            (vmajor,vminor)
+        }
+    }
+}
+
 fn main() {
     // 1. if MOSEK_BINDIR is set, use that
-    let (pfname, libname) = get_platform_name();
-    let libdir = find_mosek_installation(&pfname);
+    let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
+
+    let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
+    let libdir = find_mosek_installation(&pfname,mskvermajor,mskverminor);
 
     println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);

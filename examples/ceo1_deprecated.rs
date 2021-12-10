@@ -77,7 +77,7 @@ fn main() -> Result<(),String> {
     task.optimize()?;
     // Print a summary containing information
     // about the solution for debugging purposes
-    task.solution_summary(mosek::MSK_STREAM_MSG);
+    task.solution_summary(mosek::MSK_STREAM_MSG)?;
 
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;

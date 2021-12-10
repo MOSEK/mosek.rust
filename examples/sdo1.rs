@@ -17,14 +17,13 @@ const INF : f64 = 0.0;
 
 const NUMCON    : usize = 2;   /* Number of constraints.              */
 const NUMVAR    : usize = 3;   /* Number of conic quadratic variables */
-const NUMANZ    : usize = 3;   /* Number of non-zeros in A            */
-const NUMBARVAR : usize = 1;   /* Number of semidefinite variables    */
+//const NUMANZ    : usize = 3;   /* Number of non-zeros in A            */
+//const NUMBARVAR : usize = 1;   /* Number of semidefinite variables    */
 
 
 fn main() -> Result<(),String>
 {
-    let DIMBARVAR = vec![3];         /* Dimension of semidefinite cone */
-    let LENBARVAR = vec![3*(3+1)/2]; /* Number of scalar SD variables  */
+    let dimbarvar = vec![3];         /* Dimension of semidefinite cone */
 
     let bkc = vec![ mosek::MSK_BK_FX, mosek::MSK_BK_FX ];
     let blc = vec![ 1.0, 0.5 ];
@@ -69,7 +68,7 @@ fn main() -> Result<(),String>
     task.append_vars(NUMVAR as i32)?;
 
     /* Append 'NUMBARVAR' semidefinite variables. */
-    task.append_barvars(&DIMBARVAR[..])?;
+    task.append_barvars(&dimbarvar[..])?;
 
     /* Optionally add a constant term to the objective. */
     task.put_cfix(0.0)?;
@@ -86,7 +85,7 @@ fn main() -> Result<(),String>
     }
 
     /* Set the linear term barc_j in the objective.*/
-    let c_symmat_idx = task.append_sparse_sym_mat(DIMBARVAR[0],
+    let c_symmat_idx = task.append_sparse_sym_mat(dimbarvar[0],
                                                   & barc_i,
                                                   & barc_j,
                                                   & barc_v)?;
@@ -115,7 +114,7 @@ fn main() -> Result<(),String>
 
     /* Add the first row of barA */
     let a_symmat_idx1 =
-        task.append_sparse_sym_mat(DIMBARVAR[0],
+        task.append_sparse_sym_mat(dimbarvar[0],
                                    & bara_i[..3],
                                    & bara_j[..3],
                                    & bara_v[..3])?;
@@ -124,7 +123,7 @@ fn main() -> Result<(),String>
 
     /* Add the second row of barA */
     let a_symmat_idx2 =
-        task.append_sparse_sym_mat(DIMBARVAR[0],
+        task.append_sparse_sym_mat(dimbarvar[0],
                                    & bara_i[3..9],
                                    & bara_j[3..9],
                                    & bara_v[3..9])?;
@@ -154,7 +153,7 @@ fn main() -> Result<(),String>
             {
                 println!("x[{}]: {}",j,xx[j]);
             }
-            let n = DIMBARVAR[0] as usize;
+            let n = dimbarvar[0] as usize;
             for j in 0..n
             {
                 for i in j..n

@@ -95,7 +95,7 @@ fn main() -> Result<(),String>
     }
 
     /* Maximize objective function. */
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE);
+    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
 
       /* Run optimizer */
     let _trmcode = task.optimize()?;

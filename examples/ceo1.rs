@@ -35,7 +35,6 @@ fn main() -> Result<(),String> {
     let c   = vec![ 1.0, 1.0, 0.0 ];
     let a   = vec![ 1.0, 1.0, 1.0 ];
     let asub = vec![0, 1, 2];
-    let csub = vec![0, 1, 2];
     //let csub = new int[numvar];
     //double[] xx  = new double[numvar];
 
