@@ -505,7 +505,7 @@ extern {
     fn MSK_makeenv(env_ : & mut * const u8,dbgfile_ : * const libc::c_char) -> i32;
     fn MSK_maketask(env_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,task_ : & mut * const u8) -> i32;
     #[allow(dead_code)]
-    fn MSK_optimizebatch(env_ : * const u8,israce_ : i32,maxtime_ : f64,numthreads_ : i32,numtask_ : i64,task_ : ** const u8,trmcode_ : * mut i32,rcode_ : * mut i32) -> i32;
+    fn MSK_optimizebatch(env_ : * const u8,israce_ : i32,maxtime_ : f64,numthreads_ : i32,numtask_ : i64,task_ : * const * const u8,trmcode_ : * mut i32,rcode_ : * mut i32) -> i32;
     fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
     fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
@@ -2115,16 +2115,16 @@ impl Env
     } // linkfiletoenvstream
     #[allow(unused_parens)]
     pub fn make_empty_task(&mut self) -> Result<Task,String> {
-      let mut ptr_task : * const u8;
+      let mut ptr_task : * const u8 = std::ptr::null();
       self.handle_res(unsafe { MSK_makeemptytask(self.ptr,& mut ptr_task) },"make_empty_task")?;
-      let res_task = Task { ptr : ptr_task, streamcb : [None,None,None,None], valuecb : None }
+      let res_task = Task { ptr : ptr_task, streamcb : [None,None,None,None], valuecb : None };
       return Result::Ok(res_task);
     } // makeemptytask
     #[allow(unused_parens)]
     pub fn make_task(&mut self,maxnumcon_ : i32,maxnumvar_ : i32) -> Result<Task,String> {
-      let mut ptr_task : * const u8;
+      let mut ptr_task : * const u8 = std::ptr::null();
       self.handle_res(unsafe { MSK_maketask(self.ptr,maxnumcon_,maxnumvar_,& mut ptr_task) },"make_task")?;
-      let res_task = Task { ptr : ptr_task, streamcb : [None,None,None,None], valuecb : None }
+      let res_task = Task { ptr : ptr_task, streamcb : [None,None,None,None], valuecb : None };
       return Result::Ok(res_task);
     } // maketask
     #[allow(unused_parens)]
@@ -2603,9 +2603,9 @@ impl Task
     } // chgvarbound
     #[allow(unused_parens)]
     pub fn clone_task(&self) -> Result<Task,String> {
-      let mut ptr_clonedtask : * const u8;
+      let mut ptr_clonedtask : * const u8 = std::ptr::null();
       self.handle_res(unsafe { MSK_clonetask(self.ptr,& mut ptr_clonedtask) },"clone_task")?;
-      let res_clonedtask = Task { ptr : ptr_clonedtask, streamcb : [None,None,None,None], valuecb : None }
+      let res_clonedtask = Task { ptr : ptr_clonedtask, streamcb : [None,None,None,None], valuecb : None };
       return Result::Ok(res_clonedtask);
     } // clonetask
     #[allow(unused_parens)]
@@ -2705,9 +2705,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateaccnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_acc_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generateaccnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_acc_names")?;
       return Result::Ok(());
     } // generateaccnames
     #[allow(unused_parens)]
@@ -2720,9 +2720,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatebarvarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_barvar_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generatebarvarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_barvar_names")?;
       return Result::Ok(());
     } // generatebarvarnames
     #[allow(unused_parens)]
@@ -2735,9 +2735,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateconenames(self.ptr,num_,subk_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_cone_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generateconenames(self.ptr,num_,subk_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_cone_names")?;
       return Result::Ok(());
     } // generateconenames
     #[allow(unused_parens)]
@@ -2750,9 +2750,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateconnames(self.ptr,num_,subi_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_con_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generateconnames(self.ptr,num_,subi_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_con_names")?;
       return Result::Ok(());
     } // generateconnames
     #[allow(unused_parens)]
@@ -2765,9 +2765,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatedjcnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_djc_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generatedjcnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_djc_names")?;
       return Result::Ok(());
     } // generatedjcnames
     #[allow(unused_parens)]
@@ -2780,9 +2780,9 @@ impl Task
       }
       let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
       let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
-      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s).unwrap()).collect();
-      let cptr_names : Vec<* const u8> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatevarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cstr.as_ptr()) },"generate_var_names")?;
+      let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
+      let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
+      self.handle_res(unsafe { MSK_generatevarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_var_names")?;
       return Result::Ok(());
     } // generatevarnames
     #[allow(unused_parens)]
@@ -3679,9 +3679,9 @@ impl Task
     } // getdviolvar
     #[allow(unused_parens)]
     pub fn get_infeasible_sub_problem(&self,whichsol_ : i32) -> Result<Task,String> {
-      let mut ptr_inftask : * const u8;
+      let mut ptr_inftask : * const u8 = std::ptr::null();
       self.handle_res(unsafe { MSK_getinfeasiblesubproblem(self.ptr,whichsol_,& mut ptr_inftask) },"get_infeasible_sub_problem")?;
-      let res_inftask = Task { ptr : ptr_inftask, streamcb : [None,None,None,None], valuecb : None }
+      let res_inftask = Task { ptr : ptr_inftask, streamcb : [None,None,None,None], valuecb : None };
       return Result::Ok(res_inftask);
     } // getinfeasiblesubproblem
     #[allow(unused_parens)]
