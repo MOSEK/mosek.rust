@@ -86,7 +86,7 @@ fn portfolio(n : i32,
     let trm = task.optimize()?;
 
     /* Display the solution summary for quick inspection of results. */
-    task.solution_summary(mosek::MSK_STREAM_MSG);
+    task.solution_summary(mosek::MSK_STREAM_MSG)?;
 
     /* Read the x variables one by one and compute expected return. */
     /* Can also be obtained as value of the objective. */
@@ -119,7 +119,7 @@ fn main() -> Result<(),String> {
     let x0 = vec![0.0, 0.0, 0.0];
     let w = 1.0;
 
-    portfolio(n,gamma,mu.as_slice(),GT.as_slice(),x0.as_slice(),w)?;
+    let _ = portfolio(n,gamma,mu.as_slice(),GT.as_slice(),x0.as_slice(),w)?;
 
     return Ok(());
 }

@@ -8,7 +8,7 @@
 // Maximize mu'*x - alpha * s
 // Subject to
 //     budget : sum(x)  = 1
-//     GT     : (0.5,s,G'*x) in Q_r^n+2
+//     GT     : (0.5,s,G'*x) in Q_r^{n+2}
 //              == (s >= |G'x|
 //     x >= 0
 
