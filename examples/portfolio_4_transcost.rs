@@ -72,6 +72,7 @@ fn portfolio(n : i32,
     task.put_con_bound(0i32,mosek::MSK_BK_FX,w0,w0)?;
 
     // objective
+    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
     for (i,mui) in (0..n).zip(mu.iter()) {
         task.put_c_j(x_base+i, *mui)?;
     }
@@ -149,7 +150,6 @@ fn portfolio(n : i32,
         }
     }
 
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
 
     let _ = task.optimize()?;
 
