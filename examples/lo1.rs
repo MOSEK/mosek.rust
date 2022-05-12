@@ -51,12 +51,10 @@ fn main() -> Result<(),String>
         None => return Err("Failed to create task".to_string()),
         };
 
-    //task.put_stream_callback(mosek::MSK_STREAM_LOG, stream_func);
+    /* Directs the log task stream to the 'printstr' function. */
     task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
     task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
-    /* Directs the log task stream to the 'printstr' function. */
-    //task.linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
