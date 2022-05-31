@@ -44,8 +44,8 @@ fn main() -> Result<(),String> {
                              vec![-3.8, 1.0, 0.0].as_slice())?;
 
     // Objective
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE);
-    task.put_c_j(0, 1.0);
+    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
+    task.put_c_j(0, 1.0)?;
 
     // Conic part of the problem
     task.append_afes(6)?;
@@ -64,10 +64,10 @@ fn main() -> Result<(),String> {
     }
     // Optimize the task
     let _trm = task.optimize()?;
-    task.solution_summary(mosek::MSK_STREAM_MSG);
+    task.solution_summary(mosek::MSK_STREAM_MSG)?;
 
     let mut xx = vec![0.0; 2];
-    task.get_xx_slice(mosek::MSK_SOL_ITG, 1, 3, xx.as_mut_slice());
+    task.get_xx_slice(mosek::MSK_SOL_ITG, 1, 3, xx.as_mut_slice())?;
     println!("x = {}  y = {}",xx[0],xx[1]);
     Ok(())
 }
