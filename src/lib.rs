@@ -31,7 +31,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 */
 
-// Generted for MOSEK v[10, 0, 8]
+// Generted for MOSEK v[10, 0, 15]
 
 extern crate libc;
 use std::ffi::CString;
@@ -85,20 +85,16 @@ extern {
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
     fn MSK_appendsvecpsdconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
-    fn MSK_asyncgetlog(task_ : * const u8,server_ : * const libc::c_char,port_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    fn MSK_asyncgetlog(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
     fn MSK_asyncgetresult(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
     fn MSK_asyncoptimize(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token : * mut u8) -> i32;
     fn MSK_asyncpoll(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
     fn MSK_asyncstop(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
-    fn MSK_bktostr(task_ : * const u8,bk_ : i32,str : * mut u8) -> i32;
-    fn MSK_callbackcodetostr(code_ : i32,callbackcodestr : * mut u8) -> i32;
-    fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
     fn MSK_chgconbound(task_ : * const u8,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
     fn MSK_chgvarbound(task_ : * const u8,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
     fn MSK_clonetask(task_ : * const u8,clonedtask_ : & mut * const u8) -> i32;
     fn MSK_commitchanges(task_ : * const u8) -> i32;
-    fn MSK_conetypetostr(task_ : * const u8,ct_ : i32,str : * mut u8) -> i32;
     fn MSK_deletesolution(task_ : * const u8,whichsol_ : i32) -> i32;
     #[allow(dead_code)]
     fn MSK_deletetask(task_ : & mut * const u8) -> i32;
@@ -121,8 +117,14 @@ extern {
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
     fn MSK_getaccafeidxlist(task_ : * const u8,accidx_ : i64,afeidxlist_ : * mut i64) -> i32;
     fn MSK_getaccb(task_ : * const u8,accidx_ : i64,b_ : * mut f64) -> i32;
+    fn MSK_getaccbarfblocktriplet(task_ : * const u8,maxnumtrip_ : i64,numtrip_ : & mut i64,acc_afe_ : * mut i64,bar_var_ : * mut i32,blk_row_ : * mut i32,blk_col_ : * mut i32,blk_val_ : * mut f64) -> i32;
+    fn MSK_getaccbarfnumblocktriplets(task_ : * const u8,numtrip_ : & mut i64) -> i32;
     fn MSK_getaccdomain(task_ : * const u8,accidx_ : i64,domidx_ : & mut i64) -> i32;
     fn MSK_getaccdoty(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    fn MSK_getaccdotys(task_ : * const u8,whichsol_ : i32,doty_ : * mut f64) -> i32;
+    fn MSK_getaccfnumnz(task_ : * const u8,accfnnz_ : & mut i64) -> i32;
+    fn MSK_getaccftrip(task_ : * const u8,frow_ : * mut i64,fcol_ : * mut i32,fval_ : * mut f64) -> i32;
+    fn MSK_getaccgvector(task_ : * const u8,g_ : * mut f64) -> i32;
     fn MSK_getaccn(task_ : * const u8,accidx_ : i64,n_ : & mut i64) -> i32;
     fn MSK_getaccname(task_ : * const u8,accidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
     fn MSK_getaccnamelen(task_ : * const u8,accidx_ : i64,len_ : & mut i32) -> i32;
@@ -201,7 +203,7 @@ extern {
     fn MSK_getdomainn(task_ : * const u8,domidx_ : i64,n_ : & mut i64) -> i32;
     fn MSK_getdomainname(task_ : * const u8,domidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
     fn MSK_getdomainnamelen(task_ : * const u8,domidx_ : i64,len_ : & mut i32) -> i32;
-    fn MSK_getdomaintype(task_ : * const u8,domidx_ : i64,domaintype_ : &mut i32) -> i32;
+    fn MSK_getdomaintype(task_ : * const u8,domidx_ : i64,domtype_ : &mut i32) -> i32;
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
@@ -316,6 +318,7 @@ extern {
     fn MSK_getxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * mut f64) -> i32;
     fn MSK_gety(task_ : * const u8,whichsol_ : i32,y_ : * mut f64) -> i32;
     fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * mut f64) -> i32;
+    fn MSK_infeasibilityreport(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
     fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut i32) -> i32;
     fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i64,aptre_ : * const i64,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
@@ -329,8 +332,6 @@ extern {
     fn MSK_primalrepair(task_ : * const u8,wlc_ : * const f64,wuc_ : * const f64,wlx_ : * const f64,wux_ : * const f64) -> i32;
     fn MSK_primalsensitivity(task_ : * const u8,numi_ : i32,subi_ : * const i32,marki_ : * const i32,numj_ : i32,subj_ : * const i32,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
     fn MSK_printparam(task_ : * const u8) -> i32;
-    fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str : * mut u8) -> i32;
-    fn MSK_prostatostr(task_ : * const u8,problemsta_ : i32,str : * mut u8) -> i32;
     fn MSK_putacc(task_ : * const u8,accidx_ : i64,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
     fn MSK_putaccb(task_ : * const u8,accidx_ : i64,lengthb_ : i64,b_ : * const f64) -> i32;
     fn MSK_putaccbj(task_ : * const u8,accidx_ : i64,j_ : i64,bj_ : f64) -> i32;
@@ -441,6 +442,7 @@ extern {
     fn MSK_putxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * const f64) -> i32;
     fn MSK_puty(task_ : * const u8,whichsol_ : i32,y_ : * const f64) -> i32;
     fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * const f64) -> i32;
+    fn MSK_readbsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
     fn MSK_readdataautoformat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readdataformat(task_ : * const u8,filename_ : * const libc::c_char,format_ : i32,compress_ : i32) -> i32;
     fn MSK_readjsonstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
@@ -449,6 +451,7 @@ extern {
     fn MSK_readparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readptfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
     fn MSK_readsolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    fn MSK_readsolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_readsummary(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_readtask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_removebarvars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
@@ -458,29 +461,27 @@ extern {
     fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> i32;
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_setdefaults(task_ : * const u8) -> i32;
-    fn MSK_sktostr(task_ : * const u8,sk_ : i32,str : * mut u8) -> i32;
-    fn MSK_solstatostr(task_ : * const u8,solutionsta_ : i32,str : * mut u8) -> i32;
     fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut i32) -> i32;
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
-    fn MSK_solvewithbasis(task_ : * const u8,transp_ : i32,numnz_ : & mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
-    fn MSK_strduptask(task_ : * const u8,str_ : * const libc::c_char) -> i32;
+    fn MSK_solvewithbasis(task_ : * const u8,transp_ : i32,numnz_ : i32,sub_ : * mut i32,val_ : * mut f64,numnzout_ : & mut i32) -> i32;
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : &mut i32) -> i32;
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : &mut i32) -> i32;
     fn MSK_toconic(task_ : * const u8) -> i32;
     fn MSK_unlinkfuncfromtaskstream(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
     fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : &mut i32,param_ : & mut i32) -> i32;
+    fn MSK_writebsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writejsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writeparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writesolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    fn MSK_writesolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writestat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
     fn MSK_writetask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
-    fn MSK_writetasksolverresult_file(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    fn MSK_writetasksolverresult_file(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     fn MSK_checkinall(env_ : * const u8) -> i32;
     fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
-    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
     fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
     fn MSK_checkversion(env_ : * const u8,major_ : i32,minor_ : i32,revision_ : i32) -> i32;
     #[allow(dead_code)]
@@ -490,6 +491,7 @@ extern {
     fn MSK_dot(env_ : * const u8,n_ : i32,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
     fn MSK_echointro(env_ : * const u8,longver_ : i32) -> i32;
     fn MSK_enablegarcolenv(env_ : * const u8) -> i32;
+    fn MSK_expirylicenses(env_ : * const u8,expiry_ : & mut i64) -> i32;
     #[allow(dead_code)]
     fn MSK_freeenv(env_ : * const u8,buffer_ : * mut u8) -> i32;
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
@@ -503,6 +505,8 @@ extern {
     fn MSK_makeemptytask(env_ : * const u8,task_ : & mut * const u8) -> i32;
     #[allow(dead_code)]
     fn MSK_makeenv(env_ : & mut * const u8,dbgfile_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
+    fn MSK_makeenvdebug(env_ : & mut * const u8,maxnumalloc_ : i64,dbgfile_ : * const libc::c_char) -> i32;
     fn MSK_maketask(env_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,task_ : & mut * const u8) -> i32;
     #[allow(dead_code)]
     fn MSK_optimizebatch(env_ : * const u8,israce_ : i32,maxtime_ : f64,numthreads_ : i32,numtask_ : i64,task_ : * const * const u8,trmcode_ : * mut i32,rcode_ : * mut i32) -> i32;
@@ -511,12 +515,12 @@ extern {
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
     fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
+    fn MSK_resetexpirylicenses(env_ : * const u8) -> i32;
     fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const i64,lensubnval_ : i64,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
     fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * const f64,w_ : * mut f64) -> i32;
     fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64,w_ : * mut f64) -> i32;
     fn MSK_symnamtovalue(name_ : * const libc::c_char,value : * mut u8) -> i32;
     fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
-    fn MSK_unlinkfuncfromenvstream(env_ : * const u8,whichstream_ : i32) -> i32;
 
 }
 
@@ -732,6 +736,12 @@ pub const MSK_DATA_FORMAT_PTF : i32 = 6;
 pub const MSK_DATA_FORMAT_CB : i32 = 7;
 pub const MSK_DATA_FORMAT_JSON_TASK : i32 = 8;
 
+// solformat
+pub const MSK_SOL_FORMAT_EXTENSION : i32 = 0;
+pub const MSK_SOL_FORMAT_B : i32 = 1;
+pub const MSK_SOL_FORMAT_TASK : i32 = 2;
+pub const MSK_SOL_FORMAT_JSON_TASK : i32 = 3;
+
 // dinfitem
 pub const MSK_DINF_BI_CLEAN_DUAL_TIME : i32 = 0;
 pub const MSK_DINF_BI_CLEAN_PRIMAL_TIME : i32 = 1;
@@ -753,82 +763,86 @@ pub const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 16;
 pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 17;
 pub const MSK_DINF_MIO_GMI_SEPARATION_TIME : i32 = 18;
 pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME : i32 = 19;
-pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 20;
-pub const MSK_DINF_MIO_LIPRO_SEPARATION_TIME : i32 = 21;
-pub const MSK_DINF_MIO_OBJ_ABS_GAP : i32 = 22;
-pub const MSK_DINF_MIO_OBJ_BOUND : i32 = 23;
-pub const MSK_DINF_MIO_OBJ_INT : i32 = 24;
-pub const MSK_DINF_MIO_OBJ_REL_GAP : i32 = 25;
-pub const MSK_DINF_MIO_PROBING_TIME : i32 = 26;
-pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME : i32 = 27;
-pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME : i32 = 28;
-pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME : i32 = 29;
-pub const MSK_DINF_MIO_ROOT_TIME : i32 = 30;
-pub const MSK_DINF_MIO_TIME : i32 = 31;
-pub const MSK_DINF_MIO_USER_OBJ_CUT : i32 = 32;
-pub const MSK_DINF_OPTIMIZER_TIME : i32 = 33;
-pub const MSK_DINF_PRESOLVE_ELI_TIME : i32 = 34;
-pub const MSK_DINF_PRESOLVE_LINDEP_TIME : i32 = 35;
-pub const MSK_DINF_PRESOLVE_TIME : i32 = 36;
-pub const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 37;
-pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ : i32 = 38;
-pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 39;
-pub const MSK_DINF_QCQO_REFORMULATE_TIME : i32 = 40;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 41;
-pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 42;
-pub const MSK_DINF_RD_TIME : i32 = 43;
-pub const MSK_DINF_SIM_DUAL_TIME : i32 = 44;
-pub const MSK_DINF_SIM_FEAS : i32 = 45;
-pub const MSK_DINF_SIM_OBJ : i32 = 46;
-pub const MSK_DINF_SIM_PRIMAL_TIME : i32 = 47;
-pub const MSK_DINF_SIM_TIME : i32 = 48;
-pub const MSK_DINF_SOL_BAS_DUAL_OBJ : i32 = 49;
-pub const MSK_DINF_SOL_BAS_DVIOLCON : i32 = 50;
-pub const MSK_DINF_SOL_BAS_DVIOLVAR : i32 = 51;
-pub const MSK_DINF_SOL_BAS_NRM_BARX : i32 = 52;
-pub const MSK_DINF_SOL_BAS_NRM_SLC : i32 = 53;
-pub const MSK_DINF_SOL_BAS_NRM_SLX : i32 = 54;
-pub const MSK_DINF_SOL_BAS_NRM_SUC : i32 = 55;
-pub const MSK_DINF_SOL_BAS_NRM_SUX : i32 = 56;
-pub const MSK_DINF_SOL_BAS_NRM_XC : i32 = 57;
-pub const MSK_DINF_SOL_BAS_NRM_XX : i32 = 58;
-pub const MSK_DINF_SOL_BAS_NRM_Y : i32 = 59;
-pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ : i32 = 60;
-pub const MSK_DINF_SOL_BAS_PVIOLCON : i32 = 61;
-pub const MSK_DINF_SOL_BAS_PVIOLVAR : i32 = 62;
-pub const MSK_DINF_SOL_ITG_NRM_BARX : i32 = 63;
-pub const MSK_DINF_SOL_ITG_NRM_XC : i32 = 64;
-pub const MSK_DINF_SOL_ITG_NRM_XX : i32 = 65;
-pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ : i32 = 66;
-pub const MSK_DINF_SOL_ITG_PVIOLBARVAR : i32 = 67;
-pub const MSK_DINF_SOL_ITG_PVIOLCON : i32 = 68;
-pub const MSK_DINF_SOL_ITG_PVIOLCONES : i32 = 69;
-pub const MSK_DINF_SOL_ITG_PVIOLITG : i32 = 70;
-pub const MSK_DINF_SOL_ITG_PVIOLVAR : i32 = 71;
-pub const MSK_DINF_SOL_ITR_DUAL_OBJ : i32 = 72;
-pub const MSK_DINF_SOL_ITR_DVIOLACC : i32 = 73;
-pub const MSK_DINF_SOL_ITR_DVIOLBARVAR : i32 = 74;
-pub const MSK_DINF_SOL_ITR_DVIOLCON : i32 = 75;
-pub const MSK_DINF_SOL_ITR_DVIOLCONES : i32 = 76;
-pub const MSK_DINF_SOL_ITR_DVIOLVAR : i32 = 77;
-pub const MSK_DINF_SOL_ITR_NRM_BARS : i32 = 78;
-pub const MSK_DINF_SOL_ITR_NRM_BARX : i32 = 79;
-pub const MSK_DINF_SOL_ITR_NRM_SLC : i32 = 80;
-pub const MSK_DINF_SOL_ITR_NRM_SLX : i32 = 81;
-pub const MSK_DINF_SOL_ITR_NRM_SNX : i32 = 82;
-pub const MSK_DINF_SOL_ITR_NRM_SUC : i32 = 83;
-pub const MSK_DINF_SOL_ITR_NRM_SUX : i32 = 84;
-pub const MSK_DINF_SOL_ITR_NRM_XC : i32 = 85;
-pub const MSK_DINF_SOL_ITR_NRM_XX : i32 = 86;
-pub const MSK_DINF_SOL_ITR_NRM_Y : i32 = 87;
-pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ : i32 = 88;
-pub const MSK_DINF_SOL_ITR_PVIOLACC : i32 = 89;
-pub const MSK_DINF_SOL_ITR_PVIOLBARVAR : i32 = 90;
-pub const MSK_DINF_SOL_ITR_PVIOLCON : i32 = 91;
-pub const MSK_DINF_SOL_ITR_PVIOLCONES : i32 = 92;
-pub const MSK_DINF_SOL_ITR_PVIOLVAR : i32 = 93;
-pub const MSK_DINF_TO_CONIC_TIME : i32 = 94;
-pub const MSK_DINF_END : i32 = 94;
+pub const MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 20;
+pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 21;
+pub const MSK_DINF_MIO_LIPRO_SEPARATION_TIME : i32 = 22;
+pub const MSK_DINF_MIO_OBJ_ABS_GAP : i32 = 23;
+pub const MSK_DINF_MIO_OBJ_BOUND : i32 = 24;
+pub const MSK_DINF_MIO_OBJ_INT : i32 = 25;
+pub const MSK_DINF_MIO_OBJ_REL_GAP : i32 = 26;
+pub const MSK_DINF_MIO_PROBING_TIME : i32 = 27;
+pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME : i32 = 28;
+pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME : i32 = 29;
+pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME : i32 = 30;
+pub const MSK_DINF_MIO_ROOT_TIME : i32 = 31;
+pub const MSK_DINF_MIO_TIME : i32 = 32;
+pub const MSK_DINF_MIO_USER_OBJ_CUT : i32 = 33;
+pub const MSK_DINF_OPTIMIZER_TIME : i32 = 34;
+pub const MSK_DINF_PRESOLVE_ELI_TIME : i32 = 35;
+pub const MSK_DINF_PRESOLVE_LINDEP_TIME : i32 = 36;
+pub const MSK_DINF_PRESOLVE_TIME : i32 = 37;
+pub const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 38;
+pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ : i32 = 39;
+pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 40;
+pub const MSK_DINF_QCQO_REFORMULATE_TIME : i32 = 41;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 42;
+pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 43;
+pub const MSK_DINF_RD_TIME : i32 = 44;
+pub const MSK_DINF_REMOTE_TIME : i32 = 45;
+pub const MSK_DINF_SIM_DUAL_TIME : i32 = 46;
+pub const MSK_DINF_SIM_FEAS : i32 = 47;
+pub const MSK_DINF_SIM_OBJ : i32 = 48;
+pub const MSK_DINF_SIM_PRIMAL_TIME : i32 = 49;
+pub const MSK_DINF_SIM_TIME : i32 = 50;
+pub const MSK_DINF_SOL_BAS_DUAL_OBJ : i32 = 51;
+pub const MSK_DINF_SOL_BAS_DVIOLCON : i32 = 52;
+pub const MSK_DINF_SOL_BAS_DVIOLVAR : i32 = 53;
+pub const MSK_DINF_SOL_BAS_NRM_BARX : i32 = 54;
+pub const MSK_DINF_SOL_BAS_NRM_SLC : i32 = 55;
+pub const MSK_DINF_SOL_BAS_NRM_SLX : i32 = 56;
+pub const MSK_DINF_SOL_BAS_NRM_SUC : i32 = 57;
+pub const MSK_DINF_SOL_BAS_NRM_SUX : i32 = 58;
+pub const MSK_DINF_SOL_BAS_NRM_XC : i32 = 59;
+pub const MSK_DINF_SOL_BAS_NRM_XX : i32 = 60;
+pub const MSK_DINF_SOL_BAS_NRM_Y : i32 = 61;
+pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ : i32 = 62;
+pub const MSK_DINF_SOL_BAS_PVIOLCON : i32 = 63;
+pub const MSK_DINF_SOL_BAS_PVIOLVAR : i32 = 64;
+pub const MSK_DINF_SOL_ITG_NRM_BARX : i32 = 65;
+pub const MSK_DINF_SOL_ITG_NRM_XC : i32 = 66;
+pub const MSK_DINF_SOL_ITG_NRM_XX : i32 = 67;
+pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ : i32 = 68;
+pub const MSK_DINF_SOL_ITG_PVIOLACC : i32 = 69;
+pub const MSK_DINF_SOL_ITG_PVIOLBARVAR : i32 = 70;
+pub const MSK_DINF_SOL_ITG_PVIOLCON : i32 = 71;
+pub const MSK_DINF_SOL_ITG_PVIOLCONES : i32 = 72;
+pub const MSK_DINF_SOL_ITG_PVIOLDJC : i32 = 73;
+pub const MSK_DINF_SOL_ITG_PVIOLITG : i32 = 74;
+pub const MSK_DINF_SOL_ITG_PVIOLVAR : i32 = 75;
+pub const MSK_DINF_SOL_ITR_DUAL_OBJ : i32 = 76;
+pub const MSK_DINF_SOL_ITR_DVIOLACC : i32 = 77;
+pub const MSK_DINF_SOL_ITR_DVIOLBARVAR : i32 = 78;
+pub const MSK_DINF_SOL_ITR_DVIOLCON : i32 = 79;
+pub const MSK_DINF_SOL_ITR_DVIOLCONES : i32 = 80;
+pub const MSK_DINF_SOL_ITR_DVIOLVAR : i32 = 81;
+pub const MSK_DINF_SOL_ITR_NRM_BARS : i32 = 82;
+pub const MSK_DINF_SOL_ITR_NRM_BARX : i32 = 83;
+pub const MSK_DINF_SOL_ITR_NRM_SLC : i32 = 84;
+pub const MSK_DINF_SOL_ITR_NRM_SLX : i32 = 85;
+pub const MSK_DINF_SOL_ITR_NRM_SNX : i32 = 86;
+pub const MSK_DINF_SOL_ITR_NRM_SUC : i32 = 87;
+pub const MSK_DINF_SOL_ITR_NRM_SUX : i32 = 88;
+pub const MSK_DINF_SOL_ITR_NRM_XC : i32 = 89;
+pub const MSK_DINF_SOL_ITR_NRM_XX : i32 = 90;
+pub const MSK_DINF_SOL_ITR_NRM_Y : i32 = 91;
+pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ : i32 = 92;
+pub const MSK_DINF_SOL_ITR_PVIOLACC : i32 = 93;
+pub const MSK_DINF_SOL_ITR_PVIOLBARVAR : i32 = 94;
+pub const MSK_DINF_SOL_ITR_PVIOLCON : i32 = 95;
+pub const MSK_DINF_SOL_ITR_PVIOLCONES : i32 = 96;
+pub const MSK_DINF_SOL_ITR_PVIOLVAR : i32 = 97;
+pub const MSK_DINF_TO_CONIC_TIME : i32 = 98;
+pub const MSK_DINF_END : i32 = 98;
 
 // feature
 pub const MSK_FEATURE_PTS : i32 = 0;
@@ -877,26 +891,25 @@ pub const MSK_DPAR_LOWER_OBJ_CUT : i32 = 38;
 pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH : i32 = 39;
 pub const MSK_DPAR_MIO_DJC_MAX_BIGM : i32 = 40;
 pub const MSK_DPAR_MIO_MAX_TIME : i32 = 41;
-pub const MSK_DPAR_MIO_PRESOLVE_AGGREGATOR_TOL_PIVOT : i32 = 42;
-pub const MSK_DPAR_MIO_REL_GAP_CONST : i32 = 43;
-pub const MSK_DPAR_MIO_TOL_ABS_GAP : i32 = 44;
-pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT : i32 = 45;
-pub const MSK_DPAR_MIO_TOL_FEAS : i32 = 46;
-pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 47;
-pub const MSK_DPAR_MIO_TOL_REL_GAP : i32 = 48;
-pub const MSK_DPAR_OPTIMIZER_MAX_TIME : i32 = 49;
-pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP : i32 = 50;
-pub const MSK_DPAR_PRESOLVE_TOL_AIJ : i32 = 51;
-pub const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 52;
-pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP : i32 = 53;
-pub const MSK_DPAR_PRESOLVE_TOL_S : i32 = 54;
-pub const MSK_DPAR_PRESOLVE_TOL_X : i32 = 55;
-pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL : i32 = 56;
-pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX : i32 = 57;
-pub const MSK_DPAR_SIM_LU_TOL_REL_PIV : i32 = 58;
-pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV : i32 = 59;
-pub const MSK_DPAR_UPPER_OBJ_CUT : i32 = 60;
-pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH : i32 = 61;
+pub const MSK_DPAR_MIO_REL_GAP_CONST : i32 = 42;
+pub const MSK_DPAR_MIO_TOL_ABS_GAP : i32 = 43;
+pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT : i32 = 44;
+pub const MSK_DPAR_MIO_TOL_FEAS : i32 = 45;
+pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 46;
+pub const MSK_DPAR_MIO_TOL_REL_GAP : i32 = 47;
+pub const MSK_DPAR_OPTIMIZER_MAX_TIME : i32 = 48;
+pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP : i32 = 49;
+pub const MSK_DPAR_PRESOLVE_TOL_AIJ : i32 = 50;
+pub const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 51;
+pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP : i32 = 52;
+pub const MSK_DPAR_PRESOLVE_TOL_S : i32 = 53;
+pub const MSK_DPAR_PRESOLVE_TOL_X : i32 = 54;
+pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL : i32 = 55;
+pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX : i32 = 56;
+pub const MSK_DPAR_SIM_LU_TOL_REL_PIV : i32 = 57;
+pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV : i32 = 58;
+pub const MSK_DPAR_UPPER_OBJ_CUT : i32 = 59;
+pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH : i32 = 60;
 
 // liinfitem
 pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER : i32 = 0;
@@ -942,90 +955,91 @@ pub const MSK_IINF_INTPNT_SOLVE_DUAL : i32 = 18;
 pub const MSK_IINF_MIO_ABSGAP_SATISFIED : i32 = 19;
 pub const MSK_IINF_MIO_CLIQUE_TABLE_SIZE : i32 = 20;
 pub const MSK_IINF_MIO_CONSTRUCT_SOLUTION : i32 = 21;
-pub const MSK_IINF_MIO_NODE_DEPTH : i32 = 22;
-pub const MSK_IINF_MIO_NUM_ACTIVE_NODES : i32 = 23;
-pub const MSK_IINF_MIO_NUM_BRANCH : i32 = 24;
-pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS : i32 = 25;
-pub const MSK_IINF_MIO_NUM_CMIR_CUTS : i32 = 26;
-pub const MSK_IINF_MIO_NUM_GOMORY_CUTS : i32 = 27;
-pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS : i32 = 28;
-pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS : i32 = 29;
-pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 30;
-pub const MSK_IINF_MIO_NUM_LIPRO_CUTS : i32 = 31;
-pub const MSK_IINF_MIO_NUM_RELAX : i32 = 32;
-pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE : i32 = 33;
-pub const MSK_IINF_MIO_NUMBIN : i32 = 34;
-pub const MSK_IINF_MIO_NUMBINCONEVAR : i32 = 35;
-pub const MSK_IINF_MIO_NUMCON : i32 = 36;
-pub const MSK_IINF_MIO_NUMCONE : i32 = 37;
-pub const MSK_IINF_MIO_NUMCONEVAR : i32 = 38;
-pub const MSK_IINF_MIO_NUMCONT : i32 = 39;
-pub const MSK_IINF_MIO_NUMCONTCONEVAR : i32 = 40;
-pub const MSK_IINF_MIO_NUMDEXPCONES : i32 = 41;
-pub const MSK_IINF_MIO_NUMDJC : i32 = 42;
-pub const MSK_IINF_MIO_NUMDPOWCONES : i32 = 43;
-pub const MSK_IINF_MIO_NUMINT : i32 = 44;
-pub const MSK_IINF_MIO_NUMINTCONEVAR : i32 = 45;
-pub const MSK_IINF_MIO_NUMPEXPCONES : i32 = 46;
-pub const MSK_IINF_MIO_NUMPPOWCONES : i32 = 47;
-pub const MSK_IINF_MIO_NUMQCONES : i32 = 48;
-pub const MSK_IINF_MIO_NUMRQCONES : i32 = 49;
-pub const MSK_IINF_MIO_NUMVAR : i32 = 50;
-pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED : i32 = 51;
-pub const MSK_IINF_MIO_PRESOLVED_NUMBIN : i32 = 52;
-pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR : i32 = 53;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCON : i32 = 54;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONE : i32 = 55;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR : i32 = 56;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONT : i32 = 57;
-pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 58;
-pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES : i32 = 59;
-pub const MSK_IINF_MIO_PRESOLVED_NUMDJC : i32 = 60;
-pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES : i32 = 61;
-pub const MSK_IINF_MIO_PRESOLVED_NUMINT : i32 = 62;
-pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR : i32 = 63;
-pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES : i32 = 64;
-pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES : i32 = 65;
-pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES : i32 = 66;
-pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES : i32 = 67;
-pub const MSK_IINF_MIO_PRESOLVED_NUMVAR : i32 = 68;
-pub const MSK_IINF_MIO_RELGAP_SATISFIED : i32 = 69;
-pub const MSK_IINF_MIO_TOTAL_NUM_CUTS : i32 = 70;
-pub const MSK_IINF_MIO_USER_OBJ_CUT : i32 = 71;
-pub const MSK_IINF_OPT_NUMCON : i32 = 72;
-pub const MSK_IINF_OPT_NUMVAR : i32 = 73;
-pub const MSK_IINF_OPTIMIZE_RESPONSE : i32 = 74;
-pub const MSK_IINF_PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 75;
-pub const MSK_IINF_PURIFY_DUAL_SUCCESS : i32 = 76;
-pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS : i32 = 77;
-pub const MSK_IINF_RD_NUMBARVAR : i32 = 78;
-pub const MSK_IINF_RD_NUMCON : i32 = 79;
-pub const MSK_IINF_RD_NUMCONE : i32 = 80;
-pub const MSK_IINF_RD_NUMINTVAR : i32 = 81;
-pub const MSK_IINF_RD_NUMQ : i32 = 82;
-pub const MSK_IINF_RD_NUMVAR : i32 = 83;
-pub const MSK_IINF_RD_PROTYPE : i32 = 84;
-pub const MSK_IINF_SIM_DUAL_DEG_ITER : i32 = 85;
-pub const MSK_IINF_SIM_DUAL_HOTSTART : i32 = 86;
-pub const MSK_IINF_SIM_DUAL_HOTSTART_LU : i32 = 87;
-pub const MSK_IINF_SIM_DUAL_INF_ITER : i32 = 88;
-pub const MSK_IINF_SIM_DUAL_ITER : i32 = 89;
-pub const MSK_IINF_SIM_NUMCON : i32 = 90;
-pub const MSK_IINF_SIM_NUMVAR : i32 = 91;
-pub const MSK_IINF_SIM_PRIMAL_DEG_ITER : i32 = 92;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART : i32 = 93;
-pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU : i32 = 94;
-pub const MSK_IINF_SIM_PRIMAL_INF_ITER : i32 = 95;
-pub const MSK_IINF_SIM_PRIMAL_ITER : i32 = 96;
-pub const MSK_IINF_SIM_SOLVE_DUAL : i32 = 97;
-pub const MSK_IINF_SOL_BAS_PROSTA : i32 = 98;
-pub const MSK_IINF_SOL_BAS_SOLSTA : i32 = 99;
-pub const MSK_IINF_SOL_ITG_PROSTA : i32 = 100;
-pub const MSK_IINF_SOL_ITG_SOLSTA : i32 = 101;
-pub const MSK_IINF_SOL_ITR_PROSTA : i32 = 102;
-pub const MSK_IINF_SOL_ITR_SOLSTA : i32 = 103;
-pub const MSK_IINF_STO_NUM_A_REALLOC : i32 = 104;
-pub const MSK_IINF_END : i32 = 104;
+pub const MSK_IINF_MIO_INITIAL_FEASIBLE_SOLUTION : i32 = 22;
+pub const MSK_IINF_MIO_NODE_DEPTH : i32 = 23;
+pub const MSK_IINF_MIO_NUM_ACTIVE_NODES : i32 = 24;
+pub const MSK_IINF_MIO_NUM_BRANCH : i32 = 25;
+pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS : i32 = 26;
+pub const MSK_IINF_MIO_NUM_CMIR_CUTS : i32 = 27;
+pub const MSK_IINF_MIO_NUM_GOMORY_CUTS : i32 = 28;
+pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS : i32 = 29;
+pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS : i32 = 30;
+pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 31;
+pub const MSK_IINF_MIO_NUM_LIPRO_CUTS : i32 = 32;
+pub const MSK_IINF_MIO_NUM_RELAX : i32 = 33;
+pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE : i32 = 34;
+pub const MSK_IINF_MIO_NUMBIN : i32 = 35;
+pub const MSK_IINF_MIO_NUMBINCONEVAR : i32 = 36;
+pub const MSK_IINF_MIO_NUMCON : i32 = 37;
+pub const MSK_IINF_MIO_NUMCONE : i32 = 38;
+pub const MSK_IINF_MIO_NUMCONEVAR : i32 = 39;
+pub const MSK_IINF_MIO_NUMCONT : i32 = 40;
+pub const MSK_IINF_MIO_NUMCONTCONEVAR : i32 = 41;
+pub const MSK_IINF_MIO_NUMDEXPCONES : i32 = 42;
+pub const MSK_IINF_MIO_NUMDJC : i32 = 43;
+pub const MSK_IINF_MIO_NUMDPOWCONES : i32 = 44;
+pub const MSK_IINF_MIO_NUMINT : i32 = 45;
+pub const MSK_IINF_MIO_NUMINTCONEVAR : i32 = 46;
+pub const MSK_IINF_MIO_NUMPEXPCONES : i32 = 47;
+pub const MSK_IINF_MIO_NUMPPOWCONES : i32 = 48;
+pub const MSK_IINF_MIO_NUMQCONES : i32 = 49;
+pub const MSK_IINF_MIO_NUMRQCONES : i32 = 50;
+pub const MSK_IINF_MIO_NUMVAR : i32 = 51;
+pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED : i32 = 52;
+pub const MSK_IINF_MIO_PRESOLVED_NUMBIN : i32 = 53;
+pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR : i32 = 54;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCON : i32 = 55;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONE : i32 = 56;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR : i32 = 57;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONT : i32 = 58;
+pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 59;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES : i32 = 60;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDJC : i32 = 61;
+pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES : i32 = 62;
+pub const MSK_IINF_MIO_PRESOLVED_NUMINT : i32 = 63;
+pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR : i32 = 64;
+pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES : i32 = 65;
+pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES : i32 = 66;
+pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES : i32 = 67;
+pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES : i32 = 68;
+pub const MSK_IINF_MIO_PRESOLVED_NUMVAR : i32 = 69;
+pub const MSK_IINF_MIO_RELGAP_SATISFIED : i32 = 70;
+pub const MSK_IINF_MIO_TOTAL_NUM_CUTS : i32 = 71;
+pub const MSK_IINF_MIO_USER_OBJ_CUT : i32 = 72;
+pub const MSK_IINF_OPT_NUMCON : i32 = 73;
+pub const MSK_IINF_OPT_NUMVAR : i32 = 74;
+pub const MSK_IINF_OPTIMIZE_RESPONSE : i32 = 75;
+pub const MSK_IINF_PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 76;
+pub const MSK_IINF_PURIFY_DUAL_SUCCESS : i32 = 77;
+pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS : i32 = 78;
+pub const MSK_IINF_RD_NUMBARVAR : i32 = 79;
+pub const MSK_IINF_RD_NUMCON : i32 = 80;
+pub const MSK_IINF_RD_NUMCONE : i32 = 81;
+pub const MSK_IINF_RD_NUMINTVAR : i32 = 82;
+pub const MSK_IINF_RD_NUMQ : i32 = 83;
+pub const MSK_IINF_RD_NUMVAR : i32 = 84;
+pub const MSK_IINF_RD_PROTYPE : i32 = 85;
+pub const MSK_IINF_SIM_DUAL_DEG_ITER : i32 = 86;
+pub const MSK_IINF_SIM_DUAL_HOTSTART : i32 = 87;
+pub const MSK_IINF_SIM_DUAL_HOTSTART_LU : i32 = 88;
+pub const MSK_IINF_SIM_DUAL_INF_ITER : i32 = 89;
+pub const MSK_IINF_SIM_DUAL_ITER : i32 = 90;
+pub const MSK_IINF_SIM_NUMCON : i32 = 91;
+pub const MSK_IINF_SIM_NUMVAR : i32 = 92;
+pub const MSK_IINF_SIM_PRIMAL_DEG_ITER : i32 = 93;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART : i32 = 94;
+pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU : i32 = 95;
+pub const MSK_IINF_SIM_PRIMAL_INF_ITER : i32 = 96;
+pub const MSK_IINF_SIM_PRIMAL_ITER : i32 = 97;
+pub const MSK_IINF_SIM_SOLVE_DUAL : i32 = 98;
+pub const MSK_IINF_SOL_BAS_PROSTA : i32 = 99;
+pub const MSK_IINF_SOL_BAS_SOLSTA : i32 = 100;
+pub const MSK_IINF_SOL_ITG_PROSTA : i32 = 101;
+pub const MSK_IINF_SOL_ITG_SOLSTA : i32 = 102;
+pub const MSK_IINF_SOL_ITR_PROSTA : i32 = 103;
+pub const MSK_IINF_SOL_ITR_SOLSTA : i32 = 104;
+pub const MSK_IINF_STO_NUM_A_REALLOC : i32 = 105;
+pub const MSK_IINF_END : i32 = 105;
 
 // inftype
 pub const MSK_INF_DOU_TYPE : i32 = 0;
@@ -1100,131 +1114,135 @@ pub const MSK_IPAR_LOG_STORAGE : i32 = 58;
 pub const MSK_IPAR_MAX_NUM_WARNINGS : i32 = 59;
 pub const MSK_IPAR_MIO_BRANCH_DIR : i32 = 60;
 pub const MSK_IPAR_MIO_CONIC_OUTER_APPROXIMATION : i32 = 61;
-pub const MSK_IPAR_MIO_CUT_CLIQUE : i32 = 62;
-pub const MSK_IPAR_MIO_CUT_CMIR : i32 = 63;
-pub const MSK_IPAR_MIO_CUT_GMI : i32 = 64;
-pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND : i32 = 65;
-pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER : i32 = 66;
-pub const MSK_IPAR_MIO_CUT_LIPRO : i32 = 67;
-pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL : i32 = 68;
-pub const MSK_IPAR_MIO_DATA_PERMUTATION_METHOD : i32 = 69;
-pub const MSK_IPAR_MIO_FEASPUMP_LEVEL : i32 = 70;
-pub const MSK_IPAR_MIO_HEURISTIC_LEVEL : i32 = 71;
-pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES : i32 = 72;
-pub const MSK_IPAR_MIO_MAX_NUM_RELAXS : i32 = 73;
-pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 74;
-pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS : i32 = 75;
-pub const MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL : i32 = 76;
-pub const MSK_IPAR_MIO_MODE : i32 = 77;
-pub const MSK_IPAR_MIO_NODE_OPTIMIZER : i32 = 78;
-pub const MSK_IPAR_MIO_NODE_SELECTION : i32 = 79;
-pub const MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 80;
-pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE : i32 = 81;
-pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_MAX_FILL : i32 = 82;
+pub const MSK_IPAR_MIO_CONSTRUCT_SOL : i32 = 62;
+pub const MSK_IPAR_MIO_CUT_CLIQUE : i32 = 63;
+pub const MSK_IPAR_MIO_CUT_CMIR : i32 = 64;
+pub const MSK_IPAR_MIO_CUT_GMI : i32 = 65;
+pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND : i32 = 66;
+pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER : i32 = 67;
+pub const MSK_IPAR_MIO_CUT_LIPRO : i32 = 68;
+pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL : i32 = 69;
+pub const MSK_IPAR_MIO_DATA_PERMUTATION_METHOD : i32 = 70;
+pub const MSK_IPAR_MIO_FEASPUMP_LEVEL : i32 = 71;
+pub const MSK_IPAR_MIO_HEURISTIC_LEVEL : i32 = 72;
+pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES : i32 = 73;
+pub const MSK_IPAR_MIO_MAX_NUM_RELAXS : i32 = 74;
+pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 75;
+pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS : i32 = 76;
+pub const MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL : i32 = 77;
+pub const MSK_IPAR_MIO_MODE : i32 = 78;
+pub const MSK_IPAR_MIO_NODE_OPTIMIZER : i32 = 79;
+pub const MSK_IPAR_MIO_NODE_SELECTION : i32 = 80;
+pub const MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 81;
+pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE : i32 = 82;
 pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE : i32 = 83;
 pub const MSK_IPAR_MIO_PROBING_LEVEL : i32 = 84;
 pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 85;
-pub const MSK_IPAR_MIO_RINS_MAX_NODES : i32 = 86;
-pub const MSK_IPAR_MIO_ROOT_OPTIMIZER : i32 = 87;
-pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 88;
-pub const MSK_IPAR_MIO_SEED : i32 = 89;
-pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL : i32 = 90;
-pub const MSK_IPAR_MT_SPINCOUNT : i32 = 91;
-pub const MSK_IPAR_NG : i32 = 92;
-pub const MSK_IPAR_NUM_THREADS : i32 = 93;
-pub const MSK_IPAR_OPF_WRITE_HEADER : i32 = 94;
-pub const MSK_IPAR_OPF_WRITE_HINTS : i32 = 95;
-pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH : i32 = 96;
-pub const MSK_IPAR_OPF_WRITE_PARAMETERS : i32 = 97;
-pub const MSK_IPAR_OPF_WRITE_PROBLEM : i32 = 98;
-pub const MSK_IPAR_OPF_WRITE_SOL_BAS : i32 = 99;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITG : i32 = 100;
-pub const MSK_IPAR_OPF_WRITE_SOL_ITR : i32 = 101;
-pub const MSK_IPAR_OPF_WRITE_SOLUTIONS : i32 = 102;
-pub const MSK_IPAR_OPTIMIZER : i32 = 103;
-pub const MSK_IPAR_PARAM_READ_CASE_NAME : i32 = 104;
-pub const MSK_IPAR_PARAM_READ_IGN_ERROR : i32 = 105;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 106;
-pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 107;
-pub const MSK_IPAR_PRESOLVE_LEVEL : i32 = 108;
-pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 109;
-pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 110;
-pub const MSK_IPAR_PRESOLVE_LINDEP_USE : i32 = 111;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS : i32 = 112;
-pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 113;
-pub const MSK_IPAR_PRESOLVE_USE : i32 = 114;
-pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER : i32 = 115;
-pub const MSK_IPAR_PTF_WRITE_TRANSFORM : i32 = 116;
-pub const MSK_IPAR_READ_DEBUG : i32 = 117;
-pub const MSK_IPAR_READ_KEEP_FREE_CON : i32 = 118;
-pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 119;
-pub const MSK_IPAR_READ_LP_QUOTED_NAMES : i32 = 120;
-pub const MSK_IPAR_READ_MPS_FORMAT : i32 = 121;
-pub const MSK_IPAR_READ_MPS_WIDTH : i32 = 122;
-pub const MSK_IPAR_READ_TASK_IGNORE_PARAM : i32 = 123;
-pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS : i32 = 124;
-pub const MSK_IPAR_SENSITIVITY_ALL : i32 = 125;
-pub const MSK_IPAR_SENSITIVITY_OPTIMIZER : i32 = 126;
-pub const MSK_IPAR_SENSITIVITY_TYPE : i32 = 127;
-pub const MSK_IPAR_SIM_BASIS_FACTOR_USE : i32 = 128;
-pub const MSK_IPAR_SIM_DEGEN : i32 = 129;
-pub const MSK_IPAR_SIM_DUAL_CRASH : i32 = 130;
-pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD : i32 = 131;
-pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION : i32 = 132;
-pub const MSK_IPAR_SIM_DUAL_SELECTION : i32 = 133;
-pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC : i32 = 134;
-pub const MSK_IPAR_SIM_HOTSTART : i32 = 135;
-pub const MSK_IPAR_SIM_HOTSTART_LU : i32 = 136;
-pub const MSK_IPAR_SIM_MAX_ITERATIONS : i32 = 137;
-pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS : i32 = 138;
-pub const MSK_IPAR_SIM_NON_SINGULAR : i32 = 139;
-pub const MSK_IPAR_SIM_PRIMAL_CRASH : i32 = 140;
-pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD : i32 = 141;
-pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION : i32 = 142;
-pub const MSK_IPAR_SIM_PRIMAL_SELECTION : i32 = 143;
-pub const MSK_IPAR_SIM_REFACTOR_FREQ : i32 = 144;
-pub const MSK_IPAR_SIM_REFORMULATION : i32 = 145;
-pub const MSK_IPAR_SIM_SAVE_LU : i32 = 146;
-pub const MSK_IPAR_SIM_SCALING : i32 = 147;
-pub const MSK_IPAR_SIM_SCALING_METHOD : i32 = 148;
-pub const MSK_IPAR_SIM_SEED : i32 = 149;
-pub const MSK_IPAR_SIM_SOLVE_FORM : i32 = 150;
-pub const MSK_IPAR_SIM_STABILITY_PRIORITY : i32 = 151;
-pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER : i32 = 152;
-pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC : i32 = 153;
-pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED : i32 = 154;
-pub const MSK_IPAR_SOL_READ_NAME_WIDTH : i32 = 155;
-pub const MSK_IPAR_SOL_READ_WIDTH : i32 = 156;
-pub const MSK_IPAR_SOLUTION_CALLBACK : i32 = 157;
-pub const MSK_IPAR_TIMING_LEVEL : i32 = 158;
-pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS : i32 = 159;
-pub const MSK_IPAR_WRITE_BAS_HEAD : i32 = 160;
-pub const MSK_IPAR_WRITE_BAS_VARIABLES : i32 = 161;
-pub const MSK_IPAR_WRITE_COMPRESSION : i32 = 162;
-pub const MSK_IPAR_WRITE_DATA_PARAM : i32 = 163;
-pub const MSK_IPAR_WRITE_FREE_CON : i32 = 164;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES : i32 = 165;
-pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO : i32 = 166;
-pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 167;
-pub const MSK_IPAR_WRITE_INT_CONSTRAINTS : i32 = 168;
-pub const MSK_IPAR_WRITE_INT_HEAD : i32 = 169;
-pub const MSK_IPAR_WRITE_INT_VARIABLES : i32 = 170;
-pub const MSK_IPAR_WRITE_JSON_INDENTATION : i32 = 171;
-pub const MSK_IPAR_WRITE_LP_FULL_OBJ : i32 = 172;
-pub const MSK_IPAR_WRITE_LP_LINE_WIDTH : i32 = 173;
-pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES : i32 = 174;
-pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT : i32 = 175;
-pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE : i32 = 176;
-pub const MSK_IPAR_WRITE_MPS_FORMAT : i32 = 177;
-pub const MSK_IPAR_WRITE_MPS_INT : i32 = 178;
-pub const MSK_IPAR_WRITE_PRECISION : i32 = 179;
-pub const MSK_IPAR_WRITE_SOL_BARVARIABLES : i32 = 180;
-pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS : i32 = 181;
-pub const MSK_IPAR_WRITE_SOL_HEAD : i32 = 182;
-pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 183;
-pub const MSK_IPAR_WRITE_SOL_VARIABLES : i32 = 184;
-pub const MSK_IPAR_WRITE_TASK_INC_SOL : i32 = 185;
-pub const MSK_IPAR_WRITE_XML_MODE : i32 = 186;
+pub const MSK_IPAR_MIO_QCQO_REFORMULATION_METHOD : i32 = 86;
+pub const MSK_IPAR_MIO_RINS_MAX_NODES : i32 = 87;
+pub const MSK_IPAR_MIO_ROOT_OPTIMIZER : i32 = 88;
+pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 89;
+pub const MSK_IPAR_MIO_SEED : i32 = 90;
+pub const MSK_IPAR_MIO_SYMMETRY_LEVEL : i32 = 91;
+pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL : i32 = 92;
+pub const MSK_IPAR_MT_SPINCOUNT : i32 = 93;
+pub const MSK_IPAR_NG : i32 = 94;
+pub const MSK_IPAR_NUM_THREADS : i32 = 95;
+pub const MSK_IPAR_OPF_WRITE_HEADER : i32 = 96;
+pub const MSK_IPAR_OPF_WRITE_HINTS : i32 = 97;
+pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH : i32 = 98;
+pub const MSK_IPAR_OPF_WRITE_PARAMETERS : i32 = 99;
+pub const MSK_IPAR_OPF_WRITE_PROBLEM : i32 = 100;
+pub const MSK_IPAR_OPF_WRITE_SOL_BAS : i32 = 101;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITG : i32 = 102;
+pub const MSK_IPAR_OPF_WRITE_SOL_ITR : i32 = 103;
+pub const MSK_IPAR_OPF_WRITE_SOLUTIONS : i32 = 104;
+pub const MSK_IPAR_OPTIMIZER : i32 = 105;
+pub const MSK_IPAR_PARAM_READ_CASE_NAME : i32 = 106;
+pub const MSK_IPAR_PARAM_READ_IGN_ERROR : i32 = 107;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 108;
+pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 109;
+pub const MSK_IPAR_PRESOLVE_LEVEL : i32 = 110;
+pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 111;
+pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 112;
+pub const MSK_IPAR_PRESOLVE_LINDEP_USE : i32 = 113;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS : i32 = 114;
+pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 115;
+pub const MSK_IPAR_PRESOLVE_USE : i32 = 116;
+pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER : i32 = 117;
+pub const MSK_IPAR_PTF_WRITE_TRANSFORM : i32 = 118;
+pub const MSK_IPAR_READ_DEBUG : i32 = 119;
+pub const MSK_IPAR_READ_KEEP_FREE_CON : i32 = 120;
+pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 121;
+pub const MSK_IPAR_READ_LP_QUOTED_NAMES : i32 = 122;
+pub const MSK_IPAR_READ_MPS_FORMAT : i32 = 123;
+pub const MSK_IPAR_READ_MPS_WIDTH : i32 = 124;
+pub const MSK_IPAR_READ_TASK_IGNORE_PARAM : i32 = 125;
+pub const MSK_IPAR_REMOTE_USE_COMPRESSION : i32 = 126;
+pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS : i32 = 127;
+pub const MSK_IPAR_SENSITIVITY_ALL : i32 = 128;
+pub const MSK_IPAR_SENSITIVITY_OPTIMIZER : i32 = 129;
+pub const MSK_IPAR_SENSITIVITY_TYPE : i32 = 130;
+pub const MSK_IPAR_SIM_BASIS_FACTOR_USE : i32 = 131;
+pub const MSK_IPAR_SIM_DEGEN : i32 = 132;
+pub const MSK_IPAR_SIM_DETECT_PWL : i32 = 133;
+pub const MSK_IPAR_SIM_DUAL_CRASH : i32 = 134;
+pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD : i32 = 135;
+pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION : i32 = 136;
+pub const MSK_IPAR_SIM_DUAL_SELECTION : i32 = 137;
+pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC : i32 = 138;
+pub const MSK_IPAR_SIM_HOTSTART : i32 = 139;
+pub const MSK_IPAR_SIM_HOTSTART_LU : i32 = 140;
+pub const MSK_IPAR_SIM_MAX_ITERATIONS : i32 = 141;
+pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS : i32 = 142;
+pub const MSK_IPAR_SIM_NON_SINGULAR : i32 = 143;
+pub const MSK_IPAR_SIM_PRIMAL_CRASH : i32 = 144;
+pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD : i32 = 145;
+pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION : i32 = 146;
+pub const MSK_IPAR_SIM_PRIMAL_SELECTION : i32 = 147;
+pub const MSK_IPAR_SIM_REFACTOR_FREQ : i32 = 148;
+pub const MSK_IPAR_SIM_REFORMULATION : i32 = 149;
+pub const MSK_IPAR_SIM_SAVE_LU : i32 = 150;
+pub const MSK_IPAR_SIM_SCALING : i32 = 151;
+pub const MSK_IPAR_SIM_SCALING_METHOD : i32 = 152;
+pub const MSK_IPAR_SIM_SEED : i32 = 153;
+pub const MSK_IPAR_SIM_SOLVE_FORM : i32 = 154;
+pub const MSK_IPAR_SIM_STABILITY_PRIORITY : i32 = 155;
+pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER : i32 = 156;
+pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC : i32 = 157;
+pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED : i32 = 158;
+pub const MSK_IPAR_SOL_READ_NAME_WIDTH : i32 = 159;
+pub const MSK_IPAR_SOL_READ_WIDTH : i32 = 160;
+pub const MSK_IPAR_SOLUTION_CALLBACK : i32 = 161;
+pub const MSK_IPAR_TIMING_LEVEL : i32 = 162;
+pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS : i32 = 163;
+pub const MSK_IPAR_WRITE_BAS_HEAD : i32 = 164;
+pub const MSK_IPAR_WRITE_BAS_VARIABLES : i32 = 165;
+pub const MSK_IPAR_WRITE_COMPRESSION : i32 = 166;
+pub const MSK_IPAR_WRITE_DATA_PARAM : i32 = 167;
+pub const MSK_IPAR_WRITE_FREE_CON : i32 = 168;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES : i32 = 169;
+pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO : i32 = 170;
+pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 171;
+pub const MSK_IPAR_WRITE_INT_CONSTRAINTS : i32 = 172;
+pub const MSK_IPAR_WRITE_INT_HEAD : i32 = 173;
+pub const MSK_IPAR_WRITE_INT_VARIABLES : i32 = 174;
+pub const MSK_IPAR_WRITE_JSON_INDENTATION : i32 = 175;
+pub const MSK_IPAR_WRITE_LP_FULL_OBJ : i32 = 176;
+pub const MSK_IPAR_WRITE_LP_LINE_WIDTH : i32 = 177;
+pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES : i32 = 178;
+pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT : i32 = 179;
+pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE : i32 = 180;
+pub const MSK_IPAR_WRITE_MPS_FORMAT : i32 = 181;
+pub const MSK_IPAR_WRITE_MPS_INT : i32 = 182;
+pub const MSK_IPAR_WRITE_PRECISION : i32 = 183;
+pub const MSK_IPAR_WRITE_SOL_BARVARIABLES : i32 = 184;
+pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS : i32 = 185;
+pub const MSK_IPAR_WRITE_SOL_HEAD : i32 = 186;
+pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 187;
+pub const MSK_IPAR_WRITE_SOL_VARIABLES : i32 = 188;
+pub const MSK_IPAR_WRITE_TASK_INC_SOL : i32 = 189;
+pub const MSK_IPAR_WRITE_XML_MODE : i32 = 190;
 
 // branchdir
 pub const MSK_BRANCH_DIR_FREE : i32 = 0;
@@ -1235,6 +1253,14 @@ pub const MSK_BRANCH_DIR_FAR : i32 = 4;
 pub const MSK_BRANCH_DIR_ROOT_LP : i32 = 5;
 pub const MSK_BRANCH_DIR_GUIDED : i32 = 6;
 pub const MSK_BRANCH_DIR_PSEUDOCOST : i32 = 7;
+
+// miqcqoreformmethod
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_FREE : i32 = 0;
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_NONE : i32 = 1;
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_LINEARIZATION : i32 = 2;
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_EIGEN_VAL_METHOD : i32 = 3;
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_DIAG_SDP : i32 = 4;
+pub const MSK_MIO_QCQO_REFORMULATION_METHOD_RELAX_SDP : i32 = 5;
 
 // miodatapermmethod
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_NONE : i32 = 0;
@@ -1387,10 +1413,6 @@ pub const MSK_RES_WRN_ANA_C_ZERO : i32 = 901;
 pub const MSK_RES_WRN_ANA_EMPTY_COLS : i32 = 902;
 pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS : i32 = 903;
 pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS : i32 = 904;
-pub const MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO : i32 = 930;
-pub const MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO : i32 = 931;
-pub const MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO : i32 = 932;
-pub const MSK_RES_WRN_POW_CONES_WITH_ROOT_FIXED_AT_ZERO : i32 = 933;
 pub const MSK_RES_WRN_NO_DUALIZER : i32 = 950;
 pub const MSK_RES_WRN_SYM_MAT_LARGE : i32 = 960;
 pub const MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER : i32 = 970;
@@ -1398,6 +1420,7 @@ pub const MSK_RES_WRN_LARGE_FIJ : i32 = 980;
 pub const MSK_RES_ERR_LICENSE : i32 = 1000;
 pub const MSK_RES_ERR_LICENSE_EXPIRED : i32 = 1001;
 pub const MSK_RES_ERR_LICENSE_VERSION : i32 = 1002;
+pub const MSK_RES_ERR_LICENSE_OLD_SERVER_VERSION : i32 = 1003;
 pub const MSK_RES_ERR_SIZE_LICENSE : i32 = 1005;
 pub const MSK_RES_ERR_PROB_LICENSE : i32 = 1006;
 pub const MSK_RES_ERR_FILE_LICENSE : i32 = 1007;
@@ -1724,6 +1747,7 @@ pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX : i32 = 4001;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS : i32 = 4002;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS : i32 = 4003;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES : i32 = 4005;
+pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_QUADRATIC_TERMS : i32 = 4006;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR : i32 = 4010;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS : i32 = 4011;
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS : i32 = 4012;
@@ -1797,6 +1821,7 @@ pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON : i32 = 7202;
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_INDEX : i32 = 7203;
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX : i32 = 7204;
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_BLOCK_INDEX : i32 = 7205;
+pub const MSK_RES_ERR_CBF_UNSUPPORTED_CHANGE : i32 = 7210;
 pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER : i32 = 7700;
 pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER : i32 = 7701;
 pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE : i32 = 7750;
@@ -1838,6 +1863,8 @@ pub const MSK_RES_ERR_DJC_DOMAIN_TERMSIZE_MISMATCH : i32 = 20704;
 pub const MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH : i32 = 20705;
 pub const MSK_RES_ERR_UNDEF_SOLUTION : i32 = 22000;
 pub const MSK_RES_ERR_NO_DOTY : i32 = 22010;
+pub const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES : i32 = 23000;
+pub const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS : i32 = 23005;
 pub const MSK_RES_TRM_MAX_ITERATIONS : i32 = 100000;
 pub const MSK_RES_TRM_MAX_TIME : i32 = 100001;
 pub const MSK_RES_TRM_OBJECTIVE_RANGE : i32 = 100002;
@@ -1924,17 +1951,18 @@ pub const MSK_SPAR_READ_MPS_BOU_NAME : i32 = 9;
 pub const MSK_SPAR_READ_MPS_OBJ_NAME : i32 = 10;
 pub const MSK_SPAR_READ_MPS_RAN_NAME : i32 = 11;
 pub const MSK_SPAR_READ_MPS_RHS_NAME : i32 = 12;
-pub const MSK_SPAR_REMOTE_TLS_CERT : i32 = 13;
-pub const MSK_SPAR_REMOTE_TLS_CERT_PATH : i32 = 14;
-pub const MSK_SPAR_SENSITIVITY_FILE_NAME : i32 = 15;
-pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 16;
-pub const MSK_SPAR_SOL_FILTER_XC_LOW : i32 = 17;
-pub const MSK_SPAR_SOL_FILTER_XC_UPR : i32 = 18;
-pub const MSK_SPAR_SOL_FILTER_XX_LOW : i32 = 19;
-pub const MSK_SPAR_SOL_FILTER_XX_UPR : i32 = 20;
-pub const MSK_SPAR_STAT_KEY : i32 = 21;
-pub const MSK_SPAR_STAT_NAME : i32 = 22;
-pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME : i32 = 23;
+pub const MSK_SPAR_REMOTE_OPTSERVER_HOST : i32 = 13;
+pub const MSK_SPAR_REMOTE_TLS_CERT : i32 = 14;
+pub const MSK_SPAR_REMOTE_TLS_CERT_PATH : i32 = 15;
+pub const MSK_SPAR_SENSITIVITY_FILE_NAME : i32 = 16;
+pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
+pub const MSK_SPAR_SOL_FILTER_XC_LOW : i32 = 18;
+pub const MSK_SPAR_SOL_FILTER_XC_UPR : i32 = 19;
+pub const MSK_SPAR_SOL_FILTER_XX_LOW : i32 = 20;
+pub const MSK_SPAR_SOL_FILTER_XX_UPR : i32 = 21;
+pub const MSK_SPAR_STAT_KEY : i32 = 22;
+pub const MSK_SPAR_STAT_NAME : i32 = 23;
+pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME : i32 = 24;
 
 // stakey
 pub const MSK_SK_UNK : i32 = 0;
@@ -1974,7 +2002,6 @@ fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
               Ok(())
           })
 }
-
 
 pub struct Env
 {
@@ -2057,12 +2084,6 @@ impl Env
       return Result::Ok(());
     } // checkinlicense
     #[allow(unused_parens)]
-    pub fn check_mem(&mut self,file_ : &str,line_ : i32) -> Result<(),String> {
-      let __tmp_1 = CString::new(file_).unwrap();
-      self.handle_res(unsafe { MSK_checkmemenv(self.ptr,__tmp_1.as_ptr(),line_) },"check_mem")?;
-      return Result::Ok(());
-    } // checkmemenv
-    #[allow(unused_parens)]
     pub fn checkout_license(&mut self,feature_ : i32) -> Result<(),String> {
       self.handle_res(unsafe { MSK_checkoutlicense(self.ptr,feature_) },"checkout_license")?;
       return Result::Ok(());
@@ -2093,6 +2114,11 @@ impl Env
       self.handle_res(unsafe { MSK_enablegarcolenv(self.ptr) },"enable_gar_col_env")?;
       return Result::Ok(());
     } // enablegarcolenv
+    #[allow(unused_parens)]
+    pub fn expirylicenses(&mut self,expiry_ : &mut i64) -> Result<(),String> {
+      self.handle_res(unsafe { MSK_expirylicenses(self.ptr,expiry_) },"expirylicenses")?;
+      return Result::Ok(());
+    } // expirylicenses
     #[allow(unused_parens)]
     pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((m_*k_)).try_into().unwrap() {
@@ -2160,15 +2186,20 @@ impl Env
       return Result::Ok(());
     } // putlicensewait
     #[allow(unused_parens)]
+    pub fn resetexpirylicenses(&mut self) -> Result<(),String> {
+      self.handle_res(unsafe { MSK_resetexpirylicenses(self.ptr) },"resetexpirylicenses")?;
+      return Result::Ok(());
+    } // resetexpirylicenses
+    #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(lptrc_.len(),lptrc_.len()),b_.len()),lnzc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(b_.len(),b_.len()),lptrc_.len()),lnzc_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
       if lptrc_.len() != (n_).try_into().unwrap() {
         return Result::Err("Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(std::cmp::min(lvalc_.len(),lvalc_.len()),lsubc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(std::cmp::min(lsubc_.len(),lsubc_.len()),lvalc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
         return Result::Err("Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
@@ -2214,17 +2245,8 @@ impl Env
       self.handle_res(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
       return Result::Ok(());
     } // syrk
-    #[allow(unused_parens)]
-    pub fn unlink_func_from_stream(&mut self,whichstream_ : i32) -> Result<(),String> {
-      self.handle_res(unsafe { MSK_unlinkfuncfromenvstream(self.ptr,whichstream_) },"unlink_func_from_stream")?;
-      return Result::Ok(());
-    } // unlinkfuncfromenvstream
-
 
 }
-
-
-
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
     let h = handle as * const Box<dyn Fn(&str)>;
@@ -2402,7 +2424,7 @@ impl Task
     } // appendconeseq
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(nummem_.len(),nummem_.len()),ct_.len()),conepar_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ct_.len(),ct_.len()),conepar_.len()),nummem_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -2492,7 +2514,7 @@ impl Task
     } // appendrzerodomain
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valij_.len()),subi_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valij_.len(),valij_.len()),subj_.len()),subi_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
       return Result::Ok(__tmp_0);
@@ -2533,9 +2555,9 @@ impl Task
       return Result::Ok(());
     } // appendvars
     #[allow(unused_parens)]
-    pub fn async_get_log(&mut self,server_ : &str,port_ : &str,token_ : &str) -> Result<(),String> {
-      let __tmp_1 = CString::new(server_).unwrap();
-      let __tmp_3 = CString::new(port_).unwrap();
+    pub fn async_get_log(&mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String> {
+      let __tmp_1 = CString::new(addr_).unwrap();
+      let __tmp_3 = CString::new(accesstoken_).unwrap();
       let __tmp_5 = CString::new(token_).unwrap();
       self.handle_res(unsafe { MSK_asyncgetlog(self.ptr,__tmp_1.as_ptr(),__tmp_3.as_ptr(),__tmp_5.as_ptr()) },"async_get_log")?;
       return Result::Ok(());
@@ -2580,18 +2602,6 @@ impl Task
       return Result::Ok(());
     } // basiscond
     #[allow(unused_parens)]
-    pub fn bk_to_str(&self,bk_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(MSK_MAX_STR_LEN as usize,0);
-      self.handle_res(unsafe { MSK_bktostr(self.ptr,bk_,str_.as_mut_ptr()) },"bk_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // bktostr
-    #[allow(unused_parens)]
-    pub fn check_mem(&mut self,file_ : &str,line_ : i32) -> Result<(),String> {
-      let __tmp_1 = CString::new(file_).unwrap();
-      self.handle_res(unsafe { MSK_checkmemtask(self.ptr,__tmp_1.as_ptr(),line_) },"check_mem")?;
-      return Result::Ok(());
-    } // checkmemtask
-    #[allow(unused_parens)]
     pub fn chg_con_bound(&mut self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String> {
       self.handle_res(unsafe { MSK_chgconbound(self.ptr,i_,lower_,finite_,value_) },"chg_con_bound")?;
       return Result::Ok(());
@@ -2613,12 +2623,6 @@ impl Task
       self.handle_res(unsafe { MSK_commitchanges(self.ptr) },"commit_changes")?;
       return Result::Ok(());
     } // commitchanges
-    #[allow(unused_parens)]
-    pub fn cone_type_to_str(&self,ct_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(1024 as usize,0);
-      self.handle_res(unsafe { MSK_conetypetostr(self.ptr,ct_,str_.as_mut_ptr()) },"cone_type_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // conetypetostr
     #[allow(unused_parens)]
     pub fn delete_solution(&mut self,whichsol_ : i32) -> Result<(),String> {
       self.handle_res(unsafe { MSK_deletesolution(self.ptr,whichsol_) },"delete_solution")?;
@@ -2806,6 +2810,36 @@ impl Task
       return Result::Ok(());
     } // getaccb
     #[allow(unused_parens)]
+    pub fn get_acc_barf_block_triplet(&self,acc_afe_ : &mut[i64],bar_var_ : &mut[i32],blk_row_ : &mut[i32],blk_col_ : &mut[i32],blk_val_ : &mut[f64]) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      let __tmp_1 = unsafe { MSK_getaccbarfnumblocktriplets(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccbarfnumblocktriplets")?;
+      let maxnumtrip_ : i64 = __tmp_0;
+      let mut __tmp_2 : i64 = i64::default();
+      if acc_afe_.len() != (maxnumtrip_).try_into().unwrap() {
+        return Result::Err("Argument 'acc_afe' has the wrong length, expected maxnumtrip_".to_string());
+      }
+      if bar_var_.len() != (maxnumtrip_).try_into().unwrap() {
+        return Result::Err("Argument 'bar_var' has the wrong length, expected maxnumtrip_".to_string());
+      }
+      if blk_row_.len() != (maxnumtrip_).try_into().unwrap() {
+        return Result::Err("Argument 'blk_row' has the wrong length, expected maxnumtrip_".to_string());
+      }
+      if blk_col_.len() != (maxnumtrip_).try_into().unwrap() {
+        return Result::Err("Argument 'blk_col' has the wrong length, expected maxnumtrip_".to_string());
+      }
+      if blk_val_.len() != (maxnumtrip_).try_into().unwrap() {
+        return Result::Err("Argument 'blk_val' has the wrong length, expected maxnumtrip_".to_string());
+      }
+      self.handle_res(unsafe { MSK_getaccbarfblocktriplet(self.ptr,maxnumtrip_,&mut __tmp_2,acc_afe_.as_mut_ptr(),bar_var_.as_mut_ptr(),blk_row_.as_mut_ptr(),blk_col_.as_mut_ptr(),blk_val_.as_mut_ptr()) },"get_acc_barf_block_triplet")?;
+      return Result::Ok(__tmp_2);
+    } // getaccbarfblocktriplet
+    #[allow(unused_parens)]
+    pub fn get_acc_barf_num_block_triplets(&self) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      self.handle_res(unsafe { MSK_getaccbarfnumblocktriplets(self.ptr,&mut __tmp_0) },"get_acc_barf_num_block_triplets")?;
+      return Result::Ok(__tmp_0);
+    } // getaccbarfnumblocktriplets
+    #[allow(unused_parens)]
     pub fn get_acc_domain(&mut self,accidx_ : i64,domidx_ : &mut i64) -> Result<(),String> {
       self.handle_res(unsafe { MSK_getaccdomain(self.ptr,accidx_,domidx_) },"get_acc_domain")?;
       return Result::Ok(());
@@ -2820,6 +2854,52 @@ impl Task
       self.handle_res(unsafe { MSK_getaccdoty(self.ptr,whichsol_,accidx_,doty_.as_mut_ptr()) },"get_acc_dot_y")?;
       return Result::Ok(());
     } // getaccdoty
+    #[allow(unused_parens)]
+    pub fn get_acc_dot_y_s(&self,whichsol_ : i32,doty_ : &mut[f64]) -> Result<(),String> {
+      let mut __tmp_0 : i64 = i64::default();
+      let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
+      if doty_.len() != (__tmp_0).try_into().unwrap() {
+        return Result::Err("Argument 'doty' has the wrong length, expected __tmp_0".to_string());
+      }
+      self.handle_res(unsafe { MSK_getaccdotys(self.ptr,whichsol_,doty_.as_mut_ptr()) },"get_acc_dot_y_s")?;
+      return Result::Ok(());
+    } // getaccdotys
+    #[allow(unused_parens)]
+    pub fn get_acc_f_numnz(&mut self) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      self.handle_res(unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_0) },"get_acc_f_numnz")?;
+      return Result::Ok(__tmp_0);
+    } // getaccfnumnz
+    #[allow(unused_parens)]
+    pub fn get_acc_f_trip(&mut self,frow_ : &mut[i64],fcol_ : &mut[i32],fval_ : &mut[f64]) -> Result<(),String> {
+      let mut __tmp_0 : i64 = i64::default();
+      let __tmp_1 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccfnumnz")?;
+      if frow_.len() != (__tmp_0).try_into().unwrap() {
+        return Result::Err("Argument 'frow' has the wrong length, expected __tmp_0".to_string());
+      }
+      let mut __tmp_2 : i64 = i64::default();
+      let __tmp_3 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getaccfnumnz")?;
+      if fcol_.len() != (__tmp_2).try_into().unwrap() {
+        return Result::Err("Argument 'fcol' has the wrong length, expected __tmp_2".to_string());
+      }
+      let mut __tmp_4 : i64 = i64::default();
+      let __tmp_5 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getaccfnumnz")?;
+      if fval_.len() != (__tmp_4).try_into().unwrap() {
+        return Result::Err("Argument 'fval' has the wrong length, expected __tmp_4".to_string());
+      }
+      self.handle_res(unsafe { MSK_getaccftrip(self.ptr,frow_.as_mut_ptr(),fcol_.as_mut_ptr(),fval_.as_mut_ptr()) },"get_acc_f_trip")?;
+      return Result::Ok(());
+    } // getaccftrip
+    #[allow(unused_parens)]
+    pub fn get_acc_g_vector(&self,g_ : &mut[f64]) -> Result<(),String> {
+      let mut __tmp_0 : i64 = i64::default();
+      let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
+      if g_.len() != (__tmp_0).try_into().unwrap() {
+        return Result::Err("Argument 'g' has the wrong length, expected __tmp_0".to_string());
+      }
+      self.handle_res(unsafe { MSK_getaccgvector(self.ptr,g_.as_mut_ptr()) },"get_acc_g_vector")?;
+      return Result::Ok(());
+    } // getaccgvector
     #[allow(unused_parens)]
     pub fn get_acc_n(&mut self,accidx_ : i64) -> Result<i64,String> {
       let mut __tmp_0 : i64 = i64::default();
@@ -2893,7 +2973,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getacolslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getacolslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
-      let mut surp_ : i64 = std::cmp::min(val_.len(),sub_.len()).try_into().unwrap();
+      let mut surp_ : i64 = std::cmp::min(sub_.len(),val_.len()).try_into().unwrap();
       if ptrb_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
       }
@@ -3108,7 +3188,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getarowslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getarowslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
-      let mut surp_ : i64 = std::cmp::min(val_.len(),sub_.len()).try_into().unwrap();
+      let mut surp_ : i64 = std::cmp::min(sub_.len(),val_.len()).try_into().unwrap();
       if ptrb_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
       }
@@ -4053,7 +4133,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getnumqconknz64(self.ptr,k_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumqconknz64")?;
       let maxnumqcnz_ : i64 = __tmp_0;
-      let mut qcsurp_ : i64 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcsubi_.len()),qcval_.len()).try_into().unwrap();
+      let mut qcsurp_ : i64 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()).try_into().unwrap();
       let mut __tmp_2 : i64 = i64::default();
       let mut __tmp_3 : i64 = i64::default();
       let __tmp_4 = unsafe { MSK_getnumqconknz64(self.ptr,k_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getnumqconknz64")?;
@@ -4542,6 +4622,11 @@ impl Task
       return Result::Ok(());
     } // getyslice
     #[allow(unused_parens)]
+    pub fn infeasibility_report(&mut self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> {
+      self.handle_res(unsafe { MSK_infeasibilityreport(self.ptr,whichstream_,whichsol_) },"infeasibility_report")?;
+      return Result::Ok(());
+    } // infeasibilityreport
+    #[allow(unused_parens)]
     pub fn init_basis_solve(&mut self,basis_ : &mut[i32]) -> Result<(),String> {
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
@@ -4553,8 +4638,8 @@ impl Task
     } // initbasissolve
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),bkc_.len()),buc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),bkx_.len()),bux_.len()),aptrb_.len()),c_.len()),blx_.len()),aptre_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),buc_.len()),blc_.len()),bkc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),bkx_.len()),aptre_.len()),bux_.len()),c_.len()),blx_.len()),aptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,c_.as_ptr(),cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
@@ -4632,7 +4717,7 @@ impl Task
     } // primalrepair
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(std::cmp::min(marki_.len(),marki_.len()),subi_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(std::cmp::min(subi_.len(),subi_.len()),marki_.len()) as i32;
       let numj_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),markj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("Argument 'leftpricei' has the wrong length, expected numi_".to_string());
@@ -4667,18 +4752,6 @@ impl Task
       return Result::Ok(());
     } // printparam
     #[allow(unused_parens)]
-    pub fn prob_type_to_str(&mut self,probtype_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(MSK_MAX_STR_LEN as usize,0);
-      self.handle_res(unsafe { MSK_probtypetostr(self.ptr,probtype_,str_.as_mut_ptr()) },"prob_type_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // probtypetostr
-    #[allow(unused_parens)]
-    pub fn pro_sta_to_str(&self,problemsta_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(MSK_MAX_STR_LEN as usize,0);
-      self.handle_res(unsafe { MSK_prostatostr(self.ptr,problemsta_,str_.as_mut_ptr()) },"pro_sta_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // prostatostr
-    #[allow(unused_parens)]
     pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
@@ -4710,7 +4783,7 @@ impl Task
     } // putaccdoty
     #[allow(unused_parens)]
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(std::cmp::min(accidxs_.len(),accidxs_.len()),domidxs_.len()) as i64;
+      let numaccs_ : i64 = std::cmp::min(std::cmp::min(domidxs_.len(),domidxs_.len()),accidxs_.len()) as i64;
       let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
@@ -4726,13 +4799,13 @@ impl Task
     } // putaccname
     #[allow(unused_parens)]
     pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> {
-      let nzj_ : i32 = std::cmp::min(std::cmp::min(valj_.len(),valj_.len()),subj_.len()) as i32;
+      let nzj_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valj_.len()) as i32;
       self.handle_res(unsafe { MSK_putacol(self.ptr,j_,nzj_,subj_.as_ptr(),valj_.as_ptr()) },"put_a_col")?;
       return Result::Ok(());
     } // putacol
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),ptre_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptre_.len(),ptre_.len()),sub_.len()),ptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_putacollist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_list")?;
       return Result::Ok(());
     } // putacollist64
@@ -4769,14 +4842,14 @@ impl Task
     } // putafebarfentry
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),numterm_.len()),ptrterm_.len()),afeidx_.len()),barvaridx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),barvaridx_.len()),numterm_.len()),afeidx_.len()),ptrterm_.len()) as i64;
       let lenterm_ : i64 = std::cmp::min(std::cmp::min(termidx_.len(),termidx_.len()),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
     } // putafebarfentrylist
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),numterm_.len()),ptrterm_.len()),barvaridx_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),barvaridx_.len()),numterm_.len()),ptrterm_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(std::cmp::min(termidx_.len(),termidx_.len()),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -4806,7 +4879,7 @@ impl Task
     } // putafefrow
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(ptrrow_.len(),ptrrow_.len()),afeidx_.len()),numnzrow_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(numnzrow_.len(),numnzrow_.len()),afeidx_.len()),ptrrow_.len()) as i64;
       let lenidxval_ : i64 = std::cmp::min(std::cmp::min(val_.len(),val_.len()),varidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefrowlist(self.ptr,numafeidx_,afeidx_.as_ptr(),numnzrow_.as_ptr(),ptrrow_.as_ptr(),lenidxval_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row_list")?;
       return Result::Ok(());
@@ -4818,7 +4891,7 @@ impl Task
     } // putafeg
     #[allow(unused_parens)]
     pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),afeidx_.len()),g_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(g_.len(),g_.len()),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafeglist(self.ptr,numafeidx_,afeidx_.as_ptr(),g_.as_ptr()) },"put_afe_g_list")?;
       return Result::Ok(());
     } // putafeglist
@@ -4837,19 +4910,19 @@ impl Task
     } // putaij
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valij_.len()),subi_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valij_.len(),valij_.len()),subj_.len()),subi_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(std::cmp::min(vali_.len(),vali_.len()),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(std::cmp::min(subi_.len(),subi_.len()),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),ptre_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptre_.len(),ptre_.len()),sub_.len()),ptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_putarowlist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_list")?;
       return Result::Ok(());
     } // putarowlist64
@@ -4891,19 +4964,19 @@ impl Task
     } // putbarablocktriplet
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(weights_.len(),weights_.len()),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),alphaptrb_.len()),subj_.len()),alphaptre_.len()),subi_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),subi_.len()),alphaptre_.len()),alphaptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_putbaraijlist(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_ij_list")?;
       return Result::Ok(());
     } // putbaraijlist
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptre_.len(),ptre_.len()),subi_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptre_.len(),ptre_.len()),ptrb_.len()),subi_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -4939,7 +5012,7 @@ impl Task
     } // putbarcblocktriplet
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(weights_.len(),weights_.len()),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -4992,7 +5065,7 @@ impl Task
     } // putconbound
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),buc_.len()),sub_.len()),bkc_.len()),blc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),buc_.len()),blc_.len()),bkc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -5194,13 +5267,13 @@ impl Task
     } // putparam
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcsubj_.len(),qcsubj_.len()),qcsubi_.len()),qcval_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcval_.len(),qcval_.len()),qcsubi_.len()),qcsubj_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcsubj_.len(),qcsubj_.len()),qcsubi_.len()),qcval_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcval_.len(),qcval_.len()),qcsubi_.len()),qcsubj_.len()) as i32;
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
     } // putqconk
@@ -5375,7 +5448,7 @@ impl Task
     } // putvarbound
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),blx_.len()),sub_.len()),bkx_.len()),bux_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),bkx_.len()),sub_.len()),bux_.len()),blx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -5481,6 +5554,12 @@ impl Task
       return Result::Ok(());
     } // putyslice
     #[allow(unused_parens)]
+    pub fn read_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> {
+      let __tmp_1 = CString::new(filename_).unwrap();
+      self.handle_res(unsafe { MSK_readbsolution(self.ptr,__tmp_1.as_ptr(),compress_) },"read_b_solution")?;
+      return Result::Ok(());
+    } // readbsolution
+    #[allow(unused_parens)]
     pub fn read_data(&mut self,filename_ : &str) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
       self.handle_res(unsafe { MSK_readdataautoformat(self.ptr,__tmp_1.as_ptr()) },"read_data")?;
@@ -5528,6 +5607,12 @@ impl Task
       self.handle_res(unsafe { MSK_readsolution(self.ptr,whichsol_,__tmp_1.as_ptr()) },"read_solution")?;
       return Result::Ok(());
     } // readsolution
+    #[allow(unused_parens)]
+    pub fn read_solution_file(&self,filename_ : &str) -> Result<(),String> {
+      let __tmp_1 = CString::new(filename_).unwrap();
+      self.handle_res(unsafe { MSK_readsolutionfile(self.ptr,__tmp_1.as_ptr()) },"read_solution_file")?;
+      return Result::Ok(());
+    } // readsolutionfile
     #[allow(unused_parens)]
     pub fn read_summary(&mut self,whichstream_ : i32) -> Result<(),String> {
       self.handle_res(unsafe { MSK_readsummary(self.ptr,whichstream_) },"read_summary")?;
@@ -5579,18 +5664,6 @@ impl Task
       return Result::Ok(());
     } // setdefaults
     #[allow(unused_parens)]
-    pub fn sk_to_str(&self,sk_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(MSK_MAX_STR_LEN as usize,0);
-      self.handle_res(unsafe { MSK_sktostr(self.ptr,sk_,str_.as_mut_ptr()) },"sk_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // sktostr
-    #[allow(unused_parens)]
-    pub fn sol_sta_to_str(&self,solutionsta_ : i32) -> Result<String,String> {
-      let mut str_ = Vec::new(); str_.resize(MSK_MAX_STR_LEN as usize,0);
-      self.handle_res(unsafe { MSK_solstatostr(self.ptr,solutionsta_,str_.as_mut_ptr()) },"sol_sta_to_str")?;
-      return Result::Ok(String::from_utf8_lossy(&str_[..]).into_owned());
-    } // solstatostr
-    #[allow(unused_parens)]
     pub fn solution_def(&self,whichsol_ : i32) -> Result<bool,String> {
       let mut __tmp_0 : i32 = 0;
       self.handle_res(unsafe { MSK_solutiondef(self.ptr,whichsol_,&mut __tmp_0) },"solution_def")?;
@@ -5604,26 +5677,19 @@ impl Task
     #[allow(unused_parens)]
     pub fn solve_with_basis(&mut self,transp_ : i32,numnz_ : i32,sub_ : &mut[i32],val_ : &mut[f64]) -> Result<i32,String> {
       let mut __tmp_0 : i32 = i32::default();
-      __tmp_0 = numnz_;
-      let mut __tmp_1 : i32 = i32::default();
-      let __tmp_2 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getnumcon")?;
-      if sub_.len() != (__tmp_1).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected __tmp_1".to_string());
+      let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
+      if sub_.len() != (__tmp_0).try_into().unwrap() {
+        return Result::Err("Argument 'sub' has the wrong length, expected __tmp_0".to_string());
       }
-      let mut __tmp_3 : i32 = i32::default();
-      let __tmp_4 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getnumcon")?;
-      if val_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected __tmp_3".to_string());
+      let mut __tmp_2 : i32 = i32::default();
+      let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
+      if val_.len() != (__tmp_2).try_into().unwrap() {
+        return Result::Err("Argument 'val' has the wrong length, expected __tmp_2".to_string());
       }
-      self.handle_res(unsafe { MSK_solvewithbasis(self.ptr,transp_,&mut __tmp_0,sub_.as_mut_ptr(),val_.as_mut_ptr()) },"solve_with_basis")?;
-      return Result::Ok(__tmp_0);
+      let mut __tmp_4 : i32 = i32::default();
+      self.handle_res(unsafe { MSK_solvewithbasis(self.ptr,transp_,numnz_,sub_.as_mut_ptr(),val_.as_mut_ptr(),&mut __tmp_4) },"solve_with_basis")?;
+      return Result::Ok(__tmp_4);
     } // solvewithbasis
-    #[allow(unused_parens)]
-    pub fn str_dup_task(&self,str_ : &str) -> Result<(),String> {
-      let __tmp_1 = CString::new(str_).unwrap();
-      self.handle_res(unsafe { MSK_strduptask(self.ptr,__tmp_1.as_ptr()) },"str_dup_task")?;
-      return Result::Ok(());
-    } // strduptask
     #[allow(unused_parens)]
     pub fn str_to_cone_type(&self,str_ : &str,conetype_ : & mut i32) -> Result<(),String> {
       let __tmp_1 = CString::new(str_).unwrap();
@@ -5658,6 +5724,12 @@ impl Task
       return Result::Ok(());
     } // whichparam
     #[allow(unused_parens)]
+    pub fn write_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> {
+      let __tmp_1 = CString::new(filename_).unwrap();
+      self.handle_res(unsafe { MSK_writebsolution(self.ptr,__tmp_1.as_ptr(),compress_) },"write_b_solution")?;
+      return Result::Ok(());
+    } // writebsolution
+    #[allow(unused_parens)]
     pub fn write_data(&self,filename_ : &str) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
       self.handle_res(unsafe { MSK_writedata(self.ptr,__tmp_1.as_ptr()) },"write_data")?;
@@ -5682,6 +5754,12 @@ impl Task
       return Result::Ok(());
     } // writesolution
     #[allow(unused_parens)]
+    pub fn write_solution_file(&self,filename_ : &str) -> Result<(),String> {
+      let __tmp_1 = CString::new(filename_).unwrap();
+      self.handle_res(unsafe { MSK_writesolutionfile(self.ptr,__tmp_1.as_ptr()) },"write_solution_file")?;
+      return Result::Ok(());
+    } // writesolutionfile
+    #[allow(unused_parens)]
     pub fn write_stat(&mut self,filename_ : &str) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
       self.handle_res(unsafe { MSK_writestat(self.ptr,__tmp_1.as_ptr()) },"write_stat")?;
@@ -5694,9 +5772,9 @@ impl Task
       return Result::Ok(());
     } // writetask
     #[allow(unused_parens)]
-    pub fn write_task_solver_result_file(&self,filename_ : &str) -> Result<(),String> {
+    pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
-      self.handle_res(unsafe { MSK_writetasksolverresult_file(self.ptr,__tmp_1.as_ptr()) },"write_task_solver_result_file")?;
+      self.handle_res(unsafe { MSK_writetasksolverresult_file(self.ptr,__tmp_1.as_ptr(),compress_) },"write_task_solver_result_file")?;
       return Result::Ok(());
     } // writetasksolverresult_file
 
@@ -5721,12 +5799,6 @@ impl Drop for Task
 }
 
 
-#[allow(unused_parens)]
-pub fn callback_code_to_str(code_ : i32) -> Result<String,String> {
-  let mut callbackcodestr_ = Vec::new(); callbackcodestr_.resize(MSK_MAX_STR_LEN as usize,0);
-  handle_res_static(unsafe { MSK_callbackcodetostr(code_,callbackcodestr_.as_mut_ptr()) },"callback_code_to_str")?;
-  return Result::Ok(String::from_utf8_lossy(&callbackcodestr_[..]).into_owned());
-} // callbackcodetostr
 #[allow(unused_parens)]
 pub fn get_build_info() -> Result<String,String> {
   let mut buildstate_ = Vec::new(); buildstate_.resize(MSK_MAX_STR_LEN as usize,0);

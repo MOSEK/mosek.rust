@@ -109,5 +109,4 @@ fn main() {
 
     println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);
-
 }
