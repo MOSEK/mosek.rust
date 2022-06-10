@@ -9,20 +9,16 @@
 
 extern crate mosek;
 
-fn portfolio(n : i32,
-             gamma : f64,
-             mu : &[f64],
-             GT : &[f64],
-             x0 : &[f64],
-             w : f64) -> Result<Vec<f64>,String> {
+fn portfolio(n : i32,     // number of assets
+             gamma : f64, // risk bound: maximum stddev
+             mu : &[f64], // vector of expected returns
+             GT : &[f64], // covariance matrix factor
+             x0 : &[f64], // initial investment
+             w : f64)     // initial wealth
+             -> Result<Vec<f64>,String> {
 
-    /* Initial setup. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-    };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match mosek::Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
     };
@@ -77,11 +73,10 @@ fn portfolio(n : i32,
 
     task.put_acc_name(0,"stddev");
 
-
     task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE);
 
     /* Dump the problem to a human readable OPF file. */
-    task.write_data("dump.ptf");
+    task.write_data("portfolio_1_basic.ptf");
 
     let trm = task.optimize()?;
 
