@@ -1,3 +1,0 @@
-[submodule "deps/conicsolverapi.rs"]
-	path = deps/conicsolverapi.rs
-	url = git@git-lab.mosek.intranet:ulfw/conicsolverapi.rs.git

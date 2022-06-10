@@ -2279,7 +2279,7 @@ extern fn callback_proxy(_       : * const c_void,
 
 impl Task
 {
-    pub fn new_from_env(env : &Env) -> Some<Task> {
+    pub fn new_from_env(env : &Env) -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(env.ptr, 0,0, & mut task) } {
             return None;
@@ -2290,7 +2290,7 @@ impl Task
                            valuecb  : None,});
     }
 
-    pub fn new()  -> Some<Task> {
+    pub fn new()  -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(std::ptr::null(), 0,0, & mut task) } {
             return None;

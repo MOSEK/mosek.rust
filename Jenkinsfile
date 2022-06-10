@@ -1,5 +1,5 @@
 
-node ("karise") {
+node ("ulfborg") {
     def brn = env.gitlabSourceBranch
     branchname = ( brn == null ?
             "origin/master" :
