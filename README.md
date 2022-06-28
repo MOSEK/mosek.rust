@@ -1,8 +1,8 @@
 # *DISCLAIMER*
 
-This software is still experimental. We (MOSEK) may fix errors and bugs, but provide
-no guarantee on how or how quickly we do so.
-
+This software is still experimental. We (MOSEK) will attempt to fix
+errors and bugs, but provide no guarantee on how or how quickly we do
+so.
 
 # Mosek 10.0 Rust interface
 
@@ -38,6 +38,12 @@ export MOSEK_BINDIR_100=$HOME/local/mosek/10.0/tools/platform/linux64x86/bin
 cargo build
 ```
 
+## Documentation
+
+```cargo doc``` will build the simple API documentation for all
+functions, objects and constants. For a more complete documentation,
+see <https://docs.mosek.com/latest/capi/index.html>.
+
 ## Examples
 
 Examples are located under `examples/`
@@ -47,6 +53,10 @@ To compile examples, run
 ```
 cargo build --examples
 ```
+
+To run example binaries it is necessary to add the path to the MOSEK
+library to the `LD_LIBRARY_PATH` (linux), `DYLD_LIBRARY_PATH` (OS X)
+or `PATH` (Windows) environment variable.
 
 # MOSEK / Mosek.rs versions
 
