@@ -3342,11 +3342,17 @@ fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
           })
 }
 
+/// Environment. Defines an environment in which tasks are created. In
+/// most cases it is not necessary to create this directly since the
+/// tasks can use the default environment.
 pub struct Env
 {
     ptr : * const u8,
 }
 
+/// The Task structure encapsulates a MOSEK Task containing problem
+/// data, parameters and other information used to solve the
+/// optimization problem.
 pub struct Task
 {
     ptr       : * const u8,
@@ -3356,6 +3362,7 @@ pub struct Task
 
 impl Env
 {
+    /// Create a new environment
     pub fn new() -> Option<Env> {
         let mut env : * const u8 = std::ptr::null();
         let res = unsafe { MSK_makeenv(& mut env, std::ptr::null()) };
@@ -3364,6 +3371,7 @@ impl Env
         return Some(Env { ptr : env });
     }
 
+    /// Create a new environment, specifying an output file used for writing memory debugging information.
     pub fn new_mem_debug(dbgfile : &str) -> Option<Env> {
         let mut env : * const u8 = std::ptr::null();
         let dbgfile_cstr = CString::new(dbgfile).unwrap();
@@ -3372,7 +3380,8 @@ impl Env
 
         return Some(Env { ptr : env });
     }
-
+    
+    /// Create a new task in this environment
     pub fn task(&self) -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(self.ptr, 0,0, & mut task) } {
@@ -3383,7 +3392,8 @@ impl Env
                            streamcb : [None,None,None,None],
                            valuecb  : None,});
     }
-
+    
+    /// Create a new task in this environment with pre-defined capacities.
     pub fn task_with_capacity(&self, numcon : i32, numvar : i32) -> Option<Task>
     {
         let mut task : * const u8 = std::ptr::null();
@@ -3812,6 +3822,7 @@ extern fn callback_proxy(_       : * const c_void,
 
 impl Task
 {
+    /// Create a new task in the given environment
     pub fn new_from_env(env : &Env) -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(env.ptr, 0,0, & mut task) } {
@@ -3823,6 +3834,7 @@ impl Task
                            valuecb  : None,});
     }
 
+    /// Create a new task in the default environment
     pub fn new()  -> Option<Task> {
         let mut task : * const u8 = std::ptr::null();
         if 0 != unsafe { MSK_maketask(std::ptr::null(), 0,0, & mut task) } {
@@ -3859,6 +3871,12 @@ impl Task
 
     // NOTE on callback with handles:
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
+    /// Set a stream callback handler.
+    ///
+    /// # Arguments
+    ///
+    /// - `whichstream` defines which stream attach it to, use constants `MSK_STREAM_...`.
+    /// - `func` is a function `(String) -> ()` that receives a message to be printed.
     pub fn put_stream_callback<F>(& mut self,whichstream : i32, func : F) -> Result<(),String>
     where F : 'static+Fn(&str) {
         if whichstream >= 0 && whichstream < 4 {
@@ -3876,6 +3894,7 @@ impl Task
     }
 
 
+    /// Clear stream callback handler at a given stream.
     pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
         match self.streamcb[whichstream as usize] {
             Some(ref _f) => {
@@ -3887,6 +3906,17 @@ impl Task
         return Ok(());
     }
 
+    /// Sets an information callback handler in the task
+    ///
+    /// # Arguments:
+    ///
+    /// - `func` A function (caller:i32,dinf:&[f64],iinf:&[i32],liinf:&[i64]) -> bool, that
+    ///   returns false to indicate that the solver should terminate as
+    ///   soon as possible, otherwise returns true.
+    ///   - `caller` indicates what the solver is currently doing (see `MSK_CALLBACK_...` constants)
+    ///   - `dinf` is a list of f64 information items (indexed with `MSK_DINF_...`)
+    ///   - `iinf` is a list of i32 information items (indexed with `MSK_IINF_...`)
+    ///   - `liinf` is a list of i64 information items (indexed with `MSK_LIINF_...`)
     pub fn put_callback<F>(& mut self,func : F) -> Result<(),String>
     where F : 'static +FnMut(i32,&[f64],&[i32],&[i64]) -> bool {
         self.valuecb = Some(Box::new(Box::new(func)));
