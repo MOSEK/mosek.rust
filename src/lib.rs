@@ -3876,7 +3876,7 @@ impl Task
     /// # Arguments
     ///
     /// - `whichstream` defines which stream attach it to, use constants `MSK_STREAM_...`.
-    /// - `func` is a function `(String) -> ()` that receives a message to be printed.
+    /// - `func` is a function that receives a message to be printed.
     pub fn put_stream_callback<F>(& mut self,whichstream : i32, func : F) -> Result<(),String>
     where F : 'static+Fn(&str) {
         if whichstream >= 0 && whichstream < 4 {
@@ -3910,7 +3910,7 @@ impl Task
     ///
     /// # Arguments:
     ///
-    /// - `func` A function (caller:i32,dinf:&[f64],iinf:&[i32],liinf:&[i64]) -> bool, that
+    /// - `func` A function (caller,dinf,iinf,liinf) -> bool, that
     ///   returns false to indicate that the solver should terminate as
     ///   soon as possible, otherwise returns true.
     ///   - `caller` indicates what the solver is currently doing (see `MSK_CALLBACK_...` constants)
