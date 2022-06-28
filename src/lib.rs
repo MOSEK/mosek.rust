@@ -527,6 +527,7 @@ extern {
 
 /// Basis identification
 #[non_exhaustive]
+#[negative_impls]
 pub struct Basindtype;
 impl Basindtype {
   /// Never do basis identification.
@@ -543,6 +544,7 @@ impl Basindtype {
 
 /// Bound keys
 #[non_exhaustive]
+#[negative_impls]
 pub struct Boundkey;
 impl Boundkey {
   /// The constraint or variable has a finite lower bound and an infinite upper bound.
@@ -559,6 +561,7 @@ impl Boundkey {
 
 /// Mark
 #[non_exhaustive]
+#[negative_impls]
 pub struct Mark;
 impl Mark {
   /// The lower bound is selected for sensitivity analysis.
@@ -569,6 +572,7 @@ impl Mark {
 
 /// Degeneracy strategies
 #[non_exhaustive]
+#[negative_impls]
 pub struct Simdegen;
 impl Simdegen {
   /// The simplex optimizer should use no degeneration strategy.
@@ -585,6 +589,7 @@ impl Simdegen {
 
 /// Transposed matrix.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Transpose;
 impl Transpose {
   /// No transpose is applied.
@@ -595,6 +600,7 @@ impl Transpose {
 
 /// Triangular part of a symmetric matrix.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Uplo;
 impl Uplo {
   /// Lower part.
@@ -605,6 +611,7 @@ impl Uplo {
 
 /// Problem reformulation.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Simreform;
 impl Simreform {
   /// Disallow the simplex optimizer to reformulate the problem.
@@ -619,6 +626,7 @@ impl Simreform {
 
 /// Exploit duplicate columns.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Simdupvec;
 impl Simdupvec {
   /// Disallow the simplex optimizer to exploit duplicated columns.
@@ -631,6 +639,7 @@ impl Simdupvec {
 
 /// Hot-start type employed by the simplex optimizer
 #[non_exhaustive]
+#[negative_impls]
 pub struct Simhotstart;
 impl Simhotstart {
   /// The simplex optimizer performs a coldstart.
@@ -643,6 +652,7 @@ impl Simhotstart {
 
 /// Hot-start type employed by the interior-point optimizers.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Intpnthotstart;
 impl Intpnthotstart {
   /// The interior-point optimizer performs a coldstart.
@@ -657,6 +667,7 @@ impl Intpnthotstart {
 
 /// Solution purification employed optimizer.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Purify;
 impl Purify {
   /// The optimizer performs no solution purification.
@@ -673,6 +684,7 @@ impl Purify {
 
 /// Progress callback codes
 #[non_exhaustive]
+#[negative_impls]
 pub struct Callbackcode;
 impl Callbackcode {
   /// The basis identification procedure has been started.
@@ -865,6 +877,7 @@ impl Callbackcode {
 
 /// Types of convexity checks.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Checkconvexitytype;
 impl Checkconvexitytype {
   /// No convexity check.
@@ -877,6 +890,7 @@ impl Checkconvexitytype {
 
 /// Compression types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Compresstype;
 impl Compresstype {
   /// No compression is used.
@@ -891,6 +905,7 @@ impl Compresstype {
 
 /// Cone types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Conetype;
 impl Conetype {
   /// The cone is a quadratic cone.
@@ -911,6 +926,7 @@ impl Conetype {
 
 /// Cone types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Domaintype;
 impl Domaintype {
   /// R.
@@ -943,6 +959,7 @@ impl Domaintype {
 
 /// Name types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Nametype;
 impl Nametype {
   /// General names. However, no duplicate and blank names are allowed.
@@ -955,6 +972,7 @@ impl Nametype {
 
 /// Cone types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Symmattype;
 impl Symmattype {
   /// Sparse symmetric matrix.
@@ -963,6 +981,7 @@ impl Symmattype {
 
 /// Data format types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Dataformat;
 impl Dataformat {
   /// The file extension is used to determine the data file format.
@@ -987,6 +1006,7 @@ impl Dataformat {
 
 /// Data format types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Solformat;
 impl Solformat {
   /// The file extension is used to determine the data file format.
@@ -1001,6 +1021,7 @@ impl Solformat {
 
 /// Double information items
 #[non_exhaustive]
+#[negative_impls]
 pub struct Dinfitem;
 impl Dinfitem {
   /// Time  spent within the dual clean-up optimizer of the basis identification procedure since its invocation.
@@ -1206,6 +1227,7 @@ impl Dinfitem {
 
 /// License feature
 #[non_exhaustive]
+#[negative_impls]
 pub struct Feature;
 impl Feature {
   /// Base system.
@@ -1216,6 +1238,7 @@ impl Feature {
 
 /// Double parameters
 #[non_exhaustive]
+#[negative_impls]
 pub struct Dparam;
 impl Dparam {
   /// If a constraint violates its bound with an amount larger than this value, the constraint name, index and violation will be printed by the solution analyzer.
@@ -1344,6 +1367,7 @@ impl Dparam {
 
 /// Long integer information items.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Liinfitem;
 impl Liinfitem {
   /// Number of dual degenerate clean iterations performed in the basis identification.
@@ -1387,6 +1411,7 @@ impl Liinfitem {
 
 /// Integer information items.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Iinfitem;
 impl Iinfitem {
   /// Number of constraints in the problem.
@@ -1606,6 +1631,7 @@ impl Iinfitem {
 
 /// Information item types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Inftype;
 impl Inftype {
   /// Is a double information type.
@@ -1618,6 +1644,7 @@ impl Inftype {
 
 /// Input/output modes
 #[non_exhaustive]
+#[negative_impls]
 pub struct Iomode;
 impl Iomode {
   /// The file is read-only.
@@ -1630,6 +1657,7 @@ impl Iomode {
 
 /// Integer parameters
 #[non_exhaustive]
+#[negative_impls]
 pub struct Iparam;
 impl Iparam {
   /// Controls whether the basis matrix is analyzed in solution analyzer.
@@ -2016,6 +2044,7 @@ impl Iparam {
 
 /// Specifies the branching direction.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Branchdir;
 impl Branchdir {
   /// The mixed-integer optimizer decides which branch to choose.
@@ -2038,6 +2067,7 @@ impl Branchdir {
 
 /// Specifies the reformulation method for mixed-integer quadratic problems.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Miqcqoreformmethod;
 impl Miqcqoreformmethod {
   /// The mixed-integer optimizer decides which reformulation method to apply.
@@ -2056,6 +2086,7 @@ impl Miqcqoreformmethod {
 
 /// Specifies the problem data permutation method for mixed-integer problems.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Miodatapermmethod;
 impl Miodatapermmethod {
   /// No problem data permutation is applied.
@@ -2068,6 +2099,7 @@ impl Miodatapermmethod {
 
 /// Continuous mixed-integer solution type
 #[non_exhaustive]
+#[negative_impls]
 pub struct Miocontsoltype;
 impl Miocontsoltype {
   /// No interior-point or basic solution.
@@ -2082,6 +2114,7 @@ impl Miocontsoltype {
 
 /// Integer restrictions
 #[non_exhaustive]
+#[negative_impls]
 pub struct Miomode;
 impl Miomode {
   /// The integer constraints are ignored and the problem is solved as a continuous problem.
@@ -2092,6 +2125,7 @@ impl Miomode {
 
 /// Mixed-integer node selection types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Mionodeseltype;
 impl Mionodeseltype {
   /// The optimizer decides the node selection strategy.
@@ -2106,6 +2140,7 @@ impl Mionodeseltype {
 
 /// MPS file format type
 #[non_exhaustive]
+#[negative_impls]
 pub struct Mpsformat;
 impl Mpsformat {
   /// It is assumed that the input file satisfies the MPS format strictly.
@@ -2120,6 +2155,7 @@ impl Mpsformat {
 
 /// Objective sense types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Objsense;
 impl Objsense {
   /// The problem should be minimized.
@@ -2130,6 +2166,7 @@ impl Objsense {
 
 /// On/off
 #[non_exhaustive]
+#[negative_impls]
 pub struct Onoffkey;
 impl Onoffkey {
   /// Switch the option off.
@@ -2140,6 +2177,7 @@ impl Onoffkey {
 
 /// Optimizer types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Optimizertype;
 impl Optimizertype {
   /// The optimizer for problems having conic constraints.
@@ -2160,6 +2198,7 @@ impl Optimizertype {
 
 /// Ordering strategies
 #[non_exhaustive]
+#[negative_impls]
 pub struct Orderingtype;
 impl Orderingtype {
   /// The ordering method is chosen automatically.
@@ -2178,6 +2217,7 @@ impl Orderingtype {
 
 /// Presolve method.
 #[non_exhaustive]
+#[negative_impls]
 pub struct Presolvemode;
 impl Presolvemode {
   /// The problem is not presolved before it is optimized.
@@ -2190,6 +2230,7 @@ impl Presolvemode {
 
 /// Parameter type
 #[non_exhaustive]
+#[negative_impls]
 pub struct Parametertype;
 impl Parametertype {
   /// Not a valid parameter.
@@ -2204,6 +2245,7 @@ impl Parametertype {
 
 /// Problem data items
 #[non_exhaustive]
+#[negative_impls]
 pub struct Problemitem;
 impl Problemitem {
   /// Item is a variable.
@@ -2216,6 +2258,7 @@ impl Problemitem {
 
 /// Problem types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Problemtype;
 impl Problemtype {
   /// The problem is a linear optimization problem.
@@ -2232,6 +2275,7 @@ impl Problemtype {
 
 /// Problem status keys
 #[non_exhaustive]
+#[negative_impls]
 pub struct Prosta;
 impl Prosta {
   /// Unknown problem status.
@@ -2256,6 +2300,7 @@ impl Prosta {
 
 /// XML writer output mode
 #[non_exhaustive]
+#[negative_impls]
 pub struct Xmlwriteroutputtype;
 impl Xmlwriteroutputtype {
   /// Write in row order.
@@ -2266,6 +2311,7 @@ impl Xmlwriteroutputtype {
 
 /// Response codes
 #[non_exhaustive]
+#[negative_impls]
 pub struct Rescode;
 impl Rescode {
   /// No error occurred.
@@ -3320,6 +3366,7 @@ impl Rescode {
 
 /// Response code type
 #[non_exhaustive]
+#[negative_impls]
 pub struct Rescodetype;
 impl Rescodetype {
   /// The response code is OK.
@@ -3336,6 +3383,7 @@ impl Rescodetype {
 
 /// Scaling type
 #[non_exhaustive]
+#[negative_impls]
 pub struct Scalingtype;
 impl Scalingtype {
   /// The optimizer chooses the scaling heuristic.
@@ -3346,6 +3394,7 @@ impl Scalingtype {
 
 /// Scaling method
 #[non_exhaustive]
+#[negative_impls]
 pub struct Scalingmethod;
 impl Scalingmethod {
   /// Scales only with power of 2 leaving the mantissa untouched.
@@ -3356,6 +3405,7 @@ impl Scalingmethod {
 
 /// Sensitivity types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Sensitivitytype;
 impl Sensitivitytype {
   /// Basis sensitivity analysis is performed.
@@ -3364,6 +3414,7 @@ impl Sensitivitytype {
 
 /// Simplex selection strategy
 #[non_exhaustive]
+#[negative_impls]
 pub struct Simseltype;
 impl Simseltype {
   /// The optimizer chooses the pricing strategy.
@@ -3382,6 +3433,7 @@ impl Simseltype {
 
 /// Solution items
 #[non_exhaustive]
+#[negative_impls]
 pub struct Solitem;
 impl Solitem {
   /// Solution for the constraints.
@@ -3404,6 +3456,7 @@ impl Solitem {
 
 /// Solution status keys
 #[non_exhaustive]
+#[negative_impls]
 pub struct Solsta;
 impl Solsta {
   /// Status of the solution is unknown.
@@ -3430,6 +3483,7 @@ impl Solsta {
 
 /// Solution types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Soltype;
 impl Soltype {
   /// The interior solution.
@@ -3442,6 +3496,7 @@ impl Soltype {
 
 /// Solve primal or dual form
 #[non_exhaustive]
+#[negative_impls]
 pub struct Solveform;
 impl Solveform {
   /// The optimizer is free to solve either the primal or the dual problem.
@@ -3454,6 +3509,7 @@ impl Solveform {
 
 /// String parameters
 #[non_exhaustive]
+#[negative_impls]
 pub struct Sparam;
 impl Sparam {
   /// Name of the bas solution file.
@@ -3510,6 +3566,7 @@ impl Sparam {
 
 /// Status keys
 #[non_exhaustive]
+#[negative_impls]
 pub struct Stakey;
 impl Stakey {
   /// The status for the constraint or variable is unknown.
@@ -3530,6 +3587,7 @@ impl Stakey {
 
 /// Starting point types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Startpointtype;
 impl Startpointtype {
   /// The starting point is chosen automatically.
@@ -3544,6 +3602,7 @@ impl Startpointtype {
 
 /// Stream types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Streamtype;
 impl Streamtype {
   /// Log stream. Contains the aggregated contents of all other streams. This means that a message written to any other stream will also be written to this stream.
@@ -3558,6 +3617,7 @@ impl Streamtype {
 
 /// Integer values
 #[non_exhaustive]
+#[negative_impls]
 pub struct Value;
 impl Value {
   /// The length of a license key buffer.
@@ -3568,6 +3628,7 @@ impl Value {
 
 /// Variable types
 #[non_exhaustive]
+#[negative_impls]
 pub struct Variabletype;
 impl Variabletype {
   /// Is a continuous variable.
