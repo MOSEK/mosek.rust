@@ -2740,7 +2740,7 @@ impl Rescode {
   pub const ERR_NUMVARLIM : i32 = 1251;
   /// Too small maximum number of non-zeros in A specified.
   pub const ERR_TOO_SMALL_MAXNUMANZ : i32 = 1252;
-  /// aptre[j] is strictly smaller than aptrb[j] for some j.
+  /// aptre\[j\] is strictly smaller than aptrb\[j\] for some j.
   pub const ERR_INV_APTRE : i32 = 1253;
   /// An element in A is defined multiple times.
   pub const ERR_MUL_A_ELEMENT : i32 = 1254;
@@ -2890,9 +2890,9 @@ impl Rescode {
   pub const ERR_NAN_IN_BLX : i32 = 1471;
   /// bux contains an invalid floating point value, i.e. a NaN.
   pub const ERR_NAN_IN_BUX : i32 = 1472;
-  /// a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
+  /// a\[i,j\] contains an invalid floating point value, i.e. a NaN or an infinite value.
   pub const ERR_INVALID_AIJ : i32 = 1473;
-  /// c[j] contains an invalid floating point value, i.e. a NaN or an infinite value.
+  /// c\[j\] contains an invalid floating point value, i.e. a NaN or an infinite value.
   pub const ERR_INVALID_CJ : i32 = 1474;
   /// A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value.
   pub const ERR_SYM_MAT_INVALID : i32 = 1480;
@@ -3244,7 +3244,7 @@ impl Rescode {
   pub const ERR_SERVER_PROBLEM_SIZE : i32 = 8008;
   /// An element in the F matrix is specified twice.
   pub const ERR_DUPLICATE_FIJ : i32 = 20100;
-  /// f[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
+  /// f\[i,j\] contains an invalid floating point value, i.e. a NaN or an infinite value.
   pub const ERR_INVALID_FIJ : i32 = 20101;
   /// A numerically huge value is specified for an element in F.
   pub const ERR_HUGE_FIJ : i32 = 20102;
