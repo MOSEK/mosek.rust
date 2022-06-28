@@ -12,9 +12,10 @@ no guarantee on how or how quickly we do so.
 The package should work on
 
 - Linux x86_64
-- Linux aarch64 (RaspberryPi 4)
+- Linux aarch64 (RaspberryPi 4, Amazon Graviton 2 and others)
 - Windows x86_64
 - Mac OSX x86_64
+- Mac OSX aarch64
 
 API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
 
@@ -49,5 +50,8 @@ cargo build --examples
 
 # MOSEK / Mosek.rs versions
 
-# Mosek.rs 0.1 -> MOSEK 9.2
-# Mosek.rs 0.2 -> MOSEK 9.3
+- Mosek.rs 0.1 -> MOSEK 9.2
+- Mosek.rs 0.2 -> MOSEK 9.3
+
+From Mosek 10.0 the major/minor version of Mosek Rust API will follow Mosek.
+
