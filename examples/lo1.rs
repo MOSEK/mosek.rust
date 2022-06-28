@@ -9,6 +9,8 @@
 
 extern crate mosek;
 
+use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
+
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String>
@@ -32,11 +34,11 @@ fn main() -> Result<(),String>
                       1.0, 3.0 ];
 
     /* Bounds on constraints. */
-    let bkc = vec![ mosek::MSK_BK_FX, mosek::MSK_BK_LO, mosek::MSK_BK_UP ];
+    let bkc = vec![ Boundkey::FX, Boundkey::LO, Boundkey::UP ];
     let blc = vec![ 30.0,      15.0,      -INF      ];
     let buc = vec![ 30.0,      INF,       25.0      ];
     /* Bounds on variables. */
-    let bkx = vec![ mosek::MSK_BK_LO, mosek::MSK_BK_RA, mosek::MSK_BK_LO, mosek::MSK_BK_LO ];
+    let bkx = vec![ Boundkey::LO, Boundkey::RA, Boundkey::LO, Boundkey::LO ];
     let blx = vec![ 0.0,       0.0,       0.0,       0.0       ];
     let bux = vec![ INF,      10.0,       INF,       INF       ];
 
@@ -52,7 +54,7 @@ fn main() -> Result<(),String>
         };
 
     /* Directs the log task stream to the 'printstr' function. */
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
 
@@ -93,7 +95,7 @@ fn main() -> Result<(),String>
     }
 
     /* Maximize objective function. */
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
 
       /* Run optimizer */
     let _trmcode = task.optimize()?;
@@ -101,16 +103,16 @@ fn main() -> Result<(),String>
     /* Print a summary containing information
      * about the solution for debugging purposes. */
 
-    task.solution_summary(mosek::MSK_STREAM_LOG)?;
+    task.solution_summary(Streamtype::LOG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_BAS)?;
+    let solsta = task.get_sol_sta(Soltype::BAS)?;
 
     match solsta
     {
-        mosek::MSK_SOL_STA_OPTIMAL =>
+        Solsta::OPTIMAL =>
         {
             let mut xx = vec![0.0,0.0,0.0,0.0];
-            task.get_xx(mosek::MSK_SOL_BAS,    /* Request the basic solution. */
+            task.get_xx(Soltype::BAS,    /* Request the basic solution. */
                         & mut xx[..])?;
             println!("Optimal primal solution");
             for j in 0..numvar as usize
@@ -119,13 +121,13 @@ fn main() -> Result<(),String>
             }
           }
 
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER =>
+        Solsta::DUAL_INFEAS_CER |
+        Solsta::PRIM_INFEAS_CER =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }
 
-        mosek::MSK_SOL_STA_UNKNOWN =>
+        Solsta::UNKNOWN =>
         {
             /* If the solutions status is unknown, print the termination code
              * indicating why the optimizer terminated prematurely. */
