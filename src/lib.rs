@@ -526,1469 +526,2810 @@ extern {
 
 
 // basindtype
+/// {l}
 pub const MSK_BI_NEVER : i32 = 0;
+/// {l}
 pub const MSK_BI_ALWAYS : i32 = 1;
+/// {l}
 pub const MSK_BI_NO_ERROR : i32 = 2;
+/// {l}
 pub const MSK_BI_IF_FEASIBLE : i32 = 3;
+/// {l}
 pub const MSK_BI_RESERVERED : i32 = 4;
 
 // boundkey
+/// {l}
 pub const MSK_BK_LO : i32 = 0;
+/// {l}
 pub const MSK_BK_UP : i32 = 1;
+/// {l}
 pub const MSK_BK_FX : i32 = 2;
+/// {l}
 pub const MSK_BK_FR : i32 = 3;
+/// {l}
 pub const MSK_BK_RA : i32 = 4;
 
 // mark
+/// {l}
 pub const MSK_MARK_LO : i32 = 0;
+/// {l}
 pub const MSK_MARK_UP : i32 = 1;
 
 // simdegen
+/// {l}
 pub const MSK_SIM_DEGEN_NONE : i32 = 0;
+/// {l}
 pub const MSK_SIM_DEGEN_FREE : i32 = 1;
+/// {l}
 pub const MSK_SIM_DEGEN_AGGRESSIVE : i32 = 2;
+/// {l}
 pub const MSK_SIM_DEGEN_MODERATE : i32 = 3;
+/// {l}
 pub const MSK_SIM_DEGEN_MINIMUM : i32 = 4;
 
 // transpose
+/// {l}
 pub const MSK_TRANSPOSE_NO : i32 = 0;
+/// {l}
 pub const MSK_TRANSPOSE_YES : i32 = 1;
 
 // uplo
+/// {l}
 pub const MSK_UPLO_LO : i32 = 0;
+/// {l}
 pub const MSK_UPLO_UP : i32 = 1;
 
 // simreform
+/// {l}
 pub const MSK_SIM_REFORMULATION_OFF : i32 = 0;
+/// {l}
 pub const MSK_SIM_REFORMULATION_ON : i32 = 1;
+/// {l}
 pub const MSK_SIM_REFORMULATION_FREE : i32 = 2;
+/// {l}
 pub const MSK_SIM_REFORMULATION_AGGRESSIVE : i32 = 3;
 
 // simdupvec
+/// {l}
 pub const MSK_SIM_EXPLOIT_DUPVEC_OFF : i32 = 0;
+/// {l}
 pub const MSK_SIM_EXPLOIT_DUPVEC_ON : i32 = 1;
+/// {l}
 pub const MSK_SIM_EXPLOIT_DUPVEC_FREE : i32 = 2;
 
 // simhotstart
+/// {l}
 pub const MSK_SIM_HOTSTART_NONE : i32 = 0;
+/// {l}
 pub const MSK_SIM_HOTSTART_FREE : i32 = 1;
+/// {l}
 pub const MSK_SIM_HOTSTART_STATUS_KEYS : i32 = 2;
 
 // intpnthotstart
+/// {l}
 pub const MSK_INTPNT_HOTSTART_NONE : i32 = 0;
+/// {l}
 pub const MSK_INTPNT_HOTSTART_PRIMAL : i32 = 1;
+/// {l}
 pub const MSK_INTPNT_HOTSTART_DUAL : i32 = 2;
+/// {l}
 pub const MSK_INTPNT_HOTSTART_PRIMAL_DUAL : i32 = 3;
 
 // purify
+/// {l}
 pub const MSK_PURIFY_NONE : i32 = 0;
+/// {l}
 pub const MSK_PURIFY_PRIMAL : i32 = 1;
+/// {l}
 pub const MSK_PURIFY_DUAL : i32 = 2;
+/// {l}
 pub const MSK_PURIFY_PRIMAL_DUAL : i32 = 3;
+/// {l}
 pub const MSK_PURIFY_AUTO : i32 = 4;
 
 // callbackcode
+/// {l}
 pub const MSK_CALLBACK_BEGIN_BI : i32 = 0;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_CONIC : i32 = 1;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_DUAL_BI : i32 = 2;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY : i32 = 3;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI : i32 = 4;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX : i32 = 5;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI : i32 = 6;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_INFEAS_ANA : i32 = 7;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_INTPNT : i32 = 8;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT : i32 = 9;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_MIO : i32 = 10;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_OPTIMIZER : i32 = 11;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRESOLVE : i32 = 12;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_BI : i32 = 13;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR : i32 = 14;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY : i32 = 15;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI : i32 = 16;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX : i32 = 17;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI : i32 = 18;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE : i32 = 19;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_READ : i32 = 20;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN : i32 = 21;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_SIMPLEX : i32 = 22;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI : i32 = 23;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX : i32 = 24;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_TO_CONIC : i32 = 25;
+/// {l}
 pub const MSK_CALLBACK_BEGIN_WRITE : i32 = 26;
+/// {l}
 pub const MSK_CALLBACK_CONIC : i32 = 27;
+/// {l}
 pub const MSK_CALLBACK_DUAL_SIMPLEX : i32 = 28;
+/// {l}
 pub const MSK_CALLBACK_END_BI : i32 = 29;
+/// {l}
 pub const MSK_CALLBACK_END_CONIC : i32 = 30;
+/// {l}
 pub const MSK_CALLBACK_END_DUAL_BI : i32 = 31;
+/// {l}
 pub const MSK_CALLBACK_END_DUAL_SENSITIVITY : i32 = 32;
+/// {l}
 pub const MSK_CALLBACK_END_DUAL_SETUP_BI : i32 = 33;
+/// {l}
 pub const MSK_CALLBACK_END_DUAL_SIMPLEX : i32 = 34;
+/// {l}
 pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI : i32 = 35;
+/// {l}
 pub const MSK_CALLBACK_END_INFEAS_ANA : i32 = 36;
+/// {l}
 pub const MSK_CALLBACK_END_INTPNT : i32 = 37;
+/// {l}
 pub const MSK_CALLBACK_END_LICENSE_WAIT : i32 = 38;
+/// {l}
 pub const MSK_CALLBACK_END_MIO : i32 = 39;
+/// {l}
 pub const MSK_CALLBACK_END_OPTIMIZER : i32 = 40;
+/// {l}
 pub const MSK_CALLBACK_END_PRESOLVE : i32 = 41;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_BI : i32 = 42;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_REPAIR : i32 = 43;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY : i32 = 44;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI : i32 = 45;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX : i32 = 46;
+/// {l}
 pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI : i32 = 47;
+/// {l}
 pub const MSK_CALLBACK_END_QCQO_REFORMULATE : i32 = 48;
+/// {l}
 pub const MSK_CALLBACK_END_READ : i32 = 49;
+/// {l}
 pub const MSK_CALLBACK_END_ROOT_CUTGEN : i32 = 50;
+/// {l}
 pub const MSK_CALLBACK_END_SIMPLEX : i32 = 51;
+/// {l}
 pub const MSK_CALLBACK_END_SIMPLEX_BI : i32 = 52;
+/// {l}
 pub const MSK_CALLBACK_END_SOLVE_ROOT_RELAX : i32 = 53;
+/// {l}
 pub const MSK_CALLBACK_END_TO_CONIC : i32 = 54;
+/// {l}
 pub const MSK_CALLBACK_END_WRITE : i32 = 55;
+/// {l}
 pub const MSK_CALLBACK_IM_BI : i32 = 56;
+/// {l}
 pub const MSK_CALLBACK_IM_CONIC : i32 = 57;
+/// {l}
 pub const MSK_CALLBACK_IM_DUAL_BI : i32 = 58;
+/// {l}
 pub const MSK_CALLBACK_IM_DUAL_SENSIVITY : i32 = 59;
+/// {l}
 pub const MSK_CALLBACK_IM_DUAL_SIMPLEX : i32 = 60;
+/// {l}
 pub const MSK_CALLBACK_IM_INTPNT : i32 = 61;
+/// {l}
 pub const MSK_CALLBACK_IM_LICENSE_WAIT : i32 = 62;
+/// {l}
 pub const MSK_CALLBACK_IM_LU : i32 = 63;
+/// {l}
 pub const MSK_CALLBACK_IM_MIO : i32 = 64;
+/// {l}
 pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX : i32 = 65;
+/// {l}
 pub const MSK_CALLBACK_IM_MIO_INTPNT : i32 = 66;
+/// {l}
 pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX : i32 = 67;
+/// {l}
 pub const MSK_CALLBACK_IM_ORDER : i32 = 68;
+/// {l}
 pub const MSK_CALLBACK_IM_PRESOLVE : i32 = 69;
+/// {l}
 pub const MSK_CALLBACK_IM_PRIMAL_BI : i32 = 70;
+/// {l}
 pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY : i32 = 71;
+/// {l}
 pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX : i32 = 72;
+/// {l}
 pub const MSK_CALLBACK_IM_QO_REFORMULATE : i32 = 73;
+/// {l}
 pub const MSK_CALLBACK_IM_READ : i32 = 74;
+/// {l}
 pub const MSK_CALLBACK_IM_ROOT_CUTGEN : i32 = 75;
+/// {l}
 pub const MSK_CALLBACK_IM_SIMPLEX : i32 = 76;
+/// {l}
 pub const MSK_CALLBACK_IM_SIMPLEX_BI : i32 = 77;
+/// {l}
 pub const MSK_CALLBACK_INTPNT : i32 = 78;
+/// {l}
 pub const MSK_CALLBACK_NEW_INT_MIO : i32 = 79;
+/// {l}
 pub const MSK_CALLBACK_PRIMAL_SIMPLEX : i32 = 80;
+/// {l}
 pub const MSK_CALLBACK_READ_OPF : i32 = 81;
+/// {l}
 pub const MSK_CALLBACK_READ_OPF_SECTION : i32 = 82;
+/// {l}
 pub const MSK_CALLBACK_SOLVING_REMOTE : i32 = 83;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_DUAL_BI : i32 = 84;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX : i32 = 85;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI : i32 = 86;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_PRESOLVE : i32 = 87;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_PRIMAL_BI : i32 = 88;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX : i32 = 89;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI : i32 = 90;
+/// {l}
 pub const MSK_CALLBACK_UPDATE_SIMPLEX : i32 = 91;
+/// {l}
 pub const MSK_CALLBACK_WRITE_OPF : i32 = 92;
 
 // checkconvexitytype
+/// {l}
 pub const MSK_CHECK_CONVEXITY_NONE : i32 = 0;
+/// {l}
 pub const MSK_CHECK_CONVEXITY_SIMPLE : i32 = 1;
+/// {l}
 pub const MSK_CHECK_CONVEXITY_FULL : i32 = 2;
 
 // compresstype
+/// {l}
 pub const MSK_COMPRESS_NONE : i32 = 0;
+/// {l}
 pub const MSK_COMPRESS_FREE : i32 = 1;
+/// {l}
 pub const MSK_COMPRESS_GZIP : i32 = 2;
+/// {l}
 pub const MSK_COMPRESS_ZSTD : i32 = 3;
 
 // conetype
+/// {l}
 pub const MSK_CT_QUAD : i32 = 0;
+/// {l}
 pub const MSK_CT_RQUAD : i32 = 1;
+/// {l}
 pub const MSK_CT_PEXP : i32 = 2;
+/// {l}
 pub const MSK_CT_DEXP : i32 = 3;
+/// {l}
 pub const MSK_CT_PPOW : i32 = 4;
+/// {l}
 pub const MSK_CT_DPOW : i32 = 5;
+/// {l}
 pub const MSK_CT_ZERO : i32 = 6;
 
 // domaintype
+/// {l}
 pub const MSK_DOMAIN_R : i32 = 0;
+/// {l}
 pub const MSK_DOMAIN_RZERO : i32 = 1;
+/// {l}
 pub const MSK_DOMAIN_RPLUS : i32 = 2;
+/// {l}
 pub const MSK_DOMAIN_RMINUS : i32 = 3;
+/// {l}
 pub const MSK_DOMAIN_QUADRATIC_CONE : i32 = 4;
+/// {l}
 pub const MSK_DOMAIN_RQUADRATIC_CONE : i32 = 5;
+/// {l}
 pub const MSK_DOMAIN_PRIMAL_EXP_CONE : i32 = 6;
+/// {l}
 pub const MSK_DOMAIN_DUAL_EXP_CONE : i32 = 7;
+/// {l}
 pub const MSK_DOMAIN_PRIMAL_POWER_CONE : i32 = 8;
+/// {l}
 pub const MSK_DOMAIN_DUAL_POWER_CONE : i32 = 9;
+/// {l}
 pub const MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE : i32 = 10;
+/// {l}
 pub const MSK_DOMAIN_DUAL_GEO_MEAN_CONE : i32 = 11;
+/// {l}
 pub const MSK_DOMAIN_SVEC_PSD_CONE : i32 = 12;
 
 // nametype
+/// {l}
 pub const MSK_NAME_TYPE_GEN : i32 = 0;
+/// {l}
 pub const MSK_NAME_TYPE_MPS : i32 = 1;
+/// {l}
 pub const MSK_NAME_TYPE_LP : i32 = 2;
 
 // symmattype
+/// {l}
 pub const MSK_SYMMAT_TYPE_SPARSE : i32 = 0;
 
 // dataformat
+/// {l}
 pub const MSK_DATA_FORMAT_EXTENSION : i32 = 0;
+/// {l}
 pub const MSK_DATA_FORMAT_MPS : i32 = 1;
+/// {l}
 pub const MSK_DATA_FORMAT_LP : i32 = 2;
+/// {l}
 pub const MSK_DATA_FORMAT_OP : i32 = 3;
+/// {l}
 pub const MSK_DATA_FORMAT_FREE_MPS : i32 = 4;
+/// {l}
 pub const MSK_DATA_FORMAT_TASK : i32 = 5;
+/// {l}
 pub const MSK_DATA_FORMAT_PTF : i32 = 6;
+/// {l}
 pub const MSK_DATA_FORMAT_CB : i32 = 7;
+/// {l}
 pub const MSK_DATA_FORMAT_JSON_TASK : i32 = 8;
 
 // solformat
+/// {l}
 pub const MSK_SOL_FORMAT_EXTENSION : i32 = 0;
+/// {l}
 pub const MSK_SOL_FORMAT_B : i32 = 1;
+/// {l}
 pub const MSK_SOL_FORMAT_TASK : i32 = 2;
+/// {l}
 pub const MSK_SOL_FORMAT_JSON_TASK : i32 = 3;
 
 // dinfitem
+/// {l}
 pub const MSK_DINF_BI_CLEAN_DUAL_TIME : i32 = 0;
+/// {l}
 pub const MSK_DINF_BI_CLEAN_PRIMAL_TIME : i32 = 1;
+/// {l}
 pub const MSK_DINF_BI_CLEAN_TIME : i32 = 2;
+/// {l}
 pub const MSK_DINF_BI_DUAL_TIME : i32 = 3;
+/// {l}
 pub const MSK_DINF_BI_PRIMAL_TIME : i32 = 4;
+/// {l}
 pub const MSK_DINF_BI_TIME : i32 = 5;
+/// {l}
 pub const MSK_DINF_INTPNT_DUAL_FEAS : i32 = 6;
+/// {l}
 pub const MSK_DINF_INTPNT_DUAL_OBJ : i32 = 7;
+/// {l}
 pub const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS : i32 = 8;
+/// {l}
 pub const MSK_DINF_INTPNT_OPT_STATUS : i32 = 9;
+/// {l}
 pub const MSK_DINF_INTPNT_ORDER_TIME : i32 = 10;
+/// {l}
 pub const MSK_DINF_INTPNT_PRIMAL_FEAS : i32 = 11;
+/// {l}
 pub const MSK_DINF_INTPNT_PRIMAL_OBJ : i32 = 12;
+/// {l}
 pub const MSK_DINF_INTPNT_TIME : i32 = 13;
+/// {l}
 pub const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME : i32 = 14;
+/// {l}
 pub const MSK_DINF_MIO_CMIR_SEPARATION_TIME : i32 = 15;
+/// {l}
 pub const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 16;
+/// {l}
 pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 17;
+/// {l}
 pub const MSK_DINF_MIO_GMI_SEPARATION_TIME : i32 = 18;
+/// {l}
 pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME : i32 = 19;
+/// {l}
 pub const MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 20;
+/// {l}
 pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 21;
+/// {l}
 pub const MSK_DINF_MIO_LIPRO_SEPARATION_TIME : i32 = 22;
+/// {l}
 pub const MSK_DINF_MIO_OBJ_ABS_GAP : i32 = 23;
+/// {l}
 pub const MSK_DINF_MIO_OBJ_BOUND : i32 = 24;
+/// {l}
 pub const MSK_DINF_MIO_OBJ_INT : i32 = 25;
+/// {l}
 pub const MSK_DINF_MIO_OBJ_REL_GAP : i32 = 26;
+/// {l}
 pub const MSK_DINF_MIO_PROBING_TIME : i32 = 27;
+/// {l}
 pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME : i32 = 28;
+/// {l}
 pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME : i32 = 29;
+/// {l}
 pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME : i32 = 30;
+/// {l}
 pub const MSK_DINF_MIO_ROOT_TIME : i32 = 31;
+/// {l}
 pub const MSK_DINF_MIO_TIME : i32 = 32;
+/// {l}
 pub const MSK_DINF_MIO_USER_OBJ_CUT : i32 = 33;
+/// {l}
 pub const MSK_DINF_OPTIMIZER_TIME : i32 = 34;
+/// {l}
 pub const MSK_DINF_PRESOLVE_ELI_TIME : i32 = 35;
+/// {l}
 pub const MSK_DINF_PRESOLVE_LINDEP_TIME : i32 = 36;
+/// {l}
 pub const MSK_DINF_PRESOLVE_TIME : i32 = 37;
+/// {l}
 pub const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 38;
+/// {l}
 pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ : i32 = 39;
+/// {l}
 pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 40;
+/// {l}
 pub const MSK_DINF_QCQO_REFORMULATE_TIME : i32 = 41;
+/// {l}
 pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 42;
+/// {l}
 pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 43;
+/// {l}
 pub const MSK_DINF_RD_TIME : i32 = 44;
+/// {l}
 pub const MSK_DINF_REMOTE_TIME : i32 = 45;
+/// {l}
 pub const MSK_DINF_SIM_DUAL_TIME : i32 = 46;
+/// {l}
 pub const MSK_DINF_SIM_FEAS : i32 = 47;
+/// {l}
 pub const MSK_DINF_SIM_OBJ : i32 = 48;
+/// {l}
 pub const MSK_DINF_SIM_PRIMAL_TIME : i32 = 49;
+/// {l}
 pub const MSK_DINF_SIM_TIME : i32 = 50;
+/// {l}
 pub const MSK_DINF_SOL_BAS_DUAL_OBJ : i32 = 51;
+/// {l}
 pub const MSK_DINF_SOL_BAS_DVIOLCON : i32 = 52;
+/// {l}
 pub const MSK_DINF_SOL_BAS_DVIOLVAR : i32 = 53;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_BARX : i32 = 54;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_SLC : i32 = 55;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_SLX : i32 = 56;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_SUC : i32 = 57;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_SUX : i32 = 58;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_XC : i32 = 59;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_XX : i32 = 60;
+/// {l}
 pub const MSK_DINF_SOL_BAS_NRM_Y : i32 = 61;
+/// {l}
 pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ : i32 = 62;
+/// {l}
 pub const MSK_DINF_SOL_BAS_PVIOLCON : i32 = 63;
+/// {l}
 pub const MSK_DINF_SOL_BAS_PVIOLVAR : i32 = 64;
+/// {l}
 pub const MSK_DINF_SOL_ITG_NRM_BARX : i32 = 65;
+/// {l}
 pub const MSK_DINF_SOL_ITG_NRM_XC : i32 = 66;
+/// {l}
 pub const MSK_DINF_SOL_ITG_NRM_XX : i32 = 67;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ : i32 = 68;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLACC : i32 = 69;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLBARVAR : i32 = 70;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLCON : i32 = 71;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLCONES : i32 = 72;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLDJC : i32 = 73;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLITG : i32 = 74;
+/// {l}
 pub const MSK_DINF_SOL_ITG_PVIOLVAR : i32 = 75;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DUAL_OBJ : i32 = 76;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DVIOLACC : i32 = 77;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DVIOLBARVAR : i32 = 78;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DVIOLCON : i32 = 79;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DVIOLCONES : i32 = 80;
+/// {l}
 pub const MSK_DINF_SOL_ITR_DVIOLVAR : i32 = 81;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_BARS : i32 = 82;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_BARX : i32 = 83;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_SLC : i32 = 84;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_SLX : i32 = 85;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_SNX : i32 = 86;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_SUC : i32 = 87;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_SUX : i32 = 88;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_XC : i32 = 89;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_XX : i32 = 90;
+/// {l}
 pub const MSK_DINF_SOL_ITR_NRM_Y : i32 = 91;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ : i32 = 92;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PVIOLACC : i32 = 93;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PVIOLBARVAR : i32 = 94;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PVIOLCON : i32 = 95;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PVIOLCONES : i32 = 96;
+/// {l}
 pub const MSK_DINF_SOL_ITR_PVIOLVAR : i32 = 97;
+/// {l}
 pub const MSK_DINF_TO_CONIC_TIME : i32 = 98;
 pub const MSK_DINF_END : i32 = 98;
 
 // feature
+/// {l}
 pub const MSK_FEATURE_PTS : i32 = 0;
+/// {l}
 pub const MSK_FEATURE_PTON : i32 = 1;
 
 // dparam
+/// {l}
 pub const MSK_DPAR_ANA_SOL_INFEAS_TOL : i32 = 0;
+/// {l}
 pub const MSK_DPAR_BASIS_REL_TOL_S : i32 = 1;
+/// {l}
 pub const MSK_DPAR_BASIS_TOL_S : i32 = 2;
+/// {l}
 pub const MSK_DPAR_BASIS_TOL_X : i32 = 3;
+/// {l}
 pub const MSK_DPAR_CHECK_CONVEXITY_REL_TOL : i32 = 4;
+/// {l}
 pub const MSK_DPAR_DATA_SYM_MAT_TOL : i32 = 5;
+/// {l}
 pub const MSK_DPAR_DATA_SYM_MAT_TOL_HUGE : i32 = 6;
+/// {l}
 pub const MSK_DPAR_DATA_SYM_MAT_TOL_LARGE : i32 = 7;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_AIJ_HUGE : i32 = 8;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_AIJ_LARGE : i32 = 9;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_BOUND_INF : i32 = 10;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_BOUND_WRN : i32 = 11;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_C_HUGE : i32 = 12;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_CJ_LARGE : i32 = 13;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_QIJ : i32 = 14;
+/// {l}
 pub const MSK_DPAR_DATA_TOL_X : i32 = 15;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_DFEAS : i32 = 16;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_INFEAS : i32 = 17;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_MU_RED : i32 = 18;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL : i32 = 19;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_PFEAS : i32 = 20;
+/// {l}
 pub const MSK_DPAR_INTPNT_CO_TOL_REL_GAP : i32 = 21;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_DFEAS : i32 = 22;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_INFEAS : i32 = 23;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_MU_RED : i32 = 24;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL : i32 = 25;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_PFEAS : i32 = 26;
+/// {l}
 pub const MSK_DPAR_INTPNT_QO_TOL_REL_GAP : i32 = 27;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_DFEAS : i32 = 28;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_DSAFE : i32 = 29;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_INFEAS : i32 = 30;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_MU_RED : i32 = 31;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_PATH : i32 = 32;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_PFEAS : i32 = 33;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_PSAFE : i32 = 34;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_REL_GAP : i32 = 35;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_REL_STEP : i32 = 36;
+/// {l}
 pub const MSK_DPAR_INTPNT_TOL_STEP_SIZE : i32 = 37;
+/// {l}
 pub const MSK_DPAR_LOWER_OBJ_CUT : i32 = 38;
+/// {l}
 pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH : i32 = 39;
+/// {l}
 pub const MSK_DPAR_MIO_DJC_MAX_BIGM : i32 = 40;
+/// {l}
 pub const MSK_DPAR_MIO_MAX_TIME : i32 = 41;
+/// {l}
 pub const MSK_DPAR_MIO_REL_GAP_CONST : i32 = 42;
+/// {l}
 pub const MSK_DPAR_MIO_TOL_ABS_GAP : i32 = 43;
+/// {l}
 pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT : i32 = 44;
+/// {l}
 pub const MSK_DPAR_MIO_TOL_FEAS : i32 = 45;
+/// {l}
 pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 46;
+/// {l}
 pub const MSK_DPAR_MIO_TOL_REL_GAP : i32 = 47;
+/// {l}
 pub const MSK_DPAR_OPTIMIZER_MAX_TIME : i32 = 48;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP : i32 = 49;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_AIJ : i32 = 50;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 51;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP : i32 = 52;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_S : i32 = 53;
+/// {l}
 pub const MSK_DPAR_PRESOLVE_TOL_X : i32 = 54;
+/// {l}
 pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL : i32 = 55;
+/// {l}
 pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX : i32 = 56;
+/// {l}
 pub const MSK_DPAR_SIM_LU_TOL_REL_PIV : i32 = 57;
+/// {l}
 pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV : i32 = 58;
+/// {l}
 pub const MSK_DPAR_UPPER_OBJ_CUT : i32 = 59;
+/// {l}
 pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH : i32 = 60;
 
 // liinfitem
+/// {l}
 pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER : i32 = 0;
+/// {l}
 pub const MSK_LIINF_BI_CLEAN_DUAL_ITER : i32 = 1;
+/// {l}
 pub const MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER : i32 = 2;
+/// {l}
 pub const MSK_LIINF_BI_CLEAN_PRIMAL_ITER : i32 = 3;
+/// {l}
 pub const MSK_LIINF_BI_DUAL_ITER : i32 = 4;
+/// {l}
 pub const MSK_LIINF_BI_PRIMAL_ITER : i32 = 5;
+/// {l}
 pub const MSK_LIINF_INTPNT_FACTOR_NUM_NZ : i32 = 6;
+/// {l}
 pub const MSK_LIINF_MIO_ANZ : i32 = 7;
+/// {l}
 pub const MSK_LIINF_MIO_INTPNT_ITER : i32 = 8;
+/// {l}
 pub const MSK_LIINF_MIO_NUM_DUAL_ILLPOSED_CER : i32 = 9;
+/// {l}
 pub const MSK_LIINF_MIO_NUM_PRIM_ILLPOSED_CER : i32 = 10;
+/// {l}
 pub const MSK_LIINF_MIO_PRESOLVED_ANZ : i32 = 11;
+/// {l}
 pub const MSK_LIINF_MIO_SIMPLEX_ITER : i32 = 12;
+/// {l}
 pub const MSK_LIINF_RD_NUMACC : i32 = 13;
+/// {l}
 pub const MSK_LIINF_RD_NUMANZ : i32 = 14;
+/// {l}
 pub const MSK_LIINF_RD_NUMDJC : i32 = 15;
+/// {l}
 pub const MSK_LIINF_RD_NUMQNZ : i32 = 16;
+/// {l}
 pub const MSK_LIINF_SIMPLEX_ITER : i32 = 17;
 pub const MSK_LIINF_END : i32 = 17;
 
 // iinfitem
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON : i32 = 0;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON_EQ : i32 = 1;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON_FR : i32 = 2;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON_LO : i32 = 3;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON_RA : i32 = 4;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_CON_UP : i32 = 5;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR : i32 = 6;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_BIN : i32 = 7;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_CONT : i32 = 8;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_EQ : i32 = 9;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_FR : i32 = 10;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_INT : i32 = 11;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_LO : i32 = 12;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_RA : i32 = 13;
+/// {l}
 pub const MSK_IINF_ANA_PRO_NUM_VAR_UP : i32 = 14;
+/// {l}
 pub const MSK_IINF_INTPNT_FACTOR_DIM_DENSE : i32 = 15;
+/// {l}
 pub const MSK_IINF_INTPNT_ITER : i32 = 16;
+/// {l}
 pub const MSK_IINF_INTPNT_NUM_THREADS : i32 = 17;
+/// {l}
 pub const MSK_IINF_INTPNT_SOLVE_DUAL : i32 = 18;
+/// {l}
 pub const MSK_IINF_MIO_ABSGAP_SATISFIED : i32 = 19;
+/// {l}
 pub const MSK_IINF_MIO_CLIQUE_TABLE_SIZE : i32 = 20;
+/// {l}
 pub const MSK_IINF_MIO_CONSTRUCT_SOLUTION : i32 = 21;
+/// {l}
 pub const MSK_IINF_MIO_INITIAL_FEASIBLE_SOLUTION : i32 = 22;
+/// {l}
 pub const MSK_IINF_MIO_NODE_DEPTH : i32 = 23;
+/// {l}
 pub const MSK_IINF_MIO_NUM_ACTIVE_NODES : i32 = 24;
+/// {l}
 pub const MSK_IINF_MIO_NUM_BRANCH : i32 = 25;
+/// {l}
 pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS : i32 = 26;
+/// {l}
 pub const MSK_IINF_MIO_NUM_CMIR_CUTS : i32 = 27;
+/// {l}
 pub const MSK_IINF_MIO_NUM_GOMORY_CUTS : i32 = 28;
+/// {l}
 pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS : i32 = 29;
+/// {l}
 pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS : i32 = 30;
+/// {l}
 pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 31;
+/// {l}
 pub const MSK_IINF_MIO_NUM_LIPRO_CUTS : i32 = 32;
+/// {l}
 pub const MSK_IINF_MIO_NUM_RELAX : i32 = 33;
+/// {l}
 pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE : i32 = 34;
+/// {l}
 pub const MSK_IINF_MIO_NUMBIN : i32 = 35;
+/// {l}
 pub const MSK_IINF_MIO_NUMBINCONEVAR : i32 = 36;
+/// {l}
 pub const MSK_IINF_MIO_NUMCON : i32 = 37;
+/// {l}
 pub const MSK_IINF_MIO_NUMCONE : i32 = 38;
+/// {l}
 pub const MSK_IINF_MIO_NUMCONEVAR : i32 = 39;
+/// {l}
 pub const MSK_IINF_MIO_NUMCONT : i32 = 40;
+/// {l}
 pub const MSK_IINF_MIO_NUMCONTCONEVAR : i32 = 41;
+/// {l}
 pub const MSK_IINF_MIO_NUMDEXPCONES : i32 = 42;
+/// {l}
 pub const MSK_IINF_MIO_NUMDJC : i32 = 43;
+/// {l}
 pub const MSK_IINF_MIO_NUMDPOWCONES : i32 = 44;
+/// {l}
 pub const MSK_IINF_MIO_NUMINT : i32 = 45;
+/// {l}
 pub const MSK_IINF_MIO_NUMINTCONEVAR : i32 = 46;
+/// {l}
 pub const MSK_IINF_MIO_NUMPEXPCONES : i32 = 47;
+/// {l}
 pub const MSK_IINF_MIO_NUMPPOWCONES : i32 = 48;
+/// {l}
 pub const MSK_IINF_MIO_NUMQCONES : i32 = 49;
+/// {l}
 pub const MSK_IINF_MIO_NUMRQCONES : i32 = 50;
+/// {l}
 pub const MSK_IINF_MIO_NUMVAR : i32 = 51;
+/// {l}
 pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED : i32 = 52;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMBIN : i32 = 53;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR : i32 = 54;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMCON : i32 = 55;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONE : i32 = 56;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR : i32 = 57;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONT : i32 = 58;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 59;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES : i32 = 60;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMDJC : i32 = 61;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES : i32 = 62;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMINT : i32 = 63;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR : i32 = 64;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES : i32 = 65;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES : i32 = 66;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES : i32 = 67;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES : i32 = 68;
+/// {l}
 pub const MSK_IINF_MIO_PRESOLVED_NUMVAR : i32 = 69;
+/// {l}
 pub const MSK_IINF_MIO_RELGAP_SATISFIED : i32 = 70;
+/// {l}
 pub const MSK_IINF_MIO_TOTAL_NUM_CUTS : i32 = 71;
+/// {l}
 pub const MSK_IINF_MIO_USER_OBJ_CUT : i32 = 72;
+/// {l}
 pub const MSK_IINF_OPT_NUMCON : i32 = 73;
+/// {l}
 pub const MSK_IINF_OPT_NUMVAR : i32 = 74;
+/// {l}
 pub const MSK_IINF_OPTIMIZE_RESPONSE : i32 = 75;
+/// {l}
 pub const MSK_IINF_PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 76;
+/// {l}
 pub const MSK_IINF_PURIFY_DUAL_SUCCESS : i32 = 77;
+/// {l}
 pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS : i32 = 78;
+/// {l}
 pub const MSK_IINF_RD_NUMBARVAR : i32 = 79;
+/// {l}
 pub const MSK_IINF_RD_NUMCON : i32 = 80;
+/// {l}
 pub const MSK_IINF_RD_NUMCONE : i32 = 81;
+/// {l}
 pub const MSK_IINF_RD_NUMINTVAR : i32 = 82;
+/// {l}
 pub const MSK_IINF_RD_NUMQ : i32 = 83;
+/// {l}
 pub const MSK_IINF_RD_NUMVAR : i32 = 84;
+/// {l}
 pub const MSK_IINF_RD_PROTYPE : i32 = 85;
+/// {l}
 pub const MSK_IINF_SIM_DUAL_DEG_ITER : i32 = 86;
+/// {l}
 pub const MSK_IINF_SIM_DUAL_HOTSTART : i32 = 87;
+/// {l}
 pub const MSK_IINF_SIM_DUAL_HOTSTART_LU : i32 = 88;
+/// {l}
 pub const MSK_IINF_SIM_DUAL_INF_ITER : i32 = 89;
+/// {l}
 pub const MSK_IINF_SIM_DUAL_ITER : i32 = 90;
+/// {l}
 pub const MSK_IINF_SIM_NUMCON : i32 = 91;
+/// {l}
 pub const MSK_IINF_SIM_NUMVAR : i32 = 92;
+/// {l}
 pub const MSK_IINF_SIM_PRIMAL_DEG_ITER : i32 = 93;
+/// {l}
 pub const MSK_IINF_SIM_PRIMAL_HOTSTART : i32 = 94;
+/// {l}
 pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU : i32 = 95;
+/// {l}
 pub const MSK_IINF_SIM_PRIMAL_INF_ITER : i32 = 96;
+/// {l}
 pub const MSK_IINF_SIM_PRIMAL_ITER : i32 = 97;
+/// {l}
 pub const MSK_IINF_SIM_SOLVE_DUAL : i32 = 98;
+/// {l}
 pub const MSK_IINF_SOL_BAS_PROSTA : i32 = 99;
+/// {l}
 pub const MSK_IINF_SOL_BAS_SOLSTA : i32 = 100;
+/// {l}
 pub const MSK_IINF_SOL_ITG_PROSTA : i32 = 101;
+/// {l}
 pub const MSK_IINF_SOL_ITG_SOLSTA : i32 = 102;
+/// {l}
 pub const MSK_IINF_SOL_ITR_PROSTA : i32 = 103;
+/// {l}
 pub const MSK_IINF_SOL_ITR_SOLSTA : i32 = 104;
+/// {l}
 pub const MSK_IINF_STO_NUM_A_REALLOC : i32 = 105;
 pub const MSK_IINF_END : i32 = 105;
 
 // inftype
+/// {l}
 pub const MSK_INF_DOU_TYPE : i32 = 0;
+/// {l}
 pub const MSK_INF_INT_TYPE : i32 = 1;
+/// {l}
 pub const MSK_INF_LINT_TYPE : i32 = 2;
 
 // iomode
+/// {l}
 pub const MSK_IOMODE_READ : i32 = 0;
+/// {l}
 pub const MSK_IOMODE_WRITE : i32 = 1;
+/// {l}
 pub const MSK_IOMODE_READWRITE : i32 = 2;
 
 // iparam
+/// {l}
 pub const MSK_IPAR_ANA_SOL_BASIS : i32 = 0;
+/// {l}
 pub const MSK_IPAR_ANA_SOL_PRINT_VIOLATED : i32 = 1;
+/// {l}
 pub const MSK_IPAR_AUTO_SORT_A_BEFORE_OPT : i32 = 2;
+/// {l}
 pub const MSK_IPAR_AUTO_UPDATE_SOL_INFO : i32 = 3;
+/// {l}
 pub const MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE : i32 = 4;
+/// {l}
 pub const MSK_IPAR_BI_CLEAN_OPTIMIZER : i32 = 5;
+/// {l}
 pub const MSK_IPAR_BI_IGNORE_MAX_ITER : i32 = 6;
+/// {l}
 pub const MSK_IPAR_BI_IGNORE_NUM_ERROR : i32 = 7;
+/// {l}
 pub const MSK_IPAR_BI_MAX_ITERATIONS : i32 = 8;
+/// {l}
 pub const MSK_IPAR_CACHE_LICENSE : i32 = 9;
+/// {l}
 pub const MSK_IPAR_CHECK_CONVEXITY : i32 = 10;
+/// {l}
 pub const MSK_IPAR_COMPRESS_STATFILE : i32 = 11;
+/// {l}
 pub const MSK_IPAR_INFEAS_GENERIC_NAMES : i32 = 12;
+/// {l}
 pub const MSK_IPAR_INFEAS_PREFER_PRIMAL : i32 = 13;
+/// {l}
 pub const MSK_IPAR_INFEAS_REPORT_AUTO : i32 = 14;
+/// {l}
 pub const MSK_IPAR_INFEAS_REPORT_LEVEL : i32 = 15;
+/// {l}
 pub const MSK_IPAR_INTPNT_BASIS : i32 = 16;
+/// {l}
 pub const MSK_IPAR_INTPNT_DIFF_STEP : i32 = 17;
+/// {l}
 pub const MSK_IPAR_INTPNT_HOTSTART : i32 = 18;
+/// {l}
 pub const MSK_IPAR_INTPNT_MAX_ITERATIONS : i32 = 19;
+/// {l}
 pub const MSK_IPAR_INTPNT_MAX_NUM_COR : i32 = 20;
+/// {l}
 pub const MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS : i32 = 21;
+/// {l}
 pub const MSK_IPAR_INTPNT_OFF_COL_TRH : i32 = 22;
+/// {l}
 pub const MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS : i32 = 23;
+/// {l}
 pub const MSK_IPAR_INTPNT_ORDER_METHOD : i32 = 24;
+/// {l}
 pub const MSK_IPAR_INTPNT_PURIFY : i32 = 25;
+/// {l}
 pub const MSK_IPAR_INTPNT_REGULARIZATION_USE : i32 = 26;
+/// {l}
 pub const MSK_IPAR_INTPNT_SCALING : i32 = 27;
+/// {l}
 pub const MSK_IPAR_INTPNT_SOLVE_FORM : i32 = 28;
+/// {l}
 pub const MSK_IPAR_INTPNT_STARTING_POINT : i32 = 29;
+/// {l}
 pub const MSK_IPAR_LICENSE_DEBUG : i32 = 30;
+/// {l}
 pub const MSK_IPAR_LICENSE_PAUSE_TIME : i32 = 31;
+/// {l}
 pub const MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 32;
+/// {l}
 pub const MSK_IPAR_LICENSE_TRH_EXPIRY_WRN : i32 = 33;
+/// {l}
 pub const MSK_IPAR_LICENSE_WAIT : i32 = 34;
+/// {l}
 pub const MSK_IPAR_LOG : i32 = 35;
+/// {l}
 pub const MSK_IPAR_LOG_ANA_PRO : i32 = 36;
+/// {l}
 pub const MSK_IPAR_LOG_BI : i32 = 37;
+/// {l}
 pub const MSK_IPAR_LOG_BI_FREQ : i32 = 38;
+/// {l}
 pub const MSK_IPAR_LOG_CHECK_CONVEXITY : i32 = 39;
+/// {l}
 pub const MSK_IPAR_LOG_CUT_SECOND_OPT : i32 = 40;
+/// {l}
 pub const MSK_IPAR_LOG_EXPAND : i32 = 41;
+/// {l}
 pub const MSK_IPAR_LOG_FEAS_REPAIR : i32 = 42;
+/// {l}
 pub const MSK_IPAR_LOG_FILE : i32 = 43;
+/// {l}
 pub const MSK_IPAR_LOG_INCLUDE_SUMMARY : i32 = 44;
+/// {l}
 pub const MSK_IPAR_LOG_INFEAS_ANA : i32 = 45;
+/// {l}
 pub const MSK_IPAR_LOG_INTPNT : i32 = 46;
+/// {l}
 pub const MSK_IPAR_LOG_LOCAL_INFO : i32 = 47;
+/// {l}
 pub const MSK_IPAR_LOG_MIO : i32 = 48;
+/// {l}
 pub const MSK_IPAR_LOG_MIO_FREQ : i32 = 49;
+/// {l}
 pub const MSK_IPAR_LOG_ORDER : i32 = 50;
+/// {l}
 pub const MSK_IPAR_LOG_PRESOLVE : i32 = 51;
+/// {l}
 pub const MSK_IPAR_LOG_RESPONSE : i32 = 52;
+/// {l}
 pub const MSK_IPAR_LOG_SENSITIVITY : i32 = 53;
+/// {l}
 pub const MSK_IPAR_LOG_SENSITIVITY_OPT : i32 = 54;
+/// {l}
 pub const MSK_IPAR_LOG_SIM : i32 = 55;
+/// {l}
 pub const MSK_IPAR_LOG_SIM_FREQ : i32 = 56;
+/// {l}
 pub const MSK_IPAR_LOG_SIM_MINOR : i32 = 57;
+/// {l}
 pub const MSK_IPAR_LOG_STORAGE : i32 = 58;
+/// {l}
 pub const MSK_IPAR_MAX_NUM_WARNINGS : i32 = 59;
+/// {l}
 pub const MSK_IPAR_MIO_BRANCH_DIR : i32 = 60;
+/// {l}
 pub const MSK_IPAR_MIO_CONIC_OUTER_APPROXIMATION : i32 = 61;
+/// {l}
 pub const MSK_IPAR_MIO_CONSTRUCT_SOL : i32 = 62;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_CLIQUE : i32 = 63;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_CMIR : i32 = 64;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_GMI : i32 = 65;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND : i32 = 66;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER : i32 = 67;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_LIPRO : i32 = 68;
+/// {l}
 pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL : i32 = 69;
+/// {l}
 pub const MSK_IPAR_MIO_DATA_PERMUTATION_METHOD : i32 = 70;
+/// {l}
 pub const MSK_IPAR_MIO_FEASPUMP_LEVEL : i32 = 71;
+/// {l}
 pub const MSK_IPAR_MIO_HEURISTIC_LEVEL : i32 = 72;
+/// {l}
 pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES : i32 = 73;
+/// {l}
 pub const MSK_IPAR_MIO_MAX_NUM_RELAXS : i32 = 74;
+/// {l}
 pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 75;
+/// {l}
 pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS : i32 = 76;
+/// {l}
 pub const MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL : i32 = 77;
+/// {l}
 pub const MSK_IPAR_MIO_MODE : i32 = 78;
+/// {l}
 pub const MSK_IPAR_MIO_NODE_OPTIMIZER : i32 = 79;
+/// {l}
 pub const MSK_IPAR_MIO_NODE_SELECTION : i32 = 80;
+/// {l}
 pub const MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 81;
+/// {l}
 pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE : i32 = 82;
+/// {l}
 pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE : i32 = 83;
+/// {l}
 pub const MSK_IPAR_MIO_PROBING_LEVEL : i32 = 84;
+/// {l}
 pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 85;
+/// {l}
 pub const MSK_IPAR_MIO_QCQO_REFORMULATION_METHOD : i32 = 86;
+/// {l}
 pub const MSK_IPAR_MIO_RINS_MAX_NODES : i32 = 87;
+/// {l}
 pub const MSK_IPAR_MIO_ROOT_OPTIMIZER : i32 = 88;
+/// {l}
 pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 89;
+/// {l}
 pub const MSK_IPAR_MIO_SEED : i32 = 90;
+/// {l}
 pub const MSK_IPAR_MIO_SYMMETRY_LEVEL : i32 = 91;
+/// {l}
 pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL : i32 = 92;
+/// {l}
 pub const MSK_IPAR_MT_SPINCOUNT : i32 = 93;
+/// {l}
 pub const MSK_IPAR_NG : i32 = 94;
+/// {l}
 pub const MSK_IPAR_NUM_THREADS : i32 = 95;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_HEADER : i32 = 96;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_HINTS : i32 = 97;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH : i32 = 98;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_PARAMETERS : i32 = 99;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_PROBLEM : i32 = 100;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_SOL_BAS : i32 = 101;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_SOL_ITG : i32 = 102;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_SOL_ITR : i32 = 103;
+/// {l}
 pub const MSK_IPAR_OPF_WRITE_SOLUTIONS : i32 = 104;
+/// {l}
 pub const MSK_IPAR_OPTIMIZER : i32 = 105;
+/// {l}
 pub const MSK_IPAR_PARAM_READ_CASE_NAME : i32 = 106;
+/// {l}
 pub const MSK_IPAR_PARAM_READ_IGN_ERROR : i32 = 107;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 108;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 109;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_LEVEL : i32 = 110;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 111;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 112;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_LINDEP_USE : i32 = 113;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS : i32 = 114;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 115;
+/// {l}
 pub const MSK_IPAR_PRESOLVE_USE : i32 = 116;
+/// {l}
 pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER : i32 = 117;
+/// {l}
 pub const MSK_IPAR_PTF_WRITE_TRANSFORM : i32 = 118;
+/// {l}
 pub const MSK_IPAR_READ_DEBUG : i32 = 119;
+/// {l}
 pub const MSK_IPAR_READ_KEEP_FREE_CON : i32 = 120;
+/// {l}
 pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 121;
+/// {l}
 pub const MSK_IPAR_READ_LP_QUOTED_NAMES : i32 = 122;
+/// {l}
 pub const MSK_IPAR_READ_MPS_FORMAT : i32 = 123;
+/// {l}
 pub const MSK_IPAR_READ_MPS_WIDTH : i32 = 124;
+/// {l}
 pub const MSK_IPAR_READ_TASK_IGNORE_PARAM : i32 = 125;
+/// {l}
 pub const MSK_IPAR_REMOTE_USE_COMPRESSION : i32 = 126;
+/// {l}
 pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS : i32 = 127;
+/// {l}
 pub const MSK_IPAR_SENSITIVITY_ALL : i32 = 128;
+/// {l}
 pub const MSK_IPAR_SENSITIVITY_OPTIMIZER : i32 = 129;
+/// {l}
 pub const MSK_IPAR_SENSITIVITY_TYPE : i32 = 130;
+/// {l}
 pub const MSK_IPAR_SIM_BASIS_FACTOR_USE : i32 = 131;
+/// {l}
 pub const MSK_IPAR_SIM_DEGEN : i32 = 132;
+/// {l}
 pub const MSK_IPAR_SIM_DETECT_PWL : i32 = 133;
+/// {l}
 pub const MSK_IPAR_SIM_DUAL_CRASH : i32 = 134;
+/// {l}
 pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD : i32 = 135;
+/// {l}
 pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION : i32 = 136;
+/// {l}
 pub const MSK_IPAR_SIM_DUAL_SELECTION : i32 = 137;
+/// {l}
 pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC : i32 = 138;
+/// {l}
 pub const MSK_IPAR_SIM_HOTSTART : i32 = 139;
+/// {l}
 pub const MSK_IPAR_SIM_HOTSTART_LU : i32 = 140;
+/// {l}
 pub const MSK_IPAR_SIM_MAX_ITERATIONS : i32 = 141;
+/// {l}
 pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS : i32 = 142;
+/// {l}
 pub const MSK_IPAR_SIM_NON_SINGULAR : i32 = 143;
+/// {l}
 pub const MSK_IPAR_SIM_PRIMAL_CRASH : i32 = 144;
+/// {l}
 pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD : i32 = 145;
+/// {l}
 pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION : i32 = 146;
+/// {l}
 pub const MSK_IPAR_SIM_PRIMAL_SELECTION : i32 = 147;
+/// {l}
 pub const MSK_IPAR_SIM_REFACTOR_FREQ : i32 = 148;
+/// {l}
 pub const MSK_IPAR_SIM_REFORMULATION : i32 = 149;
+/// {l}
 pub const MSK_IPAR_SIM_SAVE_LU : i32 = 150;
+/// {l}
 pub const MSK_IPAR_SIM_SCALING : i32 = 151;
+/// {l}
 pub const MSK_IPAR_SIM_SCALING_METHOD : i32 = 152;
+/// {l}
 pub const MSK_IPAR_SIM_SEED : i32 = 153;
+/// {l}
 pub const MSK_IPAR_SIM_SOLVE_FORM : i32 = 154;
+/// {l}
 pub const MSK_IPAR_SIM_STABILITY_PRIORITY : i32 = 155;
+/// {l}
 pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER : i32 = 156;
+/// {l}
 pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC : i32 = 157;
+/// {l}
 pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED : i32 = 158;
+/// {l}
 pub const MSK_IPAR_SOL_READ_NAME_WIDTH : i32 = 159;
+/// {l}
 pub const MSK_IPAR_SOL_READ_WIDTH : i32 = 160;
+/// {l}
 pub const MSK_IPAR_SOLUTION_CALLBACK : i32 = 161;
+/// {l}
 pub const MSK_IPAR_TIMING_LEVEL : i32 = 162;
+/// {l}
 pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS : i32 = 163;
+/// {l}
 pub const MSK_IPAR_WRITE_BAS_HEAD : i32 = 164;
+/// {l}
 pub const MSK_IPAR_WRITE_BAS_VARIABLES : i32 = 165;
+/// {l}
 pub const MSK_IPAR_WRITE_COMPRESSION : i32 = 166;
+/// {l}
 pub const MSK_IPAR_WRITE_DATA_PARAM : i32 = 167;
+/// {l}
 pub const MSK_IPAR_WRITE_FREE_CON : i32 = 168;
+/// {l}
 pub const MSK_IPAR_WRITE_GENERIC_NAMES : i32 = 169;
+/// {l}
 pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO : i32 = 170;
+/// {l}
 pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 171;
+/// {l}
 pub const MSK_IPAR_WRITE_INT_CONSTRAINTS : i32 = 172;
+/// {l}
 pub const MSK_IPAR_WRITE_INT_HEAD : i32 = 173;
+/// {l}
 pub const MSK_IPAR_WRITE_INT_VARIABLES : i32 = 174;
+/// {l}
 pub const MSK_IPAR_WRITE_JSON_INDENTATION : i32 = 175;
+/// {l}
 pub const MSK_IPAR_WRITE_LP_FULL_OBJ : i32 = 176;
+/// {l}
 pub const MSK_IPAR_WRITE_LP_LINE_WIDTH : i32 = 177;
+/// {l}
 pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES : i32 = 178;
+/// {l}
 pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT : i32 = 179;
+/// {l}
 pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE : i32 = 180;
+/// {l}
 pub const MSK_IPAR_WRITE_MPS_FORMAT : i32 = 181;
+/// {l}
 pub const MSK_IPAR_WRITE_MPS_INT : i32 = 182;
+/// {l}
 pub const MSK_IPAR_WRITE_SOL_BARVARIABLES : i32 = 183;
+/// {l}
 pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS : i32 = 184;
+/// {l}
 pub const MSK_IPAR_WRITE_SOL_HEAD : i32 = 185;
+/// {l}
 pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 186;
+/// {l}
 pub const MSK_IPAR_WRITE_SOL_VARIABLES : i32 = 187;
+/// {l}
 pub const MSK_IPAR_WRITE_TASK_INC_SOL : i32 = 188;
+/// {l}
 pub const MSK_IPAR_WRITE_XML_MODE : i32 = 189;
 
 // branchdir
+/// {l}
 pub const MSK_BRANCH_DIR_FREE : i32 = 0;
+/// {l}
 pub const MSK_BRANCH_DIR_UP : i32 = 1;
+/// {l}
 pub const MSK_BRANCH_DIR_DOWN : i32 = 2;
+/// {l}
 pub const MSK_BRANCH_DIR_NEAR : i32 = 3;
+/// {l}
 pub const MSK_BRANCH_DIR_FAR : i32 = 4;
+/// {l}
 pub const MSK_BRANCH_DIR_ROOT_LP : i32 = 5;
+/// {l}
 pub const MSK_BRANCH_DIR_GUIDED : i32 = 6;
+/// {l}
 pub const MSK_BRANCH_DIR_PSEUDOCOST : i32 = 7;
 
 // miqcqoreformmethod
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_FREE : i32 = 0;
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_NONE : i32 = 1;
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_LINEARIZATION : i32 = 2;
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_EIGEN_VAL_METHOD : i32 = 3;
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_DIAG_SDP : i32 = 4;
+/// {l}
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_RELAX_SDP : i32 = 5;
 
 // miodatapermmethod
+/// {l}
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_NONE : i32 = 0;
+/// {l}
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_CYCLIC_SHIFT : i32 = 1;
+/// {l}
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_RANDOM : i32 = 2;
 
 // miocontsoltype
+/// {l}
 pub const MSK_MIO_CONT_SOL_NONE : i32 = 0;
+/// {l}
 pub const MSK_MIO_CONT_SOL_ROOT : i32 = 1;
+/// {l}
 pub const MSK_MIO_CONT_SOL_ITG : i32 = 2;
+/// {l}
 pub const MSK_MIO_CONT_SOL_ITG_REL : i32 = 3;
 
 // miomode
+/// {l}
 pub const MSK_MIO_MODE_IGNORED : i32 = 0;
+/// {l}
 pub const MSK_MIO_MODE_SATISFIED : i32 = 1;
 
 // mionodeseltype
+/// {l}
 pub const MSK_MIO_NODE_SELECTION_FREE : i32 = 0;
+/// {l}
 pub const MSK_MIO_NODE_SELECTION_FIRST : i32 = 1;
+/// {l}
 pub const MSK_MIO_NODE_SELECTION_BEST : i32 = 2;
+/// {l}
 pub const MSK_MIO_NODE_SELECTION_PSEUDO : i32 = 3;
 
 // mpsformat
+/// {l}
 pub const MSK_MPS_FORMAT_STRICT : i32 = 0;
+/// {l}
 pub const MSK_MPS_FORMAT_RELAXED : i32 = 1;
+/// {l}
 pub const MSK_MPS_FORMAT_FREE : i32 = 2;
+/// {l}
 pub const MSK_MPS_FORMAT_CPLEX : i32 = 3;
 
 // objsense
+/// {l}
 pub const MSK_OBJECTIVE_SENSE_MINIMIZE : i32 = 0;
+/// {l}
 pub const MSK_OBJECTIVE_SENSE_MAXIMIZE : i32 = 1;
 
 // onoffkey
+/// {l}
 pub const MSK_OFF : i32 = 0;
+/// {l}
 pub const MSK_ON : i32 = 1;
 
 // optimizertype
+/// {l}
 pub const MSK_OPTIMIZER_CONIC : i32 = 0;
+/// {l}
 pub const MSK_OPTIMIZER_DUAL_SIMPLEX : i32 = 1;
+/// {l}
 pub const MSK_OPTIMIZER_FREE : i32 = 2;
+/// {l}
 pub const MSK_OPTIMIZER_FREE_SIMPLEX : i32 = 3;
+/// {l}
 pub const MSK_OPTIMIZER_INTPNT : i32 = 4;
+/// {l}
 pub const MSK_OPTIMIZER_MIXED_INT : i32 = 5;
+/// {l}
 pub const MSK_OPTIMIZER_PRIMAL_SIMPLEX : i32 = 6;
 
 // orderingtype
+/// {l}
 pub const MSK_ORDER_METHOD_FREE : i32 = 0;
+/// {l}
 pub const MSK_ORDER_METHOD_APPMINLOC : i32 = 1;
+/// {l}
 pub const MSK_ORDER_METHOD_EXPERIMENTAL : i32 = 2;
+/// {l}
 pub const MSK_ORDER_METHOD_TRY_GRAPHPAR : i32 = 3;
+/// {l}
 pub const MSK_ORDER_METHOD_FORCE_GRAPHPAR : i32 = 4;
+/// {l}
 pub const MSK_ORDER_METHOD_NONE : i32 = 5;
 
 // presolvemode
+/// {l}
 pub const MSK_PRESOLVE_MODE_OFF : i32 = 0;
+/// {l}
 pub const MSK_PRESOLVE_MODE_ON : i32 = 1;
+/// {l}
 pub const MSK_PRESOLVE_MODE_FREE : i32 = 2;
 
 // parametertype
+/// {l}
 pub const MSK_PAR_INVALID_TYPE : i32 = 0;
+/// {l}
 pub const MSK_PAR_DOU_TYPE : i32 = 1;
+/// {l}
 pub const MSK_PAR_INT_TYPE : i32 = 2;
+/// {l}
 pub const MSK_PAR_STR_TYPE : i32 = 3;
 
 // problemitem
+/// {l}
 pub const MSK_PI_VAR : i32 = 0;
+/// {l}
 pub const MSK_PI_CON : i32 = 1;
+/// {l}
 pub const MSK_PI_CONE : i32 = 2;
 
 // problemtype
+/// {l}
 pub const MSK_PROBTYPE_LO : i32 = 0;
+/// {l}
 pub const MSK_PROBTYPE_QO : i32 = 1;
+/// {l}
 pub const MSK_PROBTYPE_QCQO : i32 = 2;
+/// {l}
 pub const MSK_PROBTYPE_CONIC : i32 = 3;
+/// {l}
 pub const MSK_PROBTYPE_MIXED : i32 = 4;
 
 // prosta
+/// {l}
 pub const MSK_PRO_STA_UNKNOWN : i32 = 0;
+/// {l}
 pub const MSK_PRO_STA_PRIM_AND_DUAL_FEAS : i32 = 1;
+/// {l}
 pub const MSK_PRO_STA_PRIM_FEAS : i32 = 2;
+/// {l}
 pub const MSK_PRO_STA_DUAL_FEAS : i32 = 3;
+/// {l}
 pub const MSK_PRO_STA_PRIM_INFEAS : i32 = 4;
+/// {l}
 pub const MSK_PRO_STA_DUAL_INFEAS : i32 = 5;
+/// {l}
 pub const MSK_PRO_STA_PRIM_AND_DUAL_INFEAS : i32 = 6;
+/// {l}
 pub const MSK_PRO_STA_ILL_POSED : i32 = 7;
+/// {l}
 pub const MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED : i32 = 8;
 
 // xmlwriteroutputtype
+/// {l}
 pub const MSK_WRITE_XML_MODE_ROW : i32 = 0;
+/// {l}
 pub const MSK_WRITE_XML_MODE_COL : i32 = 1;
 
 // rescode
+/// {l}
 pub const MSK_RES_OK : i32 = 0;
+/// {l}
 pub const MSK_RES_WRN_OPEN_PARAM_FILE : i32 = 50;
+/// {l}
 pub const MSK_RES_WRN_LARGE_BOUND : i32 = 51;
+/// {l}
 pub const MSK_RES_WRN_LARGE_LO_BOUND : i32 = 52;
+/// {l}
 pub const MSK_RES_WRN_LARGE_UP_BOUND : i32 = 53;
+/// {l}
 pub const MSK_RES_WRN_LARGE_CON_FX : i32 = 54;
+/// {l}
 pub const MSK_RES_WRN_LARGE_CJ : i32 = 57;
+/// {l}
 pub const MSK_RES_WRN_LARGE_AIJ : i32 = 62;
+/// {l}
 pub const MSK_RES_WRN_ZERO_AIJ : i32 = 63;
+/// {l}
 pub const MSK_RES_WRN_NAME_MAX_LEN : i32 = 65;
+/// {l}
 pub const MSK_RES_WRN_SPAR_MAX_LEN : i32 = 66;
+/// {l}
 pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR : i32 = 70;
+/// {l}
 pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR : i32 = 71;
+/// {l}
 pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR : i32 = 72;
+/// {l}
 pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT : i32 = 80;
+/// {l}
 pub const MSK_RES_WRN_LP_DROP_VARIABLE : i32 = 85;
+/// {l}
 pub const MSK_RES_WRN_NZ_IN_UPR_TRI : i32 = 200;
+/// {l}
 pub const MSK_RES_WRN_DROPPED_NZ_QOBJ : i32 = 201;
+/// {l}
 pub const MSK_RES_WRN_IGNORE_INTEGER : i32 = 250;
+/// {l}
 pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER : i32 = 251;
+/// {l}
 pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL : i32 = 270;
+/// {l}
 pub const MSK_RES_WRN_SOL_FILTER : i32 = 300;
+/// {l}
 pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME : i32 = 350;
+/// {l}
 pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON : i32 = 351;
+/// {l}
 pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR : i32 = 352;
+/// {l}
 pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS : i32 = 400;
+/// {l}
 pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS : i32 = 405;
+/// {l}
 pub const MSK_RES_WRN_LICENSE_EXPIRE : i32 = 500;
+/// {l}
 pub const MSK_RES_WRN_LICENSE_SERVER : i32 = 501;
+/// {l}
 pub const MSK_RES_WRN_EMPTY_NAME : i32 = 502;
+/// {l}
 pub const MSK_RES_WRN_USING_GENERIC_NAMES : i32 = 503;
+/// {l}
 pub const MSK_RES_WRN_INVALID_MPS_NAME : i32 = 504;
+/// {l}
 pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME : i32 = 505;
+/// {l}
 pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE : i32 = 509;
+/// {l}
 pub const MSK_RES_WRN_PARAM_NAME_DOU : i32 = 510;
+/// {l}
 pub const MSK_RES_WRN_PARAM_NAME_INT : i32 = 511;
+/// {l}
 pub const MSK_RES_WRN_PARAM_NAME_STR : i32 = 512;
+/// {l}
 pub const MSK_RES_WRN_PARAM_STR_VALUE : i32 = 515;
+/// {l}
 pub const MSK_RES_WRN_PARAM_IGNORED_CMIO : i32 = 516;
+/// {l}
 pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW : i32 = 705;
+/// {l}
 pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL : i32 = 710;
+/// {l}
 pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK : i32 = 800;
+/// {l}
 pub const MSK_RES_WRN_ELIMINATOR_SPACE : i32 = 801;
+/// {l}
 pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE : i32 = 802;
+/// {l}
 pub const MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS : i32 = 803;
+/// {l}
 pub const MSK_RES_WRN_WRITE_CHANGED_NAMES : i32 = 830;
+/// {l}
 pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX : i32 = 831;
+/// {l}
 pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES : i32 = 850;
+/// {l}
 pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES : i32 = 851;
+/// {l}
 pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES : i32 = 852;
+/// {l}
 pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES : i32 = 853;
+/// {l}
 pub const MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES : i32 = 854;
+/// {l}
 pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES : i32 = 855;
+/// {l}
 pub const MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES : i32 = 856;
+/// {l}
 pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES : i32 = 857;
+/// {l}
 pub const MSK_RES_WRN_ANA_LARGE_BOUNDS : i32 = 900;
+/// {l}
 pub const MSK_RES_WRN_ANA_C_ZERO : i32 = 901;
+/// {l}
 pub const MSK_RES_WRN_ANA_EMPTY_COLS : i32 = 902;
+/// {l}
 pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS : i32 = 903;
+/// {l}
 pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS : i32 = 904;
+/// {l}
 pub const MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES : i32 = 930;
+/// {l}
 pub const MSK_RES_WRN_NO_DUALIZER : i32 = 950;
+/// {l}
 pub const MSK_RES_WRN_SYM_MAT_LARGE : i32 = 960;
+/// {l}
 pub const MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER : i32 = 970;
+/// {l}
 pub const MSK_RES_WRN_LARGE_FIJ : i32 = 980;
+/// {l}
 pub const MSK_RES_ERR_LICENSE : i32 = 1000;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_EXPIRED : i32 = 1001;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_VERSION : i32 = 1002;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_OLD_SERVER_VERSION : i32 = 1003;
+/// {l}
 pub const MSK_RES_ERR_SIZE_LICENSE : i32 = 1005;
+/// {l}
 pub const MSK_RES_ERR_PROB_LICENSE : i32 = 1006;
+/// {l}
 pub const MSK_RES_ERR_FILE_LICENSE : i32 = 1007;
+/// {l}
 pub const MSK_RES_ERR_MISSING_LICENSE_FILE : i32 = 1008;
+/// {l}
 pub const MSK_RES_ERR_SIZE_LICENSE_CON : i32 = 1010;
+/// {l}
 pub const MSK_RES_ERR_SIZE_LICENSE_VAR : i32 = 1011;
+/// {l}
 pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR : i32 = 1012;
+/// {l}
 pub const MSK_RES_ERR_OPTIMIZER_LICENSE : i32 = 1013;
+/// {l}
 pub const MSK_RES_ERR_FLEXLM : i32 = 1014;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_SERVER : i32 = 1015;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_MAX : i32 = 1016;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON : i32 = 1017;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_FEATURE : i32 = 1018;
+/// {l}
 pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED : i32 = 1019;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE : i32 = 1020;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT : i32 = 1021;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID : i32 = 1025;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_SERVER_VERSION : i32 = 1026;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT : i32 = 1027;
+/// {l}
 pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE : i32 = 1028;
+/// {l}
 pub const MSK_RES_ERR_OLDER_DLL : i32 = 1035;
+/// {l}
 pub const MSK_RES_ERR_NEWER_DLL : i32 = 1036;
+/// {l}
 pub const MSK_RES_ERR_LINK_FILE_DLL : i32 = 1040;
+/// {l}
 pub const MSK_RES_ERR_THREAD_MUTEX_INIT : i32 = 1045;
+/// {l}
 pub const MSK_RES_ERR_THREAD_MUTEX_LOCK : i32 = 1046;
+/// {l}
 pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK : i32 = 1047;
+/// {l}
 pub const MSK_RES_ERR_THREAD_CREATE : i32 = 1048;
+/// {l}
 pub const MSK_RES_ERR_THREAD_COND_INIT : i32 = 1049;
+/// {l}
 pub const MSK_RES_ERR_UNKNOWN : i32 = 1050;
+/// {l}
 pub const MSK_RES_ERR_SPACE : i32 = 1051;
+/// {l}
 pub const MSK_RES_ERR_FILE_OPEN : i32 = 1052;
+/// {l}
 pub const MSK_RES_ERR_FILE_READ : i32 = 1053;
+/// {l}
 pub const MSK_RES_ERR_FILE_WRITE : i32 = 1054;
+/// {l}
 pub const MSK_RES_ERR_DATA_FILE_EXT : i32 = 1055;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_NAME : i32 = 1056;
+/// {l}
 pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME : i32 = 1057;
+/// {l}
 pub const MSK_RES_ERR_END_OF_FILE : i32 = 1059;
+/// {l}
 pub const MSK_RES_ERR_NULL_ENV : i32 = 1060;
+/// {l}
 pub const MSK_RES_ERR_NULL_TASK : i32 = 1061;
+/// {l}
 pub const MSK_RES_ERR_INVALID_STREAM : i32 = 1062;
+/// {l}
 pub const MSK_RES_ERR_NO_INIT_ENV : i32 = 1063;
+/// {l}
 pub const MSK_RES_ERR_INVALID_TASK : i32 = 1064;
+/// {l}
 pub const MSK_RES_ERR_NULL_POINTER : i32 = 1065;
+/// {l}
 pub const MSK_RES_ERR_LIVING_TASKS : i32 = 1066;
+/// {l}
 pub const MSK_RES_ERR_BLANK_NAME : i32 = 1070;
+/// {l}
 pub const MSK_RES_ERR_DUP_NAME : i32 = 1071;
+/// {l}
 pub const MSK_RES_ERR_FORMAT_STRING : i32 = 1072;
+/// {l}
 pub const MSK_RES_ERR_SPARSITY_SPECIFICATION : i32 = 1073;
+/// {l}
 pub const MSK_RES_ERR_MISMATCHING_DIMENSION : i32 = 1074;
+/// {l}
 pub const MSK_RES_ERR_INVALID_OBJ_NAME : i32 = 1075;
+/// {l}
 pub const MSK_RES_ERR_INVALID_CON_NAME : i32 = 1076;
+/// {l}
 pub const MSK_RES_ERR_INVALID_VAR_NAME : i32 = 1077;
+/// {l}
 pub const MSK_RES_ERR_INVALID_CONE_NAME : i32 = 1078;
+/// {l}
 pub const MSK_RES_ERR_INVALID_BARVAR_NAME : i32 = 1079;
+/// {l}
 pub const MSK_RES_ERR_SPACE_LEAKING : i32 = 1080;
+/// {l}
 pub const MSK_RES_ERR_SPACE_NO_INFO : i32 = 1081;
+/// {l}
 pub const MSK_RES_ERR_DIMENSION_SPECIFICATION : i32 = 1082;
+/// {l}
 pub const MSK_RES_ERR_AXIS_NAME_SPECIFICATION : i32 = 1083;
+/// {l}
 pub const MSK_RES_ERR_READ_FORMAT : i32 = 1090;
+/// {l}
 pub const MSK_RES_ERR_MPS_FILE : i32 = 1100;
+/// {l}
 pub const MSK_RES_ERR_MPS_INV_FIELD : i32 = 1101;
+/// {l}
 pub const MSK_RES_ERR_MPS_INV_MARKER : i32 = 1102;
+/// {l}
 pub const MSK_RES_ERR_MPS_NULL_CON_NAME : i32 = 1103;
+/// {l}
 pub const MSK_RES_ERR_MPS_NULL_VAR_NAME : i32 = 1104;
+/// {l}
 pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME : i32 = 1105;
+/// {l}
 pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME : i32 = 1106;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_CON_KEY : i32 = 1107;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_BOUND_KEY : i32 = 1108;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_SEC_NAME : i32 = 1109;
+/// {l}
 pub const MSK_RES_ERR_MPS_NO_OBJECTIVE : i32 = 1110;
+/// {l}
 pub const MSK_RES_ERR_MPS_SPLITTED_VAR : i32 = 1111;
+/// {l}
 pub const MSK_RES_ERR_MPS_MUL_CON_NAME : i32 = 1112;
+/// {l}
 pub const MSK_RES_ERR_MPS_MUL_QSEC : i32 = 1113;
+/// {l}
 pub const MSK_RES_ERR_MPS_MUL_QOBJ : i32 = 1114;
+/// {l}
 pub const MSK_RES_ERR_MPS_INV_SEC_ORDER : i32 = 1115;
+/// {l}
 pub const MSK_RES_ERR_MPS_MUL_CSEC : i32 = 1116;
+/// {l}
 pub const MSK_RES_ERR_MPS_CONE_TYPE : i32 = 1117;
+/// {l}
 pub const MSK_RES_ERR_MPS_CONE_OVERLAP : i32 = 1118;
+/// {l}
 pub const MSK_RES_ERR_MPS_CONE_REPEAT : i32 = 1119;
+/// {l}
 pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q : i32 = 1120;
+/// {l}
 pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT : i32 = 1121;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE : i32 = 1122;
+/// {l}
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2 : i32 = 1125;
+/// {l}
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3 : i32 = 1126;
+/// {l}
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5 : i32 = 1127;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME : i32 = 1128;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_KEY : i32 = 1129;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_CONSTRAINT : i32 = 1130;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE : i32 = 1131;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE : i32 = 1132;
+/// {l}
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT : i32 = 1133;
+/// {l}
 pub const MSK_RES_ERR_LP_INCOMPATIBLE : i32 = 1150;
+/// {l}
 pub const MSK_RES_ERR_LP_EMPTY : i32 = 1151;
+/// {l}
 pub const MSK_RES_ERR_LP_DUP_SLACK_NAME : i32 = 1152;
+/// {l}
 pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME : i32 = 1153;
+/// {l}
 pub const MSK_RES_ERR_LP_INVALID_VAR_NAME : i32 = 1154;
+/// {l}
 pub const MSK_RES_ERR_LP_FREE_CONSTRAINT : i32 = 1155;
+/// {l}
 pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME : i32 = 1156;
+/// {l}
 pub const MSK_RES_ERR_LP_FILE_FORMAT : i32 = 1157;
+/// {l}
 pub const MSK_RES_ERR_WRITE_LP_FORMAT : i32 = 1158;
+/// {l}
 pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG : i32 = 1159;
+/// {l}
 pub const MSK_RES_ERR_LP_FORMAT : i32 = 1160;
+/// {l}
 pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME : i32 = 1161;
+/// {l}
 pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME : i32 = 1162;
+/// {l}
 pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM : i32 = 1163;
+/// {l}
 pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM : i32 = 1164;
+/// {l}
 pub const MSK_RES_ERR_WRITING_FILE : i32 = 1166;
+/// {l}
 pub const MSK_RES_ERR_OPF_FORMAT : i32 = 1168;
+/// {l}
 pub const MSK_RES_ERR_OPF_NEW_VARIABLE : i32 = 1169;
+/// {l}
 pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE : i32 = 1170;
+/// {l}
 pub const MSK_RES_ERR_LP_INVALID_CON_NAME : i32 = 1171;
+/// {l}
 pub const MSK_RES_ERR_OPF_PREMATURE_EOF : i32 = 1172;
+/// {l}
 pub const MSK_RES_ERR_JSON_SYNTAX : i32 = 1175;
+/// {l}
 pub const MSK_RES_ERR_JSON_STRING : i32 = 1176;
+/// {l}
 pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW : i32 = 1177;
+/// {l}
 pub const MSK_RES_ERR_JSON_FORMAT : i32 = 1178;
+/// {l}
 pub const MSK_RES_ERR_JSON_DATA : i32 = 1179;
+/// {l}
 pub const MSK_RES_ERR_JSON_MISSING_DATA : i32 = 1180;
+/// {l}
 pub const MSK_RES_ERR_PTF_INCOMPATIBILITY : i32 = 1181;
+/// {l}
 pub const MSK_RES_ERR_PTF_UNDEFINED_ITEM : i32 = 1182;
+/// {l}
 pub const MSK_RES_ERR_PTF_INCONSISTENCY : i32 = 1183;
+/// {l}
 pub const MSK_RES_ERR_PTF_FORMAT : i32 = 1184;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_LENNEQ : i32 = 1197;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_TYPE : i32 = 1198;
+/// {l}
 pub const MSK_RES_ERR_NUM_ARGUMENTS : i32 = 1199;
+/// {l}
 pub const MSK_RES_ERR_IN_ARGUMENT : i32 = 1200;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_DIMENSION : i32 = 1201;
+/// {l}
 pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE : i32 = 1202;
+/// {l}
 pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL : i32 = 1203;
+/// {l}
 pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE : i32 = 1204;
+/// {l}
 pub const MSK_RES_ERR_INDEX_IS_NOT_UNIQUE : i32 = 1205;
+/// {l}
 pub const MSK_RES_ERR_PARAM_NAME : i32 = 1206;
+/// {l}
 pub const MSK_RES_ERR_PARAM_NAME_DOU : i32 = 1207;
+/// {l}
 pub const MSK_RES_ERR_PARAM_NAME_INT : i32 = 1208;
+/// {l}
 pub const MSK_RES_ERR_PARAM_NAME_STR : i32 = 1209;
+/// {l}
 pub const MSK_RES_ERR_PARAM_INDEX : i32 = 1210;
+/// {l}
 pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE : i32 = 1215;
+/// {l}
 pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL : i32 = 1216;
+/// {l}
 pub const MSK_RES_ERR_PARAM_VALUE_STR : i32 = 1217;
+/// {l}
 pub const MSK_RES_ERR_PARAM_TYPE : i32 = 1218;
+/// {l}
 pub const MSK_RES_ERR_INF_DOU_INDEX : i32 = 1219;
+/// {l}
 pub const MSK_RES_ERR_INF_INT_INDEX : i32 = 1220;
+/// {l}
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL : i32 = 1221;
+/// {l}
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE : i32 = 1222;
+/// {l}
 pub const MSK_RES_ERR_INF_LINT_INDEX : i32 = 1225;
+/// {l}
 pub const MSK_RES_ERR_ARG_IS_TOO_SMALL : i32 = 1226;
+/// {l}
 pub const MSK_RES_ERR_ARG_IS_TOO_LARGE : i32 = 1227;
+/// {l}
 pub const MSK_RES_ERR_INVALID_WHICHSOL : i32 = 1228;
+/// {l}
 pub const MSK_RES_ERR_INF_DOU_NAME : i32 = 1230;
+/// {l}
 pub const MSK_RES_ERR_INF_INT_NAME : i32 = 1231;
+/// {l}
 pub const MSK_RES_ERR_INF_TYPE : i32 = 1232;
+/// {l}
 pub const MSK_RES_ERR_INF_LINT_NAME : i32 = 1234;
+/// {l}
 pub const MSK_RES_ERR_INDEX : i32 = 1235;
+/// {l}
 pub const MSK_RES_ERR_WHICHSOL : i32 = 1236;
+/// {l}
 pub const MSK_RES_ERR_SOLITEM : i32 = 1237;
+/// {l}
 pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED : i32 = 1238;
+/// {l}
 pub const MSK_RES_ERR_MAXNUMCON : i32 = 1240;
+/// {l}
 pub const MSK_RES_ERR_MAXNUMVAR : i32 = 1241;
+/// {l}
 pub const MSK_RES_ERR_MAXNUMBARVAR : i32 = 1242;
+/// {l}
 pub const MSK_RES_ERR_MAXNUMQNZ : i32 = 1243;
+/// {l}
 pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ : i32 = 1245;
+/// {l}
 pub const MSK_RES_ERR_INVALID_IDX : i32 = 1246;
+/// {l}
 pub const MSK_RES_ERR_INVALID_MAX_NUM : i32 = 1247;
+/// {l}
 pub const MSK_RES_ERR_UNALLOWED_WHICHSOL : i32 = 1248;
+/// {l}
 pub const MSK_RES_ERR_NUMCONLIM : i32 = 1250;
+/// {l}
 pub const MSK_RES_ERR_NUMVARLIM : i32 = 1251;
+/// {l}
 pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ : i32 = 1252;
+/// {l}
 pub const MSK_RES_ERR_INV_APTRE : i32 = 1253;
+/// {l}
 pub const MSK_RES_ERR_MUL_A_ELEMENT : i32 = 1254;
+/// {l}
 pub const MSK_RES_ERR_INV_BK : i32 = 1255;
+/// {l}
 pub const MSK_RES_ERR_INV_BKC : i32 = 1256;
+/// {l}
 pub const MSK_RES_ERR_INV_BKX : i32 = 1257;
+/// {l}
 pub const MSK_RES_ERR_INV_VAR_TYPE : i32 = 1258;
+/// {l}
 pub const MSK_RES_ERR_SOLVER_PROBTYPE : i32 = 1259;
+/// {l}
 pub const MSK_RES_ERR_OBJECTIVE_RANGE : i32 = 1260;
+/// {l}
 pub const MSK_RES_ERR_BASIS : i32 = 1266;
+/// {l}
 pub const MSK_RES_ERR_INV_SKC : i32 = 1267;
+/// {l}
 pub const MSK_RES_ERR_INV_SKX : i32 = 1268;
+/// {l}
 pub const MSK_RES_ERR_INV_SK_STR : i32 = 1269;
+/// {l}
 pub const MSK_RES_ERR_INV_SK : i32 = 1270;
+/// {l}
 pub const MSK_RES_ERR_INV_CONE_TYPE_STR : i32 = 1271;
+/// {l}
 pub const MSK_RES_ERR_INV_CONE_TYPE : i32 = 1272;
+/// {l}
 pub const MSK_RES_ERR_INV_SKN : i32 = 1274;
+/// {l}
 pub const MSK_RES_ERR_INVALID_SURPLUS : i32 = 1275;
+/// {l}
 pub const MSK_RES_ERR_INV_NAME_ITEM : i32 = 1280;
+/// {l}
 pub const MSK_RES_ERR_PRO_ITEM : i32 = 1281;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FORMAT_TYPE : i32 = 1283;
+/// {l}
 pub const MSK_RES_ERR_FIRSTI : i32 = 1285;
+/// {l}
 pub const MSK_RES_ERR_LASTI : i32 = 1286;
+/// {l}
 pub const MSK_RES_ERR_FIRSTJ : i32 = 1287;
+/// {l}
 pub const MSK_RES_ERR_LASTJ : i32 = 1288;
+/// {l}
 pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL : i32 = 1289;
+/// {l}
 pub const MSK_RES_ERR_NONLINEAR_EQUALITY : i32 = 1290;
+/// {l}
 pub const MSK_RES_ERR_NONCONVEX : i32 = 1291;
+/// {l}
 pub const MSK_RES_ERR_NONLINEAR_RANGED : i32 = 1292;
+/// {l}
 pub const MSK_RES_ERR_CON_Q_NOT_PSD : i32 = 1293;
+/// {l}
 pub const MSK_RES_ERR_CON_Q_NOT_NSD : i32 = 1294;
+/// {l}
 pub const MSK_RES_ERR_OBJ_Q_NOT_PSD : i32 = 1295;
+/// {l}
 pub const MSK_RES_ERR_OBJ_Q_NOT_NSD : i32 = 1296;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY : i32 = 1299;
+/// {l}
 pub const MSK_RES_ERR_CONE_INDEX : i32 = 1300;
+/// {l}
 pub const MSK_RES_ERR_CONE_SIZE : i32 = 1301;
+/// {l}
 pub const MSK_RES_ERR_CONE_OVERLAP : i32 = 1302;
+/// {l}
 pub const MSK_RES_ERR_CONE_REP_VAR : i32 = 1303;
+/// {l}
 pub const MSK_RES_ERR_MAXNUMCONE : i32 = 1304;
+/// {l}
 pub const MSK_RES_ERR_CONE_TYPE : i32 = 1305;
+/// {l}
 pub const MSK_RES_ERR_CONE_TYPE_STR : i32 = 1306;
+/// {l}
 pub const MSK_RES_ERR_CONE_OVERLAP_APPEND : i32 = 1307;
+/// {l}
 pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE : i32 = 1310;
+/// {l}
 pub const MSK_RES_ERR_APPENDING_TOO_BIG_CONE : i32 = 1311;
+/// {l}
 pub const MSK_RES_ERR_CONE_PARAMETER : i32 = 1320;
+/// {l}
 pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER : i32 = 1350;
+/// {l}
 pub const MSK_RES_ERR_HUGE_C : i32 = 1375;
+/// {l}
 pub const MSK_RES_ERR_HUGE_AIJ : i32 = 1380;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_AIJ : i32 = 1385;
+/// {l}
 pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN : i32 = 1390;
+/// {l}
 pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN : i32 = 1391;
+/// {l}
 pub const MSK_RES_ERR_INFINITE_BOUND : i32 = 1400;
+/// {l}
 pub const MSK_RES_ERR_INV_QOBJ_SUBI : i32 = 1401;
+/// {l}
 pub const MSK_RES_ERR_INV_QOBJ_SUBJ : i32 = 1402;
+/// {l}
 pub const MSK_RES_ERR_INV_QOBJ_VAL : i32 = 1403;
+/// {l}
 pub const MSK_RES_ERR_INV_QCON_SUBK : i32 = 1404;
+/// {l}
 pub const MSK_RES_ERR_INV_QCON_SUBI : i32 = 1405;
+/// {l}
 pub const MSK_RES_ERR_INV_QCON_SUBJ : i32 = 1406;
+/// {l}
 pub const MSK_RES_ERR_INV_QCON_VAL : i32 = 1407;
+/// {l}
 pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL : i32 = 1408;
+/// {l}
 pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE : i32 = 1409;
+/// {l}
 pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE : i32 = 1415;
+/// {l}
 pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE : i32 = 1417;
+/// {l}
 pub const MSK_RES_ERR_FIXED_BOUND_VALUES : i32 = 1420;
+/// {l}
 pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE : i32 = 1421;
+/// {l}
 pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE : i32 = 1445;
+/// {l}
 pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE : i32 = 1446;
+/// {l}
 pub const MSK_RES_ERR_Y_IS_UNDEFINED : i32 = 1449;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA : i32 = 1450;
+/// {l}
 pub const MSK_RES_ERR_INF_IN_DOUBLE_DATA : i32 = 1451;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_BLC : i32 = 1461;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_BUC : i32 = 1462;
+/// {l}
 pub const MSK_RES_ERR_INVALID_CFIX : i32 = 1469;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_C : i32 = 1470;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_BLX : i32 = 1471;
+/// {l}
 pub const MSK_RES_ERR_NAN_IN_BUX : i32 = 1472;
+/// {l}
 pub const MSK_RES_ERR_INVALID_AIJ : i32 = 1473;
+/// {l}
 pub const MSK_RES_ERR_INVALID_CJ : i32 = 1474;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_INVALID : i32 = 1480;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_HUGE : i32 = 1482;
+/// {l}
 pub const MSK_RES_ERR_INV_PROBLEM : i32 = 1500;
+/// {l}
 pub const MSK_RES_ERR_MIXED_CONIC_AND_NL : i32 = 1501;
+/// {l}
 pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM : i32 = 1503;
+/// {l}
 pub const MSK_RES_ERR_INV_OPTIMIZER : i32 = 1550;
+/// {l}
 pub const MSK_RES_ERR_MIO_NO_OPTIMIZER : i32 = 1551;
+/// {l}
 pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE : i32 = 1552;
+/// {l}
 pub const MSK_RES_ERR_FINAL_SOLUTION : i32 = 1560;
+/// {l}
 pub const MSK_RES_ERR_FIRST : i32 = 1570;
+/// {l}
 pub const MSK_RES_ERR_LAST : i32 = 1571;
+/// {l}
 pub const MSK_RES_ERR_SLICE_SIZE : i32 = 1572;
+/// {l}
 pub const MSK_RES_ERR_NEGATIVE_SURPLUS : i32 = 1573;
+/// {l}
 pub const MSK_RES_ERR_NEGATIVE_APPEND : i32 = 1578;
+/// {l}
 pub const MSK_RES_ERR_POSTSOLVE : i32 = 1580;
+/// {l}
 pub const MSK_RES_ERR_OVERFLOW : i32 = 1590;
+/// {l}
 pub const MSK_RES_ERR_NO_BASIS_SOL : i32 = 1600;
+/// {l}
 pub const MSK_RES_ERR_BASIS_FACTOR : i32 = 1610;
+/// {l}
 pub const MSK_RES_ERR_BASIS_SINGULAR : i32 = 1615;
+/// {l}
 pub const MSK_RES_ERR_FACTOR : i32 = 1650;
+/// {l}
 pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX : i32 = 1700;
+/// {l}
 pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED : i32 = 1701;
+/// {l}
 pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND : i32 = 1702;
+/// {l}
 pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM : i32 = 1710;
+/// {l}
 pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED : i32 = 1711;
+/// {l}
 pub const MSK_RES_ERR_NAME_MAX_LEN : i32 = 1750;
+/// {l}
 pub const MSK_RES_ERR_NAME_IS_NULL : i32 = 1760;
+/// {l}
 pub const MSK_RES_ERR_INVALID_COMPRESSION : i32 = 1800;
+/// {l}
 pub const MSK_RES_ERR_INVALID_IOMODE : i32 = 1801;
+/// {l}
 pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER : i32 = 2000;
+/// {l}
 pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER : i32 = 2001;
+/// {l}
 pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK : i32 = 2500;
+/// {l}
 pub const MSK_RES_ERR_INV_MARKI : i32 = 2501;
+/// {l}
 pub const MSK_RES_ERR_INV_MARKJ : i32 = 2502;
+/// {l}
 pub const MSK_RES_ERR_INV_NUMI : i32 = 2503;
+/// {l}
 pub const MSK_RES_ERR_INV_NUMJ : i32 = 2504;
+/// {l}
 pub const MSK_RES_ERR_TASK_INCOMPATIBLE : i32 = 2560;
+/// {l}
 pub const MSK_RES_ERR_TASK_INVALID : i32 = 2561;
+/// {l}
 pub const MSK_RES_ERR_TASK_WRITE : i32 = 2562;
+/// {l}
 pub const MSK_RES_ERR_LU_MAX_NUM_TRIES : i32 = 2800;
+/// {l}
 pub const MSK_RES_ERR_INVALID_UTF8 : i32 = 2900;
+/// {l}
 pub const MSK_RES_ERR_INVALID_WCHAR : i32 = 2901;
+/// {l}
 pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL : i32 = 2950;
+/// {l}
 pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL : i32 = 2953;
+/// {l}
 pub const MSK_RES_ERR_INTERNAL : i32 = 3000;
+/// {l}
 pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL : i32 = 3001;
+/// {l}
 pub const MSK_RES_ERR_API_CB_CONNECT : i32 = 3002;
+/// {l}
 pub const MSK_RES_ERR_API_FATAL_ERROR : i32 = 3005;
+/// {l}
 pub const MSK_RES_ERR_SEN_FORMAT : i32 = 3050;
+/// {l}
 pub const MSK_RES_ERR_SEN_UNDEF_NAME : i32 = 3051;
+/// {l}
 pub const MSK_RES_ERR_SEN_INDEX_RANGE : i32 = 3052;
+/// {l}
 pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP : i32 = 3053;
+/// {l}
 pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO : i32 = 3054;
+/// {l}
 pub const MSK_RES_ERR_SEN_INDEX_INVALID : i32 = 3055;
+/// {l}
 pub const MSK_RES_ERR_SEN_INVALID_REGEXP : i32 = 3056;
+/// {l}
 pub const MSK_RES_ERR_SEN_SOLUTION_STATUS : i32 = 3057;
+/// {l}
 pub const MSK_RES_ERR_SEN_NUMERICAL : i32 = 3058;
+/// {l}
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE : i32 = 3080;
+/// {l}
 pub const MSK_RES_ERR_UNB_STEP_SIZE : i32 = 3100;
+/// {l}
 pub const MSK_RES_ERR_IDENTICAL_TASKS : i32 = 3101;
+/// {l}
 pub const MSK_RES_ERR_AD_INVALID_CODELIST : i32 = 3102;
+/// {l}
 pub const MSK_RES_ERR_INTERNAL_TEST_FAILED : i32 = 3500;
+/// {l}
 pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE : i32 = 3600;
+/// {l}
 pub const MSK_RES_ERR_INVALID_AMPL_STUB : i32 = 3700;
+/// {l}
 pub const MSK_RES_ERR_INT64_TO_INT32_CAST : i32 = 3800;
+/// {l}
 pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES : i32 = 3900;
+/// {l}
 pub const MSK_RES_ERR_INFEAS_UNDEFINED : i32 = 3910;
+/// {l}
 pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION : i32 = 3915;
+/// {l}
 pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION : i32 = 3916;
+/// {l}
 pub const MSK_RES_ERR_BAR_VAR_DIM : i32 = 3920;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX : i32 = 3940;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX : i32 = 3941;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR : i32 = 3942;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE : i32 = 3943;
+/// {l}
 pub const MSK_RES_ERR_SYM_MAT_DUPLICATE : i32 = 3944;
+/// {l}
 pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM : i32 = 3950;
+/// {l}
 pub const MSK_RES_ERR_API_INTERNAL : i32 = 3999;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT : i32 = 4000;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX : i32 = 4001;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS : i32 = 4002;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS : i32 = 4003;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES : i32 = 4005;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_QUADRATIC_TERMS : i32 = 4006;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR : i32 = 4010;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS : i32 = 4011;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS : i32 = 4012;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES : i32 = 4500;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES : i32 = 4501;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES : i32 = 4502;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES : i32 = 4503;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES : i32 = 4504;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_DJC_NAMES : i32 = 4505;
+/// {l}
 pub const MSK_RES_ERR_NON_UNIQUE_ARRAY : i32 = 5000;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL : i32 = 5004;
+/// {l}
 pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE : i32 = 5005;
+/// {l}
 pub const MSK_RES_ERR_MIO_INTERNAL : i32 = 5010;
+/// {l}
 pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE : i32 = 6000;
+/// {l}
 pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS : i32 = 6010;
+/// {l}
 pub const MSK_RES_ERR_UPPER_TRIANGLE : i32 = 6020;
+/// {l}
 pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX : i32 = 7000;
+/// {l}
 pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE : i32 = 7001;
+/// {l}
 pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX : i32 = 7002;
+/// {l}
 pub const MSK_RES_ERR_LAU_UNKNOWN : i32 = 7005;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_M : i32 = 7010;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_N : i32 = 7011;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_K : i32 = 7012;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_TRANSA : i32 = 7015;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_TRANSB : i32 = 7016;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_UPLO : i32 = 7017;
+/// {l}
 pub const MSK_RES_ERR_LAU_ARG_TRANS : i32 = 7018;
+/// {l}
 pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX : i32 = 7019;
+/// {l}
 pub const MSK_RES_ERR_CBF_PARSE : i32 = 7100;
+/// {l}
 pub const MSK_RES_ERR_CBF_OBJ_SENSE : i32 = 7101;
+/// {l}
 pub const MSK_RES_ERR_CBF_NO_VARIABLES : i32 = 7102;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS : i32 = 7103;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES : i32 = 7104;
+/// {l}
 pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED : i32 = 7105;
+/// {l}
 pub const MSK_RES_ERR_CBF_SYNTAX : i32 = 7106;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ : i32 = 7107;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_CON : i32 = 7108;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_VAR : i32 = 7110;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_INT : i32 = 7111;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE : i32 = 7112;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE : i32 = 7113;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION : i32 = 7114;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD : i32 = 7115;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD : i32 = 7116;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD : i32 = 7117;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES : i32 = 7118;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS : i32 = 7119;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_FEW_INTS : i32 = 7120;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_MANY_INTS : i32 = 7121;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX : i32 = 7122;
+/// {l}
 pub const MSK_RES_ERR_CBF_UNSUPPORTED : i32 = 7123;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR : i32 = 7124;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION : i32 = 7125;
+/// {l}
 pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR : i32 = 7126;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION : i32 = 7127;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES : i32 = 7130;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES : i32 = 7131;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_POWER : i32 = 7132;
+/// {l}
 pub const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG : i32 = 7133;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX : i32 = 7134;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX : i32 = 7135;
+/// {l}
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE : i32 = 7136;
+/// {l}
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE : i32 = 7137;
+/// {l}
 pub const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH : i32 = 7138;
+/// {l}
 pub const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH : i32 = 7139;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES : i32 = 7140;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES : i32 = 7141;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_NUM_PSDCON : i32 = 7200;
+/// {l}
 pub const MSK_RES_ERR_CBF_DUPLICATE_PSDCON : i32 = 7201;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON : i32 = 7202;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_INDEX : i32 = 7203;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX : i32 = 7204;
+/// {l}
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_BLOCK_INDEX : i32 = 7205;
+/// {l}
 pub const MSK_RES_ERR_CBF_UNSUPPORTED_CHANGE : i32 = 7210;
+/// {l}
 pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER : i32 = 7700;
+/// {l}
 pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER : i32 = 7701;
+/// {l}
 pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE : i32 = 7750;
+/// {l}
 pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD : i32 = 7800;
+/// {l}
 pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX : i32 = 7801;
+/// {l}
 pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA : i32 = 7802;
+/// {l}
 pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC : i32 = 7803;
+/// {l}
 pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD : i32 = 7804;
+/// {l}
 pub const MSK_RES_ERR_SERVER_CONNECT : i32 = 8000;
+/// {l}
 pub const MSK_RES_ERR_SERVER_PROTOCOL : i32 = 8001;
+/// {l}
 pub const MSK_RES_ERR_SERVER_STATUS : i32 = 8002;
+/// {l}
 pub const MSK_RES_ERR_SERVER_TOKEN : i32 = 8003;
+/// {l}
 pub const MSK_RES_ERR_SERVER_ADDRESS : i32 = 8004;
+/// {l}
 pub const MSK_RES_ERR_SERVER_CERTIFICATE : i32 = 8005;
+/// {l}
 pub const MSK_RES_ERR_SERVER_TLS_CLIENT : i32 = 8006;
+/// {l}
 pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN : i32 = 8007;
+/// {l}
 pub const MSK_RES_ERR_SERVER_PROBLEM_SIZE : i32 = 8008;
+/// {l}
 pub const MSK_RES_ERR_DUPLICATE_FIJ : i32 = 20100;
+/// {l}
 pub const MSK_RES_ERR_INVALID_FIJ : i32 = 20101;
+/// {l}
 pub const MSK_RES_ERR_HUGE_FIJ : i32 = 20102;
+/// {l}
 pub const MSK_RES_ERR_INVALID_G : i32 = 20103;
+/// {l}
 pub const MSK_RES_ERR_INVALID_B : i32 = 20150;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_INVALID_INDEX : i32 = 20400;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_DIMENSION : i32 = 20401;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_DIMENSION_PSD : i32 = 20402;
+/// {l}
 pub const MSK_RES_ERR_NOT_POWER_DOMAIN : i32 = 20403;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_POWER_INVALID_ALPHA : i32 = 20404;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_POWER_NEGATIVE_ALPHA : i32 = 20405;
+/// {l}
 pub const MSK_RES_ERR_DOMAIN_POWER_NLEFT : i32 = 20406;
+/// {l}
 pub const MSK_RES_ERR_AFE_INVALID_INDEX : i32 = 20500;
+/// {l}
 pub const MSK_RES_ERR_ACC_INVALID_INDEX : i32 = 20600;
+/// {l}
 pub const MSK_RES_ERR_ACC_INVALID_ENTRY_INDEX : i32 = 20601;
+/// {l}
 pub const MSK_RES_ERR_ACC_AFE_DOMAIN_MISMATCH : i32 = 20602;
+/// {l}
 pub const MSK_RES_ERR_DJC_INVALID_INDEX : i32 = 20700;
+/// {l}
 pub const MSK_RES_ERR_DJC_UNSUPPORTED_DOMAIN_TYPE : i32 = 20701;
+/// {l}
 pub const MSK_RES_ERR_DJC_AFE_DOMAIN_MISMATCH : i32 = 20702;
+/// {l}
 pub const MSK_RES_ERR_DJC_INVALID_TERM_SIZE : i32 = 20703;
+/// {l}
 pub const MSK_RES_ERR_DJC_DOMAIN_TERMSIZE_MISMATCH : i32 = 20704;
+/// {l}
 pub const MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH : i32 = 20705;
+/// {l}
 pub const MSK_RES_ERR_UNDEF_SOLUTION : i32 = 22000;
+/// {l}
 pub const MSK_RES_ERR_NO_DOTY : i32 = 22010;
+/// {l}
 pub const MSK_RES_TRM_MAX_ITERATIONS : i32 = 100000;
+/// {l}
 pub const MSK_RES_TRM_MAX_TIME : i32 = 100001;
+/// {l}
 pub const MSK_RES_TRM_OBJECTIVE_RANGE : i32 = 100002;
+/// {l}
 pub const MSK_RES_TRM_STALL : i32 = 100006;
+/// {l}
 pub const MSK_RES_TRM_USER_CALLBACK : i32 = 100007;
+/// {l}
 pub const MSK_RES_TRM_MIO_NUM_RELAXS : i32 = 100008;
+/// {l}
 pub const MSK_RES_TRM_MIO_NUM_BRANCHES : i32 = 100009;
+/// {l}
 pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS : i32 = 100015;
+/// {l}
 pub const MSK_RES_TRM_MAX_NUM_SETBACKS : i32 = 100020;
+/// {l}
 pub const MSK_RES_TRM_NUMERICAL_PROBLEM : i32 = 100025;
+/// {l}
 pub const MSK_RES_TRM_LOST_RACE : i32 = 100027;
+/// {l}
 pub const MSK_RES_TRM_INTERNAL : i32 = 100030;
+/// {l}
 pub const MSK_RES_TRM_INTERNAL_STOP : i32 = 100031;
 
 // rescodetype
+/// {l}
 pub const MSK_RESPONSE_OK : i32 = 0;
+/// {l}
 pub const MSK_RESPONSE_WRN : i32 = 1;
+/// {l}
 pub const MSK_RESPONSE_TRM : i32 = 2;
+/// {l}
 pub const MSK_RESPONSE_ERR : i32 = 3;
+/// {l}
 pub const MSK_RESPONSE_UNK : i32 = 4;
 
 // scalingtype
+/// {l}
 pub const MSK_SCALING_FREE : i32 = 0;
+/// {l}
 pub const MSK_SCALING_NONE : i32 = 1;
 
 // scalingmethod
+/// {l}
 pub const MSK_SCALING_METHOD_POW2 : i32 = 0;
+/// {l}
 pub const MSK_SCALING_METHOD_FREE : i32 = 1;
 
 // sensitivitytype
+/// {l}
 pub const MSK_SENSITIVITY_TYPE_BASIS : i32 = 0;
 
 // simseltype
+/// {l}
 pub const MSK_SIM_SELECTION_FREE : i32 = 0;
+/// {l}
 pub const MSK_SIM_SELECTION_FULL : i32 = 1;
+/// {l}
 pub const MSK_SIM_SELECTION_ASE : i32 = 2;
+/// {l}
 pub const MSK_SIM_SELECTION_DEVEX : i32 = 3;
+/// {l}
 pub const MSK_SIM_SELECTION_SE : i32 = 4;
+/// {l}
 pub const MSK_SIM_SELECTION_PARTIAL : i32 = 5;
 
 // solitem
+/// {l}
 pub const MSK_SOL_ITEM_XC : i32 = 0;
+/// {l}
 pub const MSK_SOL_ITEM_XX : i32 = 1;
+/// {l}
 pub const MSK_SOL_ITEM_Y : i32 = 2;
+/// {l}
 pub const MSK_SOL_ITEM_SLC : i32 = 3;
+/// {l}
 pub const MSK_SOL_ITEM_SUC : i32 = 4;
+/// {l}
 pub const MSK_SOL_ITEM_SLX : i32 = 5;
+/// {l}
 pub const MSK_SOL_ITEM_SUX : i32 = 6;
+/// {l}
 pub const MSK_SOL_ITEM_SNX : i32 = 7;
 
 // solsta
+/// {l}
 pub const MSK_SOL_STA_UNKNOWN : i32 = 0;
+/// {l}
 pub const MSK_SOL_STA_OPTIMAL : i32 = 1;
+/// {l}
 pub const MSK_SOL_STA_PRIM_FEAS : i32 = 2;
+/// {l}
 pub const MSK_SOL_STA_DUAL_FEAS : i32 = 3;
+/// {l}
 pub const MSK_SOL_STA_PRIM_AND_DUAL_FEAS : i32 = 4;
+/// {l}
 pub const MSK_SOL_STA_PRIM_INFEAS_CER : i32 = 5;
+/// {l}
 pub const MSK_SOL_STA_DUAL_INFEAS_CER : i32 = 6;
+/// {l}
 pub const MSK_SOL_STA_PRIM_ILLPOSED_CER : i32 = 7;
+/// {l}
 pub const MSK_SOL_STA_DUAL_ILLPOSED_CER : i32 = 8;
+/// {l}
 pub const MSK_SOL_STA_INTEGER_OPTIMAL : i32 = 9;
 
 // soltype
+/// {l}
 pub const MSK_SOL_ITR : i32 = 0;
+/// {l}
 pub const MSK_SOL_BAS : i32 = 1;
+/// {l}
 pub const MSK_SOL_ITG : i32 = 2;
 
 // solveform
+/// {l}
 pub const MSK_SOLVE_FREE : i32 = 0;
+/// {l}
 pub const MSK_SOLVE_PRIMAL : i32 = 1;
+/// {l}
 pub const MSK_SOLVE_DUAL : i32 = 2;
 
 // sparam
+/// {l}
 pub const MSK_SPAR_BAS_SOL_FILE_NAME : i32 = 0;
+/// {l}
 pub const MSK_SPAR_DATA_FILE_NAME : i32 = 1;
+/// {l}
 pub const MSK_SPAR_DEBUG_FILE_NAME : i32 = 2;
+/// {l}
 pub const MSK_SPAR_INT_SOL_FILE_NAME : i32 = 3;
+/// {l}
 pub const MSK_SPAR_ITR_SOL_FILE_NAME : i32 = 4;
+/// {l}
 pub const MSK_SPAR_MIO_DEBUG_STRING : i32 = 5;
+/// {l}
 pub const MSK_SPAR_PARAM_COMMENT_SIGN : i32 = 6;
+/// {l}
 pub const MSK_SPAR_PARAM_READ_FILE_NAME : i32 = 7;
+/// {l}
 pub const MSK_SPAR_PARAM_WRITE_FILE_NAME : i32 = 8;
+/// {l}
 pub const MSK_SPAR_READ_MPS_BOU_NAME : i32 = 9;
+/// {l}
 pub const MSK_SPAR_READ_MPS_OBJ_NAME : i32 = 10;
+/// {l}
 pub const MSK_SPAR_READ_MPS_RAN_NAME : i32 = 11;
+/// {l}
 pub const MSK_SPAR_READ_MPS_RHS_NAME : i32 = 12;
+/// {l}
 pub const MSK_SPAR_REMOTE_OPTSERVER_HOST : i32 = 13;
+/// {l}
 pub const MSK_SPAR_REMOTE_TLS_CERT : i32 = 14;
+/// {l}
 pub const MSK_SPAR_REMOTE_TLS_CERT_PATH : i32 = 15;
+/// {l}
 pub const MSK_SPAR_SENSITIVITY_FILE_NAME : i32 = 16;
+/// {l}
 pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
+/// {l}
 pub const MSK_SPAR_SOL_FILTER_XC_LOW : i32 = 18;
+/// {l}
 pub const MSK_SPAR_SOL_FILTER_XC_UPR : i32 = 19;
+/// {l}
 pub const MSK_SPAR_SOL_FILTER_XX_LOW : i32 = 20;
+/// {l}
 pub const MSK_SPAR_SOL_FILTER_XX_UPR : i32 = 21;
+/// {l}
 pub const MSK_SPAR_STAT_KEY : i32 = 22;
+/// {l}
 pub const MSK_SPAR_STAT_NAME : i32 = 23;
+/// {l}
 pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME : i32 = 24;
 
 // stakey
+/// {l}
 pub const MSK_SK_UNK : i32 = 0;
+/// {l}
 pub const MSK_SK_BAS : i32 = 1;
+/// {l}
 pub const MSK_SK_SUPBAS : i32 = 2;
+/// {l}
 pub const MSK_SK_LOW : i32 = 3;
+/// {l}
 pub const MSK_SK_UPR : i32 = 4;
+/// {l}
 pub const MSK_SK_FIX : i32 = 5;
+/// {l}
 pub const MSK_SK_INF : i32 = 6;
 
 // startpointtype
+/// {l}
 pub const MSK_STARTING_POINT_FREE : i32 = 0;
+/// {l}
 pub const MSK_STARTING_POINT_GUESS : i32 = 1;
+/// {l}
 pub const MSK_STARTING_POINT_CONSTANT : i32 = 2;
+/// {l}
 pub const MSK_STARTING_POINT_SATISFY_BOUNDS : i32 = 3;
 
 // streamtype
+/// {l}
 pub const MSK_STREAM_LOG : i32 = 0;
+/// {l}
 pub const MSK_STREAM_MSG : i32 = 1;
+/// {l}
 pub const MSK_STREAM_ERR : i32 = 2;
+/// {l}
 pub const MSK_STREAM_WRN : i32 = 3;
 
 // value
+/// {l}
 pub const MSK_LICENSE_BUFFER_LENGTH : i32 = 21;
+/// {l}
 pub const MSK_MAX_STR_LEN : i32 = 1024;
 
 // variabletype
+/// {l}
 pub const MSK_VAR_TYPE_CONT : i32 = 0;
+/// {l}
 pub const MSK_VAR_TYPE_INT : i32 = 1;
 
 
