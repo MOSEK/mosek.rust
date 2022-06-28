@@ -526,2810 +526,2810 @@ extern {
 
 
 // basindtype
-/// {l}
+/// Never do basis identification.
 pub const MSK_BI_NEVER : i32 = 0;
-/// {l}
+/// Basis identification is always performed even if the interior-point optimizer terminates abnormally.
 pub const MSK_BI_ALWAYS : i32 = 1;
-/// {l}
+/// Basis identification is performed if the interior-point optimizer terminates without an error.
 pub const MSK_BI_NO_ERROR : i32 = 2;
-/// {l}
+/// Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible.
 pub const MSK_BI_IF_FEASIBLE : i32 = 3;
-/// {l}
+/// Not currently in use.
 pub const MSK_BI_RESERVERED : i32 = 4;
 
 // boundkey
-/// {l}
+/// The constraint or variable has a finite lower bound and an infinite upper bound.
 pub const MSK_BK_LO : i32 = 0;
-/// {l}
+/// The constraint or variable has an infinite lower bound and an finite upper bound.
 pub const MSK_BK_UP : i32 = 1;
-/// {l}
+/// The constraint or variable is fixed.
 pub const MSK_BK_FX : i32 = 2;
-/// {l}
+/// The constraint or variable is free.
 pub const MSK_BK_FR : i32 = 3;
-/// {l}
+/// The constraint or variable is ranged.
 pub const MSK_BK_RA : i32 = 4;
 
 // mark
-/// {l}
+/// The lower bound is selected for sensitivity analysis.
 pub const MSK_MARK_LO : i32 = 0;
-/// {l}
+/// The upper bound is selected for sensitivity analysis.
 pub const MSK_MARK_UP : i32 = 1;
 
 // simdegen
-/// {l}
+/// The simplex optimizer should use no degeneration strategy.
 pub const MSK_SIM_DEGEN_NONE : i32 = 0;
-/// {l}
+/// The simplex optimizer chooses the degeneration strategy.
 pub const MSK_SIM_DEGEN_FREE : i32 = 1;
-/// {l}
+/// The simplex optimizer should use an aggressive degeneration strategy.
 pub const MSK_SIM_DEGEN_AGGRESSIVE : i32 = 2;
-/// {l}
+/// The simplex optimizer should use a moderate degeneration strategy.
 pub const MSK_SIM_DEGEN_MODERATE : i32 = 3;
-/// {l}
+/// The simplex optimizer should use a minimum degeneration strategy.
 pub const MSK_SIM_DEGEN_MINIMUM : i32 = 4;
 
 // transpose
-/// {l}
+/// No transpose is applied.
 pub const MSK_TRANSPOSE_NO : i32 = 0;
-/// {l}
+/// A transpose is applied.
 pub const MSK_TRANSPOSE_YES : i32 = 1;
 
 // uplo
-/// {l}
+/// Lower part.
 pub const MSK_UPLO_LO : i32 = 0;
-/// {l}
+/// Upper part.
 pub const MSK_UPLO_UP : i32 = 1;
 
 // simreform
-/// {l}
+/// Disallow the simplex optimizer to reformulate the problem.
 pub const MSK_SIM_REFORMULATION_OFF : i32 = 0;
-/// {l}
+/// Allow the simplex optimizer to reformulate the problem.
 pub const MSK_SIM_REFORMULATION_ON : i32 = 1;
-/// {l}
+/// The simplex optimizer can choose freely.
 pub const MSK_SIM_REFORMULATION_FREE : i32 = 2;
-/// {l}
+/// The simplex optimizer should use an aggressive reformulation strategy.
 pub const MSK_SIM_REFORMULATION_AGGRESSIVE : i32 = 3;
 
 // simdupvec
-/// {l}
+/// Disallow the simplex optimizer to exploit duplicated columns.
 pub const MSK_SIM_EXPLOIT_DUPVEC_OFF : i32 = 0;
-/// {l}
+/// Allow the simplex optimizer to exploit duplicated columns.
 pub const MSK_SIM_EXPLOIT_DUPVEC_ON : i32 = 1;
-/// {l}
+/// The simplex optimizer can choose freely.
 pub const MSK_SIM_EXPLOIT_DUPVEC_FREE : i32 = 2;
 
 // simhotstart
-/// {l}
+/// The simplex optimizer performs a coldstart.
 pub const MSK_SIM_HOTSTART_NONE : i32 = 0;
-/// {l}
+/// The simplex optimize chooses the hot-start type.
 pub const MSK_SIM_HOTSTART_FREE : i32 = 1;
-/// {l}
+/// Only the status keys of the constraints and variables are used to choose the type of hot-start.
 pub const MSK_SIM_HOTSTART_STATUS_KEYS : i32 = 2;
 
 // intpnthotstart
-/// {l}
+/// The interior-point optimizer performs a coldstart.
 pub const MSK_INTPNT_HOTSTART_NONE : i32 = 0;
-/// {l}
+/// The interior-point optimizer exploits the primal solution only.
 pub const MSK_INTPNT_HOTSTART_PRIMAL : i32 = 1;
-/// {l}
+/// The interior-point optimizer exploits the dual solution only.
 pub const MSK_INTPNT_HOTSTART_DUAL : i32 = 2;
-/// {l}
+/// The interior-point optimizer exploits both the primal and dual solution.
 pub const MSK_INTPNT_HOTSTART_PRIMAL_DUAL : i32 = 3;
 
 // purify
-/// {l}
+/// The optimizer performs no solution purification.
 pub const MSK_PURIFY_NONE : i32 = 0;
-/// {l}
+/// The optimizer purifies the primal solution.
 pub const MSK_PURIFY_PRIMAL : i32 = 1;
-/// {l}
+/// The optimizer purifies the dual solution.
 pub const MSK_PURIFY_DUAL : i32 = 2;
-/// {l}
+/// The optimizer purifies both the primal and dual solution.
 pub const MSK_PURIFY_PRIMAL_DUAL : i32 = 3;
-/// {l}
+/// TBD
 pub const MSK_PURIFY_AUTO : i32 = 4;
 
 // callbackcode
-/// {l}
+/// The basis identification procedure has been started.
 pub const MSK_CALLBACK_BEGIN_BI : i32 = 0;
-/// {l}
+/// The callback function is called when the conic optimizer is started.
 pub const MSK_CALLBACK_BEGIN_CONIC : i32 = 1;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the dual phase is started.
 pub const MSK_CALLBACK_BEGIN_DUAL_BI : i32 = 2;
-/// {l}
+/// Dual sensitivity analysis is started.
 pub const MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY : i32 = 3;
-/// {l}
+/// The callback function is called when the dual BI phase is started.
 pub const MSK_CALLBACK_BEGIN_DUAL_SETUP_BI : i32 = 4;
-/// {l}
+/// The callback function is called when the dual simplex optimizer started.
 pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX : i32 = 5;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the dual simplex clean-up phase is started.
 pub const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI : i32 = 6;
-/// {l}
+/// The callback function is called when the infeasibility analyzer is started.
 pub const MSK_CALLBACK_BEGIN_INFEAS_ANA : i32 = 7;
-/// {l}
+/// The callback function is called when the interior-point optimizer is started.
 pub const MSK_CALLBACK_BEGIN_INTPNT : i32 = 8;
-/// {l}
+/// Begin waiting for license.
 pub const MSK_CALLBACK_BEGIN_LICENSE_WAIT : i32 = 9;
-/// {l}
+/// The callback function is called when the mixed-integer optimizer is started.
 pub const MSK_CALLBACK_BEGIN_MIO : i32 = 10;
-/// {l}
+/// The callback function is called when the optimizer is started.
 pub const MSK_CALLBACK_BEGIN_OPTIMIZER : i32 = 11;
-/// {l}
+/// The callback function is called when the presolve is started.
 pub const MSK_CALLBACK_BEGIN_PRESOLVE : i32 = 12;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the primal phase is started.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_BI : i32 = 13;
-/// {l}
+/// Begin primal feasibility repair.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR : i32 = 14;
-/// {l}
+/// Primal sensitivity analysis is started.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY : i32 = 15;
-/// {l}
+/// The callback function is called when the primal BI setup is started.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI : i32 = 16;
-/// {l}
+/// The callback function is called when the primal simplex optimizer is started.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX : i32 = 17;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the primal simplex clean-up phase is started.
 pub const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI : i32 = 18;
-/// {l}
+/// Begin QCQO reformulation.
 pub const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE : i32 = 19;
-/// {l}
+/// MOSEK has started reading a problem file.
 pub const MSK_CALLBACK_BEGIN_READ : i32 = 20;
-/// {l}
+/// The callback function is called when root cut generation is started.
 pub const MSK_CALLBACK_BEGIN_ROOT_CUTGEN : i32 = 21;
-/// {l}
+/// The callback function is called when the simplex optimizer is started.
 pub const MSK_CALLBACK_BEGIN_SIMPLEX : i32 = 22;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the simplex clean-up phase is started.
 pub const MSK_CALLBACK_BEGIN_SIMPLEX_BI : i32 = 23;
-/// {l}
+/// The callback function is called when solution of root relaxation is started.
 pub const MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX : i32 = 24;
-/// {l}
+/// Begin conic reformulation.
 pub const MSK_CALLBACK_BEGIN_TO_CONIC : i32 = 25;
-/// {l}
+/// MOSEK has started writing a problem file.
 pub const MSK_CALLBACK_BEGIN_WRITE : i32 = 26;
-/// {l}
+/// The callback function is called from within the conic optimizer after the information database has been updated.
 pub const MSK_CALLBACK_CONIC : i32 = 27;
-/// {l}
+/// The callback function is called from within the dual simplex optimizer.
 pub const MSK_CALLBACK_DUAL_SIMPLEX : i32 = 28;
-/// {l}
+/// The callback function is called when the basis identification procedure is terminated.
 pub const MSK_CALLBACK_END_BI : i32 = 29;
-/// {l}
+/// The callback function is called when the conic optimizer is terminated.
 pub const MSK_CALLBACK_END_CONIC : i32 = 30;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the dual phase is terminated.
 pub const MSK_CALLBACK_END_DUAL_BI : i32 = 31;
-/// {l}
+/// Dual sensitivity analysis is terminated.
 pub const MSK_CALLBACK_END_DUAL_SENSITIVITY : i32 = 32;
-/// {l}
+/// The callback function is called when the dual BI phase is terminated.
 pub const MSK_CALLBACK_END_DUAL_SETUP_BI : i32 = 33;
-/// {l}
+/// The callback function is called when the dual simplex optimizer is terminated.
 pub const MSK_CALLBACK_END_DUAL_SIMPLEX : i32 = 34;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated.
 pub const MSK_CALLBACK_END_DUAL_SIMPLEX_BI : i32 = 35;
-/// {l}
+/// The callback function is called when the infeasibility analyzer is terminated.
 pub const MSK_CALLBACK_END_INFEAS_ANA : i32 = 36;
-/// {l}
+/// The callback function is called when the interior-point optimizer is terminated.
 pub const MSK_CALLBACK_END_INTPNT : i32 = 37;
-/// {l}
+/// End waiting for license.
 pub const MSK_CALLBACK_END_LICENSE_WAIT : i32 = 38;
-/// {l}
+/// The callback function is called when the mixed-integer optimizer is terminated.
 pub const MSK_CALLBACK_END_MIO : i32 = 39;
-/// {l}
+/// The callback function is called when the optimizer is terminated.
 pub const MSK_CALLBACK_END_OPTIMIZER : i32 = 40;
-/// {l}
+/// The callback function is called when the presolve is completed.
 pub const MSK_CALLBACK_END_PRESOLVE : i32 = 41;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the primal phase is terminated.
 pub const MSK_CALLBACK_END_PRIMAL_BI : i32 = 42;
-/// {l}
+/// End primal feasibility repair.
 pub const MSK_CALLBACK_END_PRIMAL_REPAIR : i32 = 43;
-/// {l}
+/// Primal sensitivity analysis is terminated.
 pub const MSK_CALLBACK_END_PRIMAL_SENSITIVITY : i32 = 44;
-/// {l}
+/// The callback function is called when the primal BI setup is terminated.
 pub const MSK_CALLBACK_END_PRIMAL_SETUP_BI : i32 = 45;
-/// {l}
+/// The callback function is called when the primal simplex optimizer is terminated.
 pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX : i32 = 46;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated.
 pub const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI : i32 = 47;
-/// {l}
+/// End QCQO reformulation.
 pub const MSK_CALLBACK_END_QCQO_REFORMULATE : i32 = 48;
-/// {l}
+/// MOSEK has finished reading a problem file.
 pub const MSK_CALLBACK_END_READ : i32 = 49;
-/// {l}
+/// The callback function is called when root cut generation is terminated.
 pub const MSK_CALLBACK_END_ROOT_CUTGEN : i32 = 50;
-/// {l}
+/// The callback function is called when the simplex optimizer is terminated.
 pub const MSK_CALLBACK_END_SIMPLEX : i32 = 51;
-/// {l}
+/// The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated.
 pub const MSK_CALLBACK_END_SIMPLEX_BI : i32 = 52;
-/// {l}
+/// The callback function is called when solution of root relaxation is terminated.
 pub const MSK_CALLBACK_END_SOLVE_ROOT_RELAX : i32 = 53;
-/// {l}
+/// End conic reformulation.
 pub const MSK_CALLBACK_END_TO_CONIC : i32 = 54;
-/// {l}
+/// MOSEK has finished writing a problem file.
 pub const MSK_CALLBACK_END_WRITE : i32 = 55;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point.
 pub const MSK_CALLBACK_IM_BI : i32 = 56;
-/// {l}
+/// The callback function is called at an intermediate stage within the conic optimizer where the information database has not been updated.
 pub const MSK_CALLBACK_IM_CONIC : i32 = 57;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the dual phase.
 pub const MSK_CALLBACK_IM_DUAL_BI : i32 = 58;
-/// {l}
+/// The callback function is called at an intermediate stage of the dual sensitivity analysis.
 pub const MSK_CALLBACK_IM_DUAL_SENSIVITY : i32 = 59;
-/// {l}
+/// The callback function is called at an intermediate point in the dual simplex optimizer.
 pub const MSK_CALLBACK_IM_DUAL_SIMPLEX : i32 = 60;
-/// {l}
+/// The callback function is called at an intermediate stage within the interior-point optimizer where the information database has not been updated.
 pub const MSK_CALLBACK_IM_INTPNT : i32 = 61;
-/// {l}
+/// MOSEK is waiting for a license.
 pub const MSK_CALLBACK_IM_LICENSE_WAIT : i32 = 62;
-/// {l}
+/// The callback function is called from within the LU factorization procedure at an intermediate point.
 pub const MSK_CALLBACK_IM_LU : i32 = 63;
-/// {l}
+/// The callback function is called at an intermediate point in the mixed-integer optimizer.
 pub const MSK_CALLBACK_IM_MIO : i32 = 64;
-/// {l}
+/// The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer.
 pub const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX : i32 = 65;
-/// {l}
+/// The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer.
 pub const MSK_CALLBACK_IM_MIO_INTPNT : i32 = 66;
-/// {l}
+/// The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer.
 pub const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX : i32 = 67;
-/// {l}
+/// The callback function is called from within the matrix ordering procedure at an intermediate point.
 pub const MSK_CALLBACK_IM_ORDER : i32 = 68;
-/// {l}
+/// The callback function is called from within the presolve procedure at an intermediate stage.
 pub const MSK_CALLBACK_IM_PRESOLVE : i32 = 69;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the primal phase.
 pub const MSK_CALLBACK_IM_PRIMAL_BI : i32 = 70;
-/// {l}
+/// The callback function is called at an intermediate stage of the primal sensitivity analysis.
 pub const MSK_CALLBACK_IM_PRIMAL_SENSIVITY : i32 = 71;
-/// {l}
+/// The callback function is called at an intermediate point in the primal simplex optimizer.
 pub const MSK_CALLBACK_IM_PRIMAL_SIMPLEX : i32 = 72;
-/// {l}
+/// The callback function is called at an intermediate stage of the conic quadratic reformulation.
 pub const MSK_CALLBACK_IM_QO_REFORMULATE : i32 = 73;
-/// {l}
+/// Intermediate stage in reading.
 pub const MSK_CALLBACK_IM_READ : i32 = 74;
-/// {l}
+/// The callback is called from within root cut generation at an intermediate stage.
 pub const MSK_CALLBACK_IM_ROOT_CUTGEN : i32 = 75;
-/// {l}
+/// The callback function is called from within the simplex optimizer at an intermediate point.
 pub const MSK_CALLBACK_IM_SIMPLEX : i32 = 76;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the simplex clean-up phase.
 pub const MSK_CALLBACK_IM_SIMPLEX_BI : i32 = 77;
-/// {l}
+/// The callback function is called from within the interior-point optimizer after the information database has been updated.
 pub const MSK_CALLBACK_INTPNT : i32 = 78;
-/// {l}
+/// The callback function is called after a new integer solution has been located by the mixed-integer optimizer.
 pub const MSK_CALLBACK_NEW_INT_MIO : i32 = 79;
-/// {l}
+/// The callback function is called from within the primal simplex optimizer.
 pub const MSK_CALLBACK_PRIMAL_SIMPLEX : i32 = 80;
-/// {l}
+/// The callback function is called from the OPF reader.
 pub const MSK_CALLBACK_READ_OPF : i32 = 81;
-/// {l}
+/// A chunk of Q non-zeros has been read from a problem file.
 pub const MSK_CALLBACK_READ_OPF_SECTION : i32 = 82;
-/// {l}
+/// The callback function is called while the task is being solved on a remote server.
 pub const MSK_CALLBACK_SOLVING_REMOTE : i32 = 83;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the dual phase.
 pub const MSK_CALLBACK_UPDATE_DUAL_BI : i32 = 84;
-/// {l}
+/// The callback function is called in the dual simplex optimizer.
 pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX : i32 = 85;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the dual simplex clean-up phase.
 pub const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI : i32 = 86;
-/// {l}
+/// The callback function is called from within the presolve procedure.
 pub const MSK_CALLBACK_UPDATE_PRESOLVE : i32 = 87;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the primal phase.
 pub const MSK_CALLBACK_UPDATE_PRIMAL_BI : i32 = 88;
-/// {l}
+/// The callback function is called  in the primal simplex optimizer.
 pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX : i32 = 89;
-/// {l}
+/// The callback function is called from within the basis identification procedure at an intermediate point in the primal simplex clean-up phase.
 pub const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI : i32 = 90;
-/// {l}
+/// The callback function is called from simplex optimizer.
 pub const MSK_CALLBACK_UPDATE_SIMPLEX : i32 = 91;
-/// {l}
+/// The callback function is called from the OPF writer.
 pub const MSK_CALLBACK_WRITE_OPF : i32 = 92;
 
 // checkconvexitytype
-/// {l}
+/// No convexity check.
 pub const MSK_CHECK_CONVEXITY_NONE : i32 = 0;
-/// {l}
+/// Perform simple and fast convexity check.
 pub const MSK_CHECK_CONVEXITY_SIMPLE : i32 = 1;
-/// {l}
+/// Perform a full convexity check.
 pub const MSK_CHECK_CONVEXITY_FULL : i32 = 2;
 
 // compresstype
-/// {l}
+/// No compression is used.
 pub const MSK_COMPRESS_NONE : i32 = 0;
-/// {l}
+/// The type of compression used is chosen automatically.
 pub const MSK_COMPRESS_FREE : i32 = 1;
-/// {l}
+/// The type of compression used is gzip compatible.
 pub const MSK_COMPRESS_GZIP : i32 = 2;
-/// {l}
+/// The type of compression used is zstd compatible.
 pub const MSK_COMPRESS_ZSTD : i32 = 3;
 
 // conetype
-/// {l}
+/// The cone is a quadratic cone.
 pub const MSK_CT_QUAD : i32 = 0;
-/// {l}
+/// The cone is a rotated quadratic cone.
 pub const MSK_CT_RQUAD : i32 = 1;
-/// {l}
+/// A primal exponential cone.
 pub const MSK_CT_PEXP : i32 = 2;
-/// {l}
+/// A dual exponential cone.
 pub const MSK_CT_DEXP : i32 = 3;
-/// {l}
+/// A primal power cone.
 pub const MSK_CT_PPOW : i32 = 4;
-/// {l}
+/// A dual power cone.
 pub const MSK_CT_DPOW : i32 = 5;
-/// {l}
+/// The zero cone.
 pub const MSK_CT_ZERO : i32 = 6;
 
 // domaintype
-/// {l}
+/// R.
 pub const MSK_DOMAIN_R : i32 = 0;
-/// {l}
+/// The zero vector.
 pub const MSK_DOMAIN_RZERO : i32 = 1;
-/// {l}
+/// The positive orthant.
 pub const MSK_DOMAIN_RPLUS : i32 = 2;
-/// {l}
+/// The negative orthant.
 pub const MSK_DOMAIN_RMINUS : i32 = 3;
-/// {l}
+/// The quadratic cone.
 pub const MSK_DOMAIN_QUADRATIC_CONE : i32 = 4;
-/// {l}
+/// The rotated quadratic cone.
 pub const MSK_DOMAIN_RQUADRATIC_CONE : i32 = 5;
-/// {l}
+/// The primal exponential cone.
 pub const MSK_DOMAIN_PRIMAL_EXP_CONE : i32 = 6;
-/// {l}
+/// The dual exponential cone.
 pub const MSK_DOMAIN_DUAL_EXP_CONE : i32 = 7;
-/// {l}
+/// The primal power cone.
 pub const MSK_DOMAIN_PRIMAL_POWER_CONE : i32 = 8;
-/// {l}
+/// The dual power cone.
 pub const MSK_DOMAIN_DUAL_POWER_CONE : i32 = 9;
-/// {l}
+/// The primal geometric mean cone.
 pub const MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE : i32 = 10;
-/// {l}
+/// The dual geometric mean cone.
 pub const MSK_DOMAIN_DUAL_GEO_MEAN_CONE : i32 = 11;
-/// {l}
+/// The vectorized positive semidefinite cone.
 pub const MSK_DOMAIN_SVEC_PSD_CONE : i32 = 12;
 
 // nametype
-/// {l}
+/// General names. However, no duplicate and blank names are allowed.
 pub const MSK_NAME_TYPE_GEN : i32 = 0;
-/// {l}
+/// MPS type names.
 pub const MSK_NAME_TYPE_MPS : i32 = 1;
-/// {l}
+/// LP type names.
 pub const MSK_NAME_TYPE_LP : i32 = 2;
 
 // symmattype
-/// {l}
+/// Sparse symmetric matrix.
 pub const MSK_SYMMAT_TYPE_SPARSE : i32 = 0;
 
 // dataformat
-/// {l}
+/// The file extension is used to determine the data file format.
 pub const MSK_DATA_FORMAT_EXTENSION : i32 = 0;
-/// {l}
+/// The data file is MPS formatted.
 pub const MSK_DATA_FORMAT_MPS : i32 = 1;
-/// {l}
+/// The data file is LP formatted.
 pub const MSK_DATA_FORMAT_LP : i32 = 2;
-/// {l}
+/// The data file is an optimization problem formatted file.
 pub const MSK_DATA_FORMAT_OP : i32 = 3;
-/// {l}
+/// The data a free MPS formatted file.
 pub const MSK_DATA_FORMAT_FREE_MPS : i32 = 4;
-/// {l}
+/// Generic task dump file.
 pub const MSK_DATA_FORMAT_TASK : i32 = 5;
-/// {l}
+/// (P)retty (T)ext (F)format.
 pub const MSK_DATA_FORMAT_PTF : i32 = 6;
-/// {l}
+/// Conic benchmark format,
 pub const MSK_DATA_FORMAT_CB : i32 = 7;
-/// {l}
+/// JSON based task format.
 pub const MSK_DATA_FORMAT_JSON_TASK : i32 = 8;
 
 // solformat
-/// {l}
+/// The file extension is used to determine the data file format.
 pub const MSK_SOL_FORMAT_EXTENSION : i32 = 0;
-/// {l}
+/// Simple binary format
 pub const MSK_SOL_FORMAT_B : i32 = 1;
-/// {l}
+/// Tar based format.
 pub const MSK_SOL_FORMAT_TASK : i32 = 2;
-/// {l}
+/// JSON based format.
 pub const MSK_SOL_FORMAT_JSON_TASK : i32 = 3;
 
 // dinfitem
-/// {l}
+/// Time  spent within the dual clean-up optimizer of the basis identification procedure since its invocation.
 pub const MSK_DINF_BI_CLEAN_DUAL_TIME : i32 = 0;
-/// {l}
+/// Time spent within the primal clean-up optimizer of the basis identification procedure since its invocation.
 pub const MSK_DINF_BI_CLEAN_PRIMAL_TIME : i32 = 1;
-/// {l}
+/// Time spent within the clean-up phase of the basis identification procedure since its invocation.
 pub const MSK_DINF_BI_CLEAN_TIME : i32 = 2;
-/// {l}
+/// Time spent within the dual phase basis identification procedure since its invocation.
 pub const MSK_DINF_BI_DUAL_TIME : i32 = 3;
-/// {l}
+/// Time  spent within the primal phase of the basis identification procedure since its invocation.
 pub const MSK_DINF_BI_PRIMAL_TIME : i32 = 4;
-/// {l}
+/// Time spent within the basis identification procedure since its invocation.
 pub const MSK_DINF_BI_TIME : i32 = 5;
-/// {l}
+/// Dual feasibility measure reported by the interior-point optimizer.
 pub const MSK_DINF_INTPNT_DUAL_FEAS : i32 = 6;
-/// {l}
+/// Dual objective value reported by the interior-point optimizer.
 pub const MSK_DINF_INTPNT_DUAL_OBJ : i32 = 7;
-/// {l}
+/// An estimate of the number of flops used in the factorization.
 pub const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS : i32 = 8;
-/// {l}
+/// A measure of optimality of the solution.
 pub const MSK_DINF_INTPNT_OPT_STATUS : i32 = 9;
-/// {l}
+/// Order time (in seconds).
 pub const MSK_DINF_INTPNT_ORDER_TIME : i32 = 10;
-/// {l}
+/// Primal feasibility measure reported by the interior-point optimizer.
 pub const MSK_DINF_INTPNT_PRIMAL_FEAS : i32 = 11;
-/// {l}
+/// Primal objective value reported by the interior-point optimizer.
 pub const MSK_DINF_INTPNT_PRIMAL_OBJ : i32 = 12;
-/// {l}
+/// Time spent within the interior-point optimizer since its invocation.
 pub const MSK_DINF_INTPNT_TIME : i32 = 13;
-/// {l}
+/// Separation time for clique cuts.
 pub const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME : i32 = 14;
-/// {l}
+/// Separation time for CMIR cuts.
 pub const MSK_DINF_MIO_CMIR_SEPARATION_TIME : i32 = 15;
-/// {l}
+/// Optimal objective value corresponding to the feasible solution.
 pub const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 16;
-/// {l}
+/// Value of the dual bound after presolve but before cut generation.
 pub const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 17;
-/// {l}
+/// Separation time for GMI cuts.
 pub const MSK_DINF_MIO_GMI_SEPARATION_TIME : i32 = 18;
-/// {l}
+/// Separation time for implied bound cuts.
 pub const MSK_DINF_MIO_IMPLIED_BOUND_TIME : i32 = 19;
-/// {l}
+/// Optimal objective value corresponding to the user provided initial solution.
 pub const MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 20;
-/// {l}
+/// Separation time for knapsack cover.
 pub const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 21;
-/// {l}
+/// Separation time for lift-and-project cuts.
 pub const MSK_DINF_MIO_LIPRO_SEPARATION_TIME : i32 = 22;
-/// {l}
+/// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
 pub const MSK_DINF_MIO_OBJ_ABS_GAP : i32 = 23;
-/// {l}
+/// The best bound on the objective value known.
 pub const MSK_DINF_MIO_OBJ_BOUND : i32 = 24;
-/// {l}
+/// The primal objective value corresponding to the best integer feasible solution.
 pub const MSK_DINF_MIO_OBJ_INT : i32 = 25;
-/// {l}
+/// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap.
 pub const MSK_DINF_MIO_OBJ_REL_GAP : i32 = 26;
-/// {l}
+/// Total time for probing.
 pub const MSK_DINF_MIO_PROBING_TIME : i32 = 27;
-/// {l}
+/// Total time for cut generation.
 pub const MSK_DINF_MIO_ROOT_CUTGEN_TIME : i32 = 28;
-/// {l}
+/// Time spent in the contiuous optimizer while processing the root node relaxation.
 pub const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME : i32 = 29;
-/// {l}
+/// Time spent presolving the problem at the root node.
 pub const MSK_DINF_MIO_ROOT_PRESOLVE_TIME : i32 = 30;
-/// {l}
+/// Time spent processing the root node.
 pub const MSK_DINF_MIO_ROOT_TIME : i32 = 31;
-/// {l}
+/// Time spent in the mixed-integer optimizer.
 pub const MSK_DINF_MIO_TIME : i32 = 32;
-/// {l}
+/// If the objective cut is used, then this information item has the value of the cut.
 pub const MSK_DINF_MIO_USER_OBJ_CUT : i32 = 33;
-/// {l}
+/// Total time spent in the optimizer since it was invoked.
 pub const MSK_DINF_OPTIMIZER_TIME : i32 = 34;
-/// {l}
+/// Total time spent in the eliminator since the presolve was invoked.
 pub const MSK_DINF_PRESOLVE_ELI_TIME : i32 = 35;
-/// {l}
+/// Total time spent  in the linear dependency checker since the presolve was invoked.
 pub const MSK_DINF_PRESOLVE_LINDEP_TIME : i32 = 36;
-/// {l}
+/// Total time (in seconds) spent in the presolve since it was invoked.
 pub const MSK_DINF_PRESOLVE_TIME : i32 = 37;
-/// {l}
+/// Total perturbation of the bounds of the primal problem.
 pub const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 38;
-/// {l}
+/// The optimal objective value of the penalty function.
 pub const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ : i32 = 39;
-/// {l}
+/// Maximum absolute diagonal perturbation occurring during the QCQO reformulation.
 pub const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 40;
-/// {l}
+/// Time spent with conic quadratic reformulation.
 pub const MSK_DINF_QCQO_REFORMULATE_TIME : i32 = 41;
-/// {l}
+/// Worst Cholesky column scaling.
 pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 42;
-/// {l}
+/// Worst Cholesky diagonal scaling.
 pub const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 43;
-/// {l}
+/// Time spent reading the data file.
 pub const MSK_DINF_RD_TIME : i32 = 44;
-/// {l}
+/// The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server
 pub const MSK_DINF_REMOTE_TIME : i32 = 45;
-/// {l}
+/// Time spent in the dual simplex optimizer since invoking it.
 pub const MSK_DINF_SIM_DUAL_TIME : i32 = 46;
-/// {l}
+/// Feasibility measure reported by the simplex optimizer.
 pub const MSK_DINF_SIM_FEAS : i32 = 47;
-/// {l}
+/// Objective value reported by the simplex optimizer.
 pub const MSK_DINF_SIM_OBJ : i32 = 48;
-/// {l}
+/// Time spent in the primal simplex optimizer since invoking it.
 pub const MSK_DINF_SIM_PRIMAL_TIME : i32 = 49;
-/// {l}
+/// Time spent in the simplex optimizer since invoking it.
 pub const MSK_DINF_SIM_TIME : i32 = 50;
-/// {l}
+/// Dual objective value of the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_DUAL_OBJ : i32 = 51;
-/// {l}
+/// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_DVIOLCON : i32 = 52;
-/// {l}
+/// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_DVIOLVAR : i32 = 53;
-/// {l}
+/// Infinity norm of barx in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_BARX : i32 = 54;
-/// {l}
+/// Infinity norm of slc in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_SLC : i32 = 55;
-/// {l}
+/// Infinity norm of slx in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_SLX : i32 = 56;
-/// {l}
+/// Infinity norm of suc in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_SUC : i32 = 57;
-/// {l}
+/// Infinity norm of sux in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_SUX : i32 = 58;
-/// {l}
+/// Infinity norm of xc in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_XC : i32 = 59;
-/// {l}
+/// Infinity norm of xx in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_XX : i32 = 60;
-/// {l}
+/// Infinity norm of Y in the basic solution.
 pub const MSK_DINF_SOL_BAS_NRM_Y : i32 = 61;
-/// {l}
+/// Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_PRIMAL_OBJ : i32 = 62;
-/// {l}
+/// Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_PVIOLCON : i32 = 63;
-/// {l}
+/// Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_BAS_PVIOLVAR : i32 = 64;
-/// {l}
+/// Infinity norm of barx in the integer solution.
 pub const MSK_DINF_SOL_ITG_NRM_BARX : i32 = 65;
-/// {l}
+/// Infinity norm of xc in the integer solution.
 pub const MSK_DINF_SOL_ITG_NRM_XC : i32 = 66;
-/// {l}
+/// Infinity norm of xx in the integer solution.
 pub const MSK_DINF_SOL_ITG_NRM_XX : i32 = 67;
-/// {l}
+/// Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PRIMAL_OBJ : i32 = 68;
-/// {l}
+/// Maximal primal violation for affine conic constraints in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLACC : i32 = 69;
-/// {l}
+/// Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLBARVAR : i32 = 70;
-/// {l}
+/// Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLCON : i32 = 71;
-/// {l}
+/// Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLCONES : i32 = 72;
-/// {l}
+/// Maximal primal violation for disjunctive constraints in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLDJC : i32 = 73;
-/// {l}
+/// Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLITG : i32 = 74;
-/// {l}
+/// Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITG_PVIOLVAR : i32 = 75;
-/// {l}
+/// Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DUAL_OBJ : i32 = 76;
-/// {l}
+/// Maximal dual violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DVIOLACC : i32 = 77;
-/// {l}
+/// Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DVIOLBARVAR : i32 = 78;
-/// {l}
+/// Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DVIOLCON : i32 = 79;
-/// {l}
+/// Maximal dual violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DVIOLCONES : i32 = 80;
-/// {l}
+/// Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_DVIOLVAR : i32 = 81;
-/// {l}
+/// Infinity norm of bars in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_BARS : i32 = 82;
-/// {l}
+/// Infinity norm of barx in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_BARX : i32 = 83;
-/// {l}
+/// Infinity norm of slc in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_SLC : i32 = 84;
-/// {l}
+/// Infinity norm of slx in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_SLX : i32 = 85;
-/// {l}
+/// Infinity norm of snx in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_SNX : i32 = 86;
-/// {l}
+/// Infinity norm of suc in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_SUC : i32 = 87;
-/// {l}
+/// Infinity norm of sux in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_SUX : i32 = 88;
-/// {l}
+/// Infinity norm of xc in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_XC : i32 = 89;
-/// {l}
+/// Infinity norm of xx in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_XX : i32 = 90;
-/// {l}
+/// Infinity norm of Y in the interior-point solution.
 pub const MSK_DINF_SOL_ITR_NRM_Y : i32 = 91;
-/// {l}
+/// Primal objective value of the interior-point solution.
 pub const MSK_DINF_SOL_ITR_PRIMAL_OBJ : i32 = 92;
-/// {l}
+/// Maximal primal violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_PVIOLACC : i32 = 93;
-/// {l}
+/// Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_PVIOLBARVAR : i32 = 94;
-/// {l}
+/// Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_PVIOLCON : i32 = 95;
-/// {l}
+/// Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_PVIOLCONES : i32 = 96;
-/// {l}
+/// Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 pub const MSK_DINF_SOL_ITR_PVIOLVAR : i32 = 97;
-/// {l}
+/// Time spent in the last to conic reformulation.
 pub const MSK_DINF_TO_CONIC_TIME : i32 = 98;
 pub const MSK_DINF_END : i32 = 98;
 
 // feature
-/// {l}
+/// Base system.
 pub const MSK_FEATURE_PTS : i32 = 0;
-/// {l}
+/// Conic extension.
 pub const MSK_FEATURE_PTON : i32 = 1;
 
 // dparam
-/// {l}
+/// If a constraint violates its bound with an amount larger than this value, the constraint name, index and violation will be printed by the solution analyzer.
 pub const MSK_DPAR_ANA_SOL_INFEAS_TOL : i32 = 0;
-/// {l}
+/// Maximum relative dual bound violation allowed in an optimal basic solution.
 pub const MSK_DPAR_BASIS_REL_TOL_S : i32 = 1;
-/// {l}
+/// Maximum absolute dual bound violation in an optimal basic solution.
 pub const MSK_DPAR_BASIS_TOL_S : i32 = 2;
-/// {l}
+/// Maximum absolute primal bound violation allowed in an optimal basic solution.
 pub const MSK_DPAR_BASIS_TOL_X : i32 = 3;
-/// {l}
+/// Convexity check tolerance.
 pub const MSK_DPAR_CHECK_CONVEXITY_REL_TOL : i32 = 4;
-/// {l}
+/// Zero tolerance threshold for symmetric matrices.
 pub const MSK_DPAR_DATA_SYM_MAT_TOL : i32 = 5;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_SYM_MAT_TOL_HUGE : i32 = 6;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_SYM_MAT_TOL_LARGE : i32 = 7;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_AIJ_HUGE : i32 = 8;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_AIJ_LARGE : i32 = 9;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_BOUND_INF : i32 = 10;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_BOUND_WRN : i32 = 11;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_C_HUGE : i32 = 12;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_CJ_LARGE : i32 = 13;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_QIJ : i32 = 14;
-/// {l}
+/// Data tolerance threshold.
 pub const MSK_DPAR_DATA_TOL_X : i32 = 15;
-/// {l}
+/// Dual feasibility tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_DFEAS : i32 = 16;
-/// {l}
+/// Infeasibility tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_INFEAS : i32 = 17;
-/// {l}
+/// Relative complementarity gap tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_MU_RED : i32 = 18;
-/// {l}
+/// Optimality tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL : i32 = 19;
-/// {l}
+/// Primal feasibility tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_PFEAS : i32 = 20;
-/// {l}
+/// Relative gap termination tolerance used by the interior-point optimizer for conic problems.
 pub const MSK_DPAR_INTPNT_CO_TOL_REL_GAP : i32 = 21;
-/// {l}
+/// Dual feasibility tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_DFEAS : i32 = 22;
-/// {l}
+/// Infeasibility tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_INFEAS : i32 = 23;
-/// {l}
+/// Relative complementarity gap tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_MU_RED : i32 = 24;
-/// {l}
+/// Optimality tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL : i32 = 25;
-/// {l}
+/// Primal feasibility tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_PFEAS : i32 = 26;
-/// {l}
+/// Relative gap termination tolerance used by the interior-point optimizer for quadratic problems.
 pub const MSK_DPAR_INTPNT_QO_TOL_REL_GAP : i32 = 27;
-/// {l}
+/// Dual feasibility tolerance used by the interior-point optimizer for linear problems.
 pub const MSK_DPAR_INTPNT_TOL_DFEAS : i32 = 28;
-/// {l}
+/// Controls the interior-point dual starting point.
 pub const MSK_DPAR_INTPNT_TOL_DSAFE : i32 = 29;
-/// {l}
+/// Infeasibility tolerance used by the interior-point optimizer for linear problems.
 pub const MSK_DPAR_INTPNT_TOL_INFEAS : i32 = 30;
-/// {l}
+/// Relative complementarity gap tolerance used by the interior-point optimizer for linear problems.
 pub const MSK_DPAR_INTPNT_TOL_MU_RED : i32 = 31;
-/// {l}
+/// Interior-point centering aggressiveness.
 pub const MSK_DPAR_INTPNT_TOL_PATH : i32 = 32;
-/// {l}
+/// Primal feasibility tolerance used by the interior-point optimizer for linear problems.
 pub const MSK_DPAR_INTPNT_TOL_PFEAS : i32 = 33;
-/// {l}
+/// Controls the interior-point primal starting point.
 pub const MSK_DPAR_INTPNT_TOL_PSAFE : i32 = 34;
-/// {l}
+/// Relative gap termination tolerance used by the interior-point optimizer for linear problems.
 pub const MSK_DPAR_INTPNT_TOL_REL_GAP : i32 = 35;
-/// {l}
+/// Relative step size to the boundary for linear and quadratic optimization problems.
 pub const MSK_DPAR_INTPNT_TOL_REL_STEP : i32 = 36;
-/// {l}
+/// Minimal step size tolerance for the interior-point optimizer.
 pub const MSK_DPAR_INTPNT_TOL_STEP_SIZE : i32 = 37;
-/// {l}
+/// Objective bound.
 pub const MSK_DPAR_LOWER_OBJ_CUT : i32 = 38;
-/// {l}
+/// Objective bound.
 pub const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH : i32 = 39;
-/// {l}
+/// Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
 pub const MSK_DPAR_MIO_DJC_MAX_BIGM : i32 = 40;
-/// {l}
+/// Time limit for the mixed-integer optimizer.
 pub const MSK_DPAR_MIO_MAX_TIME : i32 = 41;
-/// {l}
+/// This value is used to compute the relative gap for the solution to an integer optimization problem.
 pub const MSK_DPAR_MIO_REL_GAP_CONST : i32 = 42;
-/// {l}
+/// Absolute optimality tolerance employed by the mixed-integer optimizer.
 pub const MSK_DPAR_MIO_TOL_ABS_GAP : i32 = 43;
-/// {l}
+/// Integer feasibility tolerance.
 pub const MSK_DPAR_MIO_TOL_ABS_RELAX_INT : i32 = 44;
-/// {l}
+/// Feasibility tolerance for mixed integer solver.
 pub const MSK_DPAR_MIO_TOL_FEAS : i32 = 45;
-/// {l}
+/// Controls cut generation for mixed-integer optimizer.
 pub const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 46;
-/// {l}
+/// Relative optimality tolerance employed by the mixed-integer optimizer.
 pub const MSK_DPAR_MIO_TOL_REL_GAP : i32 = 47;
-/// {l}
+/// Solver time limit.
 pub const MSK_DPAR_OPTIMIZER_MAX_TIME : i32 = 48;
-/// {l}
+/// Absolute tolerance employed by the linear dependency checker.
 pub const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP : i32 = 49;
-/// {l}
+/// Absolute zero tolerance employed for constraint coefficients in the presolve.
 pub const MSK_DPAR_PRESOLVE_TOL_AIJ : i32 = 50;
-/// {l}
+/// The presolve is allowed to perturbe a bound on a constraint or variable by this amount if it removes an infeasibility.
 pub const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 51;
-/// {l}
+/// Relative tolerance employed by the linear dependency checker.
 pub const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP : i32 = 52;
-/// {l}
+/// Absolute zero tolerance employed for slack variables in the presolve.
 pub const MSK_DPAR_PRESOLVE_TOL_S : i32 = 53;
-/// {l}
+/// Absolute zero tolerance employed for variables in the presolve.
 pub const MSK_DPAR_PRESOLVE_TOL_X : i32 = 54;
-/// {l}
+/// This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
 pub const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL : i32 = 55;
-/// {l}
+/// Tolerance to define a matrix to be positive semidefinite.
 pub const MSK_DPAR_SEMIDEFINITE_TOL_APPROX : i32 = 56;
-/// {l}
+/// Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
 pub const MSK_DPAR_SIM_LU_TOL_REL_PIV : i32 = 57;
-/// {l}
+/// Absolute pivot tolerance employed by the simplex optimizers.
 pub const MSK_DPAR_SIMPLEX_ABS_TOL_PIV : i32 = 58;
-/// {l}
+/// Objective bound.
 pub const MSK_DPAR_UPPER_OBJ_CUT : i32 = 59;
-/// {l}
+/// Objective bound.
 pub const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH : i32 = 60;
 
 // liinfitem
-/// {l}
+/// Number of dual degenerate clean iterations performed in the basis identification.
 pub const MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER : i32 = 0;
-/// {l}
+/// Number of dual clean iterations performed in the basis identification.
 pub const MSK_LIINF_BI_CLEAN_DUAL_ITER : i32 = 1;
-/// {l}
+/// Number of primal degenerate clean iterations performed in the basis identification.
 pub const MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER : i32 = 2;
-/// {l}
+/// Number of primal clean iterations performed in the basis identification.
 pub const MSK_LIINF_BI_CLEAN_PRIMAL_ITER : i32 = 3;
-/// {l}
+/// Number of dual pivots performed in the basis identification.
 pub const MSK_LIINF_BI_DUAL_ITER : i32 = 4;
-/// {l}
+/// Number of primal pivots performed in the basis identification.
 pub const MSK_LIINF_BI_PRIMAL_ITER : i32 = 5;
-/// {l}
+/// Number of non-zeros in factorization.
 pub const MSK_LIINF_INTPNT_FACTOR_NUM_NZ : i32 = 6;
-/// {l}
+/// Number of non-zero entries in the constraint matrix of the probelm to be solved by the mixed-integer optimizer.
 pub const MSK_LIINF_MIO_ANZ : i32 = 7;
-/// {l}
+/// Number of interior-point iterations performed by the mixed-integer optimizer.
 pub const MSK_LIINF_MIO_INTPNT_ITER : i32 = 8;
-/// {l}
+/// Number of dual illposed certificates encountered by the mixed-integer optimizer.
 pub const MSK_LIINF_MIO_NUM_DUAL_ILLPOSED_CER : i32 = 9;
-/// {l}
+/// Number of primal illposed certificates encountered by the mixed-integer optimizer.
 pub const MSK_LIINF_MIO_NUM_PRIM_ILLPOSED_CER : i32 = 10;
-/// {l}
+/// Number of non-zero entries in the constraint matrix of the problem after the mixed-integer optimizer's presolve.
 pub const MSK_LIINF_MIO_PRESOLVED_ANZ : i32 = 11;
-/// {l}
+/// Number of simplex iterations performed by the mixed-integer optimizer.
 pub const MSK_LIINF_MIO_SIMPLEX_ITER : i32 = 12;
-/// {l}
+/// Number of affince conic constraints.
 pub const MSK_LIINF_RD_NUMACC : i32 = 13;
-/// {l}
+/// Number of non-zeros in A that is read.
 pub const MSK_LIINF_RD_NUMANZ : i32 = 14;
-/// {l}
+/// Number of disjuncive constraints.
 pub const MSK_LIINF_RD_NUMDJC : i32 = 15;
-/// {l}
+/// Number of Q non-zeros.
 pub const MSK_LIINF_RD_NUMQNZ : i32 = 16;
-/// {l}
+/// Number of iterations performed by the simplex optimizer.
 pub const MSK_LIINF_SIMPLEX_ITER : i32 = 17;
 pub const MSK_LIINF_END : i32 = 17;
 
 // iinfitem
-/// {l}
+/// Number of constraints in the problem.
 pub const MSK_IINF_ANA_PRO_NUM_CON : i32 = 0;
-/// {l}
+/// Number of equality constraints.
 pub const MSK_IINF_ANA_PRO_NUM_CON_EQ : i32 = 1;
-/// {l}
+/// Number of unbounded constraints.
 pub const MSK_IINF_ANA_PRO_NUM_CON_FR : i32 = 2;
-/// {l}
+/// Number of constraints with a lower bound and an infinite upper bound.
 pub const MSK_IINF_ANA_PRO_NUM_CON_LO : i32 = 3;
-/// {l}
+/// Number of constraints with finite lower and upper bounds.
 pub const MSK_IINF_ANA_PRO_NUM_CON_RA : i32 = 4;
-/// {l}
+/// Number of constraints with an upper bound and an infinite lower bound.
 pub const MSK_IINF_ANA_PRO_NUM_CON_UP : i32 = 5;
-/// {l}
+/// Number of variables in the problem.
 pub const MSK_IINF_ANA_PRO_NUM_VAR : i32 = 6;
-/// {l}
+/// Number of binary variables.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_BIN : i32 = 7;
-/// {l}
+/// Number of continuous variables.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_CONT : i32 = 8;
-/// {l}
+/// Number of fixed variables.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_EQ : i32 = 9;
-/// {l}
+/// Number of unbounded constraints.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_FR : i32 = 10;
-/// {l}
+/// Number of general integer variables.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_INT : i32 = 11;
-/// {l}
+/// Number of variables with a lower bound and an infinite upper bound.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_LO : i32 = 12;
-/// {l}
+/// Number of variables with finite lower and upper bounds.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_RA : i32 = 13;
-/// {l}
+/// Number of variables with an upper bound and an infinite lower bound.
 pub const MSK_IINF_ANA_PRO_NUM_VAR_UP : i32 = 14;
-/// {l}
+/// Dimension of the dense sub system in factorization.
 pub const MSK_IINF_INTPNT_FACTOR_DIM_DENSE : i32 = 15;
-/// {l}
+/// Number of interior-point iterations since invoking the interior-point optimizer.
 pub const MSK_IINF_INTPNT_ITER : i32 = 16;
-/// {l}
+/// Number of threads that the interior-point optimizer is using.
 pub const MSK_IINF_INTPNT_NUM_THREADS : i32 = 17;
-/// {l}
+/// Non-zero if the interior-point optimizer is solving the dual problem.
 pub const MSK_IINF_INTPNT_SOLVE_DUAL : i32 = 18;
-/// {l}
+/// Non-zero if absolute gap is within tolerances.
 pub const MSK_IINF_MIO_ABSGAP_SATISFIED : i32 = 19;
-/// {l}
+/// Size of the clique table.
 pub const MSK_IINF_MIO_CLIQUE_TABLE_SIZE : i32 = 20;
-/// {l}
+/// Informs if MOSEK successfully constructed an initial integer feasible solution.
 pub const MSK_IINF_MIO_CONSTRUCT_SOLUTION : i32 = 21;
-/// {l}
+/// Informs if MOSEK found the solution provided by the user to be feasible
 pub const MSK_IINF_MIO_INITIAL_FEASIBLE_SOLUTION : i32 = 22;
-/// {l}
+/// Depth of the last node solved.
 pub const MSK_IINF_MIO_NODE_DEPTH : i32 = 23;
-/// {l}
+/// Number of active branch and bound nodes.
 pub const MSK_IINF_MIO_NUM_ACTIVE_NODES : i32 = 24;
-/// {l}
+/// Number of branches performed during the optimization.
 pub const MSK_IINF_MIO_NUM_BRANCH : i32 = 25;
-/// {l}
+/// Number of clique cuts.
 pub const MSK_IINF_MIO_NUM_CLIQUE_CUTS : i32 = 26;
-/// {l}
+/// Number of Complemented Mixed Integer Rounding (CMIR) cuts.
 pub const MSK_IINF_MIO_NUM_CMIR_CUTS : i32 = 27;
-/// {l}
+/// Number of Gomory cuts.
 pub const MSK_IINF_MIO_NUM_GOMORY_CUTS : i32 = 28;
-/// {l}
+/// Number of implied bound cuts.
 pub const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS : i32 = 29;
-/// {l}
+/// Number of integer feasible solutions that have been found.
 pub const MSK_IINF_MIO_NUM_INT_SOLUTIONS : i32 = 30;
-/// {l}
+/// Number of clique cuts.
 pub const MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 31;
-/// {l}
+/// Number of lift-and-project cuts.
 pub const MSK_IINF_MIO_NUM_LIPRO_CUTS : i32 = 32;
-/// {l}
+/// Number of relaxations solved during the optimization.
 pub const MSK_IINF_MIO_NUM_RELAX : i32 = 33;
-/// {l}
+/// Number of times presolve was repeated at root.
 pub const MSK_IINF_MIO_NUM_REPEATED_PRESOLVE : i32 = 34;
-/// {l}
+/// Number of binary variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMBIN : i32 = 35;
-/// {l}
+/// Number of binary cone variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMBINCONEVAR : i32 = 36;
-/// {l}
+/// Number of constraints in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMCON : i32 = 37;
-/// {l}
+/// Number of cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMCONE : i32 = 38;
-/// {l}
+/// Number of cone variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMCONEVAR : i32 = 39;
-/// {l}
+/// Number of continuous variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMCONT : i32 = 40;
-/// {l}
+/// Number of continuous cone variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMCONTCONEVAR : i32 = 41;
-/// {l}
+/// Number of dual exponential cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMDEXPCONES : i32 = 42;
-/// {l}
+/// Number of disjunctive constraints in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMDJC : i32 = 43;
-/// {l}
+/// Number of dual power cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMDPOWCONES : i32 = 44;
-/// {l}
+/// Number of integer variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMINT : i32 = 45;
-/// {l}
+/// Number of integer cone variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMINTCONEVAR : i32 = 46;
-/// {l}
+/// Number of primal exponential cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMPEXPCONES : i32 = 47;
-/// {l}
+/// Number of primal power cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMPPOWCONES : i32 = 48;
-/// {l}
+/// Number of quadratic cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMQCONES : i32 = 49;
-/// {l}
+/// Number of rotated quadratic cones in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMRQCONES : i32 = 50;
-/// {l}
+/// Number of variables in the problem to be solved by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_NUMVAR : i32 = 51;
-/// {l}
+/// Non-zero if a valid objective bound has been found, otherwise zero.
 pub const MSK_IINF_MIO_OBJ_BOUND_DEFINED : i32 = 52;
-/// {l}
+/// Number of binary variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMBIN : i32 = 53;
-/// {l}
+/// Number of binary cone variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMBINCONEVAR : i32 = 54;
-/// {l}
+/// Number of constraints in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMCON : i32 = 55;
-/// {l}
+/// Number of cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONE : i32 = 56;
-/// {l}
+/// Number of cone variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONEVAR : i32 = 57;
-/// {l}
+/// Number of continuous variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONT : i32 = 58;
-/// {l}
+/// Number of continuous cone variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 59;
-/// {l}
+/// Number of dual exponential cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMDEXPCONES : i32 = 60;
-/// {l}
+/// Number of disjunctive constraints in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMDJC : i32 = 61;
-/// {l}
+/// Number of dual power cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMDPOWCONES : i32 = 62;
-/// {l}
+/// Number of integer variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMINT : i32 = 63;
-/// {l}
+/// Number of integer cone variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMINTCONEVAR : i32 = 64;
-/// {l}
+/// Number of primal exponential cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMPEXPCONES : i32 = 65;
-/// {l}
+/// Number of primal power cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMPPOWCONES : i32 = 66;
-/// {l}
+/// Number of quadratic cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMQCONES : i32 = 67;
-/// {l}
+/// Number of rotated quadratic cones in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMRQCONES : i32 = 68;
-/// {l}
+/// Number of variables in the problem after the mixed-integer optimizer's presolve.
 pub const MSK_IINF_MIO_PRESOLVED_NUMVAR : i32 = 69;
-/// {l}
+/// Non-zero if relative gap is within tolerances.
 pub const MSK_IINF_MIO_RELGAP_SATISFIED : i32 = 70;
-/// {l}
+/// Total number of cuts generated by the mixed-integer optimizer.
 pub const MSK_IINF_MIO_TOTAL_NUM_CUTS : i32 = 71;
-/// {l}
+/// If it is non-zero, then the objective cut is used.
 pub const MSK_IINF_MIO_USER_OBJ_CUT : i32 = 72;
-/// {l}
+/// Number of constraints in the problem solved when the optimizer is called.
 pub const MSK_IINF_OPT_NUMCON : i32 = 73;
-/// {l}
+/// Number of variables in the problem solved when the optimizer is called
 pub const MSK_IINF_OPT_NUMVAR : i32 = 74;
-/// {l}
+/// The response code returned by optimize.
 pub const MSK_IINF_OPTIMIZE_RESPONSE : i32 = 75;
-/// {l}
+/// Number perturbations to thhe bounds of the primal problem.
 pub const MSK_IINF_PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 76;
-/// {l}
+/// Is nonzero if the dual solution is purified.
 pub const MSK_IINF_PURIFY_DUAL_SUCCESS : i32 = 77;
-/// {l}
+/// Is nonzero if the primal solution is purified.
 pub const MSK_IINF_PURIFY_PRIMAL_SUCCESS : i32 = 78;
-/// {l}
+/// Number of symmetric variables read.
 pub const MSK_IINF_RD_NUMBARVAR : i32 = 79;
-/// {l}
+/// Number of constraints read.
 pub const MSK_IINF_RD_NUMCON : i32 = 80;
-/// {l}
+/// Number of conic constraints read.
 pub const MSK_IINF_RD_NUMCONE : i32 = 81;
-/// {l}
+/// Number of integer-constrained variables read.
 pub const MSK_IINF_RD_NUMINTVAR : i32 = 82;
-/// {l}
+/// Number of nonempty Q matrices read.
 pub const MSK_IINF_RD_NUMQ : i32 = 83;
-/// {l}
+/// Number of variables read.
 pub const MSK_IINF_RD_NUMVAR : i32 = 84;
-/// {l}
+/// Problem type.
 pub const MSK_IINF_RD_PROTYPE : i32 = 85;
-/// {l}
+/// The number of dual degenerate iterations.
 pub const MSK_IINF_SIM_DUAL_DEG_ITER : i32 = 86;
-/// {l}
+/// If 1 then the dual simplex algorithm is solving from an advanced basis.
 pub const MSK_IINF_SIM_DUAL_HOTSTART : i32 = 87;
-/// {l}
+/// If 1 then a valid basis factorization of full rank was located and used by the dual simplex algorithm.
 pub const MSK_IINF_SIM_DUAL_HOTSTART_LU : i32 = 88;
-/// {l}
+/// The number of iterations taken with dual infeasibility.
 pub const MSK_IINF_SIM_DUAL_INF_ITER : i32 = 89;
-/// {l}
+/// Number of dual simplex iterations during the last optimization.
 pub const MSK_IINF_SIM_DUAL_ITER : i32 = 90;
-/// {l}
+/// Number of constraints in the problem solved by the simplex optimizer.
 pub const MSK_IINF_SIM_NUMCON : i32 = 91;
-/// {l}
+/// Number of variables in the problem solved by the simplex optimizer.
 pub const MSK_IINF_SIM_NUMVAR : i32 = 92;
-/// {l}
+/// The number of primal degenerate iterations.
 pub const MSK_IINF_SIM_PRIMAL_DEG_ITER : i32 = 93;
-/// {l}
+/// If 1 then the primal simplex algorithm is solving from an advanced basis.
 pub const MSK_IINF_SIM_PRIMAL_HOTSTART : i32 = 94;
-/// {l}
+/// If 1 then a valid basis factorization of full rank was located and used by the primal simplex algorithm.
 pub const MSK_IINF_SIM_PRIMAL_HOTSTART_LU : i32 = 95;
-/// {l}
+/// The number of iterations taken with primal infeasibility.
 pub const MSK_IINF_SIM_PRIMAL_INF_ITER : i32 = 96;
-/// {l}
+/// Number of primal simplex iterations during the last optimization.
 pub const MSK_IINF_SIM_PRIMAL_ITER : i32 = 97;
-/// {l}
+/// Is non-zero if dual problem is solved.
 pub const MSK_IINF_SIM_SOLVE_DUAL : i32 = 98;
-/// {l}
+/// Problem status of the basic solution. Updated after each optimization.
 pub const MSK_IINF_SOL_BAS_PROSTA : i32 = 99;
-/// {l}
+/// Solution status of the basic solution. Updated after each optimization.
 pub const MSK_IINF_SOL_BAS_SOLSTA : i32 = 100;
-/// {l}
+/// Problem status of the integer solution. Updated after each optimization.
 pub const MSK_IINF_SOL_ITG_PROSTA : i32 = 101;
-/// {l}
+/// Solution status of the integer solution. Updated after each optimization.
 pub const MSK_IINF_SOL_ITG_SOLSTA : i32 = 102;
-/// {l}
+/// Problem status of the interior-point solution. Updated after each optimization.
 pub const MSK_IINF_SOL_ITR_PROSTA : i32 = 103;
-/// {l}
+/// Solution status of the interior-point solution. Updated after each optimization.
 pub const MSK_IINF_SOL_ITR_SOLSTA : i32 = 104;
-/// {l}
+/// Number of times the storage for storing the linear coefficient matrix has been changed.
 pub const MSK_IINF_STO_NUM_A_REALLOC : i32 = 105;
 pub const MSK_IINF_END : i32 = 105;
 
 // inftype
-/// {l}
+/// Is a double information type.
 pub const MSK_INF_DOU_TYPE : i32 = 0;
-/// {l}
+/// Is an integer.
 pub const MSK_INF_INT_TYPE : i32 = 1;
-/// {l}
+/// Is a long integer.
 pub const MSK_INF_LINT_TYPE : i32 = 2;
 
 // iomode
-/// {l}
+/// The file is read-only.
 pub const MSK_IOMODE_READ : i32 = 0;
-/// {l}
+/// The file is write-only. If the file exists then it is truncated when it is opened. Otherwise it is created when it is opened.
 pub const MSK_IOMODE_WRITE : i32 = 1;
-/// {l}
+/// The file is to read and write.
 pub const MSK_IOMODE_READWRITE : i32 = 2;
 
 // iparam
-/// {l}
+/// Controls whether the basis matrix is analyzed in solution analyzer.
 pub const MSK_IPAR_ANA_SOL_BASIS : i32 = 0;
-/// {l}
+/// Controls whether a list of violated constraints is printed.
 pub const MSK_IPAR_ANA_SOL_PRINT_VIOLATED : i32 = 1;
-/// {l}
+/// Controls whether the elements in each column of A are sorted before an optimization is performed.
 pub const MSK_IPAR_AUTO_SORT_A_BEFORE_OPT : i32 = 2;
-/// {l}
+/// Controls whether the solution information items are automatically updated after an optimization is performed.
 pub const MSK_IPAR_AUTO_UPDATE_SOL_INFO : i32 = 3;
-/// {l}
+/// Controls the sign of the columns in the basis matrix corresponding to slack variables.
 pub const MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE : i32 = 4;
-/// {l}
+/// Controls which simplex optimizer is used in the clean-up phase.
 pub const MSK_IPAR_BI_CLEAN_OPTIMIZER : i32 = 5;
-/// {l}
+/// Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
 pub const MSK_IPAR_BI_IGNORE_MAX_ITER : i32 = 6;
-/// {l}
+/// Turns on basis identification in case the interior-point optimizer is terminated due to a numerical problem.
 pub const MSK_IPAR_BI_IGNORE_NUM_ERROR : i32 = 7;
-/// {l}
+/// Maximum number of iterations after basis identification.
 pub const MSK_IPAR_BI_MAX_ITERATIONS : i32 = 8;
-/// {l}
+/// Control license caching.
 pub const MSK_IPAR_CACHE_LICENSE : i32 = 9;
-/// {l}
+/// Specify the level of convexity check on quadratic problems.
 pub const MSK_IPAR_CHECK_CONVEXITY : i32 = 10;
-/// {l}
+/// Control compression of stat files.
 pub const MSK_IPAR_COMPRESS_STATFILE : i32 = 11;
-/// {l}
+/// Controls the contents of the infeasibility report.
 pub const MSK_IPAR_INFEAS_GENERIC_NAMES : i32 = 12;
-/// {l}
+/// Controls which certificate is used if both primal- and dual- certificate of infeasibility is available.
 pub const MSK_IPAR_INFEAS_PREFER_PRIMAL : i32 = 13;
-/// {l}
+/// Turns the feasibility report on or off.
 pub const MSK_IPAR_INFEAS_REPORT_AUTO : i32 = 14;
-/// {l}
+/// Controls the contents of the infeasibility report.
 pub const MSK_IPAR_INFEAS_REPORT_LEVEL : i32 = 15;
-/// {l}
+/// Controls whether basis identification is performed.
 pub const MSK_IPAR_INTPNT_BASIS : i32 = 16;
-/// {l}
+/// Controls whether different step sizes are allowed in the primal and dual space.
 pub const MSK_IPAR_INTPNT_DIFF_STEP : i32 = 17;
-/// {l}
+/// Currently not in use.
 pub const MSK_IPAR_INTPNT_HOTSTART : i32 = 18;
-/// {l}
+/// Controls the maximum number of iterations allowed in the interior-point optimizer.
 pub const MSK_IPAR_INTPNT_MAX_ITERATIONS : i32 = 19;
-/// {l}
+/// Maximum number of correction steps.
 pub const MSK_IPAR_INTPNT_MAX_NUM_COR : i32 = 20;
-/// {l}
+/// Maximum number of steps to be used by the iterative search direction refinement.
 pub const MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS : i32 = 21;
-/// {l}
+/// Controls the aggressiveness of the offending column detection.
 pub const MSK_IPAR_INTPNT_OFF_COL_TRH : i32 = 22;
-/// {l}
+/// This parameter controls the number of random seeds tried.
 pub const MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS : i32 = 23;
-/// {l}
+/// Controls the ordering strategy.
 pub const MSK_IPAR_INTPNT_ORDER_METHOD : i32 = 24;
-/// {l}
+/// Currently not in use.
 pub const MSK_IPAR_INTPNT_PURIFY : i32 = 25;
-/// {l}
+/// Controls whether regularization is allowed.
 pub const MSK_IPAR_INTPNT_REGULARIZATION_USE : i32 = 26;
-/// {l}
+/// Controls how the problem is scaled before the interior-point optimizer is used.
 pub const MSK_IPAR_INTPNT_SCALING : i32 = 27;
-/// {l}
+/// Controls whether the primal or the dual problem is solved.
 pub const MSK_IPAR_INTPNT_SOLVE_FORM : i32 = 28;
-/// {l}
+/// Starting point used by the interior-point optimizer.
 pub const MSK_IPAR_INTPNT_STARTING_POINT : i32 = 29;
-/// {l}
+/// Controls the license manager client debugging behavior.
 pub const MSK_IPAR_LICENSE_DEBUG : i32 = 30;
-/// {l}
+/// Controls license manager client behavior.
 pub const MSK_IPAR_LICENSE_PAUSE_TIME : i32 = 31;
-/// {l}
+/// Controls license manager client behavior.
 pub const MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 32;
-/// {l}
+/// Controls when expiry warnings are issued.
 pub const MSK_IPAR_LICENSE_TRH_EXPIRY_WRN : i32 = 33;
-/// {l}
+/// Controls if MOSEK should queue for a license if none is available.
 pub const MSK_IPAR_LICENSE_WAIT : i32 = 34;
-/// {l}
+/// Controls the amount of log information.
 pub const MSK_IPAR_LOG : i32 = 35;
-/// {l}
+/// Controls amount of output from the problem analyzer.
 pub const MSK_IPAR_LOG_ANA_PRO : i32 = 36;
-/// {l}
+/// Controls the amount of output printed by the basis identification procedure. A higher level implies that more information is logged.
 pub const MSK_IPAR_LOG_BI : i32 = 37;
-/// {l}
+/// Controls the logging frequency.
 pub const MSK_IPAR_LOG_BI_FREQ : i32 = 38;
-/// {l}
+/// Controls logging in convexity check on quadratic problems.
 pub const MSK_IPAR_LOG_CHECK_CONVEXITY : i32 = 39;
-/// {l}
+/// Controls the reduction in the log levels for the second and any subsequent optimizations.
 pub const MSK_IPAR_LOG_CUT_SECOND_OPT : i32 = 40;
-/// {l}
+/// Controls the amount of logging when a data item such as the maximum number constrains is expanded.
 pub const MSK_IPAR_LOG_EXPAND : i32 = 41;
-/// {l}
+/// Controls the amount of output printed when performing feasibility repair. A value higher than one means extensive logging.
 pub const MSK_IPAR_LOG_FEAS_REPAIR : i32 = 42;
-/// {l}
+/// If turned on, then some log info is printed when a file is written or read.
 pub const MSK_IPAR_LOG_FILE : i32 = 43;
-/// {l}
+/// Controls whether solution summary should be printed by the optimizer.
 pub const MSK_IPAR_LOG_INCLUDE_SUMMARY : i32 = 44;
-/// {l}
+/// Controls log level for the infeasibility analyzer.
 pub const MSK_IPAR_LOG_INFEAS_ANA : i32 = 45;
-/// {l}
+/// Controls the amount of log information from the interior-point optimizers.
 pub const MSK_IPAR_LOG_INTPNT : i32 = 46;
-/// {l}
+/// Control whether local identifying information is printed to the log.
 pub const MSK_IPAR_LOG_LOCAL_INFO : i32 = 47;
-/// {l}
+/// Controls the amount of log information from the mixed-integer optimizers.
 pub const MSK_IPAR_LOG_MIO : i32 = 48;
-/// {l}
+/// The mixed-integer optimizer logging frequency.
 pub const MSK_IPAR_LOG_MIO_FREQ : i32 = 49;
-/// {l}
+/// If turned on, then factor lines are added to the log.
 pub const MSK_IPAR_LOG_ORDER : i32 = 50;
-/// {l}
+/// Controls amount of output printed by the presolve procedure. A higher level implies that more information is logged.
 pub const MSK_IPAR_LOG_PRESOLVE : i32 = 51;
-/// {l}
+/// Controls amount of output printed when response codes are reported. A higher level implies that more information is logged.
 pub const MSK_IPAR_LOG_RESPONSE : i32 = 52;
-/// {l}
+/// Control logging in sensitivity analyzer.
 pub const MSK_IPAR_LOG_SENSITIVITY : i32 = 53;
-/// {l}
+/// Control logging in sensitivity analyzer.
 pub const MSK_IPAR_LOG_SENSITIVITY_OPT : i32 = 54;
-/// {l}
+/// Controls the amount of log information from the simplex optimizers.
 pub const MSK_IPAR_LOG_SIM : i32 = 55;
-/// {l}
+/// Controls simplex logging frequency.
 pub const MSK_IPAR_LOG_SIM_FREQ : i32 = 56;
-/// {l}
+/// Currently not in use.
 pub const MSK_IPAR_LOG_SIM_MINOR : i32 = 57;
-/// {l}
+/// Controls the memory related log information.
 pub const MSK_IPAR_LOG_STORAGE : i32 = 58;
-/// {l}
+/// Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
 pub const MSK_IPAR_MAX_NUM_WARNINGS : i32 = 59;
-/// {l}
+/// Controls whether the mixed-integer optimizer is branching up or down by default.
 pub const MSK_IPAR_MIO_BRANCH_DIR : i32 = 60;
-/// {l}
+/// Toggles outer approximation for conic problems.
 pub const MSK_IPAR_MIO_CONIC_OUTER_APPROXIMATION : i32 = 61;
-/// {l}
+/// Controls if an initial mixed integer solution should be constructed from the values of the integer variables.
 pub const MSK_IPAR_MIO_CONSTRUCT_SOL : i32 = 62;
-/// {l}
+/// Controls whether clique cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_CLIQUE : i32 = 63;
-/// {l}
+/// Controls whether mixed integer rounding cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_CMIR : i32 = 64;
-/// {l}
+/// Controls whether GMI cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_GMI : i32 = 65;
-/// {l}
+/// Controls whether implied bound cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_IMPLIED_BOUND : i32 = 66;
-/// {l}
+/// Controls whether knapsack cover cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_KNAPSACK_COVER : i32 = 67;
-/// {l}
+/// Controls whether lift-and-project cuts should be generated.
 pub const MSK_IPAR_MIO_CUT_LIPRO : i32 = 68;
-/// {l}
+/// Controls how aggressively generated cuts are selected to be included in the relaxation.
 pub const MSK_IPAR_MIO_CUT_SELECTION_LEVEL : i32 = 69;
-/// {l}
+/// Controls what problem data permutation method is appplied to mixed-integer problems.
 pub const MSK_IPAR_MIO_DATA_PERMUTATION_METHOD : i32 = 70;
-/// {l}
+/// Controls the way the Feasibility Pump heuristic is employed by the mixed-integer optimizer.
 pub const MSK_IPAR_MIO_FEASPUMP_LEVEL : i32 = 71;
-/// {l}
+/// Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution.
 pub const MSK_IPAR_MIO_HEURISTIC_LEVEL : i32 = 72;
-/// {l}
+/// Maximum number of branches allowed during the branch and bound search.
 pub const MSK_IPAR_MIO_MAX_NUM_BRANCHES : i32 = 73;
-/// {l}
+/// Maximum number of relaxations in branch and bound search.
 pub const MSK_IPAR_MIO_MAX_NUM_RELAXS : i32 = 74;
-/// {l}
+/// Maximum number of cut separation rounds at the root node.
 pub const MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 75;
-/// {l}
+/// Controls how many feasible solutions the mixed-integer optimizer investigates.
 pub const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS : i32 = 76;
-/// {l}
+/// Controls how much emphasis is put on reducing memory usage.
 pub const MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL : i32 = 77;
-/// {l}
+/// Turns on/off the mixed-integer mode.
 pub const MSK_IPAR_MIO_MODE : i32 = 78;
-/// {l}
+/// Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
 pub const MSK_IPAR_MIO_NODE_OPTIMIZER : i32 = 79;
-/// {l}
+/// Controls the node selection strategy employed by the mixed-integer optimizer.
 pub const MSK_IPAR_MIO_NODE_SELECTION : i32 = 80;
-/// {l}
+/// Controls how much emphasis is put on reducing numerical problems
 pub const MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 81;
-/// {l}
+/// Enables or disables perspective reformulation in presolve.
 pub const MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE : i32 = 82;
-/// {l}
+/// Controls if the aggregator should be used.
 pub const MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE : i32 = 83;
-/// {l}
+/// Controls the amount of probing employed by the mixed-integer optimizer in presolve.
 pub const MSK_IPAR_MIO_PROBING_LEVEL : i32 = 84;
-/// {l}
+/// Use objective domain propagation.
 pub const MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 85;
-/// {l}
+/// Controls what reformulation method is applied to mixed-integer quadratic problems.
 pub const MSK_IPAR_MIO_QCQO_REFORMULATION_METHOD : i32 = 86;
-/// {l}
+/// Maximum number of nodes in each call to RINS.
 pub const MSK_IPAR_MIO_RINS_MAX_NODES : i32 = 87;
-/// {l}
+/// Controls which optimizer is employed at the root node in the mixed-integer optimizer.
 pub const MSK_IPAR_MIO_ROOT_OPTIMIZER : i32 = 88;
-/// {l}
+/// Controls whether presolve can be repeated at root node.
 pub const MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 89;
-/// {l}
+/// Sets the random seed used for randomization in the mixed integer optimizer.
 pub const MSK_IPAR_MIO_SEED : i32 = 90;
-/// {l}
+/// Controls the amount of symmetry detection and handling employed by the mixed-integer optimizer in presolve.
 pub const MSK_IPAR_MIO_SYMMETRY_LEVEL : i32 = 91;
-/// {l}
+/// Controls how much effort is put into detecting variable bounds.
 pub const MSK_IPAR_MIO_VB_DETECTION_LEVEL : i32 = 92;
-/// {l}
+/// Set the number of iterations to spin before sleeping.
 pub const MSK_IPAR_MT_SPINCOUNT : i32 = 93;
-/// {l}
+/// Not in use
 pub const MSK_IPAR_NG : i32 = 94;
-/// {l}
+/// The number of threads employed by the optimizer.
 pub const MSK_IPAR_NUM_THREADS : i32 = 95;
-/// {l}
+/// Write a text header with date and MOSEK version in an OPF file.
 pub const MSK_IPAR_OPF_WRITE_HEADER : i32 = 96;
-/// {l}
+/// Write a hint section with problem dimensions in the beginning of an OPF file.
 pub const MSK_IPAR_OPF_WRITE_HINTS : i32 = 97;
-/// {l}
+/// Aim to keep lines in OPF files not much longer than this.
 pub const MSK_IPAR_OPF_WRITE_LINE_LENGTH : i32 = 98;
-/// {l}
+/// Write a parameter section in an OPF file.
 pub const MSK_IPAR_OPF_WRITE_PARAMETERS : i32 = 99;
-/// {l}
+/// Write objective, constraints, bounds etc. to an OPF file.
 pub const MSK_IPAR_OPF_WRITE_PROBLEM : i32 = 100;
-/// {l}
+/// Controls what is written to the OPF files.
 pub const MSK_IPAR_OPF_WRITE_SOL_BAS : i32 = 101;
-/// {l}
+/// Controls what is written to the OPF files.
 pub const MSK_IPAR_OPF_WRITE_SOL_ITG : i32 = 102;
-/// {l}
+/// Controls what is written to the OPF files.
 pub const MSK_IPAR_OPF_WRITE_SOL_ITR : i32 = 103;
-/// {l}
+/// Enable inclusion of solutions in the OPF files.
 pub const MSK_IPAR_OPF_WRITE_SOLUTIONS : i32 = 104;
-/// {l}
+/// Controls which optimizer is used to optimize the task.
 pub const MSK_IPAR_OPTIMIZER : i32 = 105;
-/// {l}
+/// If turned on, then names in the parameter file are case sensitive.
 pub const MSK_IPAR_PARAM_READ_CASE_NAME : i32 = 106;
-/// {l}
+/// If turned on, then errors in parameter settings is ignored.
 pub const MSK_IPAR_PARAM_READ_IGN_ERROR : i32 = 107;
-/// {l}
+/// Maximum amount of fill-in created in one pivot during the elimination phase.
 pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 108;
-/// {l}
+/// Control the maximum number of times the eliminator is tried.
 pub const MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 109;
-/// {l}
+/// Currently not used.
 pub const MSK_IPAR_PRESOLVE_LEVEL : i32 = 110;
-/// {l}
+/// Controls linear dependency check in presolve.
 pub const MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 111;
-/// {l}
+/// Controls linear dependency check in presolve.
 pub const MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 112;
-/// {l}
+/// Controls whether the linear constraints are checked for linear dependencies.
 pub const MSK_IPAR_PRESOLVE_LINDEP_USE : i32 = 113;
-/// {l}
+/// Control the maximum number of times presolve passes over the problem.
 pub const MSK_IPAR_PRESOLVE_MAX_NUM_PASS : i32 = 114;
-/// {l}
+/// Controls the maximum number of reductions performed by the presolve.
 pub const MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 115;
-/// {l}
+/// Controls whether the presolve is applied to a problem before it is optimized.
 pub const MSK_IPAR_PRESOLVE_USE : i32 = 116;
-/// {l}
+/// Controls which optimizer that is used to find the optimal repair.
 pub const MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER : i32 = 117;
-/// {l}
+/// Controls if simple transformation are done when writing PTF files.
 pub const MSK_IPAR_PTF_WRITE_TRANSFORM : i32 = 118;
-/// {l}
+/// Turns on additional debugging information when reading files.
 pub const MSK_IPAR_READ_DEBUG : i32 = 119;
-/// {l}
+/// Controls whether the free constraints are included in the problem.
 pub const MSK_IPAR_READ_KEEP_FREE_CON : i32 = 120;
-/// {l}
+/// Controls how the LP files are interpreted.
 pub const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 121;
-/// {l}
+/// If a name is in quotes when reading an LP file, the quotes will be removed.
 pub const MSK_IPAR_READ_LP_QUOTED_NAMES : i32 = 122;
-/// {l}
+/// Controls how strictly the MPS file reader interprets the MPS format.
 pub const MSK_IPAR_READ_MPS_FORMAT : i32 = 123;
-/// {l}
+/// Controls the maximal number of characters allowed in one line of the MPS file.
 pub const MSK_IPAR_READ_MPS_WIDTH : i32 = 124;
-/// {l}
+/// Controls what information is used from the task files.
 pub const MSK_IPAR_READ_TASK_IGNORE_PARAM : i32 = 125;
-/// {l}
+/// Use compression when sending data to an optimization server
 pub const MSK_IPAR_REMOTE_USE_COMPRESSION : i32 = 126;
-/// {l}
+/// Removes unused solutions before the optimization is performed.
 pub const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS : i32 = 127;
-/// {l}
+/// Controls sensitivity report behavior.
 pub const MSK_IPAR_SENSITIVITY_ALL : i32 = 128;
-/// {l}
+/// Controls which optimizer is used for optimal partition sensitivity analysis.
 pub const MSK_IPAR_SENSITIVITY_OPTIMIZER : i32 = 129;
-/// {l}
+/// Controls which type of sensitivity analysis is to be performed.
 pub const MSK_IPAR_SENSITIVITY_TYPE : i32 = 130;
-/// {l}
+/// Controls whether an LU factorization of the basis is used in a hot-start.
 pub const MSK_IPAR_SIM_BASIS_FACTOR_USE : i32 = 131;
-/// {l}
+/// Controls how aggressively degeneration is handled.
 pub const MSK_IPAR_SIM_DEGEN : i32 = 132;
-/// {l}
+/// Not in use.
 pub const MSK_IPAR_SIM_DETECT_PWL : i32 = 133;
-/// {l}
+/// Controls whether crashing is performed in the dual simplex optimizer.
 pub const MSK_IPAR_SIM_DUAL_CRASH : i32 = 134;
-/// {l}
+/// An experimental feature.
 pub const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD : i32 = 135;
-/// {l}
+/// Controls how aggressively restricted selection is used.
 pub const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION : i32 = 136;
-/// {l}
+/// Controls the dual simplex strategy.
 pub const MSK_IPAR_SIM_DUAL_SELECTION : i32 = 137;
-/// {l}
+/// Controls if the simplex optimizers are allowed to exploit duplicated columns.
 pub const MSK_IPAR_SIM_EXPLOIT_DUPVEC : i32 = 138;
-/// {l}
+/// Controls the type of hot-start that the simplex optimizer perform.
 pub const MSK_IPAR_SIM_HOTSTART : i32 = 139;
-/// {l}
+/// Determines if the simplex optimizer should exploit the initial factorization.
 pub const MSK_IPAR_SIM_HOTSTART_LU : i32 = 140;
-/// {l}
+/// Maximum number of iterations that can be used by a simplex optimizer.
 pub const MSK_IPAR_SIM_MAX_ITERATIONS : i32 = 141;
-/// {l}
+/// Controls how many set-backs that are allowed within a simplex optimizer.
 pub const MSK_IPAR_SIM_MAX_NUM_SETBACKS : i32 = 142;
-/// {l}
+/// Controls if the simplex optimizer ensures a non-singular basis, if possible.
 pub const MSK_IPAR_SIM_NON_SINGULAR : i32 = 143;
-/// {l}
+/// Controls the simplex crash.
 pub const MSK_IPAR_SIM_PRIMAL_CRASH : i32 = 144;
-/// {l}
+/// An experimental feature.
 pub const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD : i32 = 145;
-/// {l}
+/// Controls how aggressively restricted selection is used.
 pub const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION : i32 = 146;
-/// {l}
+/// Controls the primal simplex strategy.
 pub const MSK_IPAR_SIM_PRIMAL_SELECTION : i32 = 147;
-/// {l}
+/// Controls the basis refactoring frequency.
 pub const MSK_IPAR_SIM_REFACTOR_FREQ : i32 = 148;
-/// {l}
+/// Controls if the simplex optimizers are allowed to reformulate the problem.
 pub const MSK_IPAR_SIM_REFORMULATION : i32 = 149;
-/// {l}
+/// Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
 pub const MSK_IPAR_SIM_SAVE_LU : i32 = 150;
-/// {l}
+/// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
 pub const MSK_IPAR_SIM_SCALING : i32 = 151;
-/// {l}
+/// Controls how the problem is scaled before a simplex optimizer is used.
 pub const MSK_IPAR_SIM_SCALING_METHOD : i32 = 152;
-/// {l}
+/// Sets the random seed used for randomization in the simplex optimizers.
 pub const MSK_IPAR_SIM_SEED : i32 = 153;
-/// {l}
+/// Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
 pub const MSK_IPAR_SIM_SOLVE_FORM : i32 = 154;
-/// {l}
+/// Controls how high priority the numerical stability should be given.
 pub const MSK_IPAR_SIM_STABILITY_PRIORITY : i32 = 155;
-/// {l}
+/// Controls the simplex behavior.
 pub const MSK_IPAR_SIM_SWITCH_OPTIMIZER : i32 = 156;
-/// {l}
+/// Control the contents of the solution files.
 pub const MSK_IPAR_SOL_FILTER_KEEP_BASIC : i32 = 157;
-/// {l}
+/// Control the contents of the solution files.
 pub const MSK_IPAR_SOL_FILTER_KEEP_RANGED : i32 = 158;
-/// {l}
+/// Controls the input solution file format.
 pub const MSK_IPAR_SOL_READ_NAME_WIDTH : i32 = 159;
-/// {l}
+/// Controls the input solution file format.
 pub const MSK_IPAR_SOL_READ_WIDTH : i32 = 160;
-/// {l}
+/// Indicates whether solution callbacks will be performed during the optimization.
 pub const MSK_IPAR_SOLUTION_CALLBACK : i32 = 161;
-/// {l}
+/// Controls the amount of timing performed inside MOSEK.
 pub const MSK_IPAR_TIMING_LEVEL : i32 = 162;
-/// {l}
+/// Controls the basic solution file format.
 pub const MSK_IPAR_WRITE_BAS_CONSTRAINTS : i32 = 163;
-/// {l}
+/// Controls the basic solution file format.
 pub const MSK_IPAR_WRITE_BAS_HEAD : i32 = 164;
-/// {l}
+/// Controls the basic solution file format.
 pub const MSK_IPAR_WRITE_BAS_VARIABLES : i32 = 165;
-/// {l}
+/// Controls output file compression.
 pub const MSK_IPAR_WRITE_COMPRESSION : i32 = 166;
-/// {l}
+/// Controls output file data.
 pub const MSK_IPAR_WRITE_DATA_PARAM : i32 = 167;
-/// {l}
+/// Controls the output file data.
 pub const MSK_IPAR_WRITE_FREE_CON : i32 = 168;
-/// {l}
+/// Controls the output file data.
 pub const MSK_IPAR_WRITE_GENERIC_NAMES : i32 = 169;
-/// {l}
+/// Index origin used in  generic names.
 pub const MSK_IPAR_WRITE_GENERIC_NAMES_IO : i32 = 170;
-/// {l}
+/// Controls if the writer ignores incompatible problem items when writing files.
 pub const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 171;
-/// {l}
+/// Controls the integer solution file format.
 pub const MSK_IPAR_WRITE_INT_CONSTRAINTS : i32 = 172;
-/// {l}
+/// Controls the integer solution file format.
 pub const MSK_IPAR_WRITE_INT_HEAD : i32 = 173;
-/// {l}
+/// Controls the integer solution file format.
 pub const MSK_IPAR_WRITE_INT_VARIABLES : i32 = 174;
-/// {l}
+/// When set, the JSON task and solution files are written with indentation for better readability.
 pub const MSK_IPAR_WRITE_JSON_INDENTATION : i32 = 175;
-/// {l}
+/// Write full linear objective
 pub const MSK_IPAR_WRITE_LP_FULL_OBJ : i32 = 176;
-/// {l}
+/// Controls the LP output file format.
 pub const MSK_IPAR_WRITE_LP_LINE_WIDTH : i32 = 177;
-/// {l}
+/// Controls LP output file format.
 pub const MSK_IPAR_WRITE_LP_QUOTED_NAMES : i32 = 178;
-/// {l}
+/// Controls whether LP  output files satisfy the LP format strictly.
 pub const MSK_IPAR_WRITE_LP_STRICT_FORMAT : i32 = 179;
-/// {l}
+/// Controls the LP output file format.
 pub const MSK_IPAR_WRITE_LP_TERMS_PER_LINE : i32 = 180;
-/// {l}
+/// Controls in which format the MPS is written.
 pub const MSK_IPAR_WRITE_MPS_FORMAT : i32 = 181;
-/// {l}
+/// Controls the output file data.
 pub const MSK_IPAR_WRITE_MPS_INT : i32 = 182;
-/// {l}
+/// Controls the solution file format.
 pub const MSK_IPAR_WRITE_SOL_BARVARIABLES : i32 = 183;
-/// {l}
+/// Controls the solution file format.
 pub const MSK_IPAR_WRITE_SOL_CONSTRAINTS : i32 = 184;
-/// {l}
+/// Controls solution file format.
 pub const MSK_IPAR_WRITE_SOL_HEAD : i32 = 185;
-/// {l}
+/// Controls whether the user specified names are employed even if they are invalid names.
 pub const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 186;
-/// {l}
+/// Controls the solution file format.
 pub const MSK_IPAR_WRITE_SOL_VARIABLES : i32 = 187;
-/// {l}
+/// Controls whether the solutions are stored in the task file too.
 pub const MSK_IPAR_WRITE_TASK_INC_SOL : i32 = 188;
-/// {l}
+/// Controls if linear coefficients should be written by row or column when writing in the XML file format.
 pub const MSK_IPAR_WRITE_XML_MODE : i32 = 189;
 
 // branchdir
-/// {l}
+/// The mixed-integer optimizer decides which branch to choose.
 pub const MSK_BRANCH_DIR_FREE : i32 = 0;
-/// {l}
+/// The mixed-integer optimizer always chooses the up branch first.
 pub const MSK_BRANCH_DIR_UP : i32 = 1;
-/// {l}
+/// The mixed-integer optimizer always chooses the down branch first.
 pub const MSK_BRANCH_DIR_DOWN : i32 = 2;
-/// {l}
+/// Branch in direction nearest to selected fractional variable.
 pub const MSK_BRANCH_DIR_NEAR : i32 = 3;
-/// {l}
+/// Branch in direction farthest from selected fractional variable.
 pub const MSK_BRANCH_DIR_FAR : i32 = 4;
-/// {l}
+/// Chose direction based on root lp value of selected variable.
 pub const MSK_BRANCH_DIR_ROOT_LP : i32 = 5;
-/// {l}
+/// Branch in direction of current incumbent.
 pub const MSK_BRANCH_DIR_GUIDED : i32 = 6;
-/// {l}
+/// Branch based on the pseudocost of the variable.
 pub const MSK_BRANCH_DIR_PSEUDOCOST : i32 = 7;
 
 // miqcqoreformmethod
-/// {l}
+/// The mixed-integer optimizer decides which reformulation method to apply.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_FREE : i32 = 0;
-/// {l}
+/// No reformulation method is applied.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_NONE : i32 = 1;
-/// {l}
+/// A reformulation via linearization is applied.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_LINEARIZATION : i32 = 2;
-/// {l}
+/// The eigenvalue method is applied.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_EIGEN_VAL_METHOD : i32 = 3;
-/// {l}
+/// A perturbation of matrix diagonals via the solution of SDPs is applied.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_DIAG_SDP : i32 = 4;
-/// {l}
+/// A Reformulation based on the solution of an SDP-relaxation of the problem is applied.
 pub const MSK_MIO_QCQO_REFORMULATION_METHOD_RELAX_SDP : i32 = 5;
 
 // miodatapermmethod
-/// {l}
+/// No problem data permutation is applied.
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_NONE : i32 = 0;
-/// {l}
+/// A random cyclic shift is applied to permute the problem data.
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_CYCLIC_SHIFT : i32 = 1;
-/// {l}
+/// A random permutation is applied to the problem data.
 pub const MSK_MIO_DATA_PERMUTATION_METHOD_RANDOM : i32 = 2;
 
 // miocontsoltype
-/// {l}
+/// No interior-point or basic solution.
 pub const MSK_MIO_CONT_SOL_NONE : i32 = 0;
-/// {l}
+/// Solutions to the root node problem.
 pub const MSK_MIO_CONT_SOL_ROOT : i32 = 1;
-/// {l}
+/// A feasible primal solution.
 pub const MSK_MIO_CONT_SOL_ITG : i32 = 2;
-/// {l}
+/// A feasible primal solution or a root node solution if the problem is infeasible.
 pub const MSK_MIO_CONT_SOL_ITG_REL : i32 = 3;
 
 // miomode
-/// {l}
+/// The integer constraints are ignored and the problem is solved as a continuous problem.
 pub const MSK_MIO_MODE_IGNORED : i32 = 0;
-/// {l}
+/// Integer restrictions should be satisfied.
 pub const MSK_MIO_MODE_SATISFIED : i32 = 1;
 
 // mionodeseltype
-/// {l}
+/// The optimizer decides the node selection strategy.
 pub const MSK_MIO_NODE_SELECTION_FREE : i32 = 0;
-/// {l}
+/// The optimizer employs a depth first node selection strategy.
 pub const MSK_MIO_NODE_SELECTION_FIRST : i32 = 1;
-/// {l}
+/// The optimizer employs a best bound node selection strategy.
 pub const MSK_MIO_NODE_SELECTION_BEST : i32 = 2;
-/// {l}
+/// The optimizer employs selects the node based on a pseudo cost estimate.
 pub const MSK_MIO_NODE_SELECTION_PSEUDO : i32 = 3;
 
 // mpsformat
-/// {l}
+/// It is assumed that the input file satisfies the MPS format strictly.
 pub const MSK_MPS_FORMAT_STRICT : i32 = 0;
-/// {l}
+/// It is assumed that the input file satisfies a slightly relaxed version of the MPS format.
 pub const MSK_MPS_FORMAT_RELAXED : i32 = 1;
-/// {l}
+/// It is assumed that the input file satisfies the free MPS format. This implies that spaces are not allowed in names. Otherwise the format is free.
 pub const MSK_MPS_FORMAT_FREE : i32 = 2;
-/// {l}
+/// The CPLEX compatible version of the MPS format is employed.
 pub const MSK_MPS_FORMAT_CPLEX : i32 = 3;
 
 // objsense
-/// {l}
+/// The problem should be minimized.
 pub const MSK_OBJECTIVE_SENSE_MINIMIZE : i32 = 0;
-/// {l}
+/// The problem should be maximized.
 pub const MSK_OBJECTIVE_SENSE_MAXIMIZE : i32 = 1;
 
 // onoffkey
-/// {l}
+/// Switch the option off.
 pub const MSK_OFF : i32 = 0;
-/// {l}
+/// Switch the option on.
 pub const MSK_ON : i32 = 1;
 
 // optimizertype
-/// {l}
+/// The optimizer for problems having conic constraints.
 pub const MSK_OPTIMIZER_CONIC : i32 = 0;
-/// {l}
+/// The dual simplex optimizer is used.
 pub const MSK_OPTIMIZER_DUAL_SIMPLEX : i32 = 1;
-/// {l}
+/// The optimizer is chosen automatically.
 pub const MSK_OPTIMIZER_FREE : i32 = 2;
-/// {l}
+/// One of the simplex optimizers is used.
 pub const MSK_OPTIMIZER_FREE_SIMPLEX : i32 = 3;
-/// {l}
+/// The interior-point optimizer is used.
 pub const MSK_OPTIMIZER_INTPNT : i32 = 4;
-/// {l}
+/// The mixed-integer optimizer.
 pub const MSK_OPTIMIZER_MIXED_INT : i32 = 5;
-/// {l}
+/// The primal simplex optimizer is used.
 pub const MSK_OPTIMIZER_PRIMAL_SIMPLEX : i32 = 6;
 
 // orderingtype
-/// {l}
+/// The ordering method is chosen automatically.
 pub const MSK_ORDER_METHOD_FREE : i32 = 0;
-/// {l}
+/// Approximate minimum local fill-in ordering is employed.
 pub const MSK_ORDER_METHOD_APPMINLOC : i32 = 1;
-/// {l}
+/// This option should not be used.
 pub const MSK_ORDER_METHOD_EXPERIMENTAL : i32 = 2;
-/// {l}
+/// Always try the graph partitioning based ordering.
 pub const MSK_ORDER_METHOD_TRY_GRAPHPAR : i32 = 3;
-/// {l}
+/// Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering.
 pub const MSK_ORDER_METHOD_FORCE_GRAPHPAR : i32 = 4;
-/// {l}
+/// No ordering is used.
 pub const MSK_ORDER_METHOD_NONE : i32 = 5;
 
 // presolvemode
-/// {l}
+/// The problem is not presolved before it is optimized.
 pub const MSK_PRESOLVE_MODE_OFF : i32 = 0;
-/// {l}
+/// The problem is presolved before it is optimized.
 pub const MSK_PRESOLVE_MODE_ON : i32 = 1;
-/// {l}
+/// It is decided automatically whether to presolve before the problem is optimized.
 pub const MSK_PRESOLVE_MODE_FREE : i32 = 2;
 
 // parametertype
-/// {l}
+/// Not a valid parameter.
 pub const MSK_PAR_INVALID_TYPE : i32 = 0;
-/// {l}
+/// Is a double parameter.
 pub const MSK_PAR_DOU_TYPE : i32 = 1;
-/// {l}
+/// Is an integer parameter.
 pub const MSK_PAR_INT_TYPE : i32 = 2;
-/// {l}
+/// Is a string parameter.
 pub const MSK_PAR_STR_TYPE : i32 = 3;
 
 // problemitem
-/// {l}
+/// Item is a variable.
 pub const MSK_PI_VAR : i32 = 0;
-/// {l}
+/// Item is a constraint.
 pub const MSK_PI_CON : i32 = 1;
-/// {l}
+/// Item is a cone.
 pub const MSK_PI_CONE : i32 = 2;
 
 // problemtype
-/// {l}
+/// The problem is a linear optimization problem.
 pub const MSK_PROBTYPE_LO : i32 = 0;
-/// {l}
+/// The problem is a quadratic optimization problem.
 pub const MSK_PROBTYPE_QO : i32 = 1;
-/// {l}
+/// The problem is a quadratically constrained optimization problem.
 pub const MSK_PROBTYPE_QCQO : i32 = 2;
-/// {l}
+/// A conic optimization.
 pub const MSK_PROBTYPE_CONIC : i32 = 3;
-/// {l}
+/// General nonlinear constraints and conic constraints. This combination can not be solved by MOSEK.
 pub const MSK_PROBTYPE_MIXED : i32 = 4;
 
 // prosta
-/// {l}
+/// Unknown problem status.
 pub const MSK_PRO_STA_UNKNOWN : i32 = 0;
-/// {l}
+/// The problem is primal and dual feasible.
 pub const MSK_PRO_STA_PRIM_AND_DUAL_FEAS : i32 = 1;
-/// {l}
+/// The problem is primal feasible.
 pub const MSK_PRO_STA_PRIM_FEAS : i32 = 2;
-/// {l}
+/// The problem is dual feasible.
 pub const MSK_PRO_STA_DUAL_FEAS : i32 = 3;
-/// {l}
+/// The problem is primal infeasible.
 pub const MSK_PRO_STA_PRIM_INFEAS : i32 = 4;
-/// {l}
+/// The problem is dual infeasible.
 pub const MSK_PRO_STA_DUAL_INFEAS : i32 = 5;
-/// {l}
+/// The problem is primal and dual infeasible.
 pub const MSK_PRO_STA_PRIM_AND_DUAL_INFEAS : i32 = 6;
-/// {l}
+/// The problem is ill-posed. For example, it may be primal and dual feasible but have a positive duality gap.
 pub const MSK_PRO_STA_ILL_POSED : i32 = 7;
-/// {l}
+/// The problem is either primal infeasible or unbounded. This may occur for mixed-integer problems.
 pub const MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED : i32 = 8;
 
 // xmlwriteroutputtype
-/// {l}
+/// Write in row order.
 pub const MSK_WRITE_XML_MODE_ROW : i32 = 0;
-/// {l}
+/// Write in column order.
 pub const MSK_WRITE_XML_MODE_COL : i32 = 1;
 
 // rescode
-/// {l}
+/// No error occurred.
 pub const MSK_RES_OK : i32 = 0;
-/// {l}
+/// The parameter file could not be opened.
 pub const MSK_RES_WRN_OPEN_PARAM_FILE : i32 = 50;
-/// {l}
+/// A numerically large bound value is specified.
 pub const MSK_RES_WRN_LARGE_BOUND : i32 = 51;
-/// {l}
+/// A numerically large lower bound value is specified.
 pub const MSK_RES_WRN_LARGE_LO_BOUND : i32 = 52;
-/// {l}
+/// A numerically large upper bound value is specified.
 pub const MSK_RES_WRN_LARGE_UP_BOUND : i32 = 53;
-/// {l}
+/// A equality constraint is fixed to numerically large value.
 pub const MSK_RES_WRN_LARGE_CON_FX : i32 = 54;
-/// {l}
+/// A numerically large value is specified for one element in c.
 pub const MSK_RES_WRN_LARGE_CJ : i32 = 57;
-/// {l}
+/// A numerically large value is specified for an element in A.
 pub const MSK_RES_WRN_LARGE_AIJ : i32 = 62;
-/// {l}
+/// One or more zero elements are specified in A.
 pub const MSK_RES_WRN_ZERO_AIJ : i32 = 63;
-/// {l}
+/// A name is longer than the buffer that is supposed to hold it.
 pub const MSK_RES_WRN_NAME_MAX_LEN : i32 = 65;
-/// {l}
+/// A value for a string parameter is longer than the buffer that is supposed to hold it.
 pub const MSK_RES_WRN_SPAR_MAX_LEN : i32 = 66;
-/// {l}
+/// An RHS vector is split into several nonadjacent parts.
 pub const MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR : i32 = 70;
-/// {l}
+/// A RANGE vector is split into several nonadjacent parts in an MPS file.
 pub const MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR : i32 = 71;
-/// {l}
+/// A BOUNDS vector is split into several nonadjacent parts in an MPS file.
 pub const MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR : i32 = 72;
-/// {l}
+/// Missing '/2' after quadratic expressions in bound or objective.
 pub const MSK_RES_WRN_LP_OLD_QUAD_FORMAT : i32 = 80;
-/// {l}
+/// Ignore a variable because the variable was not previously defined.
 pub const MSK_RES_WRN_LP_DROP_VARIABLE : i32 = 85;
-/// {l}
+/// Non-zero elements specified in the upper triangle of a matrix were ignored.
 pub const MSK_RES_WRN_NZ_IN_UPR_TRI : i32 = 200;
-/// {l}
+/// One or more non-zero elements were dropped in the Q matrix in the objective.
 pub const MSK_RES_WRN_DROPPED_NZ_QOBJ : i32 = 201;
-/// {l}
+/// Ignored integer constraints.
 pub const MSK_RES_WRN_IGNORE_INTEGER : i32 = 250;
-/// {l}
+/// No global optimizer is available.
 pub const MSK_RES_WRN_NO_GLOBAL_OPTIMIZER : i32 = 251;
-/// {l}
+/// The final mixed-integer problem with all the integer variables fixed at their optimal values is infeasible.
 pub const MSK_RES_WRN_MIO_INFEASIBLE_FINAL : i32 = 270;
-/// {l}
+/// Invalid solution filter is specified.
 pub const MSK_RES_WRN_SOL_FILTER : i32 = 300;
-/// {l}
+/// Undefined name occurred in a solution.
 pub const MSK_RES_WRN_UNDEF_SOL_FILE_NAME : i32 = 350;
-/// {l}
+/// One or more lines in the constraint section were ignored when reading a solution file.
 pub const MSK_RES_WRN_SOL_FILE_IGNORED_CON : i32 = 351;
-/// {l}
+/// One or more lines in the variable section were ignored when reading a solution file.
 pub const MSK_RES_WRN_SOL_FILE_IGNORED_VAR : i32 = 352;
-/// {l}
+/// An incomplete basis is specified.
 pub const MSK_RES_WRN_TOO_FEW_BASIS_VARS : i32 = 400;
-/// {l}
+/// A basis with too many variables is specified.
 pub const MSK_RES_WRN_TOO_MANY_BASIS_VARS : i32 = 405;
-/// {l}
+/// The license expires.
 pub const MSK_RES_WRN_LICENSE_EXPIRE : i32 = 500;
-/// {l}
+/// The license server is not responding.
 pub const MSK_RES_WRN_LICENSE_SERVER : i32 = 501;
-/// {l}
+/// A variable or constraint name is empty. The output file may be invalid.
 pub const MSK_RES_WRN_EMPTY_NAME : i32 = 502;
-/// {l}
+/// Generic names are used because a name is not valid.
 pub const MSK_RES_WRN_USING_GENERIC_NAMES : i32 = 503;
-/// {l}
+/// A name e.g. a row name is not a valid MPS name.
 pub const MSK_RES_WRN_INVALID_MPS_NAME : i32 = 504;
-/// {l}
+/// The objective name is not a valid MPS name.
 pub const MSK_RES_WRN_INVALID_MPS_OBJ_NAME : i32 = 505;
-/// {l}
+/// The license expires.
 pub const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE : i32 = 509;
-/// {l}
+/// Parameter name not recognized.
 pub const MSK_RES_WRN_PARAM_NAME_DOU : i32 = 510;
-/// {l}
+/// Parameter name not recognized.
 pub const MSK_RES_WRN_PARAM_NAME_INT : i32 = 511;
-/// {l}
+/// Parameter name not recognized.
 pub const MSK_RES_WRN_PARAM_NAME_STR : i32 = 512;
-/// {l}
+/// A parameter value is not correct.
 pub const MSK_RES_WRN_PARAM_STR_VALUE : i32 = 515;
-/// {l}
+/// A parameter was ignored by the conic mixed integer optimizer.
 pub const MSK_RES_WRN_PARAM_IGNORED_CMIO : i32 = 516;
-/// {l}
+/// One or more (near) zero elements are specified in a sparse row of a matrix.
 pub const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW : i32 = 705;
-/// {l}
+/// One or more (near) zero elements are specified in a sparse column of a matrix.
 pub const MSK_RES_WRN_ZEROS_IN_SPARSE_COL : i32 = 710;
-/// {l}
+/// The linear dependency check(s) is incomplete.
 pub const MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK : i32 = 800;
-/// {l}
+/// The eliminator is skipped at least once due to lack of space.
 pub const MSK_RES_WRN_ELIMINATOR_SPACE : i32 = 801;
-/// {l}
+/// The presolve is incomplete due to lack of space.
 pub const MSK_RES_WRN_PRESOLVE_OUTOFSPACE : i32 = 802;
-/// {l}
+/// The presolve perturbed the bounds of the primal problem. This is an indication that the problem is nearly infeasible.
 pub const MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS : i32 = 803;
-/// {l}
+/// Some names were changed because they were invalid for the output file format.
 pub const MSK_RES_WRN_WRITE_CHANGED_NAMES : i32 = 830;
-/// {l}
+/// The fixed objective term was discarded in the output file.
 pub const MSK_RES_WRN_WRITE_DISCARDED_CFIX : i32 = 831;
-/// {l}
+/// Two constraint names are identical.
 pub const MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES : i32 = 850;
-/// {l}
+/// Two variable names are identical.
 pub const MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES : i32 = 851;
-/// {l}
+/// Two barvariable names are identical.
 pub const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES : i32 = 852;
-/// {l}
+/// Two cone names are identical.
 pub const MSK_RES_WRN_DUPLICATE_CONE_NAMES : i32 = 853;
-/// {l}
+/// LP file will be written with generic variable names.
 pub const MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES : i32 = 854;
-/// {l}
+/// LP file will be written with generic variable names.
 pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES : i32 = 855;
-/// {l}
+/// LP file will be written with generic constraint names.
 pub const MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES : i32 = 856;
-/// {l}
+/// LP file will be written with generic constraint names.
 pub const MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES : i32 = 857;
-/// {l}
+/// Warn against very large bounds.
 pub const MSK_RES_WRN_ANA_LARGE_BOUNDS : i32 = 900;
-/// {l}
+/// Warn against all objective coefficients being zero.
 pub const MSK_RES_WRN_ANA_C_ZERO : i32 = 901;
-/// {l}
+/// Warn against empty columns.
 pub const MSK_RES_WRN_ANA_EMPTY_COLS : i32 = 902;
-/// {l}
+/// Warn against close bounds.
 pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS : i32 = 903;
-/// {l}
+/// Warn against almost integral bounds.
 pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS : i32 = 904;
-/// {l}
+/// An infeasibility report is not available when the problem contains matrix variables.
 pub const MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES : i32 = 930;
-/// {l}
+/// No automatic dualizer is available for the specified problem.
 pub const MSK_RES_WRN_NO_DUALIZER : i32 = 950;
-/// {l}
+/// A numerically large value is specified for an element in E.
 pub const MSK_RES_WRN_SYM_MAT_LARGE : i32 = 960;
-/// {l}
+/// A double parameter related to solver tolerances has a non-default value.
 pub const MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER : i32 = 970;
-/// {l}
+/// A numerically large value is specified for an element in F.
 pub const MSK_RES_WRN_LARGE_FIJ : i32 = 980;
-/// {l}
+/// Invalid license.
 pub const MSK_RES_ERR_LICENSE : i32 = 1000;
-/// {l}
+/// The license has expired.
 pub const MSK_RES_ERR_LICENSE_EXPIRED : i32 = 1001;
-/// {l}
+/// Invalid license version.
 pub const MSK_RES_ERR_LICENSE_VERSION : i32 = 1002;
-/// {l}
+/// The license server version is too old.
 pub const MSK_RES_ERR_LICENSE_OLD_SERVER_VERSION : i32 = 1003;
-/// {l}
+/// The problem is bigger than the license.
 pub const MSK_RES_ERR_SIZE_LICENSE : i32 = 1005;
-/// {l}
+/// The software is not licensed to solve the problem.
 pub const MSK_RES_ERR_PROB_LICENSE : i32 = 1006;
-/// {l}
+/// Invalid license file.
 pub const MSK_RES_ERR_FILE_LICENSE : i32 = 1007;
-/// {l}
+/// A license cannot be located.
 pub const MSK_RES_ERR_MISSING_LICENSE_FILE : i32 = 1008;
-/// {l}
+/// The problem has too many constraints.
 pub const MSK_RES_ERR_SIZE_LICENSE_CON : i32 = 1010;
-/// {l}
+/// The problem has too many variables.
 pub const MSK_RES_ERR_SIZE_LICENSE_VAR : i32 = 1011;
-/// {l}
+/// The problem contains too many integer variables.
 pub const MSK_RES_ERR_SIZE_LICENSE_INTVAR : i32 = 1012;
-/// {l}
+/// The optimizer required is not licensed.
 pub const MSK_RES_ERR_OPTIMIZER_LICENSE : i32 = 1013;
-/// {l}
+/// The license manager reported an error.
 pub const MSK_RES_ERR_FLEXLM : i32 = 1014;
-/// {l}
+/// The license server is not responding.
 pub const MSK_RES_ERR_LICENSE_SERVER : i32 = 1015;
-/// {l}
+/// Maximum number of licenses is reached.
 pub const MSK_RES_ERR_LICENSE_MAX : i32 = 1016;
-/// {l}
+/// The MOSEKLM license manager daemon is not up and running.
 pub const MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON : i32 = 1017;
-/// {l}
+/// A requested feature is not available in the license file(s).
 pub const MSK_RES_ERR_LICENSE_FEATURE : i32 = 1018;
-/// {l}
+/// A requested license feature is not available for the required platform.
 pub const MSK_RES_ERR_PLATFORM_NOT_LICENSED : i32 = 1019;
-/// {l}
+/// The license system cannot allocate the memory required.
 pub const MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE : i32 = 1020;
-/// {l}
+/// MOSEK cannot connect to the license server.
 pub const MSK_RES_ERR_LICENSE_CANNOT_CONNECT : i32 = 1021;
-/// {l}
+/// The host ID specified in the license file does not match the host ID of the computer.
 pub const MSK_RES_ERR_LICENSE_INVALID_HOSTID : i32 = 1025;
-/// {l}
+/// The version specified in the checkout request is greater than the highest version number the daemon supports.
 pub const MSK_RES_ERR_LICENSE_SERVER_VERSION : i32 = 1026;
-/// {l}
+/// The license server does not support the requested feature.
 pub const MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT : i32 = 1027;
-/// {l}
+/// No SERVER lines in license file.
 pub const MSK_RES_ERR_LICENSE_NO_SERVER_LINE : i32 = 1028;
-/// {l}
+/// The dynamic link library is older than the specified version.
 pub const MSK_RES_ERR_OLDER_DLL : i32 = 1035;
-/// {l}
+/// The dynamic link library is newer than the specified version.
 pub const MSK_RES_ERR_NEWER_DLL : i32 = 1036;
-/// {l}
+/// A file cannot be linked to a stream in the DLL version.
 pub const MSK_RES_ERR_LINK_FILE_DLL : i32 = 1040;
-/// {l}
+/// Could not initialize a mutex.
 pub const MSK_RES_ERR_THREAD_MUTEX_INIT : i32 = 1045;
-/// {l}
+/// Could not lock a mutex.
 pub const MSK_RES_ERR_THREAD_MUTEX_LOCK : i32 = 1046;
-/// {l}
+/// Could not unlock a mutex.
 pub const MSK_RES_ERR_THREAD_MUTEX_UNLOCK : i32 = 1047;
-/// {l}
+/// Could not create a thread.
 pub const MSK_RES_ERR_THREAD_CREATE : i32 = 1048;
-/// {l}
+/// Could not initialize a condition.
 pub const MSK_RES_ERR_THREAD_COND_INIT : i32 = 1049;
-/// {l}
+/// Unknown error.
 pub const MSK_RES_ERR_UNKNOWN : i32 = 1050;
-/// {l}
+/// Out of space.
 pub const MSK_RES_ERR_SPACE : i32 = 1051;
-/// {l}
+/// An error occurred while opening a file.
 pub const MSK_RES_ERR_FILE_OPEN : i32 = 1052;
-/// {l}
+/// An error occurred while reading file.
 pub const MSK_RES_ERR_FILE_READ : i32 = 1053;
-/// {l}
+/// An error occurred while writing to a file.
 pub const MSK_RES_ERR_FILE_WRITE : i32 = 1054;
-/// {l}
+/// The data file format cannot be determined from the file name.
 pub const MSK_RES_ERR_DATA_FILE_EXT : i32 = 1055;
-/// {l}
+/// An invalid file name has been specified.
 pub const MSK_RES_ERR_INVALID_FILE_NAME : i32 = 1056;
-/// {l}
+/// An invalid file name has been specified.
 pub const MSK_RES_ERR_INVALID_SOL_FILE_NAME : i32 = 1057;
-/// {l}
+/// End of file reached.
 pub const MSK_RES_ERR_END_OF_FILE : i32 = 1059;
-/// {l}
+/// env is a null pointer.
 pub const MSK_RES_ERR_NULL_ENV : i32 = 1060;
-/// {l}
+/// task is a null pointer.
 pub const MSK_RES_ERR_NULL_TASK : i32 = 1061;
-/// {l}
+/// An invalid stream is referenced.
 pub const MSK_RES_ERR_INVALID_STREAM : i32 = 1062;
-/// {l}
+/// Environment is not initialized.
 pub const MSK_RES_ERR_NO_INIT_ENV : i32 = 1063;
-/// {l}
+/// The task is invalid.
 pub const MSK_RES_ERR_INVALID_TASK : i32 = 1064;
-/// {l}
+/// An argument to a function is unexpectedly a null pointer.
 pub const MSK_RES_ERR_NULL_POINTER : i32 = 1065;
-/// {l}
+/// Not all tasks associated with the environment have been deleted.
 pub const MSK_RES_ERR_LIVING_TASKS : i32 = 1066;
-/// {l}
+/// An all blank name has been specified.
 pub const MSK_RES_ERR_BLANK_NAME : i32 = 1070;
-/// {l}
+/// Duplicate names specified.
 pub const MSK_RES_ERR_DUP_NAME : i32 = 1071;
-/// {l}
+/// The name format string is invalid.
 pub const MSK_RES_ERR_FORMAT_STRING : i32 = 1072;
-/// {l}
+/// The sparsity included an index that was out of bounds of the shape.
 pub const MSK_RES_ERR_SPARSITY_SPECIFICATION : i32 = 1073;
-/// {l}
+/// Mismatching dimensions specified in arguments
 pub const MSK_RES_ERR_MISMATCHING_DIMENSION : i32 = 1074;
-/// {l}
+/// An invalid objective name is specified.
 pub const MSK_RES_ERR_INVALID_OBJ_NAME : i32 = 1075;
-/// {l}
+/// An invalid constraint name is used.
 pub const MSK_RES_ERR_INVALID_CON_NAME : i32 = 1076;
-/// {l}
+/// An invalid variable name is used.
 pub const MSK_RES_ERR_INVALID_VAR_NAME : i32 = 1077;
-/// {l}
+/// An invalid cone name is used.
 pub const MSK_RES_ERR_INVALID_CONE_NAME : i32 = 1078;
-/// {l}
+/// An invalid symmetric matrix variable name is used.
 pub const MSK_RES_ERR_INVALID_BARVAR_NAME : i32 = 1079;
-/// {l}
+/// MOSEK is leaking memory.
 pub const MSK_RES_ERR_SPACE_LEAKING : i32 = 1080;
-/// {l}
+/// No available information about the space usage.
 pub const MSK_RES_ERR_SPACE_NO_INFO : i32 = 1081;
-/// {l}
+/// Invalid dimension specification
 pub const MSK_RES_ERR_DIMENSION_SPECIFICATION : i32 = 1082;
-/// {l}
+/// Invalid axis names specification
 pub const MSK_RES_ERR_AXIS_NAME_SPECIFICATION : i32 = 1083;
-/// {l}
+/// The specified format cannot be read.
 pub const MSK_RES_ERR_READ_FORMAT : i32 = 1090;
-/// {l}
+/// An error occurred while reading an MPS file.
 pub const MSK_RES_ERR_MPS_FILE : i32 = 1100;
-/// {l}
+/// Invalid field occurred while reading an MPS file.
 pub const MSK_RES_ERR_MPS_INV_FIELD : i32 = 1101;
-/// {l}
+/// An invalid marker has been specified in the MPS file.
 pub const MSK_RES_ERR_MPS_INV_MARKER : i32 = 1102;
-/// {l}
+/// An empty constraint name is used in an MPS file.
 pub const MSK_RES_ERR_MPS_NULL_CON_NAME : i32 = 1103;
-/// {l}
+/// An empty variable name is used in an MPS file.
 pub const MSK_RES_ERR_MPS_NULL_VAR_NAME : i32 = 1104;
-/// {l}
+/// An undefined constraint name occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_UNDEF_CON_NAME : i32 = 1105;
-/// {l}
+/// An undefined variable name occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_UNDEF_VAR_NAME : i32 = 1106;
-/// {l}
+/// An invalid constraint key occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_INVALID_CON_KEY : i32 = 1107;
-/// {l}
+/// An invalid bound key occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_INVALID_BOUND_KEY : i32 = 1108;
-/// {l}
+/// An invalid section name occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_INVALID_SEC_NAME : i32 = 1109;
-/// {l}
+/// No objective is defined in an MPS file.
 pub const MSK_RES_ERR_MPS_NO_OBJECTIVE : i32 = 1110;
-/// {l}
+/// The non-zero elements in A corresponding to a variable in an MPS file must be specified consecutively.
 pub const MSK_RES_ERR_MPS_SPLITTED_VAR : i32 = 1111;
-/// {l}
+/// A constraint name is specified multiple times in the ROWS section in an MPS file.
 pub const MSK_RES_ERR_MPS_MUL_CON_NAME : i32 = 1112;
-/// {l}
+/// Multiple QSECTIONs are specified for a constraint.
 pub const MSK_RES_ERR_MPS_MUL_QSEC : i32 = 1113;
-/// {l}
+/// The Q term in the objective is specified multiple times.
 pub const MSK_RES_ERR_MPS_MUL_QOBJ : i32 = 1114;
-/// {l}
+/// The sections in an MPS file is not in the correct order.
 pub const MSK_RES_ERR_MPS_INV_SEC_ORDER : i32 = 1115;
-/// {l}
+/// Multiple CSECTIONs are given the same name.
 pub const MSK_RES_ERR_MPS_MUL_CSEC : i32 = 1116;
-/// {l}
+/// Invalid cone type specified in a  CSECTION.
 pub const MSK_RES_ERR_MPS_CONE_TYPE : i32 = 1117;
-/// {l}
+/// A variable is specified to be a member of several cones.
 pub const MSK_RES_ERR_MPS_CONE_OVERLAP : i32 = 1118;
-/// {l}
+/// A variable is repeated within the CSECTION.
 pub const MSK_RES_ERR_MPS_CONE_REPEAT : i32 = 1119;
-/// {l}
+/// A non symmetric matrix has been speciefied.
 pub const MSK_RES_ERR_MPS_NON_SYMMETRIC_Q : i32 = 1120;
-/// {l}
+/// Duplicate elements is specified in a Q matrix.
 pub const MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT : i32 = 1121;
-/// {l}
+/// An invalid objective sense is specified.
 pub const MSK_RES_ERR_MPS_INVALID_OBJSENSE : i32 = 1122;
-/// {l}
+/// A tab char occurred in field 2.
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD2 : i32 = 1125;
-/// {l}
+/// A tab char occurred in field 3.
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD3 : i32 = 1126;
-/// {l}
+/// A tab char occurred in field 5.
 pub const MSK_RES_ERR_MPS_TAB_IN_FIELD5 : i32 = 1127;
-/// {l}
+/// An invalid objective name is specified.
 pub const MSK_RES_ERR_MPS_INVALID_OBJ_NAME : i32 = 1128;
-/// {l}
+/// An invalid indicator key occurred in an MPS file.
 pub const MSK_RES_ERR_MPS_INVALID_KEY : i32 = 1129;
-/// {l}
+/// An invalid indicator constraint is used. It must not be a ranged constraint.
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_CONSTRAINT : i32 = 1130;
-/// {l}
+/// An invalid indicator variable is specfied. It must be a binary variable.
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE : i32 = 1131;
-/// {l}
+/// An invalid indicator value is specfied. It must be either 0 or 1.
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE : i32 = 1132;
-/// {l}
+/// A quadratic constraint can be be an indicator constraint.
 pub const MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT : i32 = 1133;
-/// {l}
+/// The problem cannot be written to an LP formatted file.
 pub const MSK_RES_ERR_LP_INCOMPATIBLE : i32 = 1150;
-/// {l}
+/// The problem cannot be written to an LP formatted file.
 pub const MSK_RES_ERR_LP_EMPTY : i32 = 1151;
-/// {l}
+/// The name of the slack variable added to a ranged constraint already exists.
 pub const MSK_RES_ERR_LP_DUP_SLACK_NAME : i32 = 1152;
-/// {l}
+/// An invalid name is created while writing an MPS file.
 pub const MSK_RES_ERR_WRITE_MPS_INVALID_NAME : i32 = 1153;
-/// {l}
+/// A variable name is invalid when used in an LP formatted file.
 pub const MSK_RES_ERR_LP_INVALID_VAR_NAME : i32 = 1154;
-/// {l}
+/// Free constraints cannot be written in LP file format.
 pub const MSK_RES_ERR_LP_FREE_CONSTRAINT : i32 = 1155;
-/// {l}
+/// Empty variable names cannot be written to OPF files.
 pub const MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME : i32 = 1156;
-/// {l}
+/// Syntax error in an LP file.
 pub const MSK_RES_ERR_LP_FILE_FORMAT : i32 = 1157;
-/// {l}
+/// Problem cannot be written as an LP file.
 pub const MSK_RES_ERR_WRITE_LP_FORMAT : i32 = 1158;
-/// {l}
+/// Syntax error in LP fil. Possibly missing End tag.
 pub const MSK_RES_ERR_READ_LP_MISSING_END_TAG : i32 = 1159;
-/// {l}
+/// Syntax error in an LP file.
 pub const MSK_RES_ERR_LP_FORMAT : i32 = 1160;
-/// {l}
+/// An auto-generated name is not unique.
 pub const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME : i32 = 1161;
-/// {l}
+/// A variable never occurred in objective or constraints.
 pub const MSK_RES_ERR_READ_LP_NONEXISTING_NAME : i32 = 1162;
-/// {l}
+/// The problem contains cones that cannot be written to an LP formatted file.
 pub const MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM : i32 = 1163;
-/// {l}
+/// The problem contains general convex terms that cannot be written to an LP formatted file.
 pub const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM : i32 = 1164;
-/// {l}
+/// An error occurred while writing file
 pub const MSK_RES_ERR_WRITING_FILE : i32 = 1166;
-/// {l}
+/// Syntax error in an OPF file
 pub const MSK_RES_ERR_OPF_FORMAT : i32 = 1168;
-/// {l}
+/// Variable not previously defined.
 pub const MSK_RES_ERR_OPF_NEW_VARIABLE : i32 = 1169;
-/// {l}
+/// An invalid name occurred in a solution file.
 pub const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE : i32 = 1170;
-/// {l}
+/// A constraint name is invalid when used in an LP formatted file.
 pub const MSK_RES_ERR_LP_INVALID_CON_NAME : i32 = 1171;
-/// {l}
+/// Premature end of file in an OPF file.
 pub const MSK_RES_ERR_OPF_PREMATURE_EOF : i32 = 1172;
-/// {l}
+/// Syntax error in an JSON data
 pub const MSK_RES_ERR_JSON_SYNTAX : i32 = 1175;
-/// {l}
+/// Error in JSON string.
 pub const MSK_RES_ERR_JSON_STRING : i32 = 1176;
-/// {l}
+/// Invalid number entry - wrong type or value overflow.
 pub const MSK_RES_ERR_JSON_NUMBER_OVERFLOW : i32 = 1177;
-/// {l}
+/// Error in an JSON Task file
 pub const MSK_RES_ERR_JSON_FORMAT : i32 = 1178;
-/// {l}
+/// Inconsistent data in JSON Task file
 pub const MSK_RES_ERR_JSON_DATA : i32 = 1179;
-/// {l}
+/// Missing data section in JSON task file.
 pub const MSK_RES_ERR_JSON_MISSING_DATA : i32 = 1180;
-/// {l}
+/// Incompatible item
 pub const MSK_RES_ERR_PTF_INCOMPATIBILITY : i32 = 1181;
-/// {l}
+/// Undefined symbol referenced
 pub const MSK_RES_ERR_PTF_UNDEFINED_ITEM : i32 = 1182;
-/// {l}
+/// Inconsistent size of item
 pub const MSK_RES_ERR_PTF_INCONSISTENCY : i32 = 1183;
-/// {l}
+/// Syntax error in an PTF file
 pub const MSK_RES_ERR_PTF_FORMAT : i32 = 1184;
-/// {l}
+/// Incorrect length of arguments.
 pub const MSK_RES_ERR_ARGUMENT_LENNEQ : i32 = 1197;
-/// {l}
+/// Incorrect argument type.
 pub const MSK_RES_ERR_ARGUMENT_TYPE : i32 = 1198;
-/// {l}
+/// Incorrect number of function arguments.
 pub const MSK_RES_ERR_NUM_ARGUMENTS : i32 = 1199;
-/// {l}
+/// A function argument is incorrect.
 pub const MSK_RES_ERR_IN_ARGUMENT : i32 = 1200;
-/// {l}
+/// A function argument is of incorrect dimension.
 pub const MSK_RES_ERR_ARGUMENT_DIMENSION : i32 = 1201;
-/// {l}
+/// The size of the n-dimensional shape is too large.
 pub const MSK_RES_ERR_SHAPE_IS_TOO_LARGE : i32 = 1202;
-/// {l}
+/// An index in an argument is too small.
 pub const MSK_RES_ERR_INDEX_IS_TOO_SMALL : i32 = 1203;
-/// {l}
+/// An index in an argument is too large.
 pub const MSK_RES_ERR_INDEX_IS_TOO_LARGE : i32 = 1204;
-/// {l}
+/// An index in an argument is is unique.
 pub const MSK_RES_ERR_INDEX_IS_NOT_UNIQUE : i32 = 1205;
-/// {l}
+/// A parameter name is not correct.
 pub const MSK_RES_ERR_PARAM_NAME : i32 = 1206;
-/// {l}
+/// A parameter name is not correct.
 pub const MSK_RES_ERR_PARAM_NAME_DOU : i32 = 1207;
-/// {l}
+/// A parameter name is not correct.
 pub const MSK_RES_ERR_PARAM_NAME_INT : i32 = 1208;
-/// {l}
+/// A parameter name is not correct.
 pub const MSK_RES_ERR_PARAM_NAME_STR : i32 = 1209;
-/// {l}
+/// Parameter index is out of range.
 pub const MSK_RES_ERR_PARAM_INDEX : i32 = 1210;
-/// {l}
+/// A parameter value is too large.
 pub const MSK_RES_ERR_PARAM_IS_TOO_LARGE : i32 = 1215;
-/// {l}
+/// A parameter value is too small.
 pub const MSK_RES_ERR_PARAM_IS_TOO_SMALL : i32 = 1216;
-/// {l}
+/// A parameter value string is incorrect.
 pub const MSK_RES_ERR_PARAM_VALUE_STR : i32 = 1217;
-/// {l}
+/// A parameter type is invalid.
 pub const MSK_RES_ERR_PARAM_TYPE : i32 = 1218;
-/// {l}
+/// A double information index is out of range for the specified type.
 pub const MSK_RES_ERR_INF_DOU_INDEX : i32 = 1219;
-/// {l}
+/// An integer information index is out of range for the specified type.
 pub const MSK_RES_ERR_INF_INT_INDEX : i32 = 1220;
-/// {l}
+/// An index in an array argument is too small.
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL : i32 = 1221;
-/// {l}
+/// An index in an array argument is too large.
 pub const MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE : i32 = 1222;
-/// {l}
+/// A long integer information index is out of range for the specified type.
 pub const MSK_RES_ERR_INF_LINT_INDEX : i32 = 1225;
-/// {l}
+/// The value of a argument is too small.
 pub const MSK_RES_ERR_ARG_IS_TOO_SMALL : i32 = 1226;
-/// {l}
+/// The value of a argument is too large.
 pub const MSK_RES_ERR_ARG_IS_TOO_LARGE : i32 = 1227;
-/// {l}
+/// whichsol is invalid.
 pub const MSK_RES_ERR_INVALID_WHICHSOL : i32 = 1228;
-/// {l}
+/// A double information name is invalid.
 pub const MSK_RES_ERR_INF_DOU_NAME : i32 = 1230;
-/// {l}
+/// An integer information name is invalid.
 pub const MSK_RES_ERR_INF_INT_NAME : i32 = 1231;
-/// {l}
+/// The information type is invalid.
 pub const MSK_RES_ERR_INF_TYPE : i32 = 1232;
-/// {l}
+/// A long integer information name is invalid.
 pub const MSK_RES_ERR_INF_LINT_NAME : i32 = 1234;
-/// {l}
+/// An index is out of range.
 pub const MSK_RES_ERR_INDEX : i32 = 1235;
-/// {l}
+/// The solution defined by whichsol does not exists.
 pub const MSK_RES_ERR_WHICHSOL : i32 = 1236;
-/// {l}
+/// The solution number  solemn does not exists.
 pub const MSK_RES_ERR_SOLITEM : i32 = 1237;
-/// {l}
+/// whichitem is unacceptable.
 pub const MSK_RES_ERR_WHICHITEM_NOT_ALLOWED : i32 = 1238;
-/// {l}
+/// Invalid maximum number of constraints specified.
 pub const MSK_RES_ERR_MAXNUMCON : i32 = 1240;
-/// {l}
+/// The maximum number of variables limit is too small.
 pub const MSK_RES_ERR_MAXNUMVAR : i32 = 1241;
-/// {l}
+/// The maximum number of semidefinite variables limit is too small.
 pub const MSK_RES_ERR_MAXNUMBARVAR : i32 = 1242;
-/// {l}
+/// Too small maximum number of non-zeros for the Q matrices is specified.
 pub const MSK_RES_ERR_MAXNUMQNZ : i32 = 1243;
-/// {l}
+/// The maximum number of non-zeros specified is too small.
 pub const MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ : i32 = 1245;
-/// {l}
+/// A specified index is invalid.
 pub const MSK_RES_ERR_INVALID_IDX : i32 = 1246;
-/// {l}
+/// A specified index is invalid.
 pub const MSK_RES_ERR_INVALID_MAX_NUM : i32 = 1247;
-/// {l}
+/// The value of whichsol is not allowed.
 pub const MSK_RES_ERR_UNALLOWED_WHICHSOL : i32 = 1248;
-/// {l}
+/// Maximum number of constraints limit is exceeded.
 pub const MSK_RES_ERR_NUMCONLIM : i32 = 1250;
-/// {l}
+/// Maximum number of variables limit is exceeded.
 pub const MSK_RES_ERR_NUMVARLIM : i32 = 1251;
-/// {l}
+/// Too small maximum number of non-zeros in A specified.
 pub const MSK_RES_ERR_TOO_SMALL_MAXNUMANZ : i32 = 1252;
-/// {l}
+/// aptre[j] is strictly smaller than aptrb[j] for some j.
 pub const MSK_RES_ERR_INV_APTRE : i32 = 1253;
-/// {l}
+/// An element in A is defined multiple times.
 pub const MSK_RES_ERR_MUL_A_ELEMENT : i32 = 1254;
-/// {l}
+/// Invalid bound key.
 pub const MSK_RES_ERR_INV_BK : i32 = 1255;
-/// {l}
+/// Invalid bound key is specified for a constraint.
 pub const MSK_RES_ERR_INV_BKC : i32 = 1256;
-/// {l}
+/// An invalid bound key is specified for a variable.
 pub const MSK_RES_ERR_INV_BKX : i32 = 1257;
-/// {l}
+/// An invalid variable type is specified for a variable.
 pub const MSK_RES_ERR_INV_VAR_TYPE : i32 = 1258;
-/// {l}
+/// Problem type does not match the chosen optimizer.
 pub const MSK_RES_ERR_SOLVER_PROBTYPE : i32 = 1259;
-/// {l}
+/// Empty objective range.
 pub const MSK_RES_ERR_OBJECTIVE_RANGE : i32 = 1260;
-/// {l}
+/// Invalid basis is specified.
 pub const MSK_RES_ERR_BASIS : i32 = 1266;
-/// {l}
+/// Invalid value in skc encountered.
 pub const MSK_RES_ERR_INV_SKC : i32 = 1267;
-/// {l}
+/// Invalid value in skx encountered.
 pub const MSK_RES_ERR_INV_SKX : i32 = 1268;
-/// {l}
+/// Invalid status key string encountered.
 pub const MSK_RES_ERR_INV_SK_STR : i32 = 1269;
-/// {l}
+/// Invalid status key code encountered.
 pub const MSK_RES_ERR_INV_SK : i32 = 1270;
-/// {l}
+/// Invalid cone type string encountered.
 pub const MSK_RES_ERR_INV_CONE_TYPE_STR : i32 = 1271;
-/// {l}
+/// Invalid cone type code encountered.
 pub const MSK_RES_ERR_INV_CONE_TYPE : i32 = 1272;
-/// {l}
+/// Invalid value in skn encountered.
 pub const MSK_RES_ERR_INV_SKN : i32 = 1274;
-/// {l}
+/// Invalid surplus.
 pub const MSK_RES_ERR_INVALID_SURPLUS : i32 = 1275;
-/// {l}
+/// An invalid name item code is used.
 pub const MSK_RES_ERR_INV_NAME_ITEM : i32 = 1280;
-/// {l}
+/// An invalid problem item is used.
 pub const MSK_RES_ERR_PRO_ITEM : i32 = 1281;
-/// {l}
+/// Invalid format type.
 pub const MSK_RES_ERR_INVALID_FORMAT_TYPE : i32 = 1283;
-/// {l}
+/// Invalid firsti.
 pub const MSK_RES_ERR_FIRSTI : i32 = 1285;
-/// {l}
+/// Invalid lasti.
 pub const MSK_RES_ERR_LASTI : i32 = 1286;
-/// {l}
+/// Invalid firstj.
 pub const MSK_RES_ERR_FIRSTJ : i32 = 1287;
-/// {l}
+/// Invalid lastj.
 pub const MSK_RES_ERR_LASTJ : i32 = 1288;
-/// {l}
+/// A maximum length that is too small has been specified.
 pub const MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL : i32 = 1289;
-/// {l}
+/// The model contains a nonlinear equality.
 pub const MSK_RES_ERR_NONLINEAR_EQUALITY : i32 = 1290;
-/// {l}
+/// The optimization problem is nonconvex.
 pub const MSK_RES_ERR_NONCONVEX : i32 = 1291;
-/// {l}
+/// The problem contains a nonlinear constraint with inite lower and upper bound.
 pub const MSK_RES_ERR_NONLINEAR_RANGED : i32 = 1292;
-/// {l}
+/// The quadratic constraint matrix is not PSD.
 pub const MSK_RES_ERR_CON_Q_NOT_PSD : i32 = 1293;
-/// {l}
+/// The quadratic constraint matrix is not NSD.
 pub const MSK_RES_ERR_CON_Q_NOT_NSD : i32 = 1294;
-/// {l}
+/// The quadratic coefficient matrix in the objective is not PSD.
 pub const MSK_RES_ERR_OBJ_Q_NOT_PSD : i32 = 1295;
-/// {l}
+/// The quadratic coefficient matrix in the objective is not NSD.
 pub const MSK_RES_ERR_OBJ_Q_NOT_NSD : i32 = 1296;
-/// {l}
+/// An invalid permutation array is specified.
 pub const MSK_RES_ERR_ARGUMENT_PERM_ARRAY : i32 = 1299;
-/// {l}
+/// An index of a non-existing cone has been specified.
 pub const MSK_RES_ERR_CONE_INDEX : i32 = 1300;
-/// {l}
+/// A cone with incorrect number of members is specified.
 pub const MSK_RES_ERR_CONE_SIZE : i32 = 1301;
-/// {l}
+/// One or more of variables in the cone to be added is already member of another cone.
 pub const MSK_RES_ERR_CONE_OVERLAP : i32 = 1302;
-/// {l}
+/// A variable is included multiple times in the cone.
 pub const MSK_RES_ERR_CONE_REP_VAR : i32 = 1303;
-/// {l}
+/// The value specified for maxnumcone is too small.
 pub const MSK_RES_ERR_MAXNUMCONE : i32 = 1304;
-/// {l}
+/// Invalid cone type specified.
 pub const MSK_RES_ERR_CONE_TYPE : i32 = 1305;
-/// {l}
+/// Invalid cone type specified.
 pub const MSK_RES_ERR_CONE_TYPE_STR : i32 = 1306;
-/// {l}
+/// The cone to be appended has one variable which is already member of another cone.
 pub const MSK_RES_ERR_CONE_OVERLAP_APPEND : i32 = 1307;
-/// {l}
+/// A variable cannot be removed because it will make a cone invalid.
 pub const MSK_RES_ERR_REMOVE_CONE_VARIABLE : i32 = 1310;
-/// {l}
+/// Trying to append a too big cone.
 pub const MSK_RES_ERR_APPENDING_TOO_BIG_CONE : i32 = 1311;
-/// {l}
+/// An invalid cone parameter.
 pub const MSK_RES_ERR_CONE_PARAMETER : i32 = 1320;
-/// {l}
+/// An invalid number is specified in a solution file.
 pub const MSK_RES_ERR_SOL_FILE_INVALID_NUMBER : i32 = 1350;
-/// {l}
+/// A huge value in absolute size is specified for an objective coefficient.
 pub const MSK_RES_ERR_HUGE_C : i32 = 1375;
-/// {l}
+/// A numerically huge value is specified for an element in A.
 pub const MSK_RES_ERR_HUGE_AIJ : i32 = 1380;
-/// {l}
+/// An element in the A matrix is specified twice.
 pub const MSK_RES_ERR_DUPLICATE_AIJ : i32 = 1385;
-/// {l}
+/// The lower bound specified is not a number (nan).
 pub const MSK_RES_ERR_LOWER_BOUND_IS_A_NAN : i32 = 1390;
-/// {l}
+/// The upper bound specified is not a number (nan).
 pub const MSK_RES_ERR_UPPER_BOUND_IS_A_NAN : i32 = 1391;
-/// {l}
+/// A numerically huge bound value is specified.
 pub const MSK_RES_ERR_INFINITE_BOUND : i32 = 1400;
-/// {l}
+/// Invalid value %d at qosubi.
 pub const MSK_RES_ERR_INV_QOBJ_SUBI : i32 = 1401;
-/// {l}
+/// Invalid value in qosubj.
 pub const MSK_RES_ERR_INV_QOBJ_SUBJ : i32 = 1402;
-/// {l}
+/// Invalid value in qoval.
 pub const MSK_RES_ERR_INV_QOBJ_VAL : i32 = 1403;
-/// {l}
+/// Invalid value in qcsubk.
 pub const MSK_RES_ERR_INV_QCON_SUBK : i32 = 1404;
-/// {l}
+/// Invalid value in qcsubi.
 pub const MSK_RES_ERR_INV_QCON_SUBI : i32 = 1405;
-/// {l}
+/// Invalid value in qcsubj.
 pub const MSK_RES_ERR_INV_QCON_SUBJ : i32 = 1406;
-/// {l}
+/// Invalid value in qcval.
 pub const MSK_RES_ERR_INV_QCON_VAL : i32 = 1407;
-/// {l}
+/// Invalid value in qcsubi.
 pub const MSK_RES_ERR_QCON_SUBI_TOO_SMALL : i32 = 1408;
-/// {l}
+/// Invalid value in qcsubi.
 pub const MSK_RES_ERR_QCON_SUBI_TOO_LARGE : i32 = 1409;
-/// {l}
+/// An element in the upper triangle of the quadratic term in the objective is specified.
 pub const MSK_RES_ERR_QOBJ_UPPER_TRIANGLE : i32 = 1415;
-/// {l}
+/// An element in the upper triangle of the quadratic term in a constraint.
 pub const MSK_RES_ERR_QCON_UPPER_TRIANGLE : i32 = 1417;
-/// {l}
+/// A fixed constraint/variable has been specified using the bound keys but the numerical bounds are different.
 pub const MSK_RES_ERR_FIXED_BOUND_VALUES : i32 = 1420;
-/// {l}
+/// A too small value for the A trucation value is specified.
 pub const MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE : i32 = 1421;
-/// {l}
+/// An invalid objective sense is specified.
 pub const MSK_RES_ERR_INVALID_OBJECTIVE_SENSE : i32 = 1445;
-/// {l}
+/// The objective sense has not been specified before the optimization.
 pub const MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE : i32 = 1446;
-/// {l}
+/// The solution item y is undefined.
 pub const MSK_RES_ERR_Y_IS_UNDEFINED : i32 = 1449;
-/// {l}
+/// An invalid floating value was used in some double data.
 pub const MSK_RES_ERR_NAN_IN_DOUBLE_DATA : i32 = 1450;
-/// {l}
+/// An infinite floating value was used in some double data.
 pub const MSK_RES_ERR_INF_IN_DOUBLE_DATA : i32 = 1451;
-/// {l}
+/// blc contains an invalid floating point value, i.e. a NaN.
 pub const MSK_RES_ERR_NAN_IN_BLC : i32 = 1461;
-/// {l}
+/// buc contains an invalid floating point value, i.e. a NaN.
 pub const MSK_RES_ERR_NAN_IN_BUC : i32 = 1462;
-/// {l}
+/// An invalid fixed term in the objective is speficied.
 pub const MSK_RES_ERR_INVALID_CFIX : i32 = 1469;
-/// {l}
+/// c contains an invalid floating point value, i.e. a NaN.
 pub const MSK_RES_ERR_NAN_IN_C : i32 = 1470;
-/// {l}
+/// blx contains an invalid floating point value, i.e. a NaN.
 pub const MSK_RES_ERR_NAN_IN_BLX : i32 = 1471;
-/// {l}
+/// bux contains an invalid floating point value, i.e. a NaN.
 pub const MSK_RES_ERR_NAN_IN_BUX : i32 = 1472;
-/// {l}
+/// a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_INVALID_AIJ : i32 = 1473;
-/// {l}
+/// c[j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_INVALID_CJ : i32 = 1474;
-/// {l}
+/// A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_SYM_MAT_INVALID : i32 = 1480;
-/// {l}
+/// A numerically huge value is specified for an element in E.
 pub const MSK_RES_ERR_SYM_MAT_HUGE : i32 = 1482;
-/// {l}
+/// Invalid problem type.
 pub const MSK_RES_ERR_INV_PROBLEM : i32 = 1500;
-/// {l}
+/// The problem contains both conic and nonlinear constraints.
 pub const MSK_RES_ERR_MIXED_CONIC_AND_NL : i32 = 1501;
-/// {l}
+/// The global optimizer can only be applied to problems without semidefinite variables.
 pub const MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM : i32 = 1503;
-/// {l}
+/// An invalid optimizer has been chosen for the problem.
 pub const MSK_RES_ERR_INV_OPTIMIZER : i32 = 1550;
-/// {l}
+/// No optimizer is available for the current class of integer optimization problems.
 pub const MSK_RES_ERR_MIO_NO_OPTIMIZER : i32 = 1551;
-/// {l}
+/// No optimizer is available for this class of optimization problems.
 pub const MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE : i32 = 1552;
-/// {l}
+/// An error occurred during the solution finalization.
 pub const MSK_RES_ERR_FINAL_SOLUTION : i32 = 1560;
-/// {l}
+/// Invalid first.
 pub const MSK_RES_ERR_FIRST : i32 = 1570;
-/// {l}
+/// Invalid last.
 pub const MSK_RES_ERR_LAST : i32 = 1571;
-/// {l}
+/// Invalid slice size specified.
 pub const MSK_RES_ERR_SLICE_SIZE : i32 = 1572;
-/// {l}
+/// Negative surplus.
 pub const MSK_RES_ERR_NEGATIVE_SURPLUS : i32 = 1573;
-/// {l}
+/// Cannot append a negative number.
 pub const MSK_RES_ERR_NEGATIVE_APPEND : i32 = 1578;
-/// {l}
+/// An error occurred during the postsolve.
 pub const MSK_RES_ERR_POSTSOLVE : i32 = 1580;
-/// {l}
+/// A computation produced an overflow.
 pub const MSK_RES_ERR_OVERFLOW : i32 = 1590;
-/// {l}
+/// No basic solution is defined.
 pub const MSK_RES_ERR_NO_BASIS_SOL : i32 = 1600;
-/// {l}
+/// The factorization of the basis is invalid.
 pub const MSK_RES_ERR_BASIS_FACTOR : i32 = 1610;
-/// {l}
+/// The basis is singular.
 pub const MSK_RES_ERR_BASIS_SINGULAR : i32 = 1615;
-/// {l}
+/// An error occurred while factorizing a matrix.
 pub const MSK_RES_ERR_FACTOR : i32 = 1650;
-/// {l}
+/// An optimization problem cannot be relaxed.
 pub const MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX : i32 = 1700;
-/// {l}
+/// The relaxed problem could not be solved to optimality.
 pub const MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED : i32 = 1701;
-/// {l}
+/// The upper bound is less than the lower bound for a variable or a constraint.
 pub const MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND : i32 = 1702;
-/// {l}
+/// The feasibility repair does not support the specified problem type.
 pub const MSK_RES_ERR_REPAIR_INVALID_PROBLEM : i32 = 1710;
-/// {l}
+/// Computation the optimal relaxation failed.
 pub const MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED : i32 = 1711;
-/// {l}
+/// A name is longer than the buffer that is supposed to hold it.
 pub const MSK_RES_ERR_NAME_MAX_LEN : i32 = 1750;
-/// {l}
+/// The name buffer is a null pointer.
 pub const MSK_RES_ERR_NAME_IS_NULL : i32 = 1760;
-/// {l}
+/// Invalid compression type.
 pub const MSK_RES_ERR_INVALID_COMPRESSION : i32 = 1800;
-/// {l}
+/// Invalid io mode.
 pub const MSK_RES_ERR_INVALID_IOMODE : i32 = 1801;
-/// {l}
+/// A certificate of primal infeasibility is not available.
 pub const MSK_RES_ERR_NO_PRIMAL_INFEAS_CER : i32 = 2000;
-/// {l}
+/// A certificate of dual infeasibility is not available.
 pub const MSK_RES_ERR_NO_DUAL_INFEAS_CER : i32 = 2001;
-/// {l}
+/// The required solution is not available.
 pub const MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK : i32 = 2500;
-/// {l}
+/// Invalid value in marki.
 pub const MSK_RES_ERR_INV_MARKI : i32 = 2501;
-/// {l}
+/// Invalid value in markj.
 pub const MSK_RES_ERR_INV_MARKJ : i32 = 2502;
-/// {l}
+/// Invalid numi.
 pub const MSK_RES_ERR_INV_NUMI : i32 = 2503;
-/// {l}
+/// Invalid numj.
 pub const MSK_RES_ERR_INV_NUMJ : i32 = 2504;
-/// {l}
+/// The Task file is incompatible with this platform.
 pub const MSK_RES_ERR_TASK_INCOMPATIBLE : i32 = 2560;
-/// {l}
+/// The Task file is invalid.
 pub const MSK_RES_ERR_TASK_INVALID : i32 = 2561;
-/// {l}
+/// Failed to write the task file.
 pub const MSK_RES_ERR_TASK_WRITE : i32 = 2562;
-/// {l}
+/// Could not compute the LU factors of the matrix within the maximum number of allowed tries.
 pub const MSK_RES_ERR_LU_MAX_NUM_TRIES : i32 = 2800;
-/// {l}
+/// An invalid UTF8 string is encountered.
 pub const MSK_RES_ERR_INVALID_UTF8 : i32 = 2900;
-/// {l}
+/// An invalid wchar string is encountered.
 pub const MSK_RES_ERR_INVALID_WCHAR : i32 = 2901;
-/// {l}
+/// No dual information is available for the integer solution.
 pub const MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL : i32 = 2950;
-/// {l}
+/// snx is not available for the basis solution.
 pub const MSK_RES_ERR_NO_SNX_FOR_BAS_SOL : i32 = 2953;
-/// {l}
+/// An internal error occurred.
 pub const MSK_RES_ERR_INTERNAL : i32 = 3000;
-/// {l}
+/// An input array was too short.
 pub const MSK_RES_ERR_API_ARRAY_TOO_SMALL : i32 = 3001;
-/// {l}
+/// Failed to connect a callback object.
 pub const MSK_RES_ERR_API_CB_CONNECT : i32 = 3002;
-/// {l}
+/// An internal error occurred in the API. Please report this problem.
 pub const MSK_RES_ERR_API_FATAL_ERROR : i32 = 3005;
-/// {l}
+/// Syntax error in sensitivity analysis file.
 pub const MSK_RES_ERR_SEN_FORMAT : i32 = 3050;
-/// {l}
+/// An undefined name was encountered in the sensitivity analysis file.
 pub const MSK_RES_ERR_SEN_UNDEF_NAME : i32 = 3051;
-/// {l}
+/// Index out of range in the sensitivity analysis file.
 pub const MSK_RES_ERR_SEN_INDEX_RANGE : i32 = 3052;
-/// {l}
+/// Analysis of upper bound requested for an index, where no upper bound exists.
 pub const MSK_RES_ERR_SEN_BOUND_INVALID_UP : i32 = 3053;
-/// {l}
+/// Analysis of lower bound requested for an index, where no lower bound exists.
 pub const MSK_RES_ERR_SEN_BOUND_INVALID_LO : i32 = 3054;
-/// {l}
+/// Invalid range given in the sensitivity file.
 pub const MSK_RES_ERR_SEN_INDEX_INVALID : i32 = 3055;
-/// {l}
+/// Syntax error in regexp or regexp longer than 1024.
 pub const MSK_RES_ERR_SEN_INVALID_REGEXP : i32 = 3056;
-/// {l}
+/// No optimal solution found to the original problem given for sensitivity analysis.
 pub const MSK_RES_ERR_SEN_SOLUTION_STATUS : i32 = 3057;
-/// {l}
+/// Numerical difficulties encountered performing the sensitivity analysis.
 pub const MSK_RES_ERR_SEN_NUMERICAL : i32 = 3058;
-/// {l}
+/// Sensitivity analysis cannot be performed for the specified problem.
 pub const MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE : i32 = 3080;
-/// {l}
+/// A step-size in an optimizer was unexpectedly unbounded.
 pub const MSK_RES_ERR_UNB_STEP_SIZE : i32 = 3100;
-/// {l}
+/// Some tasks related to this function call were identical. Unique tasks were expected.
 pub const MSK_RES_ERR_IDENTICAL_TASKS : i32 = 3101;
-/// {l}
+/// The code list data was invalid.
 pub const MSK_RES_ERR_AD_INVALID_CODELIST : i32 = 3102;
-/// {l}
+/// An internal unit test function failed.
 pub const MSK_RES_ERR_INTERNAL_TEST_FAILED : i32 = 3500;
-/// {l}
+/// The problem type is not supported by the XML format.
 pub const MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE : i32 = 3600;
-/// {l}
+/// Invalid AMPL stub.
 pub const MSK_RES_ERR_INVALID_AMPL_STUB : i32 = 3700;
-/// {l}
+/// A 64 bit integer could not be cast to a 32 bit integer.
 pub const MSK_RES_ERR_INT64_TO_INT32_CAST : i32 = 3800;
-/// {l}
+/// The computer contains more cpu cores than the license allows for.
 pub const MSK_RES_ERR_SIZE_LICENSE_NUMCORES : i32 = 3900;
-/// {l}
+/// The requested value is not defined for this solution type.
 pub const MSK_RES_ERR_INFEAS_UNDEFINED : i32 = 3910;
-/// {l}
+/// There is no barx available for the solution specified.
 pub const MSK_RES_ERR_NO_BARX_FOR_SOLUTION : i32 = 3915;
-/// {l}
+/// There is no bars available for the solution specified.
 pub const MSK_RES_ERR_NO_BARS_FOR_SOLUTION : i32 = 3916;
-/// {l}
+/// The dimension of a symmetric matrix variable has to be greater than 0.
 pub const MSK_RES_ERR_BAR_VAR_DIM : i32 = 3920;
-/// {l}
+/// A row index specified for sparse symmetric matrix is invalid.
 pub const MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX : i32 = 3940;
-/// {l}
+/// A column index specified for sparse symmetric matrix is invalid.
 pub const MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX : i32 = 3941;
-/// {l}
+/// Only the lower triangular part of sparse symmetric matrix should be specified.
 pub const MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR : i32 = 3942;
-/// {l}
+/// The numerical value specified in a sparse symmetric matrix is not a floating point value.
 pub const MSK_RES_ERR_SYM_MAT_INVALID_VALUE : i32 = 3943;
-/// {l}
+/// A value in a symmetric matric as been specified more than once.
 pub const MSK_RES_ERR_SYM_MAT_DUPLICATE : i32 = 3944;
-/// {l}
+/// A sparse symmetric matrix of invalid dimension is specified.
 pub const MSK_RES_ERR_INVALID_SYM_MAT_DIM : i32 = 3950;
-/// {l}
+/// An internal fatal error occurred in an interface function.
 pub const MSK_RES_ERR_API_INTERNAL : i32 = 3999;
-/// {l}
+/// The file format does not support a problem with symmetric matrix variables.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT : i32 = 4000;
-/// {l}
+/// The file format does not support a problem with nonzero fixed term in c.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX : i32 = 4001;
-/// {l}
+/// The file format does not support a problem with ranged constraints.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS : i32 = 4002;
-/// {l}
+/// The file format does not support a problem with free constraints.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS : i32 = 4003;
-/// {l}
+/// The file format does not support a problem with conic constraints.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES : i32 = 4005;
-/// {l}
+/// The file format does not support a problem with quadratic terms.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_QUADRATIC_TERMS : i32 = 4006;
-/// {l}
+/// The file format does not support a problem with nonlinear terms.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR : i32 = 4010;
-/// {l}
+/// The file format does not support a problem with disjunctive constraints.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS : i32 = 4011;
-/// {l}
+/// The file format does not support a problem with affine conic constraints.
 pub const MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS : i32 = 4012;
-/// {l}
+/// Two constraint names are identical.
 pub const MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES : i32 = 4500;
-/// {l}
+/// Two variable names are identical.
 pub const MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES : i32 = 4501;
-/// {l}
+/// Two barvariable names are identical.
 pub const MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES : i32 = 4502;
-/// {l}
+/// Two cone names are identical.
 pub const MSK_RES_ERR_DUPLICATE_CONE_NAMES : i32 = 4503;
-/// {l}
+/// Two domain names are identical.
 pub const MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES : i32 = 4504;
-/// {l}
+/// Two disjunctive constraint names are identical.
 pub const MSK_RES_ERR_DUPLICATE_DJC_NAMES : i32 = 4505;
-/// {l}
+/// An array does not contain unique elements.
 pub const MSK_RES_ERR_NON_UNIQUE_ARRAY : i32 = 5000;
-/// {l}
+/// The value of a function argument is too small.
 pub const MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL : i32 = 5004;
-/// {l}
+/// The value of a function argument is too large.
 pub const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE : i32 = 5005;
-/// {l}
+/// A fatal error occurred in the mixed integer optimizer.  Please contact MOSEK support.
 pub const MSK_RES_ERR_MIO_INTERNAL : i32 = 5010;
-/// {l}
+/// An invalid problem type.
 pub const MSK_RES_ERR_INVALID_PROBLEM_TYPE : i32 = 6000;
-/// {l}
+/// Unhandled solution status.
 pub const MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS : i32 = 6010;
-/// {l}
+/// An element in the upper triangle of a lower triangular matrix is specified.
 pub const MSK_RES_ERR_UPPER_TRIANGLE : i32 = 6020;
-/// {l}
+/// A matrix is singular.
 pub const MSK_RES_ERR_LAU_SINGULAR_MATRIX : i32 = 7000;
-/// {l}
+/// A matrix is not positive definite.
 pub const MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE : i32 = 7001;
-/// {l}
+/// An invalid lower triangular matrix.
 pub const MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX : i32 = 7002;
-/// {l}
+/// An unknown error.
 pub const MSK_RES_ERR_LAU_UNKNOWN : i32 = 7005;
-/// {l}
+/// Invalid argument m.
 pub const MSK_RES_ERR_LAU_ARG_M : i32 = 7010;
-/// {l}
+/// Invalid argument n.
 pub const MSK_RES_ERR_LAU_ARG_N : i32 = 7011;
-/// {l}
+/// Invalid argument k.
 pub const MSK_RES_ERR_LAU_ARG_K : i32 = 7012;
-/// {l}
+/// Invalid argument transa.
 pub const MSK_RES_ERR_LAU_ARG_TRANSA : i32 = 7015;
-/// {l}
+/// Invalid argument transb.
 pub const MSK_RES_ERR_LAU_ARG_TRANSB : i32 = 7016;
-/// {l}
+/// Invalid argument uplo.
 pub const MSK_RES_ERR_LAU_ARG_UPLO : i32 = 7017;
-/// {l}
+/// Invalid argument trans.
 pub const MSK_RES_ERR_LAU_ARG_TRANS : i32 = 7018;
-/// {l}
+/// An invalid sparse symmetric matrix is specfified.
 pub const MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX : i32 = 7019;
-/// {l}
+/// An error occurred while parsing an CBF file.
 pub const MSK_RES_ERR_CBF_PARSE : i32 = 7100;
-/// {l}
+/// An invalid objective sense is specified.
 pub const MSK_RES_ERR_CBF_OBJ_SENSE : i32 = 7101;
-/// {l}
+/// An invalid objective sense is specified.
 pub const MSK_RES_ERR_CBF_NO_VARIABLES : i32 = 7102;
-/// {l}
+/// Too many constraints specified.
 pub const MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS : i32 = 7103;
-/// {l}
+/// Too many variables specified.
 pub const MSK_RES_ERR_CBF_TOO_MANY_VARIABLES : i32 = 7104;
-/// {l}
+/// No version specified.
 pub const MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED : i32 = 7105;
-/// {l}
+/// Invalid syntax.
 pub const MSK_RES_ERR_CBF_SYNTAX : i32 = 7106;
-/// {l}
+/// Duplicate OBJ keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_OBJ : i32 = 7107;
-/// {l}
+/// Duplicate CON keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_CON : i32 = 7108;
-/// {l}
+/// Duplicate VAR keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_VAR : i32 = 7110;
-/// {l}
+/// Duplicate INT keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_INT : i32 = 7111;
-/// {l}
+/// Invalid variable type.
 pub const MSK_RES_ERR_CBF_INVALID_VAR_TYPE : i32 = 7112;
-/// {l}
+/// Invalid constraint type.
 pub const MSK_RES_ERR_CBF_INVALID_CON_TYPE : i32 = 7113;
-/// {l}
+/// Invalid domain dimension.
 pub const MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION : i32 = 7114;
-/// {l}
+/// Duplicate index in OBJCOORD.
 pub const MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD : i32 = 7115;
-/// {l}
+/// Duplicate index in BCOORD.
 pub const MSK_RES_ERR_CBF_DUPLICATE_BCOORD : i32 = 7116;
-/// {l}
+/// Duplicate index in ACOORD.
 pub const MSK_RES_ERR_CBF_DUPLICATE_ACOORD : i32 = 7117;
-/// {l}
+/// Too few variables defined.
 pub const MSK_RES_ERR_CBF_TOO_FEW_VARIABLES : i32 = 7118;
-/// {l}
+/// Too few constraints defined.
 pub const MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS : i32 = 7119;
-/// {l}
+/// Too ints specified.
 pub const MSK_RES_ERR_CBF_TOO_FEW_INTS : i32 = 7120;
-/// {l}
+/// Too ints specified.
 pub const MSK_RES_ERR_CBF_TOO_MANY_INTS : i32 = 7121;
-/// {l}
+/// Invalid INT index.
 pub const MSK_RES_ERR_CBF_INVALID_INT_INDEX : i32 = 7122;
-/// {l}
+/// Unsupported feature is present.
 pub const MSK_RES_ERR_CBF_UNSUPPORTED : i32 = 7123;
-/// {l}
+/// Duplicate PSDVAR keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR : i32 = 7124;
-/// {l}
+/// Invalid PSDVAR dimension.
 pub const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION : i32 = 7125;
-/// {l}
+/// Too few variables defined.
 pub const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR : i32 = 7126;
-/// {l}
+/// Invalid dimension of a exponential cone.
 pub const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION : i32 = 7127;
-/// {l}
+/// Multiple POWCONES specified.
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES : i32 = 7130;
-/// {l}
+/// Multiple POW*CONES specified.
 pub const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES : i32 = 7131;
-/// {l}
+/// Invalid power specified.
 pub const MSK_RES_ERR_CBF_INVALID_POWER : i32 = 7132;
-/// {l}
+/// Power cone is too long.
 pub const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG : i32 = 7133;
-/// {l}
+/// Invalid power cone index.
 pub const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX : i32 = 7134;
-/// {l}
+/// Invalid power star cone index.
 pub const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX : i32 = 7135;
-/// {l}
+/// An unhandled power cone type.
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE : i32 = 7136;
-/// {l}
+/// An unhandled power star cone type.
 pub const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE : i32 = 7137;
-/// {l}
+/// The power cone does not match with it definition.
 pub const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH : i32 = 7138;
-/// {l}
+/// The power star cone does not match with it definition.
 pub const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH : i32 = 7139;
-/// {l}
+/// Invalid number of cones.
 pub const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES : i32 = 7140;
-/// {l}
+/// Invalid number of cones.
 pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES : i32 = 7141;
-/// {l}
+/// Invalid number of PSDCON.
 pub const MSK_RES_ERR_CBF_INVALID_NUM_PSDCON : i32 = 7200;
-/// {l}
+/// Duplicate CON keyword.
 pub const MSK_RES_ERR_CBF_DUPLICATE_PSDCON : i32 = 7201;
-/// {l}
+/// Invalid PSDCON dimension.
 pub const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON : i32 = 7202;
-/// {l}
+/// Invalid PSDCON index.
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_INDEX : i32 = 7203;
-/// {l}
+/// Invalid PSDCON index.
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX : i32 = 7204;
-/// {l}
+/// Invalid PSDCON index.
 pub const MSK_RES_ERR_CBF_INVALID_PSDCON_BLOCK_INDEX : i32 = 7205;
-/// {l}
+/// The CHANGE section is not supported.
 pub const MSK_RES_ERR_CBF_UNSUPPORTED_CHANGE : i32 = 7210;
-/// {l}
+/// An invalid root optimizer was selected for the problem type.
 pub const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER : i32 = 7700;
-/// {l}
+/// An invalid node optimizer was selected for the problem type.
 pub const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER : i32 = 7701;
-/// {l}
+/// An invalid cone type occurs when writing a CPLEX formatted MPS file.
 pub const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE : i32 = 7750;
-/// {l}
+/// The matrix defining the quadratric part of constraint is not positive semidefinite.
 pub const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD : i32 = 7800;
-/// {l}
+/// The quadratic constraint is an equality, thus not convex.
 pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_FX : i32 = 7801;
-/// {l}
+/// The quadratic constraint has finite lower and upper bound, and therefore it is not convex.
 pub const MSK_RES_ERR_TOCONIC_CONSTRAINT_RA : i32 = 7802;
-/// {l}
+/// The constraint is not conic representable.
 pub const MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC : i32 = 7803;
-/// {l}
+/// The matrix defining the quadratric part of the objective function is not positive semidefinite.
 pub const MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD : i32 = 7804;
-/// {l}
+/// Failed to connect to remote solver server.
 pub const MSK_RES_ERR_SERVER_CONNECT : i32 = 8000;
-/// {l}
+/// Unexpected message or data from solver server.
 pub const MSK_RES_ERR_SERVER_PROTOCOL : i32 = 8001;
-/// {l}
+/// Server returned non-ok status code
 pub const MSK_RES_ERR_SERVER_STATUS : i32 = 8002;
-/// {l}
+/// Invalid job ID
 pub const MSK_RES_ERR_SERVER_TOKEN : i32 = 8003;
-/// {l}
+/// Invalid address
 pub const MSK_RES_ERR_SERVER_ADDRESS : i32 = 8004;
-/// {l}
+/// Invalid TLS certificate format or path
 pub const MSK_RES_ERR_SERVER_CERTIFICATE : i32 = 8005;
-/// {l}
+/// Failed to create TLS client
 pub const MSK_RES_ERR_SERVER_TLS_CLIENT : i32 = 8006;
-/// {l}
+/// Invalid access token
 pub const MSK_RES_ERR_SERVER_ACCESS_TOKEN : i32 = 8007;
-/// {l}
+/// The problem is too large.
 pub const MSK_RES_ERR_SERVER_PROBLEM_SIZE : i32 = 8008;
-/// {l}
+/// An element in the F matrix is specified twice.
 pub const MSK_RES_ERR_DUPLICATE_FIJ : i32 = 20100;
-/// {l}
+/// f[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_INVALID_FIJ : i32 = 20101;
-/// {l}
+/// A numerically huge value is specified for an element in F.
 pub const MSK_RES_ERR_HUGE_FIJ : i32 = 20102;
-/// {l}
+/// g contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_INVALID_G : i32 = 20103;
-/// {l}
+/// b contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_INVALID_B : i32 = 20150;
-/// {l}
+/// A domain index is invalid.
 pub const MSK_RES_ERR_DOMAIN_INVALID_INDEX : i32 = 20400;
-/// {l}
+/// A domain dimension is invalid.
 pub const MSK_RES_ERR_DOMAIN_DIMENSION : i32 = 20401;
-/// {l}
+/// A PSD domain dimension is invalid.
 pub const MSK_RES_ERR_DOMAIN_DIMENSION_PSD : i32 = 20402;
-/// {l}
+/// The function is only applicable to primal and dual power cone domains.
 pub const MSK_RES_ERR_NOT_POWER_DOMAIN : i32 = 20403;
-/// {l}
+/// Alpha contains an invalid floating point value, i.e. a NaN or an infinite value.
 pub const MSK_RES_ERR_DOMAIN_POWER_INVALID_ALPHA : i32 = 20404;
-/// {l}
+/// Alpha contains a negative value or zero.
 pub const MSK_RES_ERR_DOMAIN_POWER_NEGATIVE_ALPHA : i32 = 20405;
-/// {l}
+/// The value of nleft is too small or too large.
 pub const MSK_RES_ERR_DOMAIN_POWER_NLEFT : i32 = 20406;
-/// {l}
+/// An affine expression index is invalid.
 pub const MSK_RES_ERR_AFE_INVALID_INDEX : i32 = 20500;
-/// {l}
+/// A affine conic constraint index is invalid.
 pub const MSK_RES_ERR_ACC_INVALID_INDEX : i32 = 20600;
-/// {l}
+/// The index of an element in an affine conic constraint is invalid.
 pub const MSK_RES_ERR_ACC_INVALID_ENTRY_INDEX : i32 = 20601;
-/// {l}
+/// There is a mismatch between between the number of affine expressions and total dimension of the domain(s).
 pub const MSK_RES_ERR_ACC_AFE_DOMAIN_MISMATCH : i32 = 20602;
-/// {l}
+/// A disjunctive constraint index is invalid.
 pub const MSK_RES_ERR_DJC_INVALID_INDEX : i32 = 20700;
-/// {l}
+/// An unsupported domain type has been used in a disjunctive constraint.
 pub const MSK_RES_ERR_DJC_UNSUPPORTED_DOMAIN_TYPE : i32 = 20701;
-/// {l}
+/// There is a mismatch between the number of affine expressions and total dimension of the domain(s).
 pub const MSK_RES_ERR_DJC_AFE_DOMAIN_MISMATCH : i32 = 20702;
-/// {l}
+/// A termize is invalid.
 pub const MSK_RES_ERR_DJC_INVALID_TERM_SIZE : i32 = 20703;
-/// {l}
+/// There is a mismatch between the number of domains and the term sizes.
 pub const MSK_RES_ERR_DJC_DOMAIN_TERMSIZE_MISMATCH : i32 = 20704;
-/// {l}
+/// There total number of terms in all domains does not match.
 pub const MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH : i32 = 20705;
-/// {l}
+/// The required solution is not defined.
 pub const MSK_RES_ERR_UNDEF_SOLUTION : i32 = 22000;
-/// {l}
+/// No doty is available.
 pub const MSK_RES_ERR_NO_DOTY : i32 = 22010;
-/// {l}
+/// The optimizer terminated at the maximum number of iterations.
 pub const MSK_RES_TRM_MAX_ITERATIONS : i32 = 100000;
-/// {l}
+/// The optimizer terminated at the maximum amount of time.
 pub const MSK_RES_TRM_MAX_TIME : i32 = 100001;
-/// {l}
+/// The optimizer terminated with an objective value outside the objective range.
 pub const MSK_RES_TRM_OBJECTIVE_RANGE : i32 = 100002;
-/// {l}
+/// The optimizer is terminated due to slow progress.
 pub const MSK_RES_TRM_STALL : i32 = 100006;
-/// {l}
+/// The user-defined progress callback function terminated the optimization.
 pub const MSK_RES_TRM_USER_CALLBACK : i32 = 100007;
-/// {l}
+/// The mixed-integer optimizer terminated as the maximum number of relaxations was reached.
 pub const MSK_RES_TRM_MIO_NUM_RELAXS : i32 = 100008;
-/// {l}
+/// The mixed-integer optimizer terminated as the maximum number of branches was reached.
 pub const MSK_RES_TRM_MIO_NUM_BRANCHES : i32 = 100009;
-/// {l}
+/// The mixed-integer optimizer terminated as the maximum number of feasible solutions was reached.
 pub const MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS : i32 = 100015;
-/// {l}
+/// The optimizer terminated as the maximum number of set-backs was reached.
 pub const MSK_RES_TRM_MAX_NUM_SETBACKS : i32 = 100020;
-/// {l}
+/// The optimizer terminated due to a numerical problem.
 pub const MSK_RES_TRM_NUMERICAL_PROBLEM : i32 = 100025;
-/// {l}
+/// Lost a race.
 pub const MSK_RES_TRM_LOST_RACE : i32 = 100027;
-/// {l}
+/// The optimizer terminated due to some internal reason.
 pub const MSK_RES_TRM_INTERNAL : i32 = 100030;
-/// {l}
+/// The optimizer terminated for internal reasons.
 pub const MSK_RES_TRM_INTERNAL_STOP : i32 = 100031;
 
 // rescodetype
-/// {l}
+/// The response code is OK.
 pub const MSK_RESPONSE_OK : i32 = 0;
-/// {l}
+/// The response code is a warning.
 pub const MSK_RESPONSE_WRN : i32 = 1;
-/// {l}
+/// The response code is an optimizer termination status.
 pub const MSK_RESPONSE_TRM : i32 = 2;
-/// {l}
+/// The response code is an error.
 pub const MSK_RESPONSE_ERR : i32 = 3;
-/// {l}
+/// The response code does not belong to any class.
 pub const MSK_RESPONSE_UNK : i32 = 4;
 
 // scalingtype
-/// {l}
+/// The optimizer chooses the scaling heuristic.
 pub const MSK_SCALING_FREE : i32 = 0;
-/// {l}
+/// No scaling is performed.
 pub const MSK_SCALING_NONE : i32 = 1;
 
 // scalingmethod
-/// {l}
+/// Scales only with power of 2 leaving the mantissa untouched.
 pub const MSK_SCALING_METHOD_POW2 : i32 = 0;
-/// {l}
+/// The optimizer chooses the scaling heuristic.
 pub const MSK_SCALING_METHOD_FREE : i32 = 1;
 
 // sensitivitytype
-/// {l}
+/// Basis sensitivity analysis is performed.
 pub const MSK_SENSITIVITY_TYPE_BASIS : i32 = 0;
 
 // simseltype
-/// {l}
+/// The optimizer chooses the pricing strategy.
 pub const MSK_SIM_SELECTION_FREE : i32 = 0;
-/// {l}
+/// The optimizer uses full pricing.
 pub const MSK_SIM_SELECTION_FULL : i32 = 1;
-/// {l}
+/// The optimizer uses approximate steepest-edge pricing.
 pub const MSK_SIM_SELECTION_ASE : i32 = 2;
-/// {l}
+/// The optimizer uses devex steepest-edge pricing.
 pub const MSK_SIM_SELECTION_DEVEX : i32 = 3;
-/// {l}
+/// The optimizer uses steepest-edge selection.
 pub const MSK_SIM_SELECTION_SE : i32 = 4;
-/// {l}
+/// The optimizer uses a partial selection approach.
 pub const MSK_SIM_SELECTION_PARTIAL : i32 = 5;
 
 // solitem
-/// {l}
+/// Solution for the constraints.
 pub const MSK_SOL_ITEM_XC : i32 = 0;
-/// {l}
+/// Variable solution.
 pub const MSK_SOL_ITEM_XX : i32 = 1;
-/// {l}
+/// Lagrange multipliers for equations.
 pub const MSK_SOL_ITEM_Y : i32 = 2;
-/// {l}
+/// Lagrange multipliers for lower bounds on the constraints.
 pub const MSK_SOL_ITEM_SLC : i32 = 3;
-/// {l}
+/// Lagrange multipliers for upper bounds on the constraints.
 pub const MSK_SOL_ITEM_SUC : i32 = 4;
-/// {l}
+/// Lagrange multipliers for lower bounds on the variables.
 pub const MSK_SOL_ITEM_SLX : i32 = 5;
-/// {l}
+/// Lagrange multipliers for upper bounds on the variables.
 pub const MSK_SOL_ITEM_SUX : i32 = 6;
-/// {l}
+/// Lagrange multipliers corresponding to the conic constraints on the variables.
 pub const MSK_SOL_ITEM_SNX : i32 = 7;
 
 // solsta
-/// {l}
+/// Status of the solution is unknown.
 pub const MSK_SOL_STA_UNKNOWN : i32 = 0;
-/// {l}
+/// The solution is optimal.
 pub const MSK_SOL_STA_OPTIMAL : i32 = 1;
-/// {l}
+/// The solution is primal feasible.
 pub const MSK_SOL_STA_PRIM_FEAS : i32 = 2;
-/// {l}
+/// The solution is dual feasible.
 pub const MSK_SOL_STA_DUAL_FEAS : i32 = 3;
-/// {l}
+/// The solution is both primal and dual feasible.
 pub const MSK_SOL_STA_PRIM_AND_DUAL_FEAS : i32 = 4;
-/// {l}
+/// The solution is a certificate of primal infeasibility.
 pub const MSK_SOL_STA_PRIM_INFEAS_CER : i32 = 5;
-/// {l}
+/// The solution is a certificate of dual infeasibility.
 pub const MSK_SOL_STA_DUAL_INFEAS_CER : i32 = 6;
-/// {l}
+/// The solution is a certificate that the primal problem is illposed.
 pub const MSK_SOL_STA_PRIM_ILLPOSED_CER : i32 = 7;
-/// {l}
+/// The solution is a certificate that the dual problem is illposed.
 pub const MSK_SOL_STA_DUAL_ILLPOSED_CER : i32 = 8;
-/// {l}
+/// The primal solution is integer optimal.
 pub const MSK_SOL_STA_INTEGER_OPTIMAL : i32 = 9;
 
 // soltype
-/// {l}
+/// The interior solution.
 pub const MSK_SOL_ITR : i32 = 0;
-/// {l}
+/// The basic solution.
 pub const MSK_SOL_BAS : i32 = 1;
-/// {l}
+/// The integer solution.
 pub const MSK_SOL_ITG : i32 = 2;
 
 // solveform
-/// {l}
+/// The optimizer is free to solve either the primal or the dual problem.
 pub const MSK_SOLVE_FREE : i32 = 0;
-/// {l}
+/// The optimizer should solve the primal problem.
 pub const MSK_SOLVE_PRIMAL : i32 = 1;
-/// {l}
+/// The optimizer should solve the dual problem.
 pub const MSK_SOLVE_DUAL : i32 = 2;
 
 // sparam
-/// {l}
+/// Name of the bas solution file.
 pub const MSK_SPAR_BAS_SOL_FILE_NAME : i32 = 0;
-/// {l}
+/// Data are read and written to this file.
 pub const MSK_SPAR_DATA_FILE_NAME : i32 = 1;
-/// {l}
+/// MOSEK debug file.
 pub const MSK_SPAR_DEBUG_FILE_NAME : i32 = 2;
-/// {l}
+/// Name of the int solution file.
 pub const MSK_SPAR_INT_SOL_FILE_NAME : i32 = 3;
-/// {l}
+/// Name of the itr solution file.
 pub const MSK_SPAR_ITR_SOL_FILE_NAME : i32 = 4;
-/// {l}
+/// For internal debugging purposes.
 pub const MSK_SPAR_MIO_DEBUG_STRING : i32 = 5;
-/// {l}
+/// Solution file comment character.
 pub const MSK_SPAR_PARAM_COMMENT_SIGN : i32 = 6;
-/// {l}
+/// Modifications to the parameter database is read from this file.
 pub const MSK_SPAR_PARAM_READ_FILE_NAME : i32 = 7;
-/// {l}
+/// The parameter database is written to this file.
 pub const MSK_SPAR_PARAM_WRITE_FILE_NAME : i32 = 8;
-/// {l}
+/// Name of the BOUNDS vector used. An empty name means that the first BOUNDS vector is used.
 pub const MSK_SPAR_READ_MPS_BOU_NAME : i32 = 9;
-/// {l}
+/// Objective name in the MPS file.
 pub const MSK_SPAR_READ_MPS_OBJ_NAME : i32 = 10;
-/// {l}
+/// Name of the RANGE vector  used. An empty name means that the first RANGE vector is used.
 pub const MSK_SPAR_READ_MPS_RAN_NAME : i32 = 11;
-/// {l}
+/// Name of the RHS used. An empty name means that the first RHS vector is used.
 pub const MSK_SPAR_READ_MPS_RHS_NAME : i32 = 12;
-/// {l}
+/// URL of the remote optimization server.
 pub const MSK_SPAR_REMOTE_OPTSERVER_HOST : i32 = 13;
-/// {l}
+/// Known server certificates in PEM format
 pub const MSK_SPAR_REMOTE_TLS_CERT : i32 = 14;
-/// {l}
+/// Path to known server certificates in PEM format
 pub const MSK_SPAR_REMOTE_TLS_CERT_PATH : i32 = 15;
-/// {l}
+/// Sensitivity report file name.
 pub const MSK_SPAR_SENSITIVITY_FILE_NAME : i32 = 16;
-/// {l}
+/// Name of the sensitivity report output file.
 pub const MSK_SPAR_SENSITIVITY_RES_FILE_NAME : i32 = 17;
-/// {l}
+/// Solution file filter.
 pub const MSK_SPAR_SOL_FILTER_XC_LOW : i32 = 18;
-/// {l}
+/// Solution file filter.
 pub const MSK_SPAR_SOL_FILTER_XC_UPR : i32 = 19;
-/// {l}
+/// Solution file filter.
 pub const MSK_SPAR_SOL_FILTER_XX_LOW : i32 = 20;
-/// {l}
+/// Solution file filter.
 pub const MSK_SPAR_SOL_FILTER_XX_UPR : i32 = 21;
-/// {l}
+/// Key used when writing the summary file.
 pub const MSK_SPAR_STAT_KEY : i32 = 22;
-/// {l}
+/// Name used when writing the statistics file.
 pub const MSK_SPAR_STAT_NAME : i32 = 23;
-/// {l}
+/// Added variable names in the LP files.
 pub const MSK_SPAR_WRITE_LP_GEN_VAR_NAME : i32 = 24;
 
 // stakey
-/// {l}
+/// The status for the constraint or variable is unknown.
 pub const MSK_SK_UNK : i32 = 0;
-/// {l}
+/// The constraint or variable is in the basis.
 pub const MSK_SK_BAS : i32 = 1;
-/// {l}
+/// The constraint or variable is super basic.
 pub const MSK_SK_SUPBAS : i32 = 2;
-/// {l}
+/// The constraint or variable is at its lower bound.
 pub const MSK_SK_LOW : i32 = 3;
-/// {l}
+/// The constraint or variable is at its upper bound.
 pub const MSK_SK_UPR : i32 = 4;
-/// {l}
+/// The constraint or variable is fixed.
 pub const MSK_SK_FIX : i32 = 5;
-/// {l}
+/// The constraint or variable is infeasible in the bounds.
 pub const MSK_SK_INF : i32 = 6;
 
 // startpointtype
-/// {l}
+/// The starting point is chosen automatically.
 pub const MSK_STARTING_POINT_FREE : i32 = 0;
-/// {l}
+/// The optimizer guesses a starting point.
 pub const MSK_STARTING_POINT_GUESS : i32 = 1;
-/// {l}
+/// The optimizer constructs a starting point by assigning a constant value to all primal and dual variables. This starting point is normally robust.
 pub const MSK_STARTING_POINT_CONSTANT : i32 = 2;
-/// {l}
+/// The starting point satisfies all the simple bounds on nonlinear variables.
 pub const MSK_STARTING_POINT_SATISFY_BOUNDS : i32 = 3;
 
 // streamtype
-/// {l}
+/// Log stream. Contains the aggregated contents of all other streams. This means that a message written to any other stream will also be written to this stream.
 pub const MSK_STREAM_LOG : i32 = 0;
-/// {l}
+/// Message stream. Log information relating to performance and progress of the optimization is written to this stream.
 pub const MSK_STREAM_MSG : i32 = 1;
-/// {l}
+/// Error stream. Error messages are written to this stream.
 pub const MSK_STREAM_ERR : i32 = 2;
-/// {l}
+/// Warning stream. Warning messages are written to this stream.
 pub const MSK_STREAM_WRN : i32 = 3;
 
 // value
-/// {l}
+/// The length of a license key buffer.
 pub const MSK_LICENSE_BUFFER_LENGTH : i32 = 21;
-/// {l}
+/// Maximum string length allowed in MOSEK.
 pub const MSK_MAX_STR_LEN : i32 = 1024;
 
 // variabletype
-/// {l}
+/// Is a continuous variable.
 pub const MSK_VAR_TYPE_CONT : i32 = 0;
-/// {l}
+/// Is an integer variable.
 pub const MSK_VAR_TYPE_INT : i32 = 1;
 
 
