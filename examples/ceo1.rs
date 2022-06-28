@@ -17,19 +17,21 @@
 */
 extern crate mosek;
 
+use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
+
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
     let numcon = 1;
     let numvar = 3;
 
-    let bkc = mosek::MSK_BK_FX;
+    let bkc = mosek::Boundkey::FX;
     let blc = 1.0;
     let buc = 1.0;
 
-    let bkx = vec![ mosek::MSK_BK_FR,
-                    mosek::MSK_BK_FR,
-                    mosek::MSK_BK_FR ];
+    let bkx = vec![ Boundkey::FR,
+                    Boundkey::FR,
+                    Boundkey::FR ];
     let blx = vec![ -INF, -INF, -INF ];
     let bux = vec![ INF, INF, INF ];
     let c   = vec![ 1.0, 1.0, 0.0 ];
@@ -38,18 +40,13 @@ fn main() -> Result<(),String> {
     //let csub = new int[numvar];
     //double[] xx  = new double[numvar];
 
-    /* Create the mosek environment. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
     /* Append 'numcon' empty constraints.
@@ -78,34 +75,34 @@ fn main() -> Result<(),String> {
                             vec![1.0,1.0,1.0].as_slice())?;
     task.append_acc(domidx,afeidxs.as_slice(),b.as_slice())?;
 
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
+    task.put_obj_sense(Objsense::MINIMIZE)?;
 
     println!("optimize");
     /* Solve the problem */
     task.optimize()?;
     // Print a summary containing information
     // about the solution for debugging purposes
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     /* Get status information about the solution */
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
+    let solsta = task.get_sol_sta(Soltype::ITR)?;
 
     match solsta {
-        mosek::MSK_SOL_STA_OPTIMAL => {
+        Solsta::OPTIMAL => {
             let mut xx = vec![0.0; numvar as usize];
-            task.get_xx(mosek::MSK_SOL_ITR, & mut xx[..])?;
+            task.get_xx(Soltype::ITR, & mut xx[..])?;
             println!("Optimal primal solution");
             for j in 0..numvar as usize {
                 println!("x[{}]: {:.4}",j,xx[j]);
             }
           }
 
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER => {
+        Solsta::DUAL_INFEAS_CER |
+        Solsta::PRIM_INFEAS_CER => {
             println!("Primal or dual infeasibility certificate found.");
         }
 
-        mosek::MSK_SOL_STA_UNKNOWN => {
+        Solsta::UNKNOWN => {
             /* If the solutions status is unknown, print the termination code
              * indicating why the optimizer terminated prematurely. */
 

@@ -42,13 +42,8 @@ fn main() -> Result<(),String>
     let blx = vec![ 0.0,       0.0,       0.0,       0.0       ];
     let bux = vec![ INF,      10.0,       INF,       INF       ];
 
-    /* Create the mosek environment. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };

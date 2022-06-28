@@ -8,17 +8,19 @@
 */
 extern crate mosek;
 
+use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Prosta,Soltype,Variabletype,Dparam};
+
 fn main() -> Result<(),String> {
     let numcon : i32 = 2;
     let numvar : i32 = 2;
 
     let infinity = 0.0; // only for symbolic purposes, value never used
 
-    let bkc = vec![mosek::MSK_BK_UP, mosek::MSK_BK_LO];
+    let bkc = vec![Boundkey::UP, Boundkey::LO];
     let blc = vec![ -infinity,         -4.0 ];
     let buc = vec![ 250.0,             infinity ];
 
-    let bkx = vec![ mosek::MSK_BK_LO, mosek::MSK_BK_LO  ];
+    let bkx = vec![ Boundkey::LO, Boundkey::LO  ];
     let blx = vec![ 0.0,               0.0 ];
     let bux = vec![ infinity,          infinity ];
 
@@ -31,19 +33,13 @@ fn main() -> Result<(),String> {
     let ptrb : Vec<usize> = vec![ 0, 2 ];
     let ptre : Vec<usize> = vec![ 2, 4 ];
 
-    //double[] xx  = new double[numvar];
-
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
     // task.set_ItgSolutionCallback(
@@ -83,48 +79,48 @@ fn main() -> Result<(),String> {
 
     /* Specify integer variables. */
     for j in 0..numvar {
-        task.put_var_type(j, mosek::MSK_VAR_TYPE_INT)?;
+        task.put_var_type(j, Variabletype::TYPE_INT)?;
     }
     /* Set max solution time */
-    task.put_dou_param(mosek::MSK_DPAR_MIO_MAX_TIME, 60.0)?;
+    task.put_dou_param(Dparam::MIO_MAX_TIME, 60.0)?;
 
     /* A maximization problem */
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     /* Solve the problem */
 
     let _trm = task.optimize()?;
 
     // Print a summary containing information
     //   about the solution for debugging purposes
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     let mut xx = vec![0.0; numvar as usize];
-    task.get_xx(mosek::MSK_SOL_ITG, xx.as_mut_slice())?;
+    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
 
     /* Get status information about the solution */
 
-    match task.get_sol_sta(mosek::MSK_SOL_ITG)? {
-        mosek::MSK_SOL_STA_INTEGER_OPTIMAL => {
+    match task.get_sol_sta(Soltype::ITG)? {
+        Solsta::INTEGER_OPTIMAL => {
             println!("Optimal solution");
             for (j,xj) in (0..numvar).zip(xx.iter()) {
                 println!("x[{}]: {}", j,xj);
             }
         }
-        mosek::MSK_SOL_STA_PRIM_FEAS => {
+        Solsta::PRIM_FEAS => {
             println!("Feasible solution");
             for (j,xj) in (0..numvar).zip(xx.iter()) {
                 println!("x[{}]: {}", j,xj);
             }
         }
-        mosek::MSK_SOL_STA_UNKNOWN => {
-          match task.get_pro_sta(mosek::MSK_SOL_ITG)? {
-              mosek::MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED => {
+        Solsta::UNKNOWN => {
+          match task.get_pro_sta(Soltype::ITG)? {
+              Prosta::PRIM_INFEAS_OR_UNBOUNDED => {
                   println!("Problem status Infeasible or unbounded");
               }
-              mosek::MSK_PRO_STA_PRIM_INFEAS => {
+              Prosta::PRIM_INFEAS => {
                   println!("Problem status Infeasible.");
               }
-              mosek::MSK_PRO_STA_UNKNOWN => {
+              Prosta::UNKNOWN => {
                   println!("Problem status unknown.");
               }
               _ => {

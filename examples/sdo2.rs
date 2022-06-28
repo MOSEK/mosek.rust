@@ -18,12 +18,14 @@
 
 extern crate mosek;
 
+use mosek::{Task,Streamtype,Solsta,Soltype};
 
+
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
 
     /* Input data */
     let  numcon : i32       = 2;              /* Number of constraints. */
-    let  numbarvar : i32    = 2;
     let  dimbarvar : &[i32] = &[3, 4];         /* Dimension of semidefinite variables */
 
     /* Objective coefficients concatenated */
@@ -46,22 +48,17 @@ fn main() -> Result<(),String> {
     let A2l : &[i32] = &[ 0 ];
     let A2v : &[f64] = &[ 0.5 ];
 
-    let bkc = &[ mosek::MSK_BK_FX,
-                 mosek::MSK_BK_UP ];
+    let bkc = &[ mosek::Boundkey::FX,
+                 mosek::Boundkey::UP ];
     let blc = &[ 23.0,  0.0 ];
     let buc = &[ 23.0, -3.0 ];
 
-    /* Create the mosek environment. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-    };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
     };
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Append numcon empty constraints.
     The constraints will initially have no bounds. */
@@ -84,33 +81,31 @@ fn main() -> Result<(),String> {
 
     /* Run optimizer */
     task.optimize()?;
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     //mosek.solsta[] solsta = new mosek.solsta[1];
-    let solsta = task.get_sol_sta (mosek::MSK_SOL_ITR)?;
+    let solsta = task.get_sol_sta (Soltype::ITR)?;
 
     match solsta {
-        mosek::MSK_SOL_STA_OPTIMAL => {
+        Solsta::OPTIMAL => {
             /* Retrieve the soution for all symmetric variables */
             println!("Solution (lower triangular part vectorized):");
-            for i in 0..numbarvar {
-                for (i,dimbarvari) in dimbarvar.iter().enumerate() {
-                    //let dim = dimbarvar[i] * (dimbarvar[i] + 1) / 2;
-                    let dim = dimbarvari * (dimbarvari+1)/2;
-                    //double[] barx = new double[dim];
-                    let mut barx : Vec<f64> = vec![0.0; dim as usize];
-                    task.get_barx_j(mosek::MSK_SOL_ITR, i as i32, barx.as_mut_slice())?;
+            for (i,dimbarvari) in dimbarvar.iter().enumerate() {
+                //let dim = dimbarvar[i] * (dimbarvar[i] + 1) / 2;
+                let dim = dimbarvari * (dimbarvari+1)/2;
+                //double[] barx = new double[dim];
+                let mut barx : Vec<f64> = vec![0.0; dim as usize];
+                task.get_barx_j(Soltype::ITR, i as i32, barx.as_mut_slice())?;
 
-                    println!("X{}: {:?}",i+1,barx);
-                    // for (int j = 0; j < dim; ++j)
-                    //     System.out.print(barx[j] + " ");
-                    // System.out.println();
-                }
+                println!("X{}: {:?}",i+1,barx);
+                // for (int j = 0; j < dim; ++j)
+                //     System.out.print(barx[j] + " ");
+                // System.out.println();
             }
         },
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER|mosek::MSK_SOL_STA_PRIM_INFEAS_CER =>
+        Solsta::DUAL_INFEAS_CER|Solsta::PRIM_INFEAS_CER =>
             println!("Primal or dual infeasibility certificate found."),
-        mosek::MSK_SOL_STA_UNKNOWN =>
+        Solsta::UNKNOWN =>
             println!("The status of the solution could not be determined."),
         _ => println!("Other solution status.")
     }

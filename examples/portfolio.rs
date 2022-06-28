@@ -16,6 +16,7 @@
  */
 
 extern crate mosek;
+use mosek::{Task,Objsense,Solsta,Soltype};
 
 fn basic_markowitz(w  : f64,
                    mu  : &[f64],
@@ -23,24 +24,18 @@ fn basic_markowitz(w  : f64,
                    gt : &[f64],
                    gammas : &[f64]) -> Result<Vec<f64>,String> {
 
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()) };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()) };
 
     let n = mu.len();
 
-    //task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
-    //task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
-
     task.put_task_name("Portfolio")?;
 
     task.append_vars(n as i32)?;
-    task.put_var_bound_slice(0,3,vec![mosek::MSK_BK_LO,mosek::MSK_BK_LO,mosek::MSK_BK_LO].as_slice(),vec![0.0,0.0,0.0].as_slice(),vec![0.0,0.0,0.0].as_slice())?;
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_var_bound_slice(0,3,vec![mosek::Boundkey::LO,mosek::Boundkey::LO,mosek::Boundkey::LO].as_slice(),vec![0.0,0.0,0.0].as_slice(),vec![0.0,0.0,0.0].as_slice())?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     task.put_c_list(vec![0,1,2].as_slice(),mu)?;
 
     // budget:
@@ -48,7 +43,7 @@ fn basic_markowitz(w  : f64,
     task.put_con_name(0,"budget")?;
     task.put_a_row(0,vec![0,1,2].as_slice(),vec![1.0,1.0,1.0].as_slice())?;
     let wealth : f64 = w + x0.iter().sum::<f64>();
-    task.put_con_bound(0,mosek::MSK_BK_FX,wealth,wealth)?;
+    task.put_con_bound(0,mosek::Boundkey::FX,wealth,wealth)?;
 
     // risk:
     task.append_afes(4)?;
@@ -63,13 +58,13 @@ fn basic_markowitz(w  : f64,
     for gamma in gammas.iter() {
         task.put_afe_g(0,*gamma)?;
         task.optimize()?;
-        if mosek::MSK_SOL_STA_OPTIMAL != task.get_sol_sta(mosek::MSK_SOL_ITR)? {
+        if Solsta::OPTIMAL != task.get_sol_sta(Soltype::ITR)? {
             return Err("Result is not optimal".to_string());
         }
 
 
         let mut xx : Vec<f64> = Vec::new(); xx.resize(3,0.0);
-        task.get_xx(mosek::MSK_SOL_ITR,xx.as_mut_slice())?;
+        task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
         res.push(xx.iter().zip(mu.iter()).map(|(a,b)| (*a) * (*b)).sum());
     }
 

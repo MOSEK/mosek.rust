@@ -20,7 +20,9 @@
         g_i is the cost per unit of a transaction in asset i
  */
 extern crate mosek;
+use mosek::{Task,Objsense,Streamtype,Soltype};
 
+#[allow(non_snake_case)]
 fn portfolio(n : i32,
              mu : &[f64],
              f  : &[f64],
@@ -29,18 +31,14 @@ fn portfolio(n : i32,
              x0  : &[f64],
              gamma : f64,
              w : f64) -> Result<(),String> {
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-    };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
     };
 
     let k = (GT.len() / n as usize) as i32;
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
 
     /* Compute total wealth */
@@ -56,7 +54,7 @@ fn portfolio(n : i32,
     }
 
     task.put_var_bound_slice(0i32,3*n,
-                             vec![mosek::MSK_BK_FR; 3*n as usize].as_slice(),
+                             vec![mosek::Boundkey::FR; 3*n as usize].as_slice(),
                              vec![0.0; 3*n as usize].as_slice(),
                              vec![0.0; 3*n as usize].as_slice())?;
 
@@ -69,10 +67,10 @@ fn portfolio(n : i32,
     task.put_a_row(0i32,
                    (0i32..3*n).collect::<Vec<i32>>().as_slice(),
                    (0..n).map(|_| 1.0).chain(f.iter().map(|v| *v)).chain(g.iter().map(|v| *v)).collect::<Vec<f64>>().as_slice())?;
-    task.put_con_bound(0i32,mosek::MSK_BK_FX,w0,w0)?;
+    task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
 
     // objective
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     for (i,mui) in (0..n).zip(mu.iter()) {
         task.put_c_j(x_base+i, *mui)?;
     }
@@ -157,24 +155,18 @@ fn portfolio(n : i32,
     task.write_data("portfolio_4_transcost.ptf")?;
 
     /* Display the solution summary for quick inspection of results. */
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     let mut xx = vec![0.0;(3*n) as usize];
-    task.get_xx(mosek::MSK_SOL_ITG, xx.as_mut_slice())?;
+    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
     let expret = xx[0..n as usize].iter().zip(mu.iter()).map(|(a,b)| a*b).sum::<f64>();
 
-
-    //for j in 0..n {
-      //MOSEKCALL(res, MSK_getxxslice(task, MSK_SOL_ITG, offsetx + j, offsetx + j + 1, &xj));
-      //expret += mu[j] * xx[j];
-    //}
-
-    //MOSEKCALL(res, MSK_getxxslice(task, MSK_SOL_ITG, offsets + 0, offsets + 1, &stddev));
 
     println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
     Ok(())
 }
 
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     let n       = 3i32;
     let w       = 1.0;

@@ -6,6 +6,7 @@
  */
 
 extern crate mosek;
+use mosek::{Task,Boundkey,Streamtype,Solsta,Soltype};
 
 const INF : f64 = 0.0;
 
@@ -16,13 +17,13 @@ const NUMVAR : usize = 3;   /* Number of variables.               */
 fn main() -> Result<(),String> {
     let c = vec![ 0.0,-1.0,0.0 ];
 
-    let bkc = vec![ mosek::MSK_BK_LO ];
+    let bkc = vec![ mosek::Boundkey::LO ];
     let blc = vec![ 1.0 ];
     let buc = vec![ INF ];
 
-    let bkx = vec![ mosek::MSK_BK_LO,
-                    mosek::MSK_BK_LO,
-                    mosek::MSK_BK_LO ];
+    let bkx = vec![ Boundkey::LO,
+                    Boundkey::LO,
+                    Boundkey::LO ];
     let blx = vec![ 0.0,
                     0.0,
                     0.0 ];
@@ -40,18 +41,13 @@ fn main() -> Result<(),String> {
     let qval  = vec![ 2.0,0.2,-1.0,2.0 ];
 
 
-    /* Create the mosek environment. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     //r = MSK_linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
@@ -105,16 +101,16 @@ fn main() -> Result<(),String> {
     /* Run optimizer */
     /* Print a summary containing information
     about the solution for debugging purposes*/
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
+    let solsta = task.get_sol_sta(Soltype::ITR)?;
 
     match solsta
     {
-        mosek::MSK_SOL_STA_OPTIMAL =>
+        Solsta::OPTIMAL =>
         {
             let mut xx = vec![0.0, 0.0, 0.0];
-            task.get_xx(mosek::MSK_SOL_ITR,    /* Request the interior solution. */
+            task.get_xx(Soltype::ITR,    /* Request the interior solution. */
                         & mut xx[..])?;
 
             println!("Optimal primal solution");
@@ -124,12 +120,12 @@ fn main() -> Result<(),String> {
             }
         }
 
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER =>
+        Solsta::DUAL_INFEAS_CER |
+        Solsta::PRIM_INFEAS_CER =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }
-        mosek::MSK_SOL_STA_UNKNOWN =>
+        Solsta::UNKNOWN =>
         {
             println!("The status of the solution could not be determined.");
         }

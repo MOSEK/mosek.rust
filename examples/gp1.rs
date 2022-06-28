@@ -11,23 +11,26 @@
 //
 extern crate mosek;
 
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype};
+
 // Since the value of infinity is ignored, we define it solely
 // for symbolic purposes
 const INF : f64 = 0.0;
 
+#[allow(non_snake_case)]
 fn max_volume_box(Aw : f64, Af : f64,
                   alpha : f64, beta : f64, gamma : f64, delta : f64) -> Result<Vec<f64>,String>
 {
     let numvar = 3i32;  // Variables in original problem
     /* Create the optimization task. */
-    let mut task = match mosek::Task::new() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
     // Directs the log task stream to the user specified
     // method task_msg_obj.stream
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     // Add variables and constraints
     task.append_vars(numvar+2)?;
@@ -37,10 +40,10 @@ fn max_volume_box(Aw : f64, Af : f64,
     let s  = &[3i32,4i32];
 
     // Objective is the sum of three first variables
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     task.put_c_slice(0, numvar, &[1.0,1.0,1.0])?;
 
-    task.put_var_bound_slice_const(0, numvar+2, mosek::MSK_BK_FR, -INF, INF)?;
+    task.put_var_bound_slice_const(0, numvar+2, Boundkey::FR, -INF, INF)?;
 
     task.append_afes(6)?;
 
@@ -58,21 +61,22 @@ fn max_volume_box(Aw : f64, Af : f64,
     task.append_acc(dom,&[3,4,5],&[0.0,0.0,0.0])?;
 
     // s0+s1 < 1 <=> log(s0+s1) < 0
-    task.put_a_row(0,s,&[1.0,1.0])?; task.put_con_bound(0, mosek::MSK_BK_UP, 1.0,1.0)?;
+    task.put_a_row(0,s,&[1.0,1.0])?; task.put_con_bound(0, Boundkey::UP, 1.0,1.0)?;
 
-    task.put_a_row(1,&[xx[1],xx[2]], &[1.0,1.0])?; task.put_con_bound(1,mosek::MSK_BK_UP,Af.ln(),Af.ln())?;
-    task.put_a_row(2,&[xx[0],xx[1]], &[1.0,-1.0])?; task.put_con_bound(1,mosek::MSK_BK_RA,alpha.ln(),beta.ln())?;
-    task.put_a_row(3,&[xx[1],xx[2]], &[1.0,-1.0])?; task.put_con_bound(1,mosek::MSK_BK_RA,gamma.ln(),delta.ln())?;
+    task.put_a_row(1,&[xx[1],xx[2]], &[1.0,1.0])?; task.put_con_bound(1,Boundkey::UP,Af.ln(),Af.ln())?;
+    task.put_a_row(2,&[xx[0],xx[1]], &[1.0,-1.0])?; task.put_con_bound(1,Boundkey::RA,alpha.ln(),beta.ln())?;
+    task.put_a_row(3,&[xx[1],xx[2]], &[1.0,-1.0])?; task.put_con_bound(1,Boundkey::RA,gamma.ln(),delta.ln())?;
 
     let _trm = task.optimize()?;
     let mut xyz = vec![0.0; 3];
-    task.get_xx_slice(mosek::MSK_SOL_ITR, 0i32, numvar, xyz.as_mut_slice());
+    task.get_xx_slice(Soltype::ITR, 0i32, numvar, xyz.as_mut_slice())?;
 
     task.write_data("gp1.ptf")?;
 
     Ok(xyz.iter().map(|v| v.exp()).collect())
 }
 
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     // maximize     h*w*d
     // subjecto to  2*(h*w + h*d) <= Awall

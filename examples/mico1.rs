@@ -11,40 +11,37 @@
                            x, y - integer
 */
 extern crate mosek;
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Variabletype};
 
 fn main() -> Result<(),String> {
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
-        Some(e) => e,
+    let mut task = match Task::new() {
+        Some(t) => t,
         None => return Err("Failed to create task".to_string()),
     };
     let infinity = 0.0; // for symbolic use, value is irrelevant
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     task.append_vars(6)?;
     task.append_cons(3)?;
-    task.put_var_bound_slice_const(0, 6, mosek::MSK_BK_FR, -infinity, infinity)?;
+    task.put_var_bound_slice_const(0, 6, Boundkey::FR, -infinity, infinity)?;
 
     // Integrality constraints
     task.put_var_type_list(vec![1i32,2i32].as_slice(),
-                           vec![mosek::MSK_VAR_TYPE_INT, mosek::MSK_VAR_TYPE_INT].as_slice())?;
+                           vec![Variabletype::TYPE_INT, Variabletype::TYPE_INT].as_slice())?;
 
     // Set up the three auxiliary linear constraints
     task.put_aij_list(vec![0i32,0i32,1i32,2i32,2i32].as_slice(),
                       vec![1i32,3i32,4i32,2i32,5i32].as_slice(),
                       vec![-1.0,1.0,1.0,1.0,-1.0].as_slice())?;
     task.put_con_bound_slice(0, 3, 
-                             vec![mosek::MSK_BK_FX, mosek::MSK_BK_FX, mosek::MSK_BK_FX].as_slice(),
+                             vec![Boundkey::FX, Boundkey::FX, Boundkey::FX].as_slice(),
                              vec![-3.8, 1.0, 0.0].as_slice(),
                              vec![-3.8, 1.0, 0.0].as_slice())?;
 
     // Objective
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
+    task.put_obj_sense(Objsense::MINIMIZE)?;
     task.put_c_j(0, 1.0)?;
 
     // Conic part of the problem
@@ -64,10 +61,10 @@ fn main() -> Result<(),String> {
     }
     // Optimize the task
     let _trm = task.optimize()?;
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     let mut xx = vec![0.0; 2];
-    task.get_xx_slice(mosek::MSK_SOL_ITG, 1, 3, xx.as_mut_slice())?;
+    task.get_xx_slice(Soltype::ITG, 1, 3, xx.as_mut_slice())?;
     println!("x = {}  y = {}",xx[0],xx[1]);
     Ok(())
 }

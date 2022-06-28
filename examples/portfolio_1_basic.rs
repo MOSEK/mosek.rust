@@ -8,7 +8,9 @@
 // Such That [ gamma, G'x ] in qcone
 
 extern crate mosek;
+use mosek::{Task,Objsense,Streamtype,Soltype};
 
+#[allow(non_snake_case)]
 fn portfolio(n : i32,     // number of assets
              gamma : f64, // risk bound: maximum stddev
              mu : &[f64], // vector of expected returns
@@ -18,11 +20,11 @@ fn portfolio(n : i32,     // number of assets
              -> Result<Vec<f64>,String> {
 
     /* Create the optimization task. */
-    let mut task = match mosek::Task::new() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
     };
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Total budget */
     let total_budget = w + x0.iter().sum::<f64>();
@@ -36,7 +38,7 @@ fn portfolio(n : i32,     // number of assets
     let s : Vec<i32> = vec![n];
 
     /* Total budget constraint - set bounds l^c = u^c */
-    task.put_con_bound(0i32, mosek::MSK_BK_FX, total_budget, total_budget)?;
+    task.put_con_bound(0i32, mosek::Boundkey::FX, total_budget, total_budget)?;
     task.put_con_name(0i32,"budget")?;
 
     /* x variables. */
@@ -46,12 +48,12 @@ fn portfolio(n : i32,     // number of assets
         /* Coefficients in the first row of A */
         task.put_aij(0, x[j], 1.0)?;
         /* No short-selling - x^l = 0, x^u = inf */
-        task.put_var_bound(x[j], mosek::MSK_BK_LO, 0.0, 0.0)?;
+        task.put_var_bound(x[j], mosek::Boundkey::LO, 0.0, 0.0)?;
         task.put_var_name(x[j], format!("x[{}]",j+1).as_str())?;
     }
 
     /* s variable is a constant equal to gamma. */
-    task.put_var_bound(s[0], mosek::MSK_BK_FX, gamma, gamma)?;
+    task.put_var_bound(s[0], mosek::Boundkey::FX, gamma, gamma)?;
     task.put_var_name(s[0], "s")?;
 
     /* Define the cone spanned by variables (s, t), i.e. dimension = n + 1 */
@@ -71,22 +73,22 @@ fn portfolio(n : i32,     // number of assets
                     (0..n as i64+1).collect::<Vec<i64>>().as_slice(),
                     (0..n+1).map(|_| 0.0).collect::<Vec<f64>>().as_slice())?;
 
-    task.put_acc_name(0,"stddev");
+    task.put_acc_name(0,"stddev")?;
 
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE);
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
 
     /* Dump the problem to a human readable OPF file. */
-    task.write_data("portfolio_1_basic.ptf");
+    task.write_data("portfolio_1_basic.ptf")?;
 
-    let trm = task.optimize()?;
+    let _trm = task.optimize()?;
 
     /* Display the solution summary for quick inspection of results. */
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     /* Read the x variables one by one and compute expected return. */
     /* Can also be obtained as value of the objective. */
     let mut level = vec![0.0;n as usize + 1];
-    task.get_xx_slice(mosek::MSK_SOL_ITR,0,n+1,level.as_mut_slice())?;
+    task.get_xx_slice(Soltype::ITR,0,n+1,level.as_mut_slice())?;
 
     let xx = &level[0..n as usize];
 
@@ -101,10 +103,8 @@ fn portfolio(n : i32,     // number of assets
 
 
 
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    let expret = 0.0;
-    let stddev = 0.0;
-
     let n : i32 = 3;
     let gamma = 0.05;
     let mu = vec![0.1073,  0.0737,  0.0627];
@@ -118,14 +118,3 @@ fn main() -> Result<(),String> {
 
     return Ok(());
 }
-
-
-
-// let m = Mosek::named("Molly")?;
-// let x = m.named_variable("x",Domain::greater_than(vec![0.0; n].as_slice()))?;
-// m.named_objective("obj",mosek::Maximize, Expr::dot(x,mu))?;
-// let t = m.named_variable("t",Domain::equal_toscalar(gamma))?;
-// let _ = m.named_constraint("wealth",Expr::sum(x.as_expr()),Domain::equal_to(total_budget))?;
-// let _ = m.named_constraint("GTx",Expr::vstack(t.as_expr(),Expr::mul(GT,x),Domain::in_quadratic_cone(n+1)))?;
-// m.solve()?;
-// let xlevel = m.get_level(x);

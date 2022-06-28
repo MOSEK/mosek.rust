@@ -13,6 +13,8 @@
 
 extern crate mosek;
 
+use mosek::{Task,Streamtype,Solsta,Soltype,Conetype};
+
 const INF : f64 = 0.0;
 
 const NUMCON    : usize = 2;   /* Number of constraints.              */
@@ -25,7 +27,7 @@ fn main() -> Result<(),String>
 {
     let dimbarvar = vec![3];         /* Dimension of semidefinite cone */
 
-    let bkc = vec![ mosek::MSK_BK_FX, mosek::MSK_BK_FX ];
+    let bkc = vec![ mosek::Boundkey::FX, mosek::Boundkey::FX ];
     let blc = vec![ 1.0, 0.5 ];
     let buc = vec![ 1.0, 0.5 ];
 
@@ -46,18 +48,13 @@ fn main() -> Result<(),String>
     let falpha = 1.0;
 
 
-    /* Create the mosek environment. */
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-        };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Append 'NUMCON' empty constraints.
      * The constraints will initially have no bounds. */
@@ -79,7 +76,7 @@ fn main() -> Result<(),String>
     for j in 0..NUMVAR
     {
         task.put_var_bound(j as i32,
-                           mosek::MSK_BK_FR,
+                           mosek::Boundkey::FR,
                            -INF,
                            INF)?;
     }
@@ -108,7 +105,7 @@ fn main() -> Result<(),String>
     }
 
     /* Append the conic quadratic cone */
-    task.append_cone(mosek::MSK_CT_QUAD,
+    task.append_cone(Conetype::QUAD,
                      0.0,
                      & conesub)?;
 
@@ -133,19 +130,19 @@ fn main() -> Result<(),String>
 
     /* Print a summary containing information
      * about the solution for debugging purposes*/
-    task.solution_summary (mosek::MSK_STREAM_MSG)?;
+    task.solution_summary (Streamtype::MSG)?;
 
-    let solsta = task.get_sol_sta(mosek::MSK_SOL_ITR)?;
+    let solsta = task.get_sol_sta(Soltype::ITR)?;
 
     match solsta
     {
-        mosek::MSK_SOL_STA_OPTIMAL =>
+        Solsta::OPTIMAL =>
         {
             let mut xx = vec![0.0,0.0,0.0];
             let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
-            task.get_xx(mosek::MSK_SOL_ITR,    /* Request the basic solution. */
+            task.get_xx(Soltype::ITR,    /* Request the basic solution. */
                         & mut xx[..])?;
-            task.get_barx_j(mosek::MSK_SOL_ITR,    /* Request the interior solution. */
+            task.get_barx_j(Soltype::ITR,    /* Request the interior solution. */
                             0,
                             & mut barx[..])?;
             println!("Optimal primal solution");
@@ -163,13 +160,13 @@ fn main() -> Result<(),String>
             }
           }
 
-        mosek::MSK_SOL_STA_DUAL_INFEAS_CER       |
-        mosek::MSK_SOL_STA_PRIM_INFEAS_CER       =>
+        Solsta::DUAL_INFEAS_CER       |
+        Solsta::PRIM_INFEAS_CER       =>
         {
             println!("Primal or dual infeasibility certificate found.");
         }
 
-        mosek::MSK_SOL_STA_UNKNOWN =>
+        Solsta::UNKNOWN =>
         {
             /* If the solutions status is unknown, print the termination code
              * indicating why the optimizer terminated prematurely. */

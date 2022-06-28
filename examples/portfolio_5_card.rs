@@ -18,7 +18,9 @@
   
  */
 extern crate mosek;
+use mosek::{Task,Objsense,Streamtype,Soltype};
 
+#[allow(non_snake_case)]
 fn portfolio(n : i32,
              mu : &[f64],
              GT : &[f64],
@@ -27,18 +29,14 @@ fn portfolio(n : i32,
              p  : i32,
              w : f64) -> Result<Vec<f64>,String> {
 
-    let env = match mosek::Env::new() {
-        Some(e) => e,
-        None => return Err("Failed to create env".to_string()),
-    };
     /* Create the optimization task. */
-    let mut task = match env.task() {
+    let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
     };
 
     let k = (GT.len() / n as usize) as i32;
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Compute total wealth */
     let w0 = w + x0.iter().sum::<f64>();
@@ -57,7 +55,7 @@ fn portfolio(n : i32,
     }
 
     // objective
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     for (j,mui) in x.iter().zip(mu.iter()) {
         task.put_c_j(*j, *mui)?;
     }
@@ -68,13 +66,13 @@ fn portfolio(n : i32,
     task.put_a_row(0,
                    x.as_slice(),
                    (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    task.put_con_bound(0i32,mosek::MSK_BK_FX,w0,w0)?;
+    task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
     // cardinality constraint
     task.put_con_name(1,"cardinality")?;
     task.put_a_row(1,
                    y.as_slice(),
                    (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    task.put_con_bound(1,mosek::MSK_BK_UP,p as f64,p as f64)?;
+    task.put_con_bound(1,mosek::Boundkey::UP,p as f64,p as f64)?;
 
     let mut afei = 0;
     // (gamma,G'x) in Q
@@ -126,15 +124,16 @@ fn portfolio(n : i32,
     task.write_data("portfolio_5_card.ptf")?;
 
     /* Display the solution summary for quick inspection of results. */
-    task.solution_summary(mosek::MSK_STREAM_MSG)?;
+    task.solution_summary(Streamtype::MSG)?;
 
     let mut xx = vec![0.0;(2*n) as usize];
-    task.get_xx(mosek::MSK_SOL_ITG, xx.as_mut_slice())?;
+    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
     // let expret = xx[0..n as usize].iter().zip(mu.iter()).map(|(a,b)| a*b).sum::<f64>();
     Ok(xx[0..n as usize].to_vec())
 }
 
 
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     let n       = 3i32;
     let w       = 1.0;

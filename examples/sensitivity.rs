@@ -20,20 +20,21 @@
 */
 
 extern crate mosek;
+use mosek::{Task,Boundkey,Streamtype,Mark,Objsense};
 
 const INFINITY : f64 = 0.0;
 
 fn main() -> Result<(),String> {
     let bkc = vec![
-        mosek::MSK_BK_UP, mosek::MSK_BK_UP,
-        mosek::MSK_BK_UP, mosek::MSK_BK_FX,
-        mosek::MSK_BK_FX, mosek::MSK_BK_FX,
-        mosek::MSK_BK_FX ];
+        Boundkey::UP, Boundkey::UP,
+        Boundkey::UP, Boundkey::FX,
+        Boundkey::FX, Boundkey::FX,
+        Boundkey::FX ];
     let bkx = vec![
-        mosek::MSK_BK_LO, mosek::MSK_BK_LO,
-        mosek::MSK_BK_LO, mosek::MSK_BK_LO,
-        mosek::MSK_BK_LO, mosek::MSK_BK_LO,
-        mosek::MSK_BK_LO ];
+        Boundkey::LO, Boundkey::LO,
+        Boundkey::LO, Boundkey::LO,
+        Boundkey::LO, Boundkey::LO,
+        Boundkey::LO ];
 
     let ptr = [0i64, 2, 4, 6, 8, 10, 12, 14];
     let sub = [0i32, 3, 0, 4, 1, 5, 1, 6, 2, 3, 2, 5, 2, 6];
@@ -53,13 +54,13 @@ fn main() -> Result<(),String> {
     let numvar = 7;  /* Number of variables.               */
 
     /* Create the optimization task. */
-    let mut task = match mosek::Task::new() {
+    let mut task = match Task::new() {
         Some(t) => t,
         None => return Err("Failed to create task".to_string()),
     };
 
     /* Directs the log task stream to the 'printstr' function. */
-    task.put_stream_callback(mosek::MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     task.input_data(numcon as i32, numvar as i32,
                     &c,
@@ -76,17 +77,17 @@ fn main() -> Result<(),String> {
                     &bux)?;
 
     /* A maximization problem */
-    task.put_obj_sense(mosek::MSK_OBJECTIVE_SENSE_MINIMIZE)?;
+    task.put_obj_sense(Objsense::MINIMIZE)?;
 
     task.optimize()?;
 
     /* Analyze upper bound on c1 and the equality constraint on c4 */
     let mut subi  = vec![0i32, 3i32];
-    let mut marki = vec![mosek::MSK_MARK_UP, mosek::MSK_MARK_UP];
+    let mut marki = vec![Mark::UP, Mark::UP];
 
     /* Analyze lower bound on the variables x12 and x31 */
     let mut subj  = vec![1i32, 4];
-    let mut markj = vec![mosek::MSK_MARK_LO, mosek::MSK_MARK_LO];
+    let mut markj = vec![Mark::LO, Mark::LO];
 
     let mut leftpricei  = vec![0.0; 2];
     let mut rightpricei = vec![0.0; 2];

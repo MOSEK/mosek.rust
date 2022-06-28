@@ -38,7 +38,7 @@ fn main()  -> Result<(),String> {
         };
     // Directs the log task stream to the user specified
     // method msgclass.streamCB
-    task.put_stream_callback(MSK_STREAM_LOG, |msg| print!("{}",msg))?;
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     /*TAG:end-maketask*/
 
     /* Append 'numcon' empty constraints.
@@ -52,32 +52,32 @@ fn main()  -> Result<(),String> {
     /* Set up the linear part of the problem */
     task.put_c_list(&sub, &val)?;
     task.put_a_row(0, &asub, &aval)?;
-    task.put_con_bound(0, MSK_BK_FX, 2.0, 2.0)?;
+    task.put_con_bound(0, Boundkey::FX, 2.0, 2.0)?;
 
 
-    let bkx = vec![MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FX];
+    let bkx = vec![Boundkey::FR, Boundkey::FR, Boundkey::FR, Boundkey::FR, Boundkey::FR, Boundkey::FX];
     let blx = vec![-INFTY,    -INFTY,    -INFTY,    -INFTY,    -INFTY,    1.0      ];
     let bux = vec![ INFTY,     INFTY,     INFTY,     INFTY,     INFTY,    1.0      ];
     task.put_var_bound_slice(0, numvar, &bkx, &blx, &bux)?;
 
     /* Add a conic constraint */
-    task.append_cone(MSK_CT_PPOW, 0.2, &vec![0, 1, 3])?;
-    task.append_cone(MSK_CT_PPOW, 0.4, &vec![2, 5, 4])?;
+    task.append_cone(Conetype::PPOW, 0.2, &vec![0, 1, 3])?;
+    task.append_cone(Conetype::PPOW, 0.4, &vec![2, 5, 4])?;
     //TAG:end-appendcone
 
-    task.put_obj_sense(MSK_OBJECTIVE_SENSE_MAXIMIZE)?;
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     task.optimize()?;
 
     // Print a summary containing information
     // about the solution for debugging purposes
-    task.solution_summary(MSK_STREAM_LOG)?;
+    task.solution_summary(Streamtype::LOG)?;
     /* Get status information about the solution */
-    let solsta = task.get_sol_sta(MSK_SOL_ITR)?;
+    let solsta = task.get_sol_sta(Soltype::ITR)?;
 
     match solsta {
-        MSK_SOL_STA_OPTIMAL => {
+        Solsta::OPTIMAL => {
             let mut xx = vec![0.0; numvar as usize];
-            task.get_xx(MSK_SOL_ITR,    /* Request the basic solution. */
+            task.get_xx(Soltype::ITR,    /* Request the basic solution. */
                         & mut xx[..])?;
 
             println!("Optimal primal solution");
@@ -86,12 +86,12 @@ fn main()  -> Result<(),String> {
                 println!("x[{}]: {}",j,xx[j]);
             }
         }
-        MSK_SOL_STA_DUAL_INFEAS_CER |
-        MSK_SOL_STA_PRIM_INFEAS_CER => {
+        Solsta::DUAL_INFEAS_CER |
+        Solsta::PRIM_INFEAS_CER => {
             println!("Primal or dual infeasibility certificate found.");
         }
 
-        MSK_SOL_STA_UNKNOWN => {
+        Solsta::UNKNOWN => {
             /* If the solutions status is unknown, print the termination code
              * indicating why the optimizer terminated prematurely. */
 
