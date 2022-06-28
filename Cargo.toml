@@ -1,6 +1,6 @@
 [package]
 name    = "mosek"
-version = "0.9.0"
+version = "10.0.0-beta.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 

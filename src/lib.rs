@@ -1412,6 +1412,7 @@ pub const MSK_RES_WRN_ANA_C_ZERO : i32 = 901;
 pub const MSK_RES_WRN_ANA_EMPTY_COLS : i32 = 902;
 pub const MSK_RES_WRN_ANA_CLOSE_BOUNDS : i32 = 903;
 pub const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS : i32 = 904;
+pub const MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES : i32 = 930;
 pub const MSK_RES_WRN_NO_DUALIZER : i32 = 950;
 pub const MSK_RES_WRN_SYM_MAT_LARGE : i32 = 960;
 pub const MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER : i32 = 970;
@@ -1862,8 +1863,6 @@ pub const MSK_RES_ERR_DJC_DOMAIN_TERMSIZE_MISMATCH : i32 = 20704;
 pub const MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH : i32 = 20705;
 pub const MSK_RES_ERR_UNDEF_SOLUTION : i32 = 22000;
 pub const MSK_RES_ERR_NO_DOTY : i32 = 22010;
-pub const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES : i32 = 23000;
-pub const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS : i32 = 23005;
 pub const MSK_RES_TRM_MAX_ITERATIONS : i32 = 100000;
 pub const MSK_RES_TRM_MAX_TIME : i32 = 100001;
 pub const MSK_RES_TRM_OBJECTIVE_RANGE : i32 = 100002;
@@ -2191,14 +2190,14 @@ impl Env
     } // resetexpirylicenses
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(b_.len(),b_.len()),lnzc_.len()),lptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),lptrc_.len()),b_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
       if lptrc_.len() != (n_).try_into().unwrap() {
         return Result::Err("Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(std::cmp::min(lvalc_.len(),lvalc_.len()),lsubc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
         return Result::Err("Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
@@ -2384,7 +2383,7 @@ impl Task
     } // analyzesolution
     #[allow(unused_parens)]
     pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
@@ -2393,8 +2392,8 @@ impl Task
     } // appendacc
     #[allow(unused_parens)]
     pub fn append_accs(&mut self,domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),domidxs_.len()) as i64;
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numaccs_ : i64 = domidxs_.len() as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
@@ -2414,7 +2413,7 @@ impl Task
     } // appendaccseq
     #[allow(unused_parens)]
     pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),domidxs_.len()) as i64;
+      let numaccs_ : i64 = domidxs_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
@@ -2428,13 +2427,13 @@ impl Task
     } // appendafes
     #[allow(unused_parens)]
     pub fn append_barvars(&mut self,dim_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(dim_.len(),dim_.len()) as i32;
+      let num_ : i32 = dim_.len() as i32;
       self.handle_res(unsafe { MSK_appendbarvars(self.ptr,num_,dim_.as_ptr()) },"append_barvars")?;
       return Result::Ok(());
     } // appendbarvars
     #[allow(unused_parens)]
     pub fn append_cone(&mut self,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> {
-      let nummem_ : i32 = std::cmp::min(submem_.len(),submem_.len()) as i32;
+      let nummem_ : i32 = submem_.len() as i32;
       self.handle_res(unsafe { MSK_appendcone(self.ptr,ct_,conepar_,nummem_,submem_.as_ptr()) },"append_cone")?;
       return Result::Ok(());
     } // appendcone
@@ -2445,7 +2444,7 @@ impl Task
     } // appendconeseq
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ct_.len(),ct_.len()),conepar_.len()),nummem_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),conepar_.len()),nummem_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -2473,7 +2472,7 @@ impl Task
     } // appenddualgeomeanconedomain
     #[allow(unused_parens)]
     pub fn append_dual_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> {
-      let nleft_ : i64 = std::cmp::min(alpha_.len(),alpha_.len()) as i64;
+      let nleft_ : i64 = alpha_.len() as i64;
       let mut __tmp_0 : i64 = i64::default();
       self.handle_res(unsafe { MSK_appenddualpowerconedomain(self.ptr,n_,nleft_,alpha_.as_ptr(),&mut __tmp_0) },"append_dual_power_cone_domain")?;
       return Result::Ok(__tmp_0);
@@ -2492,7 +2491,7 @@ impl Task
     } // appendprimalgeomeanconedomain
     #[allow(unused_parens)]
     pub fn append_primal_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> {
-      let nleft_ : i64 = std::cmp::min(alpha_.len(),alpha_.len()) as i64;
+      let nleft_ : i64 = alpha_.len() as i64;
       let mut __tmp_0 : i64 = i64::default();
       self.handle_res(unsafe { MSK_appendprimalpowerconedomain(self.ptr,n_,nleft_,alpha_.as_ptr(),&mut __tmp_0) },"append_primal_power_cone_domain")?;
       return Result::Ok(__tmp_0);
@@ -2535,14 +2534,14 @@ impl Task
     } // appendrzerodomain
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valij_.len()),subi_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),valij_.len()),subi_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
       return Result::Ok(__tmp_0);
     } // appendsparsesymmat
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat_list(&mut self,dims_ : &[i32],nz_ : &[i64],subi_ : &[i32],subj_ : &[i32],valij_ : &[f64],idx_ : &mut[i64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(dims_.len(),dims_.len()),nz_.len()) as i32;
+      let num_ : i32 = std::cmp::min(dims_.len(),nz_.len()) as i32;
       let mut __tmp_0 : i64 = i64::default();
       for __tmp_1 in nz_ { __tmp_0 += __tmp_1; }
       if subi_.len() != (__tmp_0).try_into().unwrap() {
@@ -2651,7 +2650,7 @@ impl Task
     } // deletesolution
     #[allow(unused_parens)]
     pub fn dual_sensitivity(&self,subj_ : &[i32],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numj_ : i32 = std::cmp::min(subj_.len(),subj_.len()) as i32;
+      let numj_ : i32 = subj_.len() as i32;
       if leftpricej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("Argument 'leftpricej' has the wrong length, expected numj_".to_string());
       }
@@ -2674,7 +2673,7 @@ impl Task
     } // emptyafebarfrow
     #[allow(unused_parens)]
     pub fn empty_afe_barf_row_list(&mut self,afeidxlist_ : &[i64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       self.handle_res(unsafe { MSK_emptyafebarfrowlist(self.ptr,numafeidx_,afeidxlist_.as_ptr()) },"empty_afe_barf_row_list")?;
       return Result::Ok(());
     } // emptyafebarfrowlist
@@ -2685,7 +2684,7 @@ impl Task
     } // emptyafefcol
     #[allow(unused_parens)]
     pub fn empty_afe_f_col_list(&mut self,varidx_ : &[i32]) -> Result<(),String> {
-      let numvaridx_ : i64 = std::cmp::min(varidx_.len(),varidx_.len()) as i64;
+      let numvaridx_ : i64 = varidx_.len() as i64;
       self.handle_res(unsafe { MSK_emptyafefcollist(self.ptr,numvaridx_,varidx_.as_ptr()) },"empty_afe_f_col_list")?;
       return Result::Ok(());
     } // emptyafefcollist
@@ -2696,7 +2695,7 @@ impl Task
     } // emptyafefrow
     #[allow(unused_parens)]
     pub fn empty_afe_f_row_list(&mut self,afeidx_ : &[i64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(afeidx_.len(),afeidx_.len()) as i64;
+      let numafeidx_ : i64 = afeidx_.len() as i64;
       self.handle_res(unsafe { MSK_emptyafefrowlist(self.ptr,numafeidx_,afeidx_.as_ptr()) },"empty_afe_f_row_list")?;
       return Result::Ok(());
     } // emptyafefrowlist
@@ -2722,14 +2721,14 @@ impl Task
     } // evaluateaccs
     #[allow(unused_parens)]
     pub fn generate_acc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),sub_.len()) as i64;
+      let num_ : i64 = sub_.len() as i64;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generateaccnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_acc_names")?;
@@ -2737,14 +2736,14 @@ impl Task
     } // generateaccnames
     #[allow(unused_parens)]
     pub fn generate_barvar_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),subj_.len()) as i32;
+      let num_ : i32 = subj_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generatebarvarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_barvar_names")?;
@@ -2752,14 +2751,14 @@ impl Task
     } // generatebarvarnames
     #[allow(unused_parens)]
     pub fn generate_cone_names(&mut self,subk_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subk_.len(),subk_.len()) as i32;
+      let num_ : i32 = subk_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generateconenames(self.ptr,num_,subk_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_cone_names")?;
@@ -2767,14 +2766,14 @@ impl Task
     } // generateconenames
     #[allow(unused_parens)]
     pub fn generate_con_names(&mut self,subi_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subi_.len(),subi_.len()) as i32;
+      let num_ : i32 = subi_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generateconnames(self.ptr,num_,subi_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_con_names")?;
@@ -2782,14 +2781,14 @@ impl Task
     } // generateconnames
     #[allow(unused_parens)]
     pub fn generate_djc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),sub_.len()) as i64;
+      let num_ : i64 = sub_.len() as i64;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generatedjcnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_djc_names")?;
@@ -2797,14 +2796,14 @@ impl Task
     } // generatedjcnames
     #[allow(unused_parens)]
     pub fn generate_var_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),subj_.len()) as i32;
+      let num_ : i32 = subj_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
-      let ndims_ : i32 = std::cmp::min(dims_.len(),dims_.len()) as i32;
+      let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
       }
-      let numnamedaxis_ : i32 = std::cmp::min(namedaxisidxs_.len(),namedaxisidxs_.len()) as i32;
-      let numnames_ : i64 = std::cmp::min(names_.len(),names_.len()) as i64;
+      let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
+      let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
       self.handle_res(unsafe { MSK_generatevarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_var_names")?;
@@ -3469,7 +3468,7 @@ impl Task
     } // getcj
     #[allow(unused_parens)]
     pub fn get_c_list(&self,subj_ : &[i32],c_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),subj_.len()) as i32;
+      let num_ : i32 = subj_.len() as i32;
       if c_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'c' has the wrong length, expected num_".to_string());
       }
@@ -3730,7 +3729,7 @@ impl Task
     } // getdualsolutionnorms
     #[allow(unused_parens)]
     pub fn get_dviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
-      let numaccidx_ : i64 = std::cmp::min(accidxlist_.len(),accidxlist_.len()) as i64;
+      let numaccidx_ : i64 = accidxlist_.len() as i64;
       if viol_.len() != (numaccidx_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected numaccidx_".to_string());
       }
@@ -3739,7 +3738,7 @@ impl Task
     } // getdviolacc
     #[allow(unused_parens)]
     pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -3748,7 +3747,7 @@ impl Task
     } // getdviolbarvar
     #[allow(unused_parens)]
     pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -3757,7 +3756,7 @@ impl Task
     } // getdviolcon
     #[allow(unused_parens)]
     pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -3766,7 +3765,7 @@ impl Task
     } // getdviolcones
     #[allow(unused_parens)]
     pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -4092,7 +4091,7 @@ impl Task
     } // getprosta
     #[allow(unused_parens)]
     pub fn get_pviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
-      let numaccidx_ : i64 = std::cmp::min(accidxlist_.len(),accidxlist_.len()) as i64;
+      let numaccidx_ : i64 = accidxlist_.len() as i64;
       if viol_.len() != (numaccidx_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected numaccidx_".to_string());
       }
@@ -4101,7 +4100,7 @@ impl Task
     } // getpviolacc
     #[allow(unused_parens)]
     pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -4110,7 +4109,7 @@ impl Task
     } // getpviolbarvar
     #[allow(unused_parens)]
     pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -4119,7 +4118,7 @@ impl Task
     } // getpviolcon
     #[allow(unused_parens)]
     pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -4128,7 +4127,7 @@ impl Task
     } // getpviolcones
     #[allow(unused_parens)]
     pub fn get_pviol_djc(&self,whichsol_ : i32,djcidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
-      let numdjcidx_ : i64 = std::cmp::min(djcidxlist_.len(),djcidxlist_.len()) as i64;
+      let numdjcidx_ : i64 = djcidxlist_.len() as i64;
       if viol_.len() != (numdjcidx_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected numdjcidx_".to_string());
       }
@@ -4137,7 +4136,7 @@ impl Task
     } // getpvioldjc
     #[allow(unused_parens)]
     pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
       }
@@ -4574,7 +4573,7 @@ impl Task
     } // getvartype
     #[allow(unused_parens)]
     pub fn get_var_type_list(&self,subj_ : &[i32],vartype_ : &mut[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),subj_.len()) as i32;
+      let num_ : i32 = subj_.len() as i32;
       if vartype_.len() != (num_).try_into().unwrap() {
         return Result::Err("Argument 'vartype' has the wrong length, expected num_".to_string());
       }
@@ -4652,8 +4651,8 @@ impl Task
     } // initbasissolve
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blc_.len(),blc_.len()),buc_.len()),bkc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptre_.len(),aptre_.len()),c_.len()),blx_.len()),aptrb_.len()),bkx_.len()),bux_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(c_.len(),blx_.len()),bux_.len()),aptrb_.len()),aptre_.len()),bkx_.len()) as i32;
       self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,c_.as_ptr(),cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
@@ -4731,8 +4730,8 @@ impl Task
     } // primalrepair
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(std::cmp::min(marki_.len(),marki_.len()),subi_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),markj_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
@@ -4767,7 +4766,7 @@ impl Task
     } // printparam
     #[allow(unused_parens)]
     pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
@@ -4776,7 +4775,7 @@ impl Task
     } // putacc
     #[allow(unused_parens)]
     pub fn put_acc_b(&mut self,accidx_ : i64,b_ : &[f64]) -> Result<(),String> {
-      let lengthb_ : i64 = std::cmp::min(b_.len(),b_.len()) as i64;
+      let lengthb_ : i64 = b_.len() as i64;
       self.handle_res(unsafe { MSK_putaccb(self.ptr,accidx_,lengthb_,b_.as_ptr()) },"put_acc_b")?;
       return Result::Ok(());
     } // putaccb
@@ -4797,8 +4796,8 @@ impl Task
     } // putaccdoty
     #[allow(unused_parens)]
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(std::cmp::min(accidxs_.len(),accidxs_.len()),domidxs_.len()) as i64;
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),accidxs_.len()) as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
@@ -4813,13 +4812,13 @@ impl Task
     } // putaccname
     #[allow(unused_parens)]
     pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> {
-      let nzj_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valj_.len()) as i32;
+      let nzj_ : i32 = std::cmp::min(subj_.len(),valj_.len()) as i32;
       self.handle_res(unsafe { MSK_putacol(self.ptr,j_,nzj_,subj_.as_ptr(),valj_.as_ptr()) },"put_a_col")?;
       return Result::Ok(());
     } // putacol
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptrb_.len(),ptrb_.len()),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_putacollist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_list")?;
       return Result::Ok(());
     } // putacollist64
@@ -4850,27 +4849,27 @@ impl Task
     } // putafebarfblocktriplet
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numterm_ : i64 = std::cmp::min(std::cmp::min(termidx_.len(),termidx_.len()),termweight_.len()) as i64;
+      let numterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentry(self.ptr,afeidx_,barvaridx_,numterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry")?;
       return Result::Ok(());
     } // putafebarfentry
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(ptrterm_.len(),ptrterm_.len()),afeidx_.len()),numterm_.len()),barvaridx_.len()) as i64;
-      let lenterm_ : i64 = std::cmp::min(std::cmp::min(termidx_.len(),termidx_.len()),termweight_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),numterm_.len()),barvaridx_.len()),ptrterm_.len()) as i64;
+      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
     } // putafebarfentrylist
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptrterm_.len(),ptrterm_.len()),numterm_.len()),barvaridx_.len()) as i32;
-      let lenterm_ : i64 = std::cmp::min(std::cmp::min(termidx_.len(),termidx_.len()),termweight_.len()) as i64;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),barvaridx_.len()),ptrterm_.len()) as i32;
+      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
     } // putafebarfrow
     #[allow(unused_parens)]
     pub fn put_afe_f_col(&mut self,varidx_ : i32,afeidx_ : &[i64],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),afeidx_.len()),val_.len()) as i64;
+      let numnz_ : i64 = std::cmp::min(val_.len(),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefcol(self.ptr,varidx_,numnz_,afeidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_col")?;
       return Result::Ok(());
     } // putafefcol
@@ -4881,20 +4880,20 @@ impl Task
     } // putafefentry
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),afeidx_.len()),varidx_.len()),val_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),afeidx_.len()),varidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
     #[allow(unused_parens)]
     pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i32 = std::cmp::min(std::cmp::min(varidx_.len(),varidx_.len()),val_.len()) as i32;
+      let numnz_ : i32 = std::cmp::min(val_.len(),varidx_.len()) as i32;
       self.handle_res(unsafe { MSK_putafefrow(self.ptr,afeidx_,numnz_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row")?;
       return Result::Ok(());
     } // putafefrow
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(ptrrow_.len(),ptrrow_.len()),afeidx_.len()),numnzrow_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),varidx_.len()),val_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefrowlist(self.ptr,numafeidx_,afeidx_.as_ptr(),numnzrow_.as_ptr(),ptrrow_.as_ptr(),lenidxval_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row_list")?;
       return Result::Ok(());
     } // putafefrowlist
@@ -4905,7 +4904,7 @@ impl Task
     } // putafeg
     #[allow(unused_parens)]
     pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),afeidx_.len()),g_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(afeidx_.len(),g_.len()) as i64;
       self.handle_res(unsafe { MSK_putafeglist(self.ptr,numafeidx_,afeidx_.as_ptr(),g_.as_ptr()) },"put_afe_g_list")?;
       return Result::Ok(());
     } // putafeglist
@@ -4924,19 +4923,19 @@ impl Task
     } // putaij
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),valij_.len()),subi_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),valij_.len()),subi_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(std::cmp::min(vali_.len(),vali_.len()),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptrb_.len(),ptrb_.len()),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
       self.handle_res(unsafe { MSK_putarowlist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_list")?;
       return Result::Ok(());
     } // putarowlist64
@@ -4978,19 +4977,19 @@ impl Task
     } // putbarablocktriplet
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),alphaptre_.len()),alphaptrb_.len()),subi_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),alphaptre_.len()),alphaptrb_.len()),subi_.len()) as i32;
       self.handle_res(unsafe { MSK_putbaraijlist(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_ij_list")?;
       return Result::Ok(());
     } // putbaraijlist
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(ptrb_.len(),ptrb_.len()),ptre_.len()),subi_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),ptrb_.len()),subi_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -5026,7 +5025,7 @@ impl Task
     } // putbarcblocktriplet
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(sub_.len(),sub_.len()),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -5068,7 +5067,7 @@ impl Task
     } // putcj
     #[allow(unused_parens)]
     pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),val_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putclist(self.ptr,num_,subj_.as_ptr(),val_.as_ptr()) },"put_c_list")?;
       return Result::Ok(());
     } // putclist
@@ -5079,13 +5078,13 @@ impl Task
     } // putconbound
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),bkc_.len()),buc_.len()),sub_.len()),blc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),sub_.len()),bkc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
     #[allow(unused_parens)]
     pub fn put_con_bound_list_const(&mut self,sub_ : &[i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       self.handle_res(unsafe { MSK_putconboundlistconst(self.ptr,num_,sub_.as_ptr(),bkc_,blc_,buc_) },"put_con_bound_list_const")?;
       return Result::Ok(());
     } // putconboundlistconst
@@ -5110,7 +5109,7 @@ impl Task
     } // putconboundsliceconst
     #[allow(unused_parens)]
     pub fn put_cone(&mut self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> {
-      let nummem_ : i32 = std::cmp::min(submem_.len(),submem_.len()) as i32;
+      let nummem_ : i32 = submem_.len() as i32;
       self.handle_res(unsafe { MSK_putcone(self.ptr,k_,ct_,conepar_,nummem_,submem_.as_ptr()) },"put_cone")?;
       return Result::Ok(());
     } // putcone
@@ -5141,12 +5140,12 @@ impl Task
     } // putcslice
     #[allow(unused_parens)]
     pub fn put_djc(&mut self,djcidx_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64]) -> Result<(),String> {
-      let numdomidx_ : i64 = std::cmp::min(domidxlist_.len(),domidxlist_.len()) as i64;
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numdomidx_ : i64 = domidxlist_.len() as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      let numterms_ : i64 = std::cmp::min(termsizelist_.len(),termsizelist_.len()) as i64;
+      let numterms_ : i64 = termsizelist_.len() as i64;
       self.handle_res(unsafe { MSK_putdjc(self.ptr,djcidx_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_,termsizelist_.as_ptr()) },"put_djc")?;
       return Result::Ok(());
     } // putdjc
@@ -5158,12 +5157,12 @@ impl Task
     } // putdjcname
     #[allow(unused_parens)]
     pub fn put_djc_slice(&mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64],termsindjc_ : &[i64]) -> Result<(),String> {
-      let numdomidx_ : i64 = std::cmp::min(domidxlist_.len(),domidxlist_.len()) as i64;
-      let numafeidx_ : i64 = std::cmp::min(afeidxlist_.len(),afeidxlist_.len()) as i64;
+      let numdomidx_ : i64 = domidxlist_.len() as i64;
+      let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      let numterms_ : i64 = std::cmp::min(termsizelist_.len(),termsizelist_.len()) as i64;
+      let numterms_ : i64 = termsizelist_.len() as i64;
       if termsindjc_.len() != ((idxlast_-idxfirst_)).try_into().unwrap() {
         return Result::Err("Argument 'termsindjc' has the wrong length, expected (idxlast_-idxfirst_)".to_string());
       }
@@ -5281,19 +5280,19 @@ impl Task
     } // putparam
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcsubi_.len(),qcsubi_.len()),qcval_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qcsubi_.len(),qcsubi_.len()),qcval_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
     } // putqconk
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(qoval_.len(),qoval_.len()),qosubi_.len()),qosubj_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubj_.len(),qoval_.len()),qosubi_.len()) as i32;
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
     } // putqobj
@@ -5462,13 +5461,13 @@ impl Task
     } // putvarbound
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),blx_.len()),sub_.len()),bux_.len()),bkx_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),bkx_.len()),blx_.len()),sub_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
     #[allow(unused_parens)]
     pub fn put_var_bound_list_const(&mut self,sub_ : &[i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(sub_.len(),sub_.len()) as i32;
+      let num_ : i32 = sub_.len() as i32;
       self.handle_res(unsafe { MSK_putvarboundlistconst(self.ptr,num_,sub_.as_ptr(),bkx_,blx_,bux_) },"put_var_bound_list_const")?;
       return Result::Ok(());
     } // putvarboundlistconst
@@ -5509,7 +5508,7 @@ impl Task
     } // putvartype
     #[allow(unused_parens)]
     pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(subj_.len(),subj_.len()),vartype_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),vartype_.len()) as i32;
       self.handle_res(unsafe { MSK_putvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_ptr()) },"put_var_type_list")?;
       return Result::Ok(());
     } // putvartypelist
@@ -5640,25 +5639,25 @@ impl Task
     } // readtask
     #[allow(unused_parens)]
     pub fn remove_barvars(&mut self,subset_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subset_.len(),subset_.len()) as i32;
+      let num_ : i32 = subset_.len() as i32;
       self.handle_res(unsafe { MSK_removebarvars(self.ptr,num_,subset_.as_ptr()) },"remove_barvars")?;
       return Result::Ok(());
     } // removebarvars
     #[allow(unused_parens)]
     pub fn remove_cones(&mut self,subset_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subset_.len(),subset_.len()) as i32;
+      let num_ : i32 = subset_.len() as i32;
       self.handle_res(unsafe { MSK_removecones(self.ptr,num_,subset_.as_ptr()) },"remove_cones")?;
       return Result::Ok(());
     } // removecones
     #[allow(unused_parens)]
     pub fn remove_cons(&mut self,subset_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subset_.len(),subset_.len()) as i32;
+      let num_ : i32 = subset_.len() as i32;
       self.handle_res(unsafe { MSK_removecons(self.ptr,num_,subset_.as_ptr()) },"remove_cons")?;
       return Result::Ok(());
     } // removecons
     #[allow(unused_parens)]
     pub fn remove_vars(&mut self,subset_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subset_.len(),subset_.len()) as i32;
+      let num_ : i32 = subset_.len() as i32;
       self.handle_res(unsafe { MSK_removevars(self.ptr,num_,subset_.as_ptr()) },"remove_vars")?;
       return Result::Ok(());
     } // removevars
