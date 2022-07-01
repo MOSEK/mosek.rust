@@ -47,14 +47,21 @@ use itertools::{izip,iproduct};
 /// - `x0` vector if initial investment
 /// - `gamma` bound on risk
 /// - `w` initial uninvested wealth
+///
+/// # Returns
+///
+/// Returns `(solution,objval)`
+///
+/// - `solution` is the primal investment solution vector
+/// - `objval` is the solution expected return
 #[allow(non_snake_case)]
-fn portfolio(n : i32,
-             mu : &[f64],
-             m  : &[f64],
-             GT : &[f64],
-             x0  : &[f64],
-             gamma : f64,
-             w : f64) -> Result<(Vec<f64>,f64),String> {
+pub fn portfolio(n : i32,
+                 mu : &[f64],
+                 m  : &[f64],
+                 GT : &[f64],
+                 x0  : &[f64],
+                 gamma : f64,
+                 w : f64) -> Result<(Vec<f64>,f64),String> {
 
     let k = (GT.len() / n as usize) as i32;
     /* Create the optimization task. */
