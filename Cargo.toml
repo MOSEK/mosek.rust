@@ -11,3 +11,4 @@ license = "BSD-4-Clause"
 
 [dependencies]
 libc = "0.2"
+itertools = "*"
