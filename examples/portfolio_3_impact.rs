@@ -1,35 +1,52 @@
-// File : $${file}
-
-// Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-// Description :  Implements a basic portfolio optimization model
-//                with transaction costs of order x^(3/2).
-//
-// Maximize mu'x
-// Subject to
-//    budget : sum(x)+m't = sum(x0)+w
-//    GT     : (gamma,G'x) in Q^{k+1}
-//    MI     : (t_j,1,|x_j-x0_j|) in P^3(2/3,1/3), j = 1..
-//    x >= 0
-//
-// Where
-//    m_i is the transaction cost associated with asset i
-//    gamma is the bound on the standard deviation if the portfolio
-//    mu_i is the expected return on asset i
-//    w is the initial wealth held in cash
-//    x0_i is the initial investment in asset i
-//    G'G is the covariance matrix for assets
-// The MI constraint is not convex due tot he |.| term, so we relax it:
-//    MI     : (t_j,1,z_j) in P^3(2/3,1/3), j = 1..
-//             z_j >= |x_j-x0_j|
-//             implemented as
-//                z_j >= x_j-x0_j
-//                z_j >= x0_j-x_j
+//! File : portfolio_3_impact
+//!
+//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//! Description :  Implements a basic portfolio optimization model with transaction costs of order x^(3/2).
+//!
+//! ```
+//! Maximize mu'x
+//! Subject to
+//!    budget : sum(x)+m't = sum(x0)+w
+//!    GT     : (gamma,G'x) in Q^{k+1}
+//!    MI     : (t_j,1,|x_j-x0_j|) in P^3(2/3,1/3), j = 1..
+//!    x >= 0
+//! ```
+//!
+//! Where
+//!
+//! - m_i is the transaction cost associated with asset i
+//! - gamma is the bound on the standard deviation if the portfolio
+//! - mu_i is the expected return on asset i
+//! - w is the initial wealth held in cash
+//! - x0_i is the initial investment in asset i
+//! - G'G is the covariance matrix for assets
+//!
+//! The MI constraint is not convex due tot he |.| term, so we relax it:
+//! ```
+//!    MI     : (t_j,1,z_j) in P^3(2/3,1/3), j = 1..
+//!             z_j >= |x_j-x0_j|
+//!             implemented as
+//!                z_j >= x_j-x0_j
+//!                z_j >= x0_j-x_j
+//! ```
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype};
 use itertools::{izip,iproduct};
 
+
+/// Solve portfolio with market impact terms
+///
+/// # Arguments
+///
+/// - `n` number of assets
+/// - `mu` vector of expected returns
+/// - `m` vector of market impact estimates
+/// - `GT` factored covariance matrix
+/// - `x0` vector if initial investment
+/// - `gamma` bound on risk
+/// - `w` initial uninvested wealth
 #[allow(non_snake_case)]
 fn portfolio(n : i32,
              mu : &[f64],
@@ -37,7 +54,7 @@ fn portfolio(n : i32,
              GT : &[f64],
              x0  : &[f64],
              gamma : f64,
-             w : f64) -> Result<(),String> {
+             w : f64) -> Result<(Vec<f64>,f64),String> {
 
     let k = (GT.len() / n as usize) as i32;
     /* Create the optimization task. */
@@ -123,7 +140,7 @@ fn portfolio(n : i32,
         task.put_acc_name(acci,"GT")?;
         task.put_afe_g(afei,gamma)?;
 
-        for ((i,j),v) in iproduct!(0..n,0..n).zip(GT).filter(|(idx,v)| **v != 0.0) {
+        for ((i,j),v) in iproduct!(0..n,0..n).zip(GT).filter(|(_,v)| **v != 0.0) {
             task.put_afe_f_entry(afei + i as i64, j as i32, *v)?;
         }
     }
@@ -163,10 +180,9 @@ fn portfolio(n : i32,
 
     let mut level = vec![0.0;n as usize];
     task.get_xx_slice(Soltype::ITR,0,n,level.as_mut_slice())?;
-
-    println!("Solution x = {:?}",level);
-
-    Ok(())
+    let obj = task.get_primal_obj(Soltype::ITR)?;
+    
+    Ok((level,obj))
 }
 
 #[allow(non_snake_case)]
@@ -196,6 +212,11 @@ fn main() -> Result<(),String> {
     //                  0.0000,  0.1033, -0.0022,
     //                  0.0000,  0.0000,  0.0338];
 
-    portfolio(n, mu, m, GT, x0, gamma, w)?;
+    let (level,obj) = portfolio(n, mu, m, GT, x0, gamma, w)?;
+
+    println!("Solution x = {:?}",level);
+    println!("Objective value x = {:?}",obj);
+
+    
     Ok(())
 }
