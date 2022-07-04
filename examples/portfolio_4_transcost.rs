@@ -136,33 +136,6 @@ fn portfolio(n : i32,
         task.put_acc_name(acci,"(x-z)<x0")?;
         task.put_acc_name(acci+1,"(x+z)>x0")?;
     }
-    // // z_i > |x_i-x0_i|
-    // {
-
-    //     let afei = task.get_num_afe()?;
-    //     let dom = task.append_rplus_domain(n as i64)?;
-    //     // z_i > x_i - x0_i <=> z_i - x_i + x0_i > 0
-    //     task.append_afes(n as i64)?;
-    //     task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                               (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
-    //                               (0..n).map(|_| -1.0 ).chain((0..n).map(|_| 1.0)).collect::<Vec<f64>>().as_slice())?;
-    //     task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                         x0)?;
-    //     task.append_acc(dom,
-    //                     (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                     (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    //     let afei = task.get_num_afe()?;
-    //     // z_i > x0_i - x_i <=> z_i + z_i - x0_i > 0
-    //     task.append_afes(n as i64)?;
-    //     task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                               (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
-    //                               (0..2*n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    //     task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                         x0.iter().map(|v| -v).collect::<Vec<f64>>().as_slice())?;
-    //     task.append_acc(dom,
-    //                     (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-    //                     (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    // }
 
     //DJC:  [ y_j == 0 AND
     //        x0_j == x_j ]
