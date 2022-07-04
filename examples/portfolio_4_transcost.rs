@@ -1,27 +1,43 @@
+//!  File : portfolio_4_transcost
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  Description :  Implements a basic portfolio optimization model
+//!                 with fixed setup costs and transaction costs
+//!                 as a mixed-integer problem.
+//!
 
-/*
-  File : $${file}
-
-  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-  Description :  Implements a basic portfolio optimization model
-                 with fixed setup costs and transaction costs
-                 as a mixed-integer problem.
-
-  Maximize mu'x
-  Such That ACC: [ gamma, G'x] in Q^{n+1}
-            sum(x) + f'y + g'z = w0+sum(x0)
-            ACC: z_j > |x0_j-x_j|
-            DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
-                    // z_j < U_j y_j, y in {0,1}
-            y free
-            x > 0
-  Where f_i is the fixed cost of a transaction in asset i,
-        g_i is the cost per unit of a transaction in asset i
- */
 extern crate mosek;
 use mosek::{Task,Objsense,Streamtype,Soltype};
+extern crate itertools;
+use itertools::{izip,iproduct};
 
+
+/// Optimize expected return on an investment with transaction cost.
+///
+/// ```
+/// Maximize mu'x
+/// Such That
+///   budget: sum(x) + f'y + g'z = w0+sum(x0)
+///   risk:   gamma > || G'x ||
+///   ACC:    z_j > |x0_j-x_j|
+///   DJC:    [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
+///           // z_j < U_j y_j, y in {0,1}
+///           y free
+///           x > 0
+/// Where f_i is the fixed cost of a transaction in asset i,
+///       g_i is the cost per unit of a transaction in asset i
+/// ```
+/// # Arguments
+///
+/// - `n` number of assets
+/// - `mu` vector of expected returns
+/// - `f` vector of fixed transaction costs
+/// - 'g' vector of continuous proportional transaction costs
+/// - `GT` Covariance matrix factor
+/// - `x0` vector if initial investment
+/// - `gamma` risk bound (bound on the standard deviation)
+/// - `w` initial uninvested wealth
 #[allow(non_snake_case)]
 fn portfolio(n : i32,
              mu : &[f64],
@@ -75,33 +91,27 @@ fn portfolio(n : i32,
         task.put_c_j(x_base+i, *mui)?;
     }
 
-
-    
-    let mut afei = 0;
-    // (gamma,G'x) in Q
+    // risk bound
     {
-        task.append_afes(k as i64+1)?;
         let acci = task.get_num_acc()?;
+        let afei = task.get_num_afe()?;
+
+        task.append_afes(k as i64 + 1)?;
         let dom = task.append_quadratic_cone_domain(k as i64+1)?;
-        task.append_acc(dom,
-                        (afei..afei+k as i64+1).collect::<Vec<i64>>().as_slice(),
-                        (0..k+1).map(|_| 0.0).collect::<Vec<f64>>().as_slice())?;
-        task.put_acc_name(acci,"GT")?;
-        task.put_afe_g(0,gamma)?;
-        let mut l = 0;
-        for i in 0..k {
-            for j in 0..n {
-                if GT[l] != 0.0 {
-                    task.put_afe_f_entry(i as i64+1,j as i32,GT[l])?;
-                }
-                l += 1;
-            }
+        task.append_acc_seq(dom,
+                            afei,
+                            vec![0.0; k as usize + 1].as_slice())?;
+        task.put_acc_name(acci,"risk")?;
+        task.put_afe_g(afei,gamma)?;
+
+        for ((i,j),v) in iproduct!(0..n,0..n).zip(GT).filter(|(_,v)| **v != 0.0) {
+            task.put_afe_f_entry(afei + i as i64 + 1, j as i32, *v)?;
         }
-        afei += k as i64 +1;
     }
 
     // z_i > |x_i-x0_i|
     {
+        let afei = task.get_num_afe()?;
         let dom = task.append_rplus_domain(n as i64)?;
         // z_i > x_i - x0_i <=> z_i - x_i + x0_i > 0
         task.append_afes(n as i64)?;
@@ -113,7 +123,7 @@ fn portfolio(n : i32,
         task.append_acc(dom,
                         (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
                         (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-        afei += n as i64;
+        let afei = task.get_num_afe()?;
         // z_i > x0_i - x_i <=> z_i + z_i - x0_i > 0
         task.append_afes(n as i64)?;
         task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
@@ -124,7 +134,6 @@ fn portfolio(n : i32,
         task.append_acc(dom,
                         (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
                         (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-        afei += n as i64;
     }
 
     //DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
@@ -132,6 +141,7 @@ fn portfolio(n : i32,
         task.append_djcs(n as i64)?;
         let domeq = task.append_rzero_domain(1)?;
         for i in 0..n {
+            let afei = task.get_num_afe()?;
             task.append_afes(3)?;
             // y_j = 0
             task.put_afe_f_entry(afei,y_base+i,1.0)?;
@@ -144,7 +154,6 @@ fn portfolio(n : i32,
                          &[afei,afei+1,afei+2],
                          &[0.0, x0[i as usize], 1.0],
                          &[2,1])?;
-            afei += 3;
         }
     }
 
