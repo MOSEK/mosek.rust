@@ -1,33 +1,54 @@
-/*
-  File : $${file}
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  Description :  Implements a basic portfolio optimization model
+//!                 with cardinality constraints on number of assets traded.
+//!
 
-  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#[path = "common.rs"]
+mod common;
 
-  Description :  Implements a basic portfolio optimization model
-                 with cardinality constraints on number of assets traded.
-
-  Maximize mu'x
-  Such That ACC: [ gamma, G'x] in Q^{n+1}
-            sum(x) = w0+sum(x0)
-            sum(y) < p
-            DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
-            y free
-            x > 0
-  Where f_i is the fixed cost of a transaction in asset i,
-        g_i is the cost per unit of a transaction in asset i
-  
- */
 extern crate mosek;
-use mosek::{Task,Objsense,Streamtype,Soltype};
+use mosek::{Task,Objsense,Soltype};
+extern crate itertools;
+use itertools::{izip,iproduct};
 
+
+/// Solve the Markowitz portfolio problem with cardinality constraints.
+///
+/// ```
+/// Maximize mu'x
+/// Such That
+///   budget:      𝐞'x = w0+sum(x0)
+///   risk:        γ^2 > ||G'x||^2
+///   cardinality: 𝐞'y < p
+///                [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
+///                y ∈ R^n
+///                y ∈ R+^n
+/// ```
+///
+/// Where
+///
+/// - `y_j` ∈ `{0,1}` is an indicator of whether we change the
+///   investment in asset j, that is if `y_j=0`, then we do not change
+///   investment in assert `j`.
+///
+/// # Arguments
+///
+/// - `n` number of assets
+/// - `mu` vector of expected returns
+/// - `GT` Covariance matrix factor
+/// - `x0` vector if initial investment
+/// - `gamma` risk bound (bound on the standard deviation)
+/// - `w` initial uninvested wealth
+/// - `p` maximum number of assets to invest in
 #[allow(non_snake_case)]
-fn portfolio(n : i32,
-             mu : &[f64],
-             GT : &[f64],
-             x0  : &[f64],
+fn portfolio(n     : i32,
+             mu    : &[f64],
+             GT    : &[f64],
+             x0    : &[f64],
              gamma : f64,
-             p  : i32,
-             w : f64) -> Result<Vec<f64>,String> {
+             p     : i32,
+             w     : f64) -> Result<(Vec<f64>,f64),String> {
 
     /* Create the optimization task. */
     let mut task = match Task::new() {
@@ -36,22 +57,26 @@ fn portfolio(n : i32,
     };
 
     let k = (GT.len() / n as usize) as i32;
-    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
+    // task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Compute total wealth */
     let w0 = w + x0.iter().sum::<f64>();
 
     task.append_cons(2i32)?;
-    task.append_vars(3*n)?;
+    task.append_vars(2*n)?;
 
-    let x : Vec<i32> = (0..n).collect();
-    let y : Vec<i32> = (n..2*n).collect();
+    let all_vars : Vec<i32> = (0..2*n).collect();
+    let x = &all_vars[0..n as usize];
+    let y = &all_vars[n as usize..2*n as usize];
 
-    for (i,j) in (0..n).zip(x.iter()) {
-        task.put_var_name(*j,    format!("x[{}]",i).as_str())?;
+    task.put_var_bound_slice_const(0,n,mosek::Boundkey::LO,0.0,0.0)?;
+    task.put_var_bound_slice_const(n,2*n,mosek::Boundkey::RA,0.0,1.0)?;
+
+    for (i,j) in x.iter().enumerate() {
+        task.put_var_name(*j,format!("x[{}]",i).as_str())?;
     }
-    for (i,j) in (0..n).zip(y.iter()) {
-        task.put_var_name(*j,  format!("y[{}]",i).as_str())?;
+    for (i,j) in y.iter().enumerate() {
+        task.put_var_name(*j,format!("y[{}]",i).as_str())?;
     }
 
     // objective
@@ -61,47 +86,45 @@ fn portfolio(n : i32,
     }
 
 
+    let n_ones = vec![1.0; n as usize];
     // budget constraint
     task.put_con_name(0,"budget")?;
     task.put_a_row(0,
-                   x.as_slice(),
-                   (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
+                   x,
+                   n_ones.as_slice())?;
     task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
+
     // cardinality constraint
     task.put_con_name(1,"cardinality")?;
     task.put_a_row(1,
-                   y.as_slice(),
-                   (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
+                   y,
+                   n_ones.as_slice())?;
     task.put_con_bound(1,mosek::Boundkey::UP,p as f64,p as f64)?;
 
-    let mut afei = 0;
     // (gamma,G'x) in Q
     {
-        task.append_afes(k as i64+1)?;
+        let afei = task.get_num_afe()?;
         let acci = task.get_num_acc()?;
+
+        task.append_afes(k as i64+1)?;
         let dom = task.append_quadratic_cone_domain(k as i64+1)?;
-        task.append_acc(dom,
-                        (afei..afei+k as i64+1).collect::<Vec<i64>>().as_slice(),
-                        (0..k+1).map(|_| 0.0).collect::<Vec<f64>>().as_slice())?;
+        task.append_acc_seq(dom,
+                            afei,
+                            vec![0.0; k as usize + 1].as_slice())?;
         task.put_acc_name(acci,"GT")?;
-        task.put_afe_g(0,gamma)?;
-        let mut l = 0;
-        for i in 0..k {
-            for j in 0..n {
-                if GT[l] != 0.0 {
-                    task.put_afe_f_entry(i as i64+1,j as i32,GT[l])?;
-                }
-                l += 1;
-            }
+        task.put_afe_g(afei,gamma)?;
+
+        for ((i,j),v) in iproduct!(0..n,0..n).zip(GT).filter(|(_,v)| **v != 0.0) {
+            task.put_afe_f_entry(afei + i as i64 + 1, j as i32, *v)?;
         }
-        afei += k as i64 +1;
     }
 
     //DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
     {
         task.append_djcs(n as i64)?;
         let domeq = task.append_rzero_domain(1)?;
-        for (((xi,yi),x0i),i) in x.iter().zip(y.iter()).zip(x0.iter()).zip(0..n) {
+        for (i,xi,yi,x0i) in izip!(0..n,x,y,x0) {
+            let afei = task.get_num_afe()?;
             task.append_afes(3)?;
             // y_j = 0
             task.put_afe_f_entry(afei,*yi,1.0)?;
@@ -114,45 +137,30 @@ fn portfolio(n : i32,
                          &[afei,afei+1,afei+2],
                          &[0.0, *x0i, 1.0],
                          &[2,1])?;
-            afei += 3;
+            task.put_djc_name(i as i64,format!("y[{}]->x[{}]>0",i,i).as_str())?;
         }
     }
 
     let _ = task.optimize()?;
+    task.write_data(format!("pf-card-{}.ptf",p).as_str())?;
 
-    /* Dump the problem to a human readable OPF file. */
-    task.write_data("portfolio_5_card.ptf")?;
-
-    /* Display the solution summary for quick inspection of results. */
-    task.solution_summary(Streamtype::MSG)?;
-
-    let mut xx = vec![0.0;(2*n) as usize];
-    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
-    // let expret = xx[0..n as usize].iter().zip(mu.iter()).map(|(a,b)| a*b).sum::<f64>();
-    Ok(xx[0..n as usize].to_vec())
+    let mut xx = vec![0.0;n as usize];
+    task.get_xx_slice(Soltype::ITG, 0,n,xx.as_mut_slice())?;
+    Ok((xx[0..n as usize].to_vec(),task.get_primal_obj(Soltype::ITG)?))
 }
 
 
-#[allow(non_snake_case)]
+// #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    let n       = 3i32;
-    let w       = 1.0;
-    let x0      = vec![0.0, 0.0, 0.0];
-    let gamma   = 0.05;
-    let mu      = vec![0.1073,  0.0737,  0.0627];
-    let GT      = vec![0.1667,  0.0232,  0.0013,
-                       0.0000,  0.1033, -0.0022,
-                       0.0000,  0.0000,  0.0338 ];
-    for k in 1..3 {
-        let x = portfolio(n,
-                          mu.as_slice(),
-                          GT.as_slice(),
-                          x0.as_slice(),
-                          gamma,
-                          k,
-                          w)?;
-        let expret = x.iter().zip(mu.iter()).map(|(xi,mui)| xi * mui).sum::<f64>();
-        println!("Bound {}: x = {:?}", k,x);
+    for p in 1..4 {
+        let (x,expret) = portfolio(common::Data1::n,
+                                   common::Data1::mu,
+                                   common::Data1::GT,
+                                   common::Data1::x0,
+                                   common::Data1::gamma,
+                                   p,
+                                   common::Data1::w)?;
+        println!("Bound {}: x = {:?}", p,x);
         println!("  Return: {:.5e}\n", expret);
     }
     Ok(())

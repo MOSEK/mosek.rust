@@ -5,6 +5,9 @@
 //! Description :  Implements a basic portfolio optimization model.
 //!                Determines points on the efficient frontier.
 
+#[path = "common.rs"]
+mod common;
+
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Solsta,Soltype};
@@ -92,7 +95,7 @@ fn portfolio(n : i32,
         }
     }
 
-    let frontier : Vec<(f64,f64)> = alphas.iter().enumerate().filter_map(|(i,alpha)| {
+    let frontier : Vec<(f64,f64)> = alphas.iter().filter_map(|alpha| {
         /* Sets the objective function coefficient for s. */
         if      let Err(_) = task.put_c_j(s, - *alpha) { None }
         else if let Err(_) = task.optimize() { None }
@@ -116,19 +119,15 @@ fn portfolio(n : i32,
     Ok(frontier)
 }
 
-#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    let n : i32 = 3;
-    let mu = vec![0.1073,  0.0737,  0.0627];
-    let x0 = vec![0.0, 0.0, 0.0];
-    let w = 1.0;
-    let alphas = vec![0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5];
-    let GT = vec![0.1667,  0.0232,  0.0013,
-                  0.0000,  0.1033, -0.0022,
-                  0.0000,  0.0000,  0.0338];
-
+    let alphas = &[0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5];
     println!("{:10}   {:10}","alpha","exp.ret.");
-    for (alpha,expret) in portfolio(n,mu.as_slice(),GT.as_slice(),x0.as_slice(),alphas.as_slice(),w)? {
+    for (alpha,expret) in portfolio(common::Data1::n,
+                                    common::Data1::mu,
+                                    common::Data1::GT,
+                                    common::Data1::x0,
+                                    alphas,
+                                    common::Data1::w)? {
         println!("{:10.3e} : {:10.e}",alpha,expret);
     }
 

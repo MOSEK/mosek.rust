@@ -7,11 +7,13 @@
 //!                 as a mixed-integer problem.
 //!
 
+#[path = "common.rs"]
+mod common;
+
 extern crate mosek;
 use mosek::{Task,Objsense,Streamtype,Soltype};
 extern crate itertools;
 use itertools::{izip,iproduct};
-
 
 /// Optimize expected return on an investment with transaction cost.
 ///
@@ -174,25 +176,15 @@ fn portfolio(n : i32,
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    let n       = 3i32;
-    let w       = 1.0;
-    let x0      = vec![0.0, 0.0, 0.0];
-    let gamma   = 0.05;
-    let mu      = vec![0.1073,  0.0737,  0.0627];
-    let f       = vec![0.01, 0.01, 0.01];
-    let g       = vec![0.001, 0.001, 0.001];
-    let GT      = vec![0.1667,  0.0232,  0.0013,
-                       0.0000,  0.1033, -0.0022,
-                       0.0000,  0.0000,  0.0338 ];
-    let (_level,expret) = portfolio(n,
-                                    mu.as_slice(),
-                                    f.as_slice(),
-                                    g.as_slice(),
-                                    GT.as_slice(),
-                                    x0.as_slice(),
-                                    gamma,
-                                    w)?;
+    let (_level,expret) = portfolio(common::Data1::n,
+                                    common::Data1::mu,
+                                    common::Data1::fixed_tcost,
+                                    common::Data1::prop_tcost,
+                                    common::Data1::GT,
+                                    common::Data1::x0,
+                                    common::Data1::gamma,
+                                    common::Data1::w)?;
 
-    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
+    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, common::Data1::gamma);
     Ok(())
 }
