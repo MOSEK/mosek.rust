@@ -60,6 +60,8 @@ fn portfolio(n : i32,     // number of assets
     /* Total budget constraint - set bounds l^c = u^c */
     task.put_con_bound(0i32, mosek::Boundkey::FX, total_budget, total_budget)?;
     task.put_con_name(0i32,"budget")?;
+
+    task.put_obj_sense(Objsense::MAXIMIZE)?;
     task.put_c_slice(0,n,mu)?;
 
     /* x variables. */
@@ -88,8 +90,6 @@ fn portfolio(n : i32,     // number of assets
             task.put_afe_f_entry(afei + i as i64 + 1, j as i32, *v)?;
         }
     }
-
-    task.put_obj_sense(Objsense::MAXIMIZE)?;
 
     /* Dump the problem to a human readable OPF file. */
     task.write_data("portfolio_1_basic.ptf")?;

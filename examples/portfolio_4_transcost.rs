@@ -46,7 +46,7 @@ fn portfolio(n : i32,
              GT : &[f64],
              x0  : &[f64],
              gamma : f64,
-             w : f64) -> Result<(),String> {
+             w : f64) -> Result<(Vec<f64>,f64),String> {
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
@@ -69,26 +69,27 @@ fn portfolio(n : i32,
         task.put_var_name(i+2*n,format!("z[{}]",i).as_str())?;
     }
 
-    task.put_var_bound_slice(0i32,3*n,
-                             vec![mosek::Boundkey::FR; 3*n as usize].as_slice(),
-                             vec![0.0; 3*n as usize].as_slice(),
-                             vec![0.0; 3*n as usize].as_slice())?;
-
-    let x_base = 0i32;
-    let y_base = n;
-    let z_base = 2*n;
+    task.put_var_bound_slice_const(0i32,3*n, mosek::Boundkey::FR, 0.0,0.0)?;
+    let all_vars : Vec<i32> = (0i32..3*n).collect();
+    let x = &all_vars[0..n as usize];
+    let y = &all_vars[n as usize..2*n as usize];
+    let z = &all_vars[2*n as usize..3*n as usize];
 
     /* Constraints. */
     task.put_con_name(0,"budget")?;
-    task.put_a_row(0i32,
-                   (0i32..3*n).collect::<Vec<i32>>().as_slice(),
-                   (0..n).map(|_| 1.0).chain(f.iter().map(|v| *v)).chain(g.iter().map(|v| *v)).collect::<Vec<f64>>().as_slice())?;
-    task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
+    {
+        let ones = vec![0i32; n as usize];
+        let fones = vec![0.0; n as usize];
+        task.put_aij_list(ones.as_slice(), x, fones.as_slice());
+        task.put_aij_list(ones.as_slice(), y, f);
+        task.put_aij_list(ones.as_slice(), z, g);
+        task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
+    }
 
     // objective
     task.put_obj_sense(Objsense::MAXIMIZE)?;
-    for (i,mui) in (0..n).zip(mu.iter()) {
-        task.put_c_j(x_base+i, *mui)?;
+    for (xi,mui) in x.iter().zip(mu.iter()) {
+        task.put_c_j(*xi, *mui)?;
     }
 
     // risk bound
@@ -109,59 +110,84 @@ fn portfolio(n : i32,
         }
     }
 
-    // z_i > |x_i-x0_i|
+    // |x-x0| <= z
     {
-        let afei = task.get_num_afe()?;
-        let dom = task.append_rplus_domain(n as i64)?;
-        // z_i > x_i - x0_i <=> z_i - x_i + x0_i > 0
-        task.append_afes(n as i64)?;
-        task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                                  (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
-                                  (0..n).map(|_| -1.0 ).chain((0..n).map(|_| 1.0)).collect::<Vec<f64>>().as_slice())?;
-        task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                            x0)?;
-        task.append_acc(dom,
-                        (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                        (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-        let afei = task.get_num_afe()?;
-        // z_i > x0_i - x_i <=> z_i + z_i - x0_i > 0
-        task.append_afes(n as i64)?;
-        task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                                  (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
-                                  (0..2*n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-        task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                            x0.iter().map(|v| -v).collect::<Vec<f64>>().as_slice())?;
-        task.append_acc(dom,
-                        (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
-                        (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
-    }
+        let acci = task.get_num_acc()?;
 
-    //DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
+        task.append_afes(2*n as i64)?;
+        let afes : Vec<i64> = (0..2*n as i64).collect();
+
+        let ones = vec![1.0; n as usize];
+        let minusones = vec![-1.0; n as usize];
+        task.put_afe_f_entry_list(&afes[0..n as usize],x,ones.as_slice())?;
+        task.put_afe_f_entry_list(&afes[0..n as usize],z,minusones.as_slice())?;
+
+        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],x,ones.as_slice())?;
+        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],z,ones.as_slice())?;
+
+        let domneg = task.append_rminus_domain(n as i64)?;
+        task.append_acc(domneg,
+                        &afes[0..n as usize],
+                        x0)?;
+        let dompos = task.append_rplus_domain(n as i64)?;
+        task.append_acc(dompos,
+                        &afes[n as usize..2*n as usize],
+                        x0)?;
+        task.put_acc_name(acci,"(x-z)<x0")?;
+        task.put_acc_name(acci+1,"(x+z)>x0")?;
+    }
+    // // z_i > |x_i-x0_i|
+    // {
+
+    //     let afei = task.get_num_afe()?;
+    //     let dom = task.append_rplus_domain(n as i64)?;
+    //     // z_i > x_i - x0_i <=> z_i - x_i + x0_i > 0
+    //     task.append_afes(n as i64)?;
+    //     task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                               (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
+    //                               (0..n).map(|_| -1.0 ).chain((0..n).map(|_| 1.0)).collect::<Vec<f64>>().as_slice())?;
+    //     task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                         x0)?;
+    //     task.append_acc(dom,
+    //                     (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                     (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
+    //     let afei = task.get_num_afe()?;
+    //     // z_i > x0_i - x_i <=> z_i + z_i - x0_i > 0
+    //     task.append_afes(n as i64)?;
+    //     task.put_afe_f_entry_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                               (x_base..x_base+n).chain(z_base..z_base+n).collect::<Vec<i32>>().as_slice(),
+    //                               (0..2*n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
+    //     task.put_afe_g_list((afei..afei+n as i64).chain(afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                         x0.iter().map(|v| -v).collect::<Vec<f64>>().as_slice())?;
+    //     task.append_acc(dom,
+    //                     (afei..afei+n as i64).collect::<Vec<i64>>().as_slice(),
+    //                     (0..n).map(|_| 1.0).collect::<Vec<f64>>().as_slice())?;
+    // }
+
+    //DJC:  [ y_j == 0 AND
+    //        x0_j == x_j ]
+    //      OR [ y_j == 1 ]
     {
         task.append_djcs(n as i64)?;
         let domeq = task.append_rzero_domain(1)?;
-        for i in 0..n {
+        for (i,(xi,yi,zi,x0i)) in izip!(x,y,z,x0).enumerate() {
             let afei = task.get_num_afe()?;
             task.append_afes(3)?;
             // y_j = 0
-            task.put_afe_f_entry(afei,y_base+i,1.0)?;
+            task.put_afe_f_entry(afei,*yi,1.0)?;
             // x_j = x0_j
-            task.put_afe_f_entry(afei+1,x_base+i,1.0)?;
+            task.put_afe_f_entry(afei+1,*xi,1.0)?;
             // y_j = 1
-            task.put_afe_f_entry(afei+2,y_base+i,1.0)?;
+            task.put_afe_f_entry(afei+2,*yi,1.0)?;
             task.put_djc(i as i64,
                          &[domeq,domeq,domeq],
                          &[afei,afei+1,afei+2],
-                         &[0.0, x0[i as usize], 1.0],
+                         &[0.0, *x0i, 1.0],
                          &[2,1])?;
         }
     }
 
-
     let _ = task.optimize()?;
-
-    /* Dump the problem to a human readable OPF file. */
-    task.write_data("portfolio_4_transcost.ptf")?;
 
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
@@ -170,9 +196,7 @@ fn portfolio(n : i32,
     task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
     let expret = xx[0..n as usize].iter().zip(mu.iter()).map(|(a,b)| a*b).sum::<f64>();
 
-
-    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
-    Ok(())
+    Ok((xx,expret))
 }
 
 #[allow(non_snake_case)]
@@ -187,14 +211,15 @@ fn main() -> Result<(),String> {
     let GT      = vec![0.1667,  0.0232,  0.0013,
                        0.0000,  0.1033, -0.0022,
                        0.0000,  0.0000,  0.0338 ];
-    portfolio(n,
-              mu.as_slice(),
-              f.as_slice(),
-              g.as_slice(),
-              GT.as_slice(),
-              x0.as_slice(),
-              gamma,
-              w)?;
+    let (_level,expret) = portfolio(n,
+                                    mu.as_slice(),
+                                    f.as_slice(),
+                                    g.as_slice(),
+                                    GT.as_slice(),
+                                    x0.as_slice(),
+                                    gamma,
+                                    w)?;
 
+    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
     Ok(())
 }
