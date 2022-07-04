@@ -1,11 +1,21 @@
-/*
-  Copyright: MOSEK ApS
+//!  Copyright: MOSEK ApS
+//!
+//!  Purpose: To demonstrate how to solve a small linear
+//!           optimization problem using the MOSEK C API,
+//!           and handle the solver result and the problem
+//!           solution.
+//!
+//! ```
+//! Maximize 3 x1 + x2 + 5 x3 + x4
+//! Such that
+//!     3 x1 +   x2 + 2 x3        =  39
+//!     2 x1 +   x2 + 3 x3 +   x4 >= 15
+//!          + 2 x2        + 3 x4 <= 25
+//!
+//!     x1,x3,x4 >= 0
+//!     0 <= x2 <= 10
+//! ```
 
-  Purpose:   To demonstrate how to solve a small linear
-             optimization problem using the MOSEK C API,
-             and handle the solver result and the problem
-             solution.
-*/
 
 extern crate mosek;
 
@@ -13,8 +23,7 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 
 const INF : f64 = 0.0;
 
-fn main() -> Result<(),String>
-{
+fn main() -> Result<(),String> {
     let numvar = 4;
     let numcon = 3;
 

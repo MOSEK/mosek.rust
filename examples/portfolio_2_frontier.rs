@@ -1,28 +1,42 @@
-
-// File : portfolio_1_basic.rs
-
-// Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-// Description :  Implements a basic portfolio optimization model.
-//                Determines points on the efficient frontier.
-// Maximize mu'*x - alpha * s
-// Subject to
-//     budget : sum(x)  = 1
-//     GT     : (0.5,s,G'*x) in Q_r^{n+2}
-//              == (s >= |G'x|
-//     x >= 0
+//! File : portfolio_2_basic.rs
+//!
+//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//! Description :  Implements a basic portfolio optimization model.
+//!                Determines points on the efficient frontier.
 
 extern crate mosek;
+extern crate itertools;
 use mosek::{Task,Objsense,Solsta,Soltype};
+use itertools::{iproduct};
 
+/// Solve basic Markowitz portfolio problem for different risk bounds
+/// to produce a list of points on the efficient frontier.
+///
+/// ```
+/// Maximize mu'x - alpha * s
+/// Subject to
+///    budget : sum(x) = sum(x0)+w
+///    risk:    s >= || G'x ||
+///    x >= 0
+/// ```
+///
+/// # Arguments
+///
+/// - `n` number of assets
+/// - `alphas` list of risk bound (bound on the standard deviation)
+/// - `mu` vector of expected returns
+/// - `GT` Covariance matrix factor
+/// - `x0` vector if initial investment
+/// - `w` initial uninvested wealth
 #[allow(non_snake_case)]
 fn portfolio(n : i32,
              mu : &[f64],
              GT : &[f64],
              x0  : &[f64],
              alphas : &[f64],
-             w : f64) -> Result<(),String> {
-    /* Initial setup. */
+             w : f64) -> Result<Vec<(f64,f64)>,String> {
+    let k = (GT.len() / n as usize) as i32;
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(t) => t,
@@ -35,61 +49,71 @@ fn portfolio(n : i32,
 
     /* Objective */
     task.put_obj_sense(Objsense::MAXIMIZE)?;
-    for (j,mu_j) in mu.iter().enumerate() {
-        task.put_c_j(j as i32,*mu_j)?;
-        task.put_aij(0,j as i32,1.0)?;
-        task.put_var_bound(j as i32, mosek::Boundkey::LO, 0.0,0.0)?;
-        task.put_var_name(j as i32, format!("x[{}]",j).as_str())?;
-    }
-    task.put_var_name(n, "s")?;
-    task.put_var_bound(n, mosek::Boundkey::FR, 0.0, 0.0)?;
+
+    let x : Vec<i32> = (0i32..n).collect();
+    let s = n;
+
     /* Total budget */
     let total_budget = w + x0.iter().sum::<f64>();
+
+    /* Total budget constraint - set bounds l^c = u^c */
     task.put_con_bound(0i32, mosek::Boundkey::FX, total_budget, total_budget)?;
-    task.put_con_name(0,"budget")?;
-    for j in 0..n { task.put_aij(0i32,j,1.0)?; }
-    
-    task.append_afes(n as i64+2)?;
-    let dom = task.append_r_quadratic_cone_domain(n as i64+2)?;
-    task.append_acc(dom,
-                    (0..n as i64+2).collect::<Vec<i64>>().as_slice(),
-                    (0..n+2).map(|_| 0.0).collect::<Vec<f64>>().as_slice())?;
+    task.put_con_name(0i32,"budget")?;
+    task.put_c_slice(0,n,mu)?;
+
+    /* x variables. */
+    for (j,xj) in x.iter().enumerate() {
+        /* Coefficients in the first row of A */
+        task.put_aij(0, *xj, 1.0)?;
+        /* No short-selling - x^l = 0, x^u = inf */
+        task.put_var_bound(*xj, mosek::Boundkey::LO, 0.0, 0.0)?;
+        task.put_var_name(*xj, format!("x[{}]",j+1).as_str())?;
+    }
+    task.put_var_name(s, "s")?;
+    task.put_var_bound(s, mosek::Boundkey::FR, 0.0, 0.0)?;
+
+    // risk bound
+    // (s,0.5,GT * x) in Q_r
     {
-        task.put_afe_g(0,0.5)?;
-        task.put_afe_f_entry(1,n,1.0)?;
-        let mut k = 0;
-        for i in 0..n {
-            for j in 0..n {
-                if GT[k] != 0.0 {
-                    task.put_afe_f_entry(i as i64+2,j as i32,GT[k])?;
+        let acci = task.get_num_acc()?;
+        let afei = task.get_num_afe()?;
+
+        task.append_afes(k as i64 + 2)?;
+        let dom = task.append_r_quadratic_cone_domain(k as i64+2)?;
+        task.append_acc_seq(dom,
+                            afei,
+                            vec![0.0; k as usize + 2].as_slice())?;
+        task.put_acc_name(acci,"variance")?;
+        task.put_afe_f_entry(afei,s,1.0)?;
+        task.put_afe_g(afei+1,0.5)?;
+
+        for ((i,j),v) in iproduct!(0..n,0..n).zip(GT).filter(|(_,v)| **v != 0.0) {
+            task.put_afe_f_entry(afei + i as i64 + 2, j as i32, *v)?;
+        }
+    }
+
+    let frontier : Vec<(f64,f64)> = alphas.iter().enumerate().filter_map(|(i,alpha)| {
+        /* Sets the objective function coefficient for s. */
+        if      let Err(_) = task.put_c_j(s, - *alpha) { None }
+        else if let Err(_) = task.optimize() { None }
+        else if let Ok(solsta) = task.get_sol_sta(Soltype::ITR) {
+            match solsta {
+                Solsta::OPTIMAL => {
+                    let mut xx = vec![0.0; n as usize+1];
+                    if let Err(_) = task.get_xx(Soltype::ITR,xx.as_mut_slice()) { None }
+                    else {
+                        Some((*alpha,mu.iter().zip(xx.iter()).map(|(m,x)| m * x).sum::<f64>()))
+                    }
                 }
-                k += 1;
+                _ => None
             }
         }
-    }
-
-    for (i,alpha) in alphas.iter().enumerate() {
-        /* Sets the objective function coefficient for s. */
-        task.put_c_j(n, -alpha)?;
-        let _trmcode = task.optimize()?;
-        let solsta = task.get_sol_sta(Soltype::ITR)?;
-
-        if solsta == Solsta::OPTIMAL {
-            let mut xx = vec![0.0; n as usize+1];
-
-            task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
-            let expret : f64 = xx[0..n as usize].iter().sum();
-            let stddev = xx[n as usize];
-            println!("alpha:{:-12.3e} | expected return:{:-12.3e} | std dev:{:-12.3e}", alpha, expret, stddev);
-        }
         else {
-            println!("An error occurred when solving for alpha={:e}", alpha);
+            None
         }
-        task.write_data(format!("portfolio-2-{}.ptf",i).as_str())?;
-    }
+    }).collect();
 
-    
-    Ok(())
+    Ok(frontier)
 }
 
 #[allow(non_snake_case)]
@@ -103,5 +127,10 @@ fn main() -> Result<(),String> {
                   0.0000,  0.1033, -0.0022,
                   0.0000,  0.0000,  0.0338];
 
-    portfolio(n,mu.as_slice(),GT.as_slice(),x0.as_slice(),alphas.as_slice(),w)
+    println!("{:10}   {:10}","alpha","exp.ret.");
+    for (alpha,expret) in portfolio(n,mu.as_slice(),GT.as_slice(),x0.as_slice(),alphas.as_slice(),w)? {
+        println!("{:10.3e} : {:10.e}",alpha,expret);
+    }
+
+    Ok(())
 }
