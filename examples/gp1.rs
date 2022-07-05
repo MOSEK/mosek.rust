@@ -71,7 +71,7 @@ fn max_volume_box(Aw : f64, Af : f64,
     let mut xyz = vec![0.0; 3];
     task.get_xx_slice(Soltype::ITR, 0i32, numvar, xyz.as_mut_slice())?;
 
-    task.write_data("gp1.ptf")?;
+    // task.write_data("gp1.ptf")?;
 
     Ok(xyz.iter().map(|v| v.exp()).collect())
 }

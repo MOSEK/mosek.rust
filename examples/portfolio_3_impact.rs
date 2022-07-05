@@ -179,7 +179,7 @@ pub fn portfolio(n : i32,
     }
 
     let _ = task.optimize()?;
-    task.write_data("pf-impact.ptf")?;
+    // task.write_data("pf-impact.ptf")?;
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
 

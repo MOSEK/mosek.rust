@@ -142,7 +142,7 @@ fn portfolio(n     : i32,
     }
 
     let _ = task.optimize()?;
-    task.write_data(format!("pf-card-{}.ptf",p).as_str())?;
+    // task.write_data(format!("pf-card-{}.ptf",p).as_str())?;
 
     let mut xx = vec![0.0;n as usize];
     task.get_xx_slice(Soltype::ITG, 0,n,xx.as_mut_slice())?;

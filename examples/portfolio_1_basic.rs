@@ -92,7 +92,7 @@ fn portfolio(n : i32,     // number of assets
     }
 
     /* Dump the problem to a human readable OPF file. */
-    task.write_data("portfolio_1_basic.ptf")?;
+    // task.write_data("portfolio_1_basic.ptf")?;
 
     let _trm = task.optimize()?;
 
