@@ -9,7 +9,7 @@ extern crate mosek;
 
 const INF : f64 = 0.0;
 
-use mosek::{Task,Streamtype,Solsta,Soltype,Conetype};
+use mosek::{Task,Streamtype,Solsta,Soltype};
 
 fn main() -> Result<(),String>
 {
@@ -35,12 +35,6 @@ fn main() -> Result<(),String>
     let aptre = vec![1, 2, 3, 3, 3, 3];
     let asub  = vec![0, 0, 0, 0];
     let aval  = vec![1.0, 1.0, 2.0];
-
-    let conetp  = vec![ Conetype::QUAD,Conetype::RQUAD ];
-    let conesub = vec![ 3,0,1,
-                        4,5,2 ];
-    let coneptrb = vec![0,3];
-    let coneptre = vec![3,6];
 
     /* Create the optimization task. */
     let mut task = match Task::new() {
@@ -88,12 +82,27 @@ fn main() -> Result<(),String>
     }
 
     /* Append the first cone. */
-    for i in 0..numcone
+//TAG:begin-appendcone
+        // Create a matrix F such that F * x = [x(3),x(0),x(1),x(4),x(5),x(2)]
     {
-        task.append_cone(conetp[i],
-                         0.0, /* For future use only, can be set to 0.0 */
-                         & conesub[coneptrb[i]..coneptre[i]])?;
+        task.append_afes(6)?;
+        task.put_afe_f_entry_list(&[0,1,2,3,4,5],                      // Rows
+                                  &[3, 0, 1, 4, 5, 2],            // Columns
+                                  &[1.0,1.0,1.0,1.0,1.0,1.0])?;
+
+        // Quadratic cone (x(3),x(0),x(1)) \in QUAD_3
+        let qconedom  = task.append_quadratic_cone_domain(3)?;
+        task.append_acc(qconedom,                // Domain
+                        &[0, 1, 2],              // Rows from F
+                        &[0.0,0.0,0.0])?;        // Unused
+
+        // Rotated quadratic cone (x(4),x(5),x(2)) \in RQUAD_3
+        let rqconedom = task.append_r_quadratic_cone_domain(3)?;
+        task.append_acc(rqconedom,               // Domain
+                        &[3, 4, 5],              // Rows from F
+                        &[0.0,0.0,0.0])?;        // Unused
     }
+//TAG:end-appendcone
 
     /* Run optimizer */
     task.optimize()?;
@@ -101,8 +110,6 @@ fn main() -> Result<(),String>
     /* Print a summary containing information
      * about the solution for debugging purposes*/
     task.solution_summary (Streamtype::MSG)?;
-
-
 
     let solsta = task.get_sol_sta(Soltype::ITR)?;
 

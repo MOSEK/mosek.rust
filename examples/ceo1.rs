@@ -87,32 +87,14 @@ fn main() -> Result<(),String> {
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(Soltype::ITR)?;
 
-    match solsta {
-        Solsta::OPTIMAL => {
-            let mut xx = vec![0.0; numvar as usize];
-            task.get_xx(Soltype::ITR, & mut xx[..])?;
-            println!("Optimal primal solution");
-            for j in 0..numvar as usize {
-                println!("x[{}]: {:.4}",j,xx[j]);
-            }
-          }
 
-        Solsta::DUAL_INFEAS_CER |
-        Solsta::PRIM_INFEAS_CER => {
-            println!("Primal or dual infeasibility certificate found.");
-        }
-
-        Solsta::UNKNOWN => {
-            /* If the solutions status is unknown, print the termination code
-             * indicating why the optimizer terminated prematurely. */
-
-            println!("The solution status is unknown.");
-            println!("The optimizer terminitated with code: {}",solsta);
-          }
-        _ =>
-        {
-            println!("Other solution status.");
-        }
+    assert!(solsta == Solsta::Optimal);
+    let mut xx = vec![0.0; numvar as usize];
+    task.get_xx(Soltype::ITR, & mut xx[..])?;
+    println!("Optimal primal solution");
+    for j in 0..numvar as usize {
+        println!("x[{}]: {:.4}",j,xx[j]);
     }
+
     return Result::Ok(());
 }
