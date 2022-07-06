@@ -62,21 +62,22 @@ fn portfolio(n     : i32,
     /* Compute total wealth */
     let w0 = w + x0.iter().sum::<f64>();
 
-    task.append_cons(2i32)?;
-    task.append_vars(2*n)?;
+    task.append_vars(3*n)?;
 
     let all_vars : Vec<i32> = (0..2*n).collect();
     let x = &all_vars[0..n as usize];
     let y = &all_vars[n as usize..2*n as usize];
+    let z = &all_vars[2*n as usize..3*n as usize];
 
     task.put_var_bound_slice_const(0,n,mosek::Boundkey::LO,0.0,0.0)?;
     task.put_var_bound_slice_const(n,2*n,mosek::Boundkey::RA,0.0,1.0)?;
+    task.put_var_bound_slice_const(2*n,3*n, mosek::Boundkey::RA, 0.0,1.0)?;
 
-    for (i,j) in x.iter().enumerate() {
-        task.put_var_name(*j,format!("x[{}]",i).as_str())?;
-    }
-    for (i,j) in y.iter().enumerate() {
-        task.put_var_name(*j,format!("y[{}]",i).as_str())?;
+    for (i,xj,yj,zj) in izip!(0..n,x,y,z) {
+        task.put_var_name(*xj,format!("x[{}]",i).as_str())?;
+        task.put_var_name(*yj,format!("y[{}]",i).as_str())?;
+        task.put_var_name(*zj,format!("z[{}]",i).as_str())?;
+        task.put_var_type(*yj, Variabletype::TYPE_INT);
     }
 
     // objective
@@ -85,22 +86,54 @@ fn portfolio(n     : i32,
         task.put_c_j(*j, *mui)?;
     }
 
-
     let n_ones = vec![1.0; n as usize];
     // budget constraint
-    task.put_con_name(0,"budget")?;
-    task.put_a_row(0,
-                   x,
-                   n_ones.as_slice())?;
-    task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
+    {
+        let coni = task.getnumcon()?;
+        task.append_cons(1)?;
+        task.put_con_name(coni,"budget")?;
+        task.put_a_row(coni,
+                       x,
+                       n_ones.as_slice())?;
+        task.put_con_bound(coni,mosek::Boundkey::FX,w0,w0)?;
+    }
 
+    // |x-x0| <= z
+    {
+        let acci = task.get_num_acc()?;
+
+        task.append_afes(2*n as i64)?;
+        let afes : Vec<i64> = (0..2*n as i64).collect();
+
+        let ones = vec![1.0; n as usize];
+        let minusones = vec![-1.0; n as usize];
+        task.put_afe_f_entry_list(&afes[0..n as usize],x,ones.as_slice())?;
+        task.put_afe_f_entry_list(&afes[0..n as usize],z,minusones.as_slice())?;
+
+        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],x,ones.as_slice())?;
+        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],z,ones.as_slice())?;
+
+        let domneg = task.append_rminus_domain(n as i64)?;
+        task.append_acc(domneg,
+                        &afes[0..n as usize],
+                        x0)?;
+        let dompos = task.append_rplus_domain(n as i64)?;
+        task.append_acc(dompos,
+                        &afes[n as usize..2*n as usize],
+                        x0)?;
+        task.put_acc_name(acci,"(x-z)<x0")?;
+        task.put_acc_name(acci+1,"(x+z)>x0")?;
+    }
+    
     // cardinality constraint
-    task.put_con_name(1,"cardinality")?;
-    task.put_a_row(1,
-                   y,
-                   n_ones.as_slice())?;
-    task.put_con_bound(1,mosek::Boundkey::UP,p as f64,p as f64)?;
-
+    {
+        let coni = task.getnumcon()?;
+        task.append_cons(1)?;
+        task.put_con_name(coi,"cardinality")?;
+        task.put_a_row(coni, y, n_ones.as_slice())?;
+        task.put_con_bound(coni,mosek::Boundkey::UP,p as f64,p as f64)?;
+    }
+    
     // (gamma,G'x) in Q
     {
         let afei = task.get_num_afe()?;
@@ -119,25 +152,19 @@ fn portfolio(n     : i32,
         }
     }
 
-    //DJC:  [ y_j == 0 AND x0_j == x_j ] OR y_j == 1
+    // Switch
     {
-        task.append_djcs(n as i64)?;
-        let domeq = task.append_rzero_domain(1)?;
-        for (i,xi,yi,x0i) in izip!(0..n,x,y,x0) {
-            let afei = task.get_num_afe()?;
-            task.append_afes(3)?;
-            // y_j = 0
-            task.put_afe_f_entry(afei,*yi,1.0)?;
-            // x_j = x0_j
-            task.put_afe_f_entry(afei+1,*xi,1.0)?;
-            // y_j = 1
-            task.put_afe_f_entry(afei+2,*yi,1.0)?;
-            task.put_djc(i as i64,
-                         &[domeq,domeq,domeq],
-                         &[afei,afei+1,afei+2],
-                         &[0.0, *x0i, 1.0],
-                         &[2,1])?;
-            task.put_djc_name(i as i64,format!("y[{}]->x[{}]>0",i,i).as_str())?;
+        let coni = task.get_num_con()?;
+        task.append_cons(n)?;
+        for i in 0..n {
+            task.put_con_name(coni + i, format!("switch[{}]",i))?;
+        }
+
+        let conlist : Vec<i32> = (coni..coni+n).collect();
+        task.put_aij_list(conlist.as_slice(), z, vec![1.0; n as usize].as_slice())?;
+        task.put_aij_list(conlist.as_slice(), y, vec![-w0; n as usize].as_slice())?;
+
+        tak.put_con_bound_slice_const(conlist.as_slice(), Boundkey::UP, 0.0,0.0);
         }
     }
 

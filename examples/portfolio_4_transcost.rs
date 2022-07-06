@@ -11,7 +11,7 @@
 mod common;
 
 extern crate mosek;
-use mosek::{Task,Objsense,Streamtype,Soltype};
+use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype};
 extern crate itertools;
 use itertools::{izip,iproduct};
 
@@ -69,9 +69,12 @@ fn portfolio(n : i32,
         task.put_var_name(i,    format!("x[{}]",i).as_str())?;
         task.put_var_name(i+n,  format!("y[{}]",i).as_str())?;
         task.put_var_name(i+2*n,format!("z[{}]",i).as_str())?;
+        task.put_var_type(i+n, Variabletype::TYPE_INT);
     }
 
-    task.put_var_bound_slice_const(0i32,3*n, mosek::Boundkey::FR, 0.0,0.0)?;
+    task.put_var_bound_slice_const(0i32,n,  mosek::Boundkey::LO, 0.0,0.0)?;
+    task.put_var_bound_slice_const(n,2*n,   mosek::Boundkey::FR, 0.0,0.0)?;
+    task.put_var_bound_slice_const(2*n,3*n, mosek::Boundkey::RA, 0.0,1.0)?;
     let all_vars : Vec<i32> = (0i32..3*n).collect();
     let x = &all_vars[0..n as usize];
     let y = &all_vars[n as usize..2*n as usize];
@@ -139,26 +142,20 @@ fn portfolio(n : i32,
         task.put_acc_name(acci+1,"(x+z)>x0")?;
     }
 
-    //DJC:  [ y_j == 0 AND
-    //        x0_j == x_j ]
-    //      OR [ y_j == 1 ]
+
+    // Switch
     {
-        task.append_djcs(n as i64)?;
-        let domeq = task.append_rzero_domain(1)?;
-        for (i,(xi,yi,zi,x0i)) in izip!(x,y,z,x0).enumerate() {
-            let afei = task.get_num_afe()?;
-            task.append_afes(3)?;
-            // y_j = 0
-            task.put_afe_f_entry(afei,*yi,1.0)?;
-            // x_j = x0_j
-            task.put_afe_f_entry(afei+1,*xi,1.0)?;
-            // y_j = 1
-            task.put_afe_f_entry(afei+2,*yi,1.0)?;
-            task.put_djc(i as i64,
-                         &[domeq,domeq,domeq],
-                         &[afei,afei+1,afei+2],
-                         &[0.0, *x0i, 1.0],
-                         &[2,1])?;
+        let coni = task.get_num_con()?;
+        task.append_cons(n)?;
+        for i in 0..n {
+            task.put_con_name(coni + i, format!("switch[{}]",i))?;
+        }
+
+        let conlist : Vec<i32> = (coni..coni+n).collect();
+        task.put_aij_list(conlist.as_slice(), z, vec![1.0; n as usize].as_slice())?;
+        task.put_aij_list(conlist.as_slice(), y, vec![-w0; n as usize].as_slice())?;
+
+        tak.put_con_bound_slice_const(conlist.as_slice(), Boundkey::UP, 0.0,0.0);
         }
     }
 
