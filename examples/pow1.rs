@@ -93,7 +93,7 @@ fn main()  -> Result<(),String> {
 
     println!("Optimal primal solution");
     for (j,&xj) in xx[0..3].iter().enumerate() {
-        println!("x[{}]: {}",j,xj);
+        println!("x[{}]: {}",j+1,xj);
     }
 
     return Ok(());
