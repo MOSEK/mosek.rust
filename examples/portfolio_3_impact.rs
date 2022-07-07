@@ -6,23 +6,21 @@
 //!
 //! More details can be found at <https://docs.mosek.com/latest/capi/case-portfolio.html#doc-optimizer-case-portfolio>
 
-#[path = "common.rs"]
-mod common;
-
 extern crate mosek;
 extern crate itertools;
-use mosek::{Task,Objsense,Streamtype,Solsta,Soltype};
+use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
 use itertools::{izip,iproduct};
 
+const INF : f64 = 0.0;
 
 /// Solve portfolio with market impact terms.
 ///
 /// ```
 /// Maximize mu'x
 /// Subject to
-///    budget : sum(x)+m't = sum(x0)+w
+///    budget : sum(x)+m'c = sum(x0)+w
 ///    risk   : (gamma,G'x) in Q^{k+1}
-///    MI     : (t_j,1,|x_j-x0_j|) in P^3(2/3,1/3), j = 1..
+///    MI     : (c_j,1,|x_j-x0_j|) in P^3(2/3,1/3), j = 1..
 ///    x >= 0
 /// ```
 ///
@@ -37,7 +35,7 @@ use itertools::{izip,iproduct};
 ///
 /// The MI constraint is not convex due tot he |.| term, so we relax it:
 /// ```
-///    MI     : (t_j,1,z_j) in P^3(2/3,1/3), j = 1..
+///    MI     : (c_j,1,z_j) in P^3(2/3,1/3), j = 1..
 ///             z_j >= |x_j-x0_j|
 ///             implemented as
 ///                z_j >= x_j-x0_j
@@ -81,20 +79,20 @@ pub fn portfolio(n : i32,
 
     let allvars : Vec<i32> = (0i32..3*n).collect();
     let var_x = &allvars[0..n as usize];
-    let var_t = &allvars[n as usize..2*n as usize];
-    let var_xt = &allvars[0..2*n as usize];
+    let var_c = &allvars[n as usize..2*n as usize];
+    let var_xc = &allvars[0..2*n as usize];
     let var_z = &allvars[2*n as usize..3*n as usize];
 
     for (i,j) in var_x.iter().enumerate() {
         task.put_var_bound(*j,mosek::Boundkey::LO, 0.0, 0.0)?;
-        task.put_var_name(*j,format!("x[{}]",i).as_str())?; }
-    for (i,j) in var_t.iter().enumerate() {
+        task.put_var_name(*j,format!("x[{}]",i+1).as_str())?; }
+    for (i,j) in var_c.iter().enumerate() {
         task.put_var_bound(*j,mosek::Boundkey::FR, 0.0, 0.0)?;
-        task.put_var_name(*j,format!("t[{}]",i).as_str())?;
+        task.put_var_name(*j,format!("c[{}]",i+1).as_str())?;
     }
     for (i,j) in var_z.iter().enumerate() {
         task.put_var_bound(*j,mosek::Boundkey::FR, 0.0, 0.0)?;
-        task.put_var_name(*j,format!("z[{}]",i).as_str())?;
+        task.put_var_name(*j,format!("z[{}]",i+1).as_str())?;
     }
 
     task.put_obj_sense(Objsense::MAXIMIZE)?;
@@ -109,35 +107,28 @@ pub fn portfolio(n : i32,
     task.put_con_name(0,"budget")?;
     let wealth = w + x0.iter().sum::<f64>();
     task.put_a_row(con_budget,
-                   &var_xt,
+                   &var_xc,
                    (0..n).map(|_| 1.0).chain(m.iter().map(|v| *v)).collect::<Vec<f64>>().as_slice())?;
     task.put_con_bound(con_budget,mosek::Boundkey::FX, wealth,wealth)?;
 
     // |x-x0| <= z
     {
-        let acci = task.get_num_acc()?;
-
-        task.append_afes(2*n as i64)?;
-        let afes : Vec<i64> = (0..2*n as i64).collect();
-
-        let ones = vec![1.0; n as usize];
+        let coni = task.get_num_con()?;
+        task.append_cons(2 * n)?;
+        for i in 0..n {
+            task.put_con_name(coni+i,   format!("zabs1[{}]",1 + i).as_str())?;
+            task.put_con_name(coni+n+i, format!("zabs2[{}]",1 + i).as_str())?;
+        }
+        let ones      = vec![1.0; n as usize];
         let minusones = vec![-1.0; n as usize];
-        task.put_afe_f_entry_list(&afes[0..n as usize],var_x,ones.as_slice())?;
-        task.put_afe_f_entry_list(&afes[0..n as usize],var_z,minusones.as_slice())?;
-
-        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],var_x,ones.as_slice())?;
-        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],var_z,ones.as_slice())?;
-
-        let domneg = task.append_rminus_domain(n as i64)?;
-        task.append_acc(domneg,
-                        &afes[0..n as usize],
-                        x0)?;
-        let dompos = task.append_rplus_domain(n as i64)?;
-        task.append_acc(dompos,
-                        &afes[n as usize..2*n as usize],
-                        x0)?;
-        task.put_acc_name(acci,"(x-z)<x0")?;
-        task.put_acc_name(acci+1,"(x+z)>x0")?;
+        let con_abs1 : Vec<i32> = (coni..coni+n).collect();
+        let con_abs2 : Vec<i32> = (coni+n..coni+2*n).collect();
+        task.put_aij_list(con_abs1.as_slice(), var_x, minusones.as_slice())?;
+        task.put_aij_list(con_abs1.as_slice(), var_z, ones.as_slice())?;
+        task.put_con_bound_slice(coni,coni+n, vec![Boundkey::LO; n as usize].as_slice(), x0.iter().map(|&v| -v).collect::<Vec<f64>>().as_slice(), vec![INF; n as usize].as_slice())?;
+        task.put_aij_list(con_abs2.as_slice(), var_x, ones.as_slice())?;
+        task.put_aij_list(con_abs2.as_slice(), var_z, ones.as_slice())?;
+        task.put_con_bound_slice(coni+n,coni+n*2, vec![Boundkey::LO; n as usize].as_slice(), x0, vec![INF; n as usize].as_slice())?;
     }
 
     // GT
@@ -161,25 +152,27 @@ pub fn portfolio(n : i32,
     {
         let mut acci = task.get_num_acc()?;
         let mut afei = task.get_num_afe()?;
-        task.append_afes(n as i64 * 3)?;
-        let dom = task.append_primal_power_cone_domain(3,&[2.0/3.0, 1.0/3.0])?;
+        let afe0 = afei;
+        task.append_afes(n as i64 * 2+1)?;
+        let dom = task.append_primal_power_cone_domain(3,&[2.0, 1.0])?;
+        task.put_afe_g(afe0,1.0)?;
+        afei += 1;
 
-        for (i,tj,zj,x0j) in izip!(0..n,var_t,var_z,x0) {
-            task.put_afe_f_entry(afei,*tj,1.0)?;
-            task.put_afe_g(afei+1,1.0)?;
-            task.put_afe_f_entry(afei+2,*zj,1.0)?;
-            task.put_afe_g(afei+2,- *x0j)?;
+        for (i,&cj,&zj,&x0j) in izip!(0..n,var_c,var_z,x0) {
+            task.put_afe_f_entry(afei,cj,1.0)?;
+            task.put_afe_f_entry(afei+1,zj,1.0)?;
+            task.put_afe_g(afei+1, - x0j)?;
             task.append_acc(dom,
-                            &[afei,afei+1,afei+2],
+                            &[afei,afe0,afei+1],
                             &[0.0, 0.0, 0.0])?;
-            task.put_acc_name(acci,format!("MarketImpact[{}]",i).as_str())?;
-            afei += 3;
+            task.put_acc_name(acci,format!("market_impact[{}]",i+1).as_str())?;
+            afei += 2;
             acci += 1;
         }
     }
 
     let _ = task.optimize()?;
-    // task.write_data("pf-impact.ptf")?;
+    task.write_data("portfolio_3_impact.ptf")?;
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
 
@@ -198,30 +191,30 @@ pub fn portfolio(n : i32,
     Ok((level,obj))
 }
 
-// #[allow(non_snake_case)]
+#[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    // let n    = 8i32;
-    // let w    = 1.0;
-    // let mu   = &[0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379];
-    // let x0   = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-    // let GT   = &[0.30758, 0.12146, 0.11341, 0.11327, 0.17625, 0.11973, 0.10435, 0.10638,
-    //              0.     , 0.25042, 0.09946, 0.09164, 0.06692, 0.08706, 0.09173, 0.08506,
-    //              0.     , 0.     , 0.19914, 0.05867, 0.06453, 0.07367, 0.06468, 0.01914,
-    //              0.     , 0.     , 0.     , 0.20876, 0.04933, 0.03651, 0.09381, 0.07742,
-    //              0.     , 0.     , 0.     , 0.     , 0.36096, 0.12574, 0.10157, 0.0571 ,
-    //              0.     , 0.     , 0.     , 0.     , 0.     , 0.21552, 0.05663, 0.06187,
-    //              0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.22514, 0.03327,
-    //              0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.2202 ];
-    // let gamma = 0.36;
-    // let m    = &[0.01   , 0.01   , 0.01   , 0.01   , 0.01   , 0.01   , 0.01   , 0.01];
+    let n : i32 = 8;
+    let w = 1.0;
+    let mu = &[0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379];
+    let x0 = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+    let GT = &[0.30758, 0.12146, 0.11341, 0.11327, 0.17625, 0.11973, 0.10435, 0.10638,
+               0.     , 0.25042, 0.09946, 0.09164, 0.06692, 0.08706, 0.09173, 0.08506,
+               0.     , 0.     , 0.19914, 0.05867, 0.06453, 0.07367, 0.06468, 0.01914,
+               0.     , 0.     , 0.     , 0.20876, 0.04933, 0.03651, 0.09381, 0.07742,
+               0.     , 0.     , 0.     , 0.     , 0.36096, 0.12574, 0.10157, 0.0571 ,
+               0.     , 0.     , 0.     , 0.     , 0.     , 0.21552, 0.05663, 0.06187,
+               0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.22514, 0.03327,
+               0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.2202 ];
+    let gamma = 0.36;
+    let m = vec![0.01; n as usize];
 
-    let (level,obj) = portfolio(common::Data1::n,
-                                common::Data1::mu,
-                                common::Data1::m,
-                                common::Data1::GT,
-                                common::Data1::x0,
-                                common::Data1::gamma,
-                                common::Data1::w)?;
+    let (level,obj) = portfolio(n,
+                                mu,
+                                m.as_slice(),
+                                GT,
+                                x0,
+                                gamma,
+                                w)?;
 
     println!("Solution x = {:?}",level);
     println!("Objective value x = {:?}",obj);

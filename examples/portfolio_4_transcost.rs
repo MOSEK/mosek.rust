@@ -7,13 +7,12 @@
 //!                 as a mixed-integer problem.
 //!
 
-#[path = "common.rs"]
-mod common;
-
 extern crate mosek;
-use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype};
+use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype,Boundkey};
 extern crate itertools;
-use itertools::{izip,iproduct};
+use itertools::{iproduct};
+
+const INF : f64 = 0.0;
 
 /// Optimize expected return on an investment with transaction cost.
 ///
@@ -66,28 +65,29 @@ fn portfolio(n : i32,
     task.append_vars(3*n)?;
 
     for i in 0i32..n {
-        task.put_var_name(i,    format!("x[{}]",i).as_str())?;
-        task.put_var_name(i+n,  format!("y[{}]",i).as_str())?;
-        task.put_var_name(i+2*n,format!("z[{}]",i).as_str())?;
-        task.put_var_type(i+n, Variabletype::TYPE_INT);
+        task.put_var_name(i,    format!("x[{}]",i+1).as_str())?;
+        task.put_var_name(i+n,  format!("y[{}]",i+1).as_str())?;
+        task.put_var_name(i+2*n,format!("z[{}]",i+1).as_str())?;
+        task.put_var_type(i+n, Variabletype::TYPE_INT)?;
     }
 
-    task.put_var_bound_slice_const(0i32,n,  mosek::Boundkey::LO, 0.0,0.0)?;
-    task.put_var_bound_slice_const(n,2*n,   mosek::Boundkey::FR, 0.0,0.0)?;
-    task.put_var_bound_slice_const(2*n,3*n, mosek::Boundkey::RA, 0.0,1.0)?;
     let all_vars : Vec<i32> = (0i32..3*n).collect();
     let x = &all_vars[0..n as usize];
     let y = &all_vars[n as usize..2*n as usize];
     let z = &all_vars[2*n as usize..3*n as usize];
 
+    task.put_var_bound_slice_const(0i32,n,  mosek::Boundkey::LO, 0.0,0.0)?;
+    task.put_var_bound_slice_const(n,2*n,   mosek::Boundkey::RA, 0.0,1.0)?;
+    task.put_var_bound_slice_const(2*n,3*n, mosek::Boundkey::FR, 0.0,0.0)?;
+
     /* Constraints. */
     task.put_con_name(0,"budget")?;
     {
-        let ones = vec![0i32; n as usize];
-        let fones = vec![0.0; n as usize];
-        task.put_aij_list(ones.as_slice(), x, fones.as_slice());
-        task.put_aij_list(ones.as_slice(), y, f);
-        task.put_aij_list(ones.as_slice(), z, g);
+        let zeros = vec![0i32; n as usize];
+        let fones = vec![1.0; n as usize];
+        task.put_aij_list(zeros.as_slice(), x, fones.as_slice())?;
+        task.put_aij_list(zeros.as_slice(), y, f)?;
+        task.put_aij_list(zeros.as_slice(), z, g)?;
         task.put_con_bound(0i32,mosek::Boundkey::FX,w0,w0)?;
     }
 
@@ -117,49 +117,41 @@ fn portfolio(n : i32,
 
     // |x-x0| <= z
     {
-        let acci = task.get_num_acc()?;
-
-        task.append_afes(2*n as i64)?;
-        let afes : Vec<i64> = (0..2*n as i64).collect();
-
-        let ones = vec![1.0; n as usize];
+        let coni = task.get_num_con()?;
+        task.append_cons(2 * n)?;
+        for i in 0..n {
+            task.put_con_name(coni+i,   format!("zabs1[{}]",1 + i).as_str())?;
+            task.put_con_name(coni+n+i, format!("zabs2[{}]",1 + i).as_str())?;
+        }
+        let ones      = vec![1.0; n as usize];
         let minusones = vec![-1.0; n as usize];
-        task.put_afe_f_entry_list(&afes[0..n as usize],x,ones.as_slice())?;
-        task.put_afe_f_entry_list(&afes[0..n as usize],z,minusones.as_slice())?;
-
-        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],x,ones.as_slice())?;
-        task.put_afe_f_entry_list(&afes[n as usize..2*n as usize],z,ones.as_slice())?;
-
-        let domneg = task.append_rminus_domain(n as i64)?;
-        task.append_acc(domneg,
-                        &afes[0..n as usize],
-                        x0)?;
-        let dompos = task.append_rplus_domain(n as i64)?;
-        task.append_acc(dompos,
-                        &afes[n as usize..2*n as usize],
-                        x0)?;
-        task.put_acc_name(acci,"(x-z)<x0")?;
-        task.put_acc_name(acci+1,"(x+z)>x0")?;
+        let con_abs1 : Vec<i32> = (coni..coni+n).collect();
+        let con_abs2 : Vec<i32> = (coni+n..coni+2*n).collect();
+        task.put_aij_list(con_abs1.as_slice(), x, minusones.as_slice())?;
+        task.put_aij_list(con_abs1.as_slice(), z, ones.as_slice())?;
+        task.put_con_bound_slice(coni,coni+n, vec![Boundkey::LO; n as usize].as_slice(), x0.iter().map(|&v| -v).collect::<Vec<f64>>().as_slice(), vec![INF; n as usize].as_slice())?;
+        task.put_aij_list(con_abs2.as_slice(), x, ones.as_slice())?;
+        task.put_aij_list(con_abs2.as_slice(), z, ones.as_slice())?;
+        task.put_con_bound_slice(coni+n,coni+n*2, vec![Boundkey::LO; n as usize].as_slice(), x0, vec![INF; n as usize].as_slice())?;
     }
-
 
     // Switch
     {
         let coni = task.get_num_con()?;
         task.append_cons(n)?;
         for i in 0..n {
-            task.put_con_name(coni + i, format!("switch[{}]",i))?;
+            task.put_con_name(coni + i, format!("switch[{}]",i+1).as_str())?;
         }
 
         let conlist : Vec<i32> = (coni..coni+n).collect();
         task.put_aij_list(conlist.as_slice(), z, vec![1.0; n as usize].as_slice())?;
         task.put_aij_list(conlist.as_slice(), y, vec![-w0; n as usize].as_slice())?;
 
-        tak.put_con_bound_slice_const(conlist.as_slice(), Boundkey::UP, 0.0,0.0);
-        }
+        task.put_con_bound_slice_const(coni,coni+n, Boundkey::UP, 0.0,0.0)?;
     }
 
     let _ = task.optimize()?;
+    task.write_data("portfolio_4_transcost.ptf")?;
 
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
@@ -173,15 +165,31 @@ fn portfolio(n : i32,
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
-    let (_level,expret) = portfolio(common::Data1::n,
-                                    common::Data1::mu,
-                                    common::Data1::fixed_tcost,
-                                    common::Data1::prop_tcost,
-                                    common::Data1::GT,
-                                    common::Data1::x0,
-                                    common::Data1::gamma,
-                                    common::Data1::w)?;
+    let n = 8i32;
+    let w = 1.0;
+    let mu = &[0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379];
+    let x0 = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+    let GT = &[ 0.30758, 0.12146, 0.11341, 0.11327, 0.17625, 0.11973, 0.10435, 0.10638,
+                0.     , 0.25042, 0.09946, 0.09164, 0.06692, 0.08706, 0.09173, 0.08506,
+                0.     , 0.     , 0.19914, 0.05867, 0.06453, 0.07367, 0.06468, 0.01914,
+                0.     , 0.     , 0.     , 0.20876, 0.04933, 0.03651, 0.09381, 0.07742,
+                0.     , 0.     , 0.     , 0.     , 0.36096, 0.12574, 0.10157, 0.0571 ,
+                0.     , 0.     , 0.     , 0.     , 0.     , 0.21552, 0.05663, 0.06187,
+                0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.22514, 0.03327,
+                0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.     , 0.2202 ];
+    let f = vec![0.01; n as usize];
+    let g = vec![0.001; n as usize];
+    let gamma = 0.36;
 
-    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, common::Data1::gamma);
+    let (_level,expret) = portfolio(n,
+                                    mu,
+                                    f.as_slice(),
+                                    g.as_slice(),
+                                    GT,
+                                    x0,
+                                    gamma,
+                                    w)?;
+
+    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
     Ok(())
 }
