@@ -1875,150 +1875,154 @@ impl Iparam {
   pub const PRESOLVE_USE : i32 = 116;
   /// Controls which optimizer that is used to find the optimal repair.
   pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 117;
+  /// Controls whether parameters section is written in PTF files.
+  pub const PTF_WRITE_PARAMETERS : i32 = 118;
+  /// Controls whether solution section is written in PTF files.
+  pub const PTF_WRITE_SOLUTIONS : i32 = 119;
   /// Controls if simple transformation are done when writing PTF files.
-  pub const PTF_WRITE_TRANSFORM : i32 = 118;
+  pub const PTF_WRITE_TRANSFORM : i32 = 120;
   /// Turns on additional debugging information when reading files.
-  pub const READ_DEBUG : i32 = 119;
+  pub const READ_DEBUG : i32 = 121;
   /// Controls whether the free constraints are included in the problem.
-  pub const READ_KEEP_FREE_CON : i32 = 120;
+  pub const READ_KEEP_FREE_CON : i32 = 122;
   /// Controls how the LP files are interpreted.
-  pub const READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 121;
+  pub const READ_LP_DROP_NEW_VARS_IN_BOU : i32 = 123;
   /// If a name is in quotes when reading an LP file, the quotes will be removed.
-  pub const READ_LP_QUOTED_NAMES : i32 = 122;
+  pub const READ_LP_QUOTED_NAMES : i32 = 124;
   /// Controls how strictly the MPS file reader interprets the MPS format.
-  pub const READ_MPS_FORMAT : i32 = 123;
+  pub const READ_MPS_FORMAT : i32 = 125;
   /// Controls the maximal number of characters allowed in one line of the MPS file.
-  pub const READ_MPS_WIDTH : i32 = 124;
+  pub const READ_MPS_WIDTH : i32 = 126;
   /// Controls what information is used from the task files.
-  pub const READ_TASK_IGNORE_PARAM : i32 = 125;
+  pub const READ_TASK_IGNORE_PARAM : i32 = 127;
   /// Use compression when sending data to an optimization server
-  pub const REMOTE_USE_COMPRESSION : i32 = 126;
+  pub const REMOTE_USE_COMPRESSION : i32 = 128;
   /// Removes unused solutions before the optimization is performed.
-  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 127;
+  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 129;
   /// Controls sensitivity report behavior.
-  pub const SENSITIVITY_ALL : i32 = 128;
+  pub const SENSITIVITY_ALL : i32 = 130;
   /// Controls which optimizer is used for optimal partition sensitivity analysis.
-  pub const SENSITIVITY_OPTIMIZER : i32 = 129;
+  pub const SENSITIVITY_OPTIMIZER : i32 = 131;
   /// Controls which type of sensitivity analysis is to be performed.
-  pub const SENSITIVITY_TYPE : i32 = 130;
+  pub const SENSITIVITY_TYPE : i32 = 132;
   /// Controls whether an LU factorization of the basis is used in a hot-start.
-  pub const SIM_BASIS_FACTOR_USE : i32 = 131;
+  pub const SIM_BASIS_FACTOR_USE : i32 = 133;
   /// Controls how aggressively degeneration is handled.
-  pub const SIM_DEGEN : i32 = 132;
+  pub const SIM_DEGEN : i32 = 134;
   /// Not in use.
-  pub const SIM_DETECT_PWL : i32 = 133;
+  pub const SIM_DETECT_PWL : i32 = 135;
   /// Controls whether crashing is performed in the dual simplex optimizer.
-  pub const SIM_DUAL_CRASH : i32 = 134;
+  pub const SIM_DUAL_CRASH : i32 = 136;
   /// An experimental feature.
-  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 135;
+  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 137;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 136;
+  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 138;
   /// Controls the dual simplex strategy.
-  pub const SIM_DUAL_SELECTION : i32 = 137;
+  pub const SIM_DUAL_SELECTION : i32 = 139;
   /// Controls if the simplex optimizers are allowed to exploit duplicated columns.
-  pub const SIM_EXPLOIT_DUPVEC : i32 = 138;
+  pub const SIM_EXPLOIT_DUPVEC : i32 = 140;
   /// Controls the type of hot-start that the simplex optimizer perform.
-  pub const SIM_HOTSTART : i32 = 139;
+  pub const SIM_HOTSTART : i32 = 141;
   /// Determines if the simplex optimizer should exploit the initial factorization.
-  pub const SIM_HOTSTART_LU : i32 = 140;
+  pub const SIM_HOTSTART_LU : i32 = 142;
   /// Maximum number of iterations that can be used by a simplex optimizer.
-  pub const SIM_MAX_ITERATIONS : i32 = 141;
+  pub const SIM_MAX_ITERATIONS : i32 = 143;
   /// Controls how many set-backs that are allowed within a simplex optimizer.
-  pub const SIM_MAX_NUM_SETBACKS : i32 = 142;
+  pub const SIM_MAX_NUM_SETBACKS : i32 = 144;
   /// Controls if the simplex optimizer ensures a non-singular basis, if possible.
-  pub const SIM_NON_SINGULAR : i32 = 143;
+  pub const SIM_NON_SINGULAR : i32 = 145;
   /// Controls the simplex crash.
-  pub const SIM_PRIMAL_CRASH : i32 = 144;
+  pub const SIM_PRIMAL_CRASH : i32 = 146;
   /// An experimental feature.
-  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 145;
+  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 147;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 146;
+  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 148;
   /// Controls the primal simplex strategy.
-  pub const SIM_PRIMAL_SELECTION : i32 = 147;
+  pub const SIM_PRIMAL_SELECTION : i32 = 149;
   /// Controls the basis refactoring frequency.
-  pub const SIM_REFACTOR_FREQ : i32 = 148;
+  pub const SIM_REFACTOR_FREQ : i32 = 150;
   /// Controls if the simplex optimizers are allowed to reformulate the problem.
-  pub const SIM_REFORMULATION : i32 = 149;
+  pub const SIM_REFORMULATION : i32 = 151;
   /// Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
-  pub const SIM_SAVE_LU : i32 = 150;
+  pub const SIM_SAVE_LU : i32 = 152;
   /// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
-  pub const SIM_SCALING : i32 = 151;
+  pub const SIM_SCALING : i32 = 153;
   /// Controls how the problem is scaled before a simplex optimizer is used.
-  pub const SIM_SCALING_METHOD : i32 = 152;
+  pub const SIM_SCALING_METHOD : i32 = 154;
   /// Sets the random seed used for randomization in the simplex optimizers.
-  pub const SIM_SEED : i32 = 153;
+  pub const SIM_SEED : i32 = 155;
   /// Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
-  pub const SIM_SOLVE_FORM : i32 = 154;
+  pub const SIM_SOLVE_FORM : i32 = 156;
   /// Controls how high priority the numerical stability should be given.
-  pub const SIM_STABILITY_PRIORITY : i32 = 155;
+  pub const SIM_STABILITY_PRIORITY : i32 = 157;
   /// Controls the simplex behavior.
-  pub const SIM_SWITCH_OPTIMIZER : i32 = 156;
+  pub const SIM_SWITCH_OPTIMIZER : i32 = 158;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_BASIC : i32 = 157;
+  pub const SOL_FILTER_KEEP_BASIC : i32 = 159;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_RANGED : i32 = 158;
+  pub const SOL_FILTER_KEEP_RANGED : i32 = 160;
   /// Controls the input solution file format.
-  pub const SOL_READ_NAME_WIDTH : i32 = 159;
+  pub const SOL_READ_NAME_WIDTH : i32 = 161;
   /// Controls the input solution file format.
-  pub const SOL_READ_WIDTH : i32 = 160;
+  pub const SOL_READ_WIDTH : i32 = 162;
   /// Indicates whether solution callbacks will be performed during the optimization.
-  pub const SOLUTION_CALLBACK : i32 = 161;
+  pub const SOLUTION_CALLBACK : i32 = 163;
   /// Controls the amount of timing performed inside MOSEK.
-  pub const TIMING_LEVEL : i32 = 162;
+  pub const TIMING_LEVEL : i32 = 164;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_CONSTRAINTS : i32 = 163;
+  pub const WRITE_BAS_CONSTRAINTS : i32 = 165;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_HEAD : i32 = 164;
+  pub const WRITE_BAS_HEAD : i32 = 166;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_VARIABLES : i32 = 165;
+  pub const WRITE_BAS_VARIABLES : i32 = 167;
   /// Controls output file compression.
-  pub const WRITE_COMPRESSION : i32 = 166;
+  pub const WRITE_COMPRESSION : i32 = 168;
   /// Controls output file data.
-  pub const WRITE_DATA_PARAM : i32 = 167;
+  pub const WRITE_DATA_PARAM : i32 = 169;
   /// Controls the output file data.
-  pub const WRITE_FREE_CON : i32 = 168;
+  pub const WRITE_FREE_CON : i32 = 170;
   /// Controls the output file data.
-  pub const WRITE_GENERIC_NAMES : i32 = 169;
+  pub const WRITE_GENERIC_NAMES : i32 = 171;
   /// Index origin used in  generic names.
-  pub const WRITE_GENERIC_NAMES_IO : i32 = 170;
+  pub const WRITE_GENERIC_NAMES_IO : i32 = 172;
   /// Controls if the writer ignores incompatible problem items when writing files.
-  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 171;
+  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 173;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_CONSTRAINTS : i32 = 172;
+  pub const WRITE_INT_CONSTRAINTS : i32 = 174;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_HEAD : i32 = 173;
+  pub const WRITE_INT_HEAD : i32 = 175;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_VARIABLES : i32 = 174;
+  pub const WRITE_INT_VARIABLES : i32 = 176;
   /// When set, the JSON task and solution files are written with indentation for better readability.
-  pub const WRITE_JSON_INDENTATION : i32 = 175;
+  pub const WRITE_JSON_INDENTATION : i32 = 177;
   /// Write full linear objective
-  pub const WRITE_LP_FULL_OBJ : i32 = 176;
+  pub const WRITE_LP_FULL_OBJ : i32 = 178;
   /// Controls the LP output file format.
-  pub const WRITE_LP_LINE_WIDTH : i32 = 177;
+  pub const WRITE_LP_LINE_WIDTH : i32 = 179;
   /// Controls LP output file format.
-  pub const WRITE_LP_QUOTED_NAMES : i32 = 178;
+  pub const WRITE_LP_QUOTED_NAMES : i32 = 180;
   /// Controls whether LP  output files satisfy the LP format strictly.
-  pub const WRITE_LP_STRICT_FORMAT : i32 = 179;
+  pub const WRITE_LP_STRICT_FORMAT : i32 = 181;
   /// Controls the LP output file format.
-  pub const WRITE_LP_TERMS_PER_LINE : i32 = 180;
+  pub const WRITE_LP_TERMS_PER_LINE : i32 = 182;
   /// Controls in which format the MPS is written.
-  pub const WRITE_MPS_FORMAT : i32 = 181;
+  pub const WRITE_MPS_FORMAT : i32 = 183;
   /// Controls the output file data.
-  pub const WRITE_MPS_INT : i32 = 182;
+  pub const WRITE_MPS_INT : i32 = 184;
   /// Controls the solution file format.
-  pub const WRITE_SOL_BARVARIABLES : i32 = 183;
+  pub const WRITE_SOL_BARVARIABLES : i32 = 185;
   /// Controls the solution file format.
-  pub const WRITE_SOL_CONSTRAINTS : i32 = 184;
+  pub const WRITE_SOL_CONSTRAINTS : i32 = 186;
   /// Controls solution file format.
-  pub const WRITE_SOL_HEAD : i32 = 185;
+  pub const WRITE_SOL_HEAD : i32 = 187;
   /// Controls whether the user specified names are employed even if they are invalid names.
-  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 186;
+  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 188;
   /// Controls the solution file format.
-  pub const WRITE_SOL_VARIABLES : i32 = 187;
+  pub const WRITE_SOL_VARIABLES : i32 = 189;
   /// Controls whether the solutions are stored in the task file too.
-  pub const WRITE_TASK_INC_SOL : i32 = 188;
+  pub const WRITE_TASK_INC_SOL : i32 = 190;
   /// Controls if linear coefficients should be written by row or column when writing in the XML file format.
-  pub const WRITE_XML_MODE : i32 = 189;
+  pub const WRITE_XML_MODE : i32 = 191;
 } // impl Iparam
 
 /// Specifies the branching direction.
@@ -2595,6 +2599,32 @@ impl Rescode {
   pub const ERR_MPS_INVALID_INDICATOR_VALUE : i32 = 1132;
   /// A quadratic constraint can be be an indicator constraint.
   pub const ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT : i32 = 1133;
+  /// Syntax error in an OPF file
+  pub const ERR_OPF_SYNTAX : i32 = 1134;
+  /// Variable not previously defined.
+  pub const ERR_OPF_NEW_VARIABLE : i32 = 1135;
+  /// Premature end of file in an OPF file.
+  pub const ERR_OPF_PREMATURE_EOF : i32 = 1136;
+  /// Mismatched end-tag in OPF file
+  pub const ERR_OPF_MISMATCHED_TAG : i32 = 1137;
+  /// Either upper or lower bound was specified twice in OPF file
+  pub const ERR_OPF_DUPLICATE_BOUND : i32 = 1138;
+  /// Duplicate constraint name in OPF File
+  pub const ERR_OPF_DUPLICATE_CONSTRAINT_NAME : i32 = 1139;
+  /// Invalid cone type in OPF File
+  pub const ERR_OPF_INVALID_CONE_TYPE : i32 = 1140;
+  /// Invalid number of parameters in start-tag in OPF File
+  pub const ERR_OPF_INCORRECT_TAG_PARAM : i32 = 1141;
+  /// Invalid start-tag in OPF File
+  pub const ERR_OPF_INVALID_TAG : i32 = 1142;
+  /// Same variable appears in multiple cones in OPF File
+  pub const ERR_OPF_DUPLICATE_CONE_ENTRY : i32 = 1143;
+  /// The problem is too large to be correctly loaded
+  pub const ERR_OPF_TOO_LARGE : i32 = 1144;
+  /// Same cone name used multiple times in OPF File
+  pub const ERR_OPF_DUPLICATE_CONE_NAME : i32 = 1145;
+  /// Dual solution values are not allowed in OPF File
+  pub const ERR_OPF_DUAL_INTEGER_SOLUTION : i32 = 1146;
   /// The problem cannot be written to an LP formatted file.
   pub const ERR_LP_INCOMPATIBLE : i32 = 1150;
   /// The problem cannot be written to an LP formatted file.
@@ -2615,8 +2645,8 @@ impl Rescode {
   pub const ERR_WRITE_LP_FORMAT : i32 = 1158;
   /// Syntax error in LP fil. Possibly missing End tag.
   pub const ERR_READ_LP_MISSING_END_TAG : i32 = 1159;
-  /// Syntax error in an LP file.
-  pub const ERR_LP_FORMAT : i32 = 1160;
+  /// An indicator variable was not declared binary
+  pub const ERR_LP_INDICATOR_VAR : i32 = 1160;
   /// An auto-generated name is not unique.
   pub const ERR_WRITE_LP_NON_UNIQUE_NAME : i32 = 1161;
   /// A variable never occurred in objective or constraints.
@@ -2627,16 +2657,10 @@ impl Rescode {
   pub const ERR_LP_WRITE_GECO_PROBLEM : i32 = 1164;
   /// An error occurred while writing file
   pub const ERR_WRITING_FILE : i32 = 1166;
-  /// Syntax error in an OPF file
-  pub const ERR_OPF_FORMAT : i32 = 1168;
-  /// Variable not previously defined.
-  pub const ERR_OPF_NEW_VARIABLE : i32 = 1169;
   /// An invalid name occurred in a solution file.
   pub const ERR_INVALID_NAME_IN_SOL_FILE : i32 = 1170;
   /// A constraint name is invalid when used in an LP formatted file.
   pub const ERR_LP_INVALID_CON_NAME : i32 = 1171;
-  /// Premature end of file in an OPF file.
-  pub const ERR_OPF_PREMATURE_EOF : i32 = 1172;
   /// Syntax error in an JSON data
   pub const ERR_JSON_SYNTAX : i32 = 1175;
   /// Error in JSON string.
@@ -3675,10 +3699,10 @@ impl Env
     #[allow(unused_parens)]
     pub fn axpy(&self,n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> {
       if x_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'x' has the wrong length, expected n_".to_string());
+        return Result::Err("axpy: Argument 'x' has the wrong length, expected n_".to_string());
       }
       if y_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected n_".to_string());
+        return Result::Err("axpy: Argument 'y' has the wrong length, expected n_".to_string());
       }
       self.handle_res(unsafe { MSK_axpy(self.ptr,n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
       return Result::Ok(());
@@ -3746,10 +3770,10 @@ impl Env
     #[allow(unused_parens)]
     pub fn dot(&self,n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> {
       if x_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'x' has the wrong length, expected n_".to_string());
+        return Result::Err("dot: Argument 'x' has the wrong length, expected n_".to_string());
       }
       if y_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected n_".to_string());
+        return Result::Err("dot: Argument 'y' has the wrong length, expected n_".to_string());
       }
       self.handle_res(unsafe { MSK_dot(self.ptr,n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
       return Result::Ok(());
@@ -3809,13 +3833,13 @@ impl Env
     #[allow(unused_parens)]
     pub fn gemm(&self,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((m_*k_)).try_into().unwrap() {
-        return Result::Err("Argument 'a' has the wrong length, expected (m_*k_)".to_string());
+        return Result::Err("gemm: Argument 'a' has the wrong length, expected (m_*k_)".to_string());
       }
       if b_.len() != ((k_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected (k_*n_)".to_string());
+        return Result::Err("gemm: Argument 'b' has the wrong length, expected (k_*n_)".to_string());
       }
       if c_.len() != ((m_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'c' has the wrong length, expected (m_*n_)".to_string());
+        return Result::Err("gemm: Argument 'c' has the wrong length, expected (m_*n_)".to_string());
       }
       self.handle_res(unsafe { MSK_gemm(self.ptr,transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
       return Result::Ok(());
@@ -3884,7 +3908,7 @@ impl Env
     #[allow(unused_parens)]
     pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((n_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+        return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
       self.handle_res(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
       return Result::Ok(());
@@ -3899,7 +3923,7 @@ impl Env
     #[allow(unused_parens)]
     pub fn put_license_code(&mut self,code_ : &[i32]) -> Result<(),String> {
       if code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
-        return Result::Err("Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
+        return Result::Err("put_license_code: Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
       }
       self.handle_res(unsafe { MSK_putlicensecode(self.ptr,code_.as_ptr()) },"put_license_code")?;
       return Result::Ok(());
@@ -3965,22 +3989,22 @@ impl Env
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),b_.len()),lptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lptrc_.len()),lnzc_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'lnzc' has the wrong length, expected n_".to_string());
+        return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
       if lptrc_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'lptrc' has the wrong length, expected n_".to_string());
+        return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
-        return Result::Err("Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
+        return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
       if lvalc_.len() != (lensubnval_).try_into().unwrap() {
-        return Result::Err("Argument 'lvalc' has the wrong length, expected lensubnval_".to_string());
+        return Result::Err("sparse_triangular_solve_dense: Argument 'lvalc' has the wrong length, expected lensubnval_".to_string());
       }
       if b_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected n_".to_string());
+        return Result::Err("sparse_triangular_solve_dense: Argument 'b' has the wrong length, expected n_".to_string());
       }
       self.handle_res(unsafe { MSK_sparsetriangularsolvedense(self.ptr,transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
       return Result::Ok(());
@@ -4000,10 +4024,10 @@ impl Env
     #[allow(unused_parens)]
     pub fn syeig(&self,uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((n_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+        return Result::Err("syeig: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
       if w_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'w' has the wrong length, expected n_".to_string());
+        return Result::Err("syeig: Argument 'w' has the wrong length, expected n_".to_string());
       }
       self.handle_res(unsafe { MSK_syeig(self.ptr,uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
       return Result::Ok(());
@@ -4023,10 +4047,10 @@ impl Env
     #[allow(unused_parens)]
     pub fn syevd(&self,uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((n_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+        return Result::Err("syevd: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
       if w_.len() != (n_).try_into().unwrap() {
-        return Result::Err("Argument 'w' has the wrong length, expected n_".to_string());
+        return Result::Err("syevd: Argument 'w' has the wrong length, expected n_".to_string());
       }
       self.handle_res(unsafe { MSK_syevd(self.ptr,uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
       return Result::Ok(());
@@ -4052,10 +4076,10 @@ impl Env
     #[allow(unused_parens)]
     pub fn syrk(&self,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
       if a_.len() != ((n_*k_)).try_into().unwrap() {
-        return Result::Err("Argument 'a' has the wrong length, expected (n_*k_)".to_string());
+        return Result::Err("syrk: Argument 'a' has the wrong length, expected (n_*k_)".to_string());
       }
       if c_.len() != ((n_*n_)).try_into().unwrap() {
-        return Result::Err("Argument 'c' has the wrong length, expected (n_*n_)".to_string());
+        return Result::Err("syrk: Argument 'c' has the wrong length, expected (n_*n_)".to_string());
       }
       self.handle_res(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
       return Result::Ok(());
@@ -4264,7 +4288,7 @@ impl Task
     pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("append_acc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_appendacc(self.ptr,domidx_,numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"append_acc")?;
       return Result::Ok(());
@@ -4283,7 +4307,7 @@ impl Task
       let numaccs_ : i64 = domidxs_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("append_accs: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_appendaccs(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"append_accs")?;
       return Result::Ok(());
@@ -4303,7 +4327,7 @@ impl Task
       let __tmp_1 = unsafe { MSK_getdomainn(self.ptr,domidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdomainn")?;
       let numafeidx_ : i64 = __tmp_0;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("append_acc_seq: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_appendaccseq(self.ptr,domidx_,numafeidx_,afeidxfirst_,b_.as_ptr()) },"append_acc_seq")?;
       return Result::Ok(());
@@ -4322,7 +4346,7 @@ impl Task
     pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> {
       let numaccs_ : i64 = domidxs_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("append_accs_seq: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_appendaccsseq(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxfirst_,b_.as_ptr()) },"append_accs_seq")?;
       return Result::Ok(());
@@ -4400,7 +4424,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),conepar_.len()),nummem_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),ct_.len()),conepar_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -4644,9 +4668,9 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
-      if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("Mismatching lengths if subi, subj and valij".to_string()); }
+      if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
       return Result::Ok(__tmp_0);
     } // appendsparsesymmat
@@ -4668,20 +4692,20 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       for __tmp_1 in nz_ { __tmp_0 += __tmp_1; }
       if subi_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("append_sparse_sym_mat_list: Argument 'subi' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       for __tmp_3 in nz_ { __tmp_2 += __tmp_3; }
       if subj_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("append_sparse_sym_mat_list: Argument 'subj' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i64 = i64::default();
       for __tmp_5 in nz_ { __tmp_4 += __tmp_5; }
       if valij_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'valij' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("append_sparse_sym_mat_list: Argument 'valij' has the wrong length, expected __tmp_4".to_string());
       }
       if idx_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'idx' has the wrong length, expected num_".to_string());
+        return Result::Err("append_sparse_sym_mat_list: Argument 'idx' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_appendsparsesymmatlist(self.ptr,num_,dims_.as_ptr(),nz_.as_ptr(),subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),idx_.as_mut_ptr()) },"append_sparse_sym_mat_list")?;
       return Result::Ok(());
@@ -4919,16 +4943,16 @@ impl Task
     pub fn dual_sensitivity(&self,subj_ : &[i32],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
       let numj_ : i32 = subj_.len() as i32;
       if leftpricej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'leftpricej' has the wrong length, expected numj_".to_string());
+        return Result::Err("dual_sensitivity: Argument 'leftpricej' has the wrong length, expected numj_".to_string());
       }
       if rightpricej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'rightpricej' has the wrong length, expected numj_".to_string());
+        return Result::Err("dual_sensitivity: Argument 'rightpricej' has the wrong length, expected numj_".to_string());
       }
       if leftrangej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'leftrangej' has the wrong length, expected numj_".to_string());
+        return Result::Err("dual_sensitivity: Argument 'leftrangej' has the wrong length, expected numj_".to_string());
       }
       if rightrangej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'rightrangej' has the wrong length, expected numj_".to_string());
+        return Result::Err("dual_sensitivity: Argument 'rightrangej' has the wrong length, expected numj_".to_string());
       }
       self.handle_res(unsafe { MSK_dualsensitivity(self.ptr,numj_,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr()) },"dual_sensitivity")?;
       return Result::Ok(());
@@ -5024,7 +5048,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccn(self.ptr,accidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccn")?;
       if activity_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'activity' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("evaluate_acc: Argument 'activity' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_evaluateacc(self.ptr,whichsol_,accidx_,activity_.as_mut_ptr()) },"evaluate_acc")?;
       return Result::Ok(());
@@ -5044,7 +5068,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
       if activity_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'activity' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("evaluate_accs: Argument 'activity' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_evaluateaccs(self.ptr,whichsol_,activity_.as_mut_ptr()) },"evaluate_accs")?;
       return Result::Ok(());
@@ -5067,7 +5091,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_acc_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5094,7 +5118,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_barvar_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5121,7 +5145,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_cone_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5148,7 +5172,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_con_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5175,7 +5199,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_djc_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5202,7 +5226,7 @@ impl Task
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
       if sp_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'sp' has the wrong length, expected num_".to_string());
+        return Result::Err("generate_var_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
@@ -5224,7 +5248,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccn(self.ptr,accidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccn")?;
       if afeidxlist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'afeidxlist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_afe_idx_list: Argument 'afeidxlist' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getaccafeidxlist(self.ptr,accidx_,afeidxlist_.as_mut_ptr()) },"get_acc_afe_idx_list")?;
       return Result::Ok(());
@@ -5242,7 +5266,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccn(self.ptr,accidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccn")?;
       if b_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_b: Argument 'b' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getaccb(self.ptr,accidx_,b_.as_mut_ptr()) },"get_acc_b")?;
       return Result::Ok(());
@@ -5269,19 +5293,19 @@ impl Task
       let maxnumtrip_ : i64 = __tmp_0;
       let mut __tmp_2 : i64 = i64::default();
       if acc_afe_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'acc_afe' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_acc_barf_block_triplet: Argument 'acc_afe' has the wrong length, expected maxnumtrip_".to_string());
       }
       if bar_var_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'bar_var' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_acc_barf_block_triplet: Argument 'bar_var' has the wrong length, expected maxnumtrip_".to_string());
       }
       if blk_row_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'blk_row' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_acc_barf_block_triplet: Argument 'blk_row' has the wrong length, expected maxnumtrip_".to_string());
       }
       if blk_col_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'blk_col' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_acc_barf_block_triplet: Argument 'blk_col' has the wrong length, expected maxnumtrip_".to_string());
       }
       if blk_val_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'blk_val' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_acc_barf_block_triplet: Argument 'blk_val' has the wrong length, expected maxnumtrip_".to_string());
       }
       self.handle_res(unsafe { MSK_getaccbarfblocktriplet(self.ptr,maxnumtrip_,&mut __tmp_2,acc_afe_.as_mut_ptr(),bar_var_.as_mut_ptr(),blk_row_.as_mut_ptr(),blk_col_.as_mut_ptr(),blk_val_.as_mut_ptr()) },"get_acc_barf_block_triplet")?;
       return Result::Ok(__tmp_2);
@@ -5328,7 +5352,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccn(self.ptr,accidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccn")?;
       if doty_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'doty' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_dot_y: Argument 'doty' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getaccdoty(self.ptr,whichsol_,accidx_,doty_.as_mut_ptr()) },"get_acc_dot_y")?;
       return Result::Ok(());
@@ -5348,7 +5372,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
       if doty_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'doty' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_dot_y_s: Argument 'doty' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getaccdotys(self.ptr,whichsol_,doty_.as_mut_ptr()) },"get_acc_dot_y_s")?;
       return Result::Ok(());
@@ -5380,17 +5404,17 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccfnumnz")?;
       if frow_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'frow' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_f_trip: Argument 'frow' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       let __tmp_3 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getaccfnumnz")?;
       if fcol_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'fcol' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_acc_f_trip: Argument 'fcol' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i64 = i64::default();
       let __tmp_5 = unsafe { MSK_getaccfnumnz(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getaccfnumnz")?;
       if fval_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'fval' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_acc_f_trip: Argument 'fval' has the wrong length, expected __tmp_4".to_string());
       }
       self.handle_res(unsafe { MSK_getaccftrip(self.ptr,frow_.as_mut_ptr(),fcol_.as_mut_ptr(),fval_.as_mut_ptr()) },"get_acc_f_trip")?;
       return Result::Ok(());
@@ -5407,7 +5431,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
       if g_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'g' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_acc_g_vector: Argument 'g' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getaccgvector(self.ptr,g_.as_mut_ptr()) },"get_acc_g_vector")?;
       return Result::Ok(());
@@ -5493,17 +5517,17 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getnumacc(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumacc")?;
       if domidxlist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_accs: Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       let __tmp_3 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getaccntot")?;
       if afeidxlist_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'afeidxlist' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_accs: Argument 'afeidxlist' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i64 = i64::default();
       let __tmp_5 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getaccntot")?;
       if b_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_accs: Argument 'b' has the wrong length, expected __tmp_4".to_string());
       }
       self.handle_res(unsafe { MSK_getaccs(self.ptr,domidxlist_.as_mut_ptr(),afeidxlist_.as_mut_ptr(),b_.as_mut_ptr()) },"get_accs")?;
       return Result::Ok(());
@@ -5523,12 +5547,12 @@ impl Task
       let mut __tmp_1 : i32 = i32::default();
       let __tmp_2 = unsafe { MSK_getacolnumnz(self.ptr,j_,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getacolnumnz")?;
       if subj_.len() != (__tmp_1).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected __tmp_1".to_string());
+        return Result::Err("get_a_col: Argument 'subj' has the wrong length, expected __tmp_1".to_string());
       }
       let mut __tmp_3 : i32 = i32::default();
       let __tmp_4 = unsafe { MSK_getacolnumnz(self.ptr,j_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getacolnumnz")?;
       if valj_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'valj' has the wrong length, expected __tmp_3".to_string());
+        return Result::Err("get_a_col: Argument 'valj' has the wrong length, expected __tmp_3".to_string());
       }
       self.handle_res(unsafe { MSK_getacol(self.ptr,j_,nzj_,subj_.as_mut_ptr(),valj_.as_mut_ptr()) },"get_a_col")?;
       return Result::Ok(());
@@ -5568,16 +5592,16 @@ impl Task
       let __tmp_1 = unsafe { MSK_getacolslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getacolslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
       if ptrb_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_a_col_slice: Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
       }
       if ptre_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_a_col_slice: Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
       }
       if sub_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_col_slice: Argument 'sub' has the wrong length, expected maxnumnz_".to_string());
       }
       if val_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_col_slice: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getacolslice64(self.ptr,first_,last_,maxnumnz_,ptrb_.as_mut_ptr(),ptre_.as_mut_ptr(),sub_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_col_slice")?;
       return Result::Ok(());
@@ -5617,13 +5641,13 @@ impl Task
       let __tmp_1 = unsafe { MSK_getacolslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getacolslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
       if subi_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_col_slice_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
       if subj_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_col_slice_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
       if val_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_col_slice_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getacolslicetrip(self.ptr,first_,last_,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_col_slice_trip")?;
       return Result::Ok(());
@@ -5650,19 +5674,19 @@ impl Task
       let maxnumtrip_ : i64 = __tmp_0;
       let mut __tmp_2 : i64 = i64::default();
       if afeidx_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'afeidx' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected maxnumtrip_".to_string());
       }
       if barvaridx_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'barvaridx' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_afe_barf_block_triplet: Argument 'barvaridx' has the wrong length, expected maxnumtrip_".to_string());
       }
       if subk_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_afe_barf_block_triplet: Argument 'subk' has the wrong length, expected maxnumtrip_".to_string());
       }
       if subl_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_afe_barf_block_triplet: Argument 'subl' has the wrong length, expected maxnumtrip_".to_string());
       }
       if valkl_.len() != (maxnumtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'valkl' has the wrong length, expected maxnumtrip_".to_string());
+        return Result::Err("get_afe_barf_block_triplet: Argument 'valkl' has the wrong length, expected maxnumtrip_".to_string());
       }
       self.handle_res(unsafe { MSK_getafebarfblocktriplet(self.ptr,maxnumtrip_,&mut __tmp_2,afeidx_.as_mut_ptr(),barvaridx_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valkl_.as_mut_ptr()) },"get_afe_barf_block_triplet")?;
       return Result::Ok(__tmp_2);
@@ -5715,31 +5739,31 @@ impl Task
       let mut __tmp_1 : i64 = i64::default();
       let __tmp_2 = unsafe { MSK_getafebarfrowinfo(self.ptr,afeidx_,&mut __tmp_0,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getafebarfrowinfo")?;
       if barvaridx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'barvaridx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_afe_barf_row: Argument 'barvaridx' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_3 : i32 = i32::default();
       let mut __tmp_4 : i64 = i64::default();
       let __tmp_5 = unsafe { MSK_getafebarfrowinfo(self.ptr,afeidx_,&mut __tmp_3,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getafebarfrowinfo")?;
       if ptrterm_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'ptrterm' has the wrong length, expected __tmp_3".to_string());
+        return Result::Err("get_afe_barf_row: Argument 'ptrterm' has the wrong length, expected __tmp_3".to_string());
       }
       let mut __tmp_6 : i32 = i32::default();
       let mut __tmp_7 : i64 = i64::default();
       let __tmp_8 = unsafe { MSK_getafebarfrowinfo(self.ptr,afeidx_,&mut __tmp_6,&mut __tmp_7) };let _ = self.handle_res(__tmp_8,"getafebarfrowinfo")?;
       if numterm_.len() != (__tmp_6).try_into().unwrap() {
-        return Result::Err("Argument 'numterm' has the wrong length, expected __tmp_6".to_string());
+        return Result::Err("get_afe_barf_row: Argument 'numterm' has the wrong length, expected __tmp_6".to_string());
       }
       let mut __tmp_9 : i32 = i32::default();
       let mut __tmp_10 : i64 = i64::default();
       let __tmp_11 = unsafe { MSK_getafebarfrowinfo(self.ptr,afeidx_,&mut __tmp_9,&mut __tmp_10) };let _ = self.handle_res(__tmp_11,"getafebarfrowinfo")?;
       if termidx_.len() != (__tmp_10).try_into().unwrap() {
-        return Result::Err("Argument 'termidx' has the wrong length, expected __tmp_10".to_string());
+        return Result::Err("get_afe_barf_row: Argument 'termidx' has the wrong length, expected __tmp_10".to_string());
       }
       let mut __tmp_12 : i32 = i32::default();
       let mut __tmp_13 : i64 = i64::default();
       let __tmp_14 = unsafe { MSK_getafebarfrowinfo(self.ptr,afeidx_,&mut __tmp_12,&mut __tmp_13) };let _ = self.handle_res(__tmp_14,"getafebarfrowinfo")?;
       if termweight_.len() != (__tmp_13).try_into().unwrap() {
-        return Result::Err("Argument 'termweight' has the wrong length, expected __tmp_13".to_string());
+        return Result::Err("get_afe_barf_row: Argument 'termweight' has the wrong length, expected __tmp_13".to_string());
       }
       self.handle_res(unsafe { MSK_getafebarfrow(self.ptr,afeidx_,barvaridx_.as_mut_ptr(),ptrterm_.as_mut_ptr(),numterm_.as_mut_ptr(),termidx_.as_mut_ptr(),termweight_.as_mut_ptr()) },"get_afe_barf_row")?;
       return Result::Ok(());
@@ -5786,12 +5810,12 @@ impl Task
       let mut __tmp_1 : i32 = i32::default();
       let __tmp_2 = unsafe { MSK_getafefrownumnz(self.ptr,afeidx_,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getafefrownumnz")?;
       if varidx_.len() != (__tmp_1).try_into().unwrap() {
-        return Result::Err("Argument 'varidx' has the wrong length, expected __tmp_1".to_string());
+        return Result::Err("get_afe_f_row: Argument 'varidx' has the wrong length, expected __tmp_1".to_string());
       }
       let mut __tmp_3 : i32 = i32::default();
       let __tmp_4 = unsafe { MSK_getafefrownumnz(self.ptr,afeidx_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getafefrownumnz")?;
       if val_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected __tmp_3".to_string());
+        return Result::Err("get_afe_f_row: Argument 'val' has the wrong length, expected __tmp_3".to_string());
       }
       self.handle_res(unsafe { MSK_getafefrow(self.ptr,afeidx_,numnz_,varidx_.as_mut_ptr(),val_.as_mut_ptr()) },"get_afe_f_row")?;
       return Result::Ok(());
@@ -5827,17 +5851,17 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getafefnumnz(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getafefnumnz")?;
       if afeidx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'afeidx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_afe_f_trip: Argument 'afeidx' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       let __tmp_3 = unsafe { MSK_getafefnumnz(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getafefnumnz")?;
       if varidx_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'varidx' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_afe_f_trip: Argument 'varidx' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i64 = i64::default();
       let __tmp_5 = unsafe { MSK_getafefnumnz(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getafefnumnz")?;
       if val_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_afe_f_trip: Argument 'val' has the wrong length, expected __tmp_4".to_string());
       }
       self.handle_res(unsafe { MSK_getafeftrip(self.ptr,afeidx_.as_mut_ptr(),varidx_.as_mut_ptr(),val_.as_mut_ptr()) },"get_afe_f_trip")?;
       return Result::Ok(());
@@ -5871,7 +5895,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_afe_g_slice(&self,first_ : i64,last_ : i64,g_ : &mut[f64]) -> Result<(),String> {
       if g_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'g' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_afe_g_slice: Argument 'g' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getafegslice(self.ptr,first_,last_,g_.as_mut_ptr()) },"get_afe_g_slice")?;
       return Result::Ok(());
@@ -5929,12 +5953,12 @@ impl Task
       let mut __tmp_1 : i32 = i32::default();
       let __tmp_2 = unsafe { MSK_getarownumnz(self.ptr,i_,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getarownumnz")?;
       if subi_.len() != (__tmp_1).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected __tmp_1".to_string());
+        return Result::Err("get_a_row: Argument 'subi' has the wrong length, expected __tmp_1".to_string());
       }
       let mut __tmp_3 : i32 = i32::default();
       let __tmp_4 = unsafe { MSK_getarownumnz(self.ptr,i_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getarownumnz")?;
       if vali_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'vali' has the wrong length, expected __tmp_3".to_string());
+        return Result::Err("get_a_row: Argument 'vali' has the wrong length, expected __tmp_3".to_string());
       }
       self.handle_res(unsafe { MSK_getarow(self.ptr,i_,nzi_,subi_.as_mut_ptr(),vali_.as_mut_ptr()) },"get_a_row")?;
       return Result::Ok(());
@@ -5974,16 +5998,16 @@ impl Task
       let __tmp_1 = unsafe { MSK_getarowslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getarowslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
       if ptrb_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_a_row_slice: Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
       }
       if ptre_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_a_row_slice: Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
       }
       if sub_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_row_slice: Argument 'sub' has the wrong length, expected maxnumnz_".to_string());
       }
       if val_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_row_slice: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getarowslice64(self.ptr,first_,last_,maxnumnz_,ptrb_.as_mut_ptr(),ptre_.as_mut_ptr(),sub_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_row_slice")?;
       return Result::Ok(());
@@ -6023,13 +6047,13 @@ impl Task
       let __tmp_1 = unsafe { MSK_getarowslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getarowslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
       if subi_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_row_slice_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
       if subj_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_row_slice_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
       if val_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_row_slice_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getarowslicetrip(self.ptr,first_,last_,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_row_slice_trip")?;
       return Result::Ok(());
@@ -6049,13 +6073,13 @@ impl Task
       let __tmp_1 = unsafe { MSK_getnumanz64(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumanz64")?;
       let maxnumnz_ : i64 = __tmp_0;
       if subi_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
       if subj_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
       if val_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_a_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getatrip(self.ptr,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_trip")?;
       return Result::Ok(());
@@ -6070,7 +6094,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_a_truncate_tol(&self,tolzero_ : &mut[f64]) -> Result<(),String> {
       if tolzero_.len() != (1).try_into().unwrap() {
-        return Result::Err("Argument 'tolzero' has the wrong length, expected 1".to_string());
+        return Result::Err("get_a_truncate_tol: Argument 'tolzero' has the wrong length, expected 1".to_string());
       }
       self.handle_res(unsafe { MSK_getatruncatetol(self.ptr,tolzero_.as_mut_ptr()) },"get_a_truncate_tol")?;
       return Result::Ok(());
@@ -6097,19 +6121,19 @@ impl Task
       let maxnum_ : i64 = __tmp_0;
       let mut __tmp_2 : i64 = i64::default();
       if subi_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_block_triplet: Argument 'subi' has the wrong length, expected maxnum_".to_string());
       }
       if subj_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_block_triplet: Argument 'subj' has the wrong length, expected maxnum_".to_string());
       }
       if subk_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_block_triplet: Argument 'subk' has the wrong length, expected maxnum_".to_string());
       }
       if subl_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_block_triplet: Argument 'subl' has the wrong length, expected maxnum_".to_string());
       }
       if valijkl_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'valijkl' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_block_triplet: Argument 'valijkl' has the wrong length, expected maxnum_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarablocktriplet(self.ptr,maxnum_,&mut __tmp_2,subi_.as_mut_ptr(),subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valijkl_.as_mut_ptr()) },"get_bara_block_triplet")?;
       return Result::Ok(__tmp_2);
@@ -6136,10 +6160,10 @@ impl Task
       let maxnum_ : i64 = __tmp_0;
       let mut __tmp_4 : i64 = i64::default();
       if sub_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_idx: Argument 'sub' has the wrong length, expected maxnum_".to_string());
       }
       if weights_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'weights' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_bara_idx: Argument 'weights' has the wrong length, expected maxnum_".to_string());
       }
       self.handle_res(unsafe { MSK_getbaraidx(self.ptr,idx_,maxnum_,i_,j_,&mut __tmp_4,sub_.as_mut_ptr(),weights_.as_mut_ptr()) },"get_bara_idx")?;
       return Result::Ok(__tmp_4);
@@ -6189,7 +6213,7 @@ impl Task
       let __tmp_1 = unsafe { MSK_getnumbaranz(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumbaranz")?;
       let maxnumnz_ : i64 = __tmp_0;
       if idxij_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'idxij' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_bara_sparsity: Argument 'idxij' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarasparsity(self.ptr,maxnumnz_,numnz_,idxij_.as_mut_ptr()) },"get_bara_sparsity")?;
       return Result::Ok(());
@@ -6215,16 +6239,16 @@ impl Task
       let maxnum_ : i64 = __tmp_0;
       let mut __tmp_2 : i64 = i64::default();
       if subj_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_block_triplet: Argument 'subj' has the wrong length, expected maxnum_".to_string());
       }
       if subk_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_block_triplet: Argument 'subk' has the wrong length, expected maxnum_".to_string());
       }
       if subl_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_block_triplet: Argument 'subl' has the wrong length, expected maxnum_".to_string());
       }
       if valjkl_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'valjkl' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_block_triplet: Argument 'valjkl' has the wrong length, expected maxnum_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarcblocktriplet(self.ptr,maxnum_,&mut __tmp_2,subj_.as_mut_ptr(),subk_.as_mut_ptr(),subl_.as_mut_ptr(),valjkl_.as_mut_ptr()) },"get_barc_block_triplet")?;
       return Result::Ok(__tmp_2);
@@ -6246,10 +6270,10 @@ impl Task
       let __tmp_1 = unsafe { MSK_getbarcidxinfo(self.ptr,idx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getbarcidxinfo")?;
       let maxnum_ : i64 = __tmp_0;
       if sub_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_idx: Argument 'sub' has the wrong length, expected maxnum_".to_string());
       }
       if weights_.len() != (maxnum_).try_into().unwrap() {
-        return Result::Err("Argument 'weights' has the wrong length, expected maxnum_".to_string());
+        return Result::Err("get_barc_idx: Argument 'weights' has the wrong length, expected maxnum_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarcidx(self.ptr,idx_,maxnum_,j_,num_,sub_.as_mut_ptr(),weights_.as_mut_ptr()) },"get_barc_idx")?;
       return Result::Ok(());
@@ -6298,7 +6322,7 @@ impl Task
       let __tmp_1 = unsafe { MSK_getnumbarcnz(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumbarcnz")?;
       let maxnumnz_ : i64 = __tmp_0;
       if idxj_.len() != (maxnumnz_).try_into().unwrap() {
-        return Result::Err("Argument 'idxj' has the wrong length, expected maxnumnz_".to_string());
+        return Result::Err("get_barc_sparsity: Argument 'idxj' has the wrong length, expected maxnumnz_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarcsparsity(self.ptr,maxnumnz_,numnz_,idxj_.as_mut_ptr()) },"get_barc_sparsity")?;
       return Result::Ok(());
@@ -6319,7 +6343,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getlenbarvarj(self.ptr,j_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getlenbarvarj")?;
       if barsj_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'barsj' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_bars_j: Argument 'barsj' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getbarsj(self.ptr,whichsol_,j_,barsj_.as_mut_ptr()) },"get_bars_j")?;
       return Result::Ok(());
@@ -6340,7 +6364,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : &mut[f64]) -> Result<(),String> {
       if barsslice_.len() != (slicesize_).try_into().unwrap() {
-        return Result::Err("Argument 'barsslice' has the wrong length, expected slicesize_".to_string());
+        return Result::Err("get_bars_slice: Argument 'barsslice' has the wrong length, expected slicesize_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarsslice(self.ptr,whichsol_,first_,last_,slicesize_,barsslice_.as_mut_ptr()) },"get_bars_slice")?;
       return Result::Ok(());
@@ -6417,7 +6441,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getlenbarvarj(self.ptr,j_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getlenbarvarj")?;
       if barxj_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'barxj' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_barx_j: Argument 'barxj' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getbarxj(self.ptr,whichsol_,j_,barxj_.as_mut_ptr()) },"get_barx_j")?;
       return Result::Ok(());
@@ -6438,7 +6462,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : &mut[f64]) -> Result<(),String> {
       if barxslice_.len() != (slicesize_).try_into().unwrap() {
-        return Result::Err("Argument 'barxslice' has the wrong length, expected slicesize_".to_string());
+        return Result::Err("get_barx_slice: Argument 'barxslice' has the wrong length, expected slicesize_".to_string());
       }
       self.handle_res(unsafe { MSK_getbarxslice(self.ptr,whichsol_,first_,last_,slicesize_,barxslice_.as_mut_ptr()) },"get_barx_slice")?;
       return Result::Ok(());
@@ -6455,7 +6479,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if c_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'c' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_c: Argument 'c' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getc(self.ptr,c_.as_mut_ptr()) },"get_c")?;
       return Result::Ok(());
@@ -6498,7 +6522,7 @@ impl Task
     pub fn get_c_list(&self,subj_ : &[i32],c_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = subj_.len() as i32;
       if c_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'c' has the wrong length, expected num_".to_string());
+        return Result::Err("get_c_list: Argument 'c' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getclist(self.ptr,num_,subj_.as_ptr(),c_.as_mut_ptr()) },"get_c_list")?;
       return Result::Ok(());
@@ -6536,13 +6560,13 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> {
       if bk_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_con_bound_slice: Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
       }
       if bl_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_con_bound_slice: Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
       }
       if bu_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_con_bound_slice: Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getconboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr()) },"get_con_bound_slice")?;
       return Result::Ok(());
@@ -6688,7 +6712,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : &mut[f64]) -> Result<(),String> {
       if c_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'c' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_c_slice: Argument 'c' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getcslice(self.ptr,first_,last_,c_.as_mut_ptr()) },"get_c_slice")?;
       return Result::Ok(());
@@ -6723,7 +6747,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdjcnumafe(self.ptr,djcidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdjcnumafe")?;
       if afeidxlist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'afeidxlist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_djc_afe_idx_list: Argument 'afeidxlist' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getdjcafeidxlist(self.ptr,djcidx_,afeidxlist_.as_mut_ptr()) },"get_djc_afe_idx_list")?;
       return Result::Ok(());
@@ -6741,7 +6765,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdjcnumafe(self.ptr,djcidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdjcnumafe")?;
       if b_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_djc_b: Argument 'b' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getdjcb(self.ptr,djcidx_,b_.as_mut_ptr()) },"get_djc_b")?;
       return Result::Ok(());
@@ -6759,7 +6783,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdjcnumdomain(self.ptr,djcidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdjcnumdomain")?;
       if domidxlist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_djc_domain_idx_list: Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getdjcdomainidxlist(self.ptr,djcidx_,domidxlist_.as_mut_ptr()) },"get_djc_domain_idx_list")?;
       return Result::Ok(());
@@ -6907,27 +6931,27 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdjcnumdomaintot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdjcnumdomaintot")?;
       if domidxlist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_djcs: Argument 'domidxlist' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       let __tmp_3 = unsafe { MSK_getdjcnumafetot(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getdjcnumafetot")?;
       if afeidxlist_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'afeidxlist' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_djcs: Argument 'afeidxlist' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i64 = i64::default();
       let __tmp_5 = unsafe { MSK_getdjcnumafetot(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getdjcnumafetot")?;
       if b_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_djcs: Argument 'b' has the wrong length, expected __tmp_4".to_string());
       }
       let mut __tmp_6 : i64 = i64::default();
       let __tmp_7 = unsafe { MSK_getdjcnumtermtot(self.ptr,&mut __tmp_6) };let _ = self.handle_res(__tmp_7,"getdjcnumtermtot")?;
       if termsizelist_.len() != (__tmp_6).try_into().unwrap() {
-        return Result::Err("Argument 'termsizelist' has the wrong length, expected __tmp_6".to_string());
+        return Result::Err("get_djcs: Argument 'termsizelist' has the wrong length, expected __tmp_6".to_string());
       }
       let mut __tmp_8 : i64 = i64::default();
       let __tmp_9 = unsafe { MSK_getnumdjc(self.ptr,&mut __tmp_8) };let _ = self.handle_res(__tmp_9,"getnumdjc")?;
       if numterms_.len() != (__tmp_8).try_into().unwrap() {
-        return Result::Err("Argument 'numterms' has the wrong length, expected __tmp_8".to_string());
+        return Result::Err("get_djcs: Argument 'numterms' has the wrong length, expected __tmp_8".to_string());
       }
       self.handle_res(unsafe { MSK_getdjcs(self.ptr,domidxlist_.as_mut_ptr(),afeidxlist_.as_mut_ptr(),b_.as_mut_ptr(),termsizelist_.as_mut_ptr(),numterms_.as_mut_ptr()) },"get_djcs")?;
       return Result::Ok(());
@@ -6945,7 +6969,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdjcnumterm(self.ptr,djcidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdjcnumterm")?;
       if termsizelist_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'termsizelist' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_djc_term_size_list: Argument 'termsizelist' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getdjctermsizelist(self.ptr,djcidx_,termsizelist_.as_mut_ptr()) },"get_djc_term_size_list")?;
       return Result::Ok(());
@@ -7110,7 +7134,7 @@ impl Task
     pub fn get_dviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
       let numaccidx_ : i64 = accidxlist_.len() as i64;
       if viol_.len() != (numaccidx_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected numaccidx_".to_string());
+        return Result::Err("get_dviol_acc: Argument 'viol' has the wrong length, expected numaccidx_".to_string());
       }
       self.handle_res(unsafe { MSK_getdviolacc(self.ptr,whichsol_,numaccidx_,accidxlist_.as_ptr(),viol_.as_mut_ptr()) },"get_dviol_acc")?;
       return Result::Ok(());
@@ -7130,7 +7154,7 @@ impl Task
     pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_dviol_barvar: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getdviolbarvar(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_dviol_barvar")?;
       return Result::Ok(());
@@ -7150,7 +7174,7 @@ impl Task
     pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_dviol_con: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getdviolcon(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_dviol_con")?;
       return Result::Ok(());
@@ -7170,7 +7194,7 @@ impl Task
     pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_dviol_cones: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getdviolcones(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_dviol_cones")?;
       return Result::Ok(());
@@ -7190,7 +7214,7 @@ impl Task
     pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_dviol_var: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getdviolvar(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_dviol_var")?;
       return Result::Ok(());
@@ -7245,7 +7269,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_inf_max(&self,inftype_ : i32,infmax_ : &mut[i32]) -> Result<(),String> {
       if infmax_.len() != (Value::MAX_STR_LEN).try_into().unwrap() {
-        return Result::Err("Argument 'infmax' has the wrong length, expected Value::MAX_STR_LEN".to_string());
+        return Result::Err("get_inf_max: Argument 'infmax' has the wrong length, expected Value::MAX_STR_LEN".to_string());
       }
       self.handle_res(unsafe { MSK_getinfmax(self.ptr,inftype_,infmax_.as_mut_ptr()) },"get_inf_max")?;
       return Result::Ok(());
@@ -7887,7 +7911,7 @@ impl Task
       let mut __tmp_1 : i64 = i64::default();
       let __tmp_2 = unsafe { MSK_getpowerdomaininfo(self.ptr,domidx_,&mut __tmp_0,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getpowerdomaininfo")?;
       if alpha_.len() != (__tmp_1).try_into().unwrap() {
-        return Result::Err("Argument 'alpha' has the wrong length, expected __tmp_1".to_string());
+        return Result::Err("get_power_domain_alpha: Argument 'alpha' has the wrong length, expected __tmp_1".to_string());
       }
       self.handle_res(unsafe { MSK_getpowerdomainalpha(self.ptr,domidx_,alpha_.as_mut_ptr()) },"get_power_domain_alpha")?;
       return Result::Ok(());
@@ -7989,7 +8013,7 @@ impl Task
     pub fn get_pviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
       let numaccidx_ : i64 = accidxlist_.len() as i64;
       if viol_.len() != (numaccidx_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected numaccidx_".to_string());
+        return Result::Err("get_pviol_acc: Argument 'viol' has the wrong length, expected numaccidx_".to_string());
       }
       self.handle_res(unsafe { MSK_getpviolacc(self.ptr,whichsol_,numaccidx_,accidxlist_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_acc")?;
       return Result::Ok(());
@@ -8009,7 +8033,7 @@ impl Task
     pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_pviol_barvar: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getpviolbarvar(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_barvar")?;
       return Result::Ok(());
@@ -8029,7 +8053,7 @@ impl Task
     pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_pviol_con: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getpviolcon(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_con")?;
       return Result::Ok(());
@@ -8049,7 +8073,7 @@ impl Task
     pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_pviol_cones: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getpviolcones(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_cones")?;
       return Result::Ok(());
@@ -8069,7 +8093,7 @@ impl Task
     pub fn get_pviol_djc(&self,whichsol_ : i32,djcidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> {
       let numdjcidx_ : i64 = djcidxlist_.len() as i64;
       if viol_.len() != (numdjcidx_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected numdjcidx_".to_string());
+        return Result::Err("get_pviol_djc: Argument 'viol' has the wrong length, expected numdjcidx_".to_string());
       }
       self.handle_res(unsafe { MSK_getpvioldjc(self.ptr,whichsol_,numdjcidx_,djcidxlist_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_djc")?;
       return Result::Ok(());
@@ -8089,7 +8113,7 @@ impl Task
     pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> {
       let num_ : i32 = sub_.len() as i32;
       if viol_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'viol' has the wrong length, expected num_".to_string());
+        return Result::Err("get_pviol_var: Argument 'viol' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getpviolvar(self.ptr,whichsol_,num_,sub_.as_ptr(),viol_.as_mut_ptr()) },"get_pviol_var")?;
       return Result::Ok(());
@@ -8117,17 +8141,17 @@ impl Task
       let mut __tmp_3 : i64 = i64::default();
       let __tmp_4 = unsafe { MSK_getnumqconknz64(self.ptr,k_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getnumqconknz64")?;
       if qcsubi_.len() != (__tmp_3).try_into().unwrap() {
-        return Result::Err("Argument 'qcsubi' has the wrong length, expected __tmp_3".to_string());
+        return Result::Err("get_q_con_k: Argument 'qcsubi' has the wrong length, expected __tmp_3".to_string());
       }
       let mut __tmp_5 : i64 = i64::default();
       let __tmp_6 = unsafe { MSK_getnumqconknz64(self.ptr,k_,&mut __tmp_5) };let _ = self.handle_res(__tmp_6,"getnumqconknz64")?;
       if qcsubj_.len() != (__tmp_5).try_into().unwrap() {
-        return Result::Err("Argument 'qcsubj' has the wrong length, expected __tmp_5".to_string());
+        return Result::Err("get_q_con_k: Argument 'qcsubj' has the wrong length, expected __tmp_5".to_string());
       }
       let mut __tmp_7 : i64 = i64::default();
       let __tmp_8 = unsafe { MSK_getnumqconknz64(self.ptr,k_,&mut __tmp_7) };let _ = self.handle_res(__tmp_8,"getnumqconknz64")?;
       if qcval_.len() != (__tmp_7).try_into().unwrap() {
-        return Result::Err("Argument 'qcval' has the wrong length, expected __tmp_7".to_string());
+        return Result::Err("get_q_con_k: Argument 'qcval' has the wrong length, expected __tmp_7".to_string());
       }
       self.handle_res(unsafe { MSK_getqconk64(self.ptr,k_,maxnumqcnz_,&mut __tmp_2,qcsubi_.as_mut_ptr(),qcsubj_.as_mut_ptr(),qcval_.as_mut_ptr()) },"get_q_con_k")?;
       return Result::Ok(__tmp_2);
@@ -8148,13 +8172,13 @@ impl Task
       let __tmp_1 = unsafe { MSK_getnumqobjnz64(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumqobjnz64")?;
       let maxnumqonz_ : i64 = __tmp_0;
       if qosubi_.len() != (maxnumqonz_).try_into().unwrap() {
-        return Result::Err("Argument 'qosubi' has the wrong length, expected maxnumqonz_".to_string());
+        return Result::Err("get_q_obj: Argument 'qosubi' has the wrong length, expected maxnumqonz_".to_string());
       }
       if qosubj_.len() != (maxnumqonz_).try_into().unwrap() {
-        return Result::Err("Argument 'qosubj' has the wrong length, expected maxnumqonz_".to_string());
+        return Result::Err("get_q_obj: Argument 'qosubj' has the wrong length, expected maxnumqonz_".to_string());
       }
       if qoval_.len() != (maxnumqonz_).try_into().unwrap() {
-        return Result::Err("Argument 'qoval' has the wrong length, expected maxnumqonz_".to_string());
+        return Result::Err("get_q_obj: Argument 'qoval' has the wrong length, expected maxnumqonz_".to_string());
       }
       self.handle_res(unsafe { MSK_getqobj64(self.ptr,maxnumqonz_,numqonz_,qosubi_.as_mut_ptr(),qosubj_.as_mut_ptr(),qoval_.as_mut_ptr()) },"get_q_obj")?;
       return Result::Ok(());
@@ -8188,7 +8212,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : &mut[f64]) -> Result<(),String> {
       if redcosts_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'redcosts' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_reduced_costs: Argument 'redcosts' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getreducedcosts(self.ptr,whichsol_,first_,last_,redcosts_.as_mut_ptr()) },"get_reduced_costs")?;
       return Result::Ok(());
@@ -8210,7 +8234,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if skc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_skc: Argument 'skc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getskc(self.ptr,whichsol_,skc_.as_mut_ptr()) },"get_skc")?;
       return Result::Ok(());
@@ -8232,7 +8256,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &mut[i32]) -> Result<(),String> {
       if skc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_skc_slice: Argument 'skc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getskcslice(self.ptr,whichsol_,first_,last_,skc_.as_mut_ptr()) },"get_skc_slice")?;
       return Result::Ok(());
@@ -8254,7 +8278,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcone(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcone")?;
       if skn_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'skn' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_skn: Argument 'skn' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getskn(self.ptr,whichsol_,skn_.as_mut_ptr()) },"get_skn")?;
       return Result::Ok(());
@@ -8276,7 +8300,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if skx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_skx: Argument 'skx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getskx(self.ptr,whichsol_,skx_.as_mut_ptr()) },"get_skx")?;
       return Result::Ok(());
@@ -8298,7 +8322,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &mut[i32]) -> Result<(),String> {
       if skx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_skx_slice: Argument 'skx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getskxslice(self.ptr,whichsol_,first_,last_,skx_.as_mut_ptr()) },"get_skx_slice")?;
       return Result::Ok(());
@@ -8318,7 +8342,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if slc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_slc: Argument 'slc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getslc(self.ptr,whichsol_,slc_.as_mut_ptr()) },"get_slc")?;
       return Result::Ok(());
@@ -8338,7 +8362,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &mut[f64]) -> Result<(),String> {
       if slc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_slc_slice: Argument 'slc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getslcslice(self.ptr,whichsol_,first_,last_,slc_.as_mut_ptr()) },"get_slc_slice")?;
       return Result::Ok(());
@@ -8358,7 +8382,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if slx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_slx: Argument 'slx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getslx(self.ptr,whichsol_,slx_.as_mut_ptr()) },"get_slx")?;
       return Result::Ok(());
@@ -8378,7 +8402,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &mut[f64]) -> Result<(),String> {
       if slx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_slx_slice: Argument 'slx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getslxslice(self.ptr,whichsol_,first_,last_,slx_.as_mut_ptr()) },"get_slx_slice")?;
       return Result::Ok(());
@@ -8398,7 +8422,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if snx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'snx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_snx: Argument 'snx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getsnx(self.ptr,whichsol_,snx_.as_mut_ptr()) },"get_snx")?;
       return Result::Ok(());
@@ -8418,7 +8442,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &mut[f64]) -> Result<(),String> {
       if snx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'snx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_snx_slice: Argument 'snx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getsnxslice(self.ptr,whichsol_,first_,last_,snx_.as_mut_ptr()) },"get_snx_slice")?;
       return Result::Ok(());
@@ -8479,57 +8503,57 @@ impl Task
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
       if skc_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_solution: Argument 'skc' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i32 = i32::default();
       let __tmp_5 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getnumvar")?;
       if skx_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_solution: Argument 'skx' has the wrong length, expected __tmp_4".to_string());
       }
       let mut __tmp_6 : i32 = i32::default();
       let __tmp_7 = unsafe { MSK_getnumcone(self.ptr,&mut __tmp_6) };let _ = self.handle_res(__tmp_7,"getnumcone")?;
       if skn_.len() != (__tmp_6).try_into().unwrap() {
-        return Result::Err("Argument 'skn' has the wrong length, expected __tmp_6".to_string());
+        return Result::Err("get_solution: Argument 'skn' has the wrong length, expected __tmp_6".to_string());
       }
       let mut __tmp_8 : i32 = i32::default();
       let __tmp_9 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_8) };let _ = self.handle_res(__tmp_9,"getnumcon")?;
       if xc_.len() != (__tmp_8).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected __tmp_8".to_string());
+        return Result::Err("get_solution: Argument 'xc' has the wrong length, expected __tmp_8".to_string());
       }
       let mut __tmp_10 : i32 = i32::default();
       let __tmp_11 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_10) };let _ = self.handle_res(__tmp_11,"getnumvar")?;
       if xx_.len() != (__tmp_10).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected __tmp_10".to_string());
+        return Result::Err("get_solution: Argument 'xx' has the wrong length, expected __tmp_10".to_string());
       }
       let mut __tmp_12 : i32 = i32::default();
       let __tmp_13 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_12) };let _ = self.handle_res(__tmp_13,"getnumcon")?;
       if y_.len() != (__tmp_12).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected __tmp_12".to_string());
+        return Result::Err("get_solution: Argument 'y' has the wrong length, expected __tmp_12".to_string());
       }
       let mut __tmp_14 : i32 = i32::default();
       let __tmp_15 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_14) };let _ = self.handle_res(__tmp_15,"getnumcon")?;
       if slc_.len() != (__tmp_14).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected __tmp_14".to_string());
+        return Result::Err("get_solution: Argument 'slc' has the wrong length, expected __tmp_14".to_string());
       }
       let mut __tmp_16 : i32 = i32::default();
       let __tmp_17 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_16) };let _ = self.handle_res(__tmp_17,"getnumcon")?;
       if suc_.len() != (__tmp_16).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected __tmp_16".to_string());
+        return Result::Err("get_solution: Argument 'suc' has the wrong length, expected __tmp_16".to_string());
       }
       let mut __tmp_18 : i32 = i32::default();
       let __tmp_19 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_18) };let _ = self.handle_res(__tmp_19,"getnumvar")?;
       if slx_.len() != (__tmp_18).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected __tmp_18".to_string());
+        return Result::Err("get_solution: Argument 'slx' has the wrong length, expected __tmp_18".to_string());
       }
       let mut __tmp_20 : i32 = i32::default();
       let __tmp_21 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_20) };let _ = self.handle_res(__tmp_21,"getnumvar")?;
       if sux_.len() != (__tmp_20).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected __tmp_20".to_string());
+        return Result::Err("get_solution: Argument 'sux' has the wrong length, expected __tmp_20".to_string());
       }
       let mut __tmp_22 : i32 = i32::default();
       let __tmp_23 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_22) };let _ = self.handle_res(__tmp_23,"getnumvar")?;
       if snx_.len() != (__tmp_22).try_into().unwrap() {
-        return Result::Err("Argument 'snx' has the wrong length, expected __tmp_22".to_string());
+        return Result::Err("get_solution: Argument 'snx' has the wrong length, expected __tmp_22".to_string());
       }
       self.handle_res(unsafe { MSK_getsolution(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr()) },"get_solution")?;
       return Result::Ok(());
@@ -8625,62 +8649,62 @@ impl Task
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
       if skc_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("get_solution_new: Argument 'skc' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i32 = i32::default();
       let __tmp_5 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getnumvar")?;
       if skx_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("get_solution_new: Argument 'skx' has the wrong length, expected __tmp_4".to_string());
       }
       let mut __tmp_6 : i32 = i32::default();
       let __tmp_7 = unsafe { MSK_getnumcone(self.ptr,&mut __tmp_6) };let _ = self.handle_res(__tmp_7,"getnumcone")?;
       if skn_.len() != (__tmp_6).try_into().unwrap() {
-        return Result::Err("Argument 'skn' has the wrong length, expected __tmp_6".to_string());
+        return Result::Err("get_solution_new: Argument 'skn' has the wrong length, expected __tmp_6".to_string());
       }
       let mut __tmp_8 : i32 = i32::default();
       let __tmp_9 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_8) };let _ = self.handle_res(__tmp_9,"getnumcon")?;
       if xc_.len() != (__tmp_8).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected __tmp_8".to_string());
+        return Result::Err("get_solution_new: Argument 'xc' has the wrong length, expected __tmp_8".to_string());
       }
       let mut __tmp_10 : i32 = i32::default();
       let __tmp_11 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_10) };let _ = self.handle_res(__tmp_11,"getnumvar")?;
       if xx_.len() != (__tmp_10).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected __tmp_10".to_string());
+        return Result::Err("get_solution_new: Argument 'xx' has the wrong length, expected __tmp_10".to_string());
       }
       let mut __tmp_12 : i32 = i32::default();
       let __tmp_13 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_12) };let _ = self.handle_res(__tmp_13,"getnumcon")?;
       if y_.len() != (__tmp_12).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected __tmp_12".to_string());
+        return Result::Err("get_solution_new: Argument 'y' has the wrong length, expected __tmp_12".to_string());
       }
       let mut __tmp_14 : i32 = i32::default();
       let __tmp_15 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_14) };let _ = self.handle_res(__tmp_15,"getnumcon")?;
       if slc_.len() != (__tmp_14).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected __tmp_14".to_string());
+        return Result::Err("get_solution_new: Argument 'slc' has the wrong length, expected __tmp_14".to_string());
       }
       let mut __tmp_16 : i32 = i32::default();
       let __tmp_17 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_16) };let _ = self.handle_res(__tmp_17,"getnumcon")?;
       if suc_.len() != (__tmp_16).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected __tmp_16".to_string());
+        return Result::Err("get_solution_new: Argument 'suc' has the wrong length, expected __tmp_16".to_string());
       }
       let mut __tmp_18 : i32 = i32::default();
       let __tmp_19 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_18) };let _ = self.handle_res(__tmp_19,"getnumvar")?;
       if slx_.len() != (__tmp_18).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected __tmp_18".to_string());
+        return Result::Err("get_solution_new: Argument 'slx' has the wrong length, expected __tmp_18".to_string());
       }
       let mut __tmp_20 : i32 = i32::default();
       let __tmp_21 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_20) };let _ = self.handle_res(__tmp_21,"getnumvar")?;
       if sux_.len() != (__tmp_20).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected __tmp_20".to_string());
+        return Result::Err("get_solution_new: Argument 'sux' has the wrong length, expected __tmp_20".to_string());
       }
       let mut __tmp_22 : i32 = i32::default();
       let __tmp_23 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_22) };let _ = self.handle_res(__tmp_23,"getnumvar")?;
       if snx_.len() != (__tmp_22).try_into().unwrap() {
-        return Result::Err("Argument 'snx' has the wrong length, expected __tmp_22".to_string());
+        return Result::Err("get_solution_new: Argument 'snx' has the wrong length, expected __tmp_22".to_string());
       }
       let mut __tmp_24 : i64 = i64::default();
       let __tmp_25 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_24) };let _ = self.handle_res(__tmp_25,"getaccntot")?;
       if doty_.len() != (__tmp_24).try_into().unwrap() {
-        return Result::Err("Argument 'doty' has the wrong length, expected __tmp_24".to_string());
+        return Result::Err("get_solution_new: Argument 'doty' has the wrong length, expected __tmp_24".to_string());
       }
       self.handle_res(unsafe { MSK_getsolutionnew(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr(),doty_.as_mut_ptr()) },"get_solution_new")?;
       return Result::Ok(());
@@ -8703,7 +8727,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : &mut[f64]) -> Result<(),String> {
       if values_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'values' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_solution_slice: Argument 'values' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getsolutionslice(self.ptr,whichsol_,solitem_,first_,last_,values_.as_mut_ptr()) },"get_solution_slice")?;
       return Result::Ok(());
@@ -8765,7 +8789,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if suc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_suc: Argument 'suc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getsuc(self.ptr,whichsol_,suc_.as_mut_ptr()) },"get_suc")?;
       return Result::Ok(());
@@ -8785,7 +8809,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &mut[f64]) -> Result<(),String> {
       if suc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_suc_slice: Argument 'suc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getsucslice(self.ptr,whichsol_,first_,last_,suc_.as_mut_ptr()) },"get_suc_slice")?;
       return Result::Ok(());
@@ -8805,7 +8829,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if sux_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_sux: Argument 'sux' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getsux(self.ptr,whichsol_,sux_.as_mut_ptr()) },"get_sux")?;
       return Result::Ok(());
@@ -8825,7 +8849,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &mut[f64]) -> Result<(),String> {
       if sux_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_sux_slice: Argument 'sux' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getsuxslice(self.ptr,whichsol_,first_,last_,sux_.as_mut_ptr()) },"get_sux_slice")?;
       return Result::Ok(());
@@ -8928,13 +8952,13 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> {
       if bk_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_var_bound_slice: Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
       }
       if bl_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_var_bound_slice: Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
       }
       if bu_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_var_bound_slice: Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getvarboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr()) },"get_var_bound_slice")?;
       return Result::Ok(());
@@ -9026,7 +9050,7 @@ impl Task
     pub fn get_var_type_list(&self,subj_ : &[i32],vartype_ : &mut[i32]) -> Result<(),String> {
       let num_ : i32 = subj_.len() as i32;
       if vartype_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'vartype' has the wrong length, expected num_".to_string());
+        return Result::Err("get_var_type_list: Argument 'vartype' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_getvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_mut_ptr()) },"get_var_type_list")?;
       return Result::Ok(());
@@ -9046,7 +9070,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if xc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_xc: Argument 'xc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getxc(self.ptr,whichsol_,xc_.as_mut_ptr()) },"get_xc")?;
       return Result::Ok(());
@@ -9066,7 +9090,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &mut[f64]) -> Result<(),String> {
       if xc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_xc_slice: Argument 'xc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getxcslice(self.ptr,whichsol_,first_,last_,xc_.as_mut_ptr()) },"get_xc_slice")?;
       return Result::Ok(());
@@ -9086,7 +9110,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if xx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_xx: Argument 'xx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_getxx(self.ptr,whichsol_,xx_.as_mut_ptr()) },"get_xx")?;
       return Result::Ok(());
@@ -9106,7 +9130,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &mut[f64]) -> Result<(),String> {
       if xx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_xx_slice: Argument 'xx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getxxslice(self.ptr,whichsol_,first_,last_,xx_.as_mut_ptr()) },"get_xx_slice")?;
       return Result::Ok(());
@@ -9126,7 +9150,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if y_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("get_y: Argument 'y' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_gety(self.ptr,whichsol_,y_.as_mut_ptr()) },"get_y")?;
       return Result::Ok(());
@@ -9146,7 +9170,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &mut[f64]) -> Result<(),String> {
       if y_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("get_y_slice: Argument 'y' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_getyslice(self.ptr,whichsol_,first_,last_,y_.as_mut_ptr()) },"get_y_slice")?;
       return Result::Ok(());
@@ -9180,7 +9204,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if basis_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'basis' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("init_basis_solve: Argument 'basis' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_initbasissolve(self.ptr,basis_.as_mut_ptr()) },"init_basis_solve")?;
       return Result::Ok(());
@@ -9211,13 +9235,13 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),blx_.len()),bux_.len()),aptre_.len()),c_.len()),aptrb_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("Mismatching asub/aval lengths".to_string()); } 
-      if aptrb_.len() != aptre_.len() { return Err("Mismatching aptrb/aptre lengths".to_string()); } 
-      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid aptrb/aptre construction".to_string()); } 
-      if let Some(v) = aptrb_.iter().min() { if *v < 0 { return Err("Invalid aptrb construction".to_string()); } }
-      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("Invalid aptre construction".to_string()); } } 
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(blc_.len(),bkc_.len()),buc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptrb_.len(),c_.len()),aptre_.len()),blx_.len()),bkx_.len()),bux_.len()) as i32;
+      if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
+      if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
+      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
+      if let Some(v) = aptrb_.iter().min() { if *v < 0 { return Err("input_data: Invalid aptrb construction".to_string()); } }
+      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,c_.as_ptr(),cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
@@ -9363,22 +9387,22 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if wlc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'wlc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("primal_repair: Argument 'wlc' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
       if wuc_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'wuc' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("primal_repair: Argument 'wuc' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i32 = i32::default();
       let __tmp_5 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getnumvar")?;
       if wlx_.len() != (__tmp_4).try_into().unwrap() {
-        return Result::Err("Argument 'wlx' has the wrong length, expected __tmp_4".to_string());
+        return Result::Err("primal_repair: Argument 'wlx' has the wrong length, expected __tmp_4".to_string());
       }
       let mut __tmp_6 : i32 = i32::default();
       let __tmp_7 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_6) };let _ = self.handle_res(__tmp_7,"getnumvar")?;
       if wux_.len() != (__tmp_6).try_into().unwrap() {
-        return Result::Err("Argument 'wux' has the wrong length, expected __tmp_6".to_string());
+        return Result::Err("primal_repair: Argument 'wux' has the wrong length, expected __tmp_6".to_string());
       }
       self.handle_res(unsafe { MSK_primalrepair(self.ptr,wlc_.as_ptr(),wuc_.as_ptr(),wlx_.as_ptr(),wux_.as_ptr()) },"primal_repair")?;
       return Result::Ok(());
@@ -9407,31 +9431,31 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
-        return Result::Err("Argument 'leftpricei' has the wrong length, expected numi_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
       if rightpricei_.len() != (numi_).try_into().unwrap() {
-        return Result::Err("Argument 'rightpricei' has the wrong length, expected numi_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'rightpricei' has the wrong length, expected numi_".to_string());
       }
       if leftrangei_.len() != (numi_).try_into().unwrap() {
-        return Result::Err("Argument 'leftrangei' has the wrong length, expected numi_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'leftrangei' has the wrong length, expected numi_".to_string());
       }
       if rightrangei_.len() != (numi_).try_into().unwrap() {
-        return Result::Err("Argument 'rightrangei' has the wrong length, expected numi_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'rightrangei' has the wrong length, expected numi_".to_string());
       }
       if leftpricej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'leftpricej' has the wrong length, expected numj_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'leftpricej' has the wrong length, expected numj_".to_string());
       }
       if rightpricej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'rightpricej' has the wrong length, expected numj_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'rightpricej' has the wrong length, expected numj_".to_string());
       }
       if leftrangej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'leftrangej' has the wrong length, expected numj_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'leftrangej' has the wrong length, expected numj_".to_string());
       }
       if rightrangej_.len() != (numj_).try_into().unwrap() {
-        return Result::Err("Argument 'rightrangej' has the wrong length, expected numj_".to_string());
+        return Result::Err("primal_sensitivity: Argument 'rightrangej' has the wrong length, expected numj_".to_string());
       }
       self.handle_res(unsafe { MSK_primalsensitivity(self.ptr,numi_,subi_.as_ptr(),marki_.as_ptr(),numj_,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr()) },"primal_sensitivity")?;
       return Result::Ok(());
@@ -9458,7 +9482,7 @@ impl Task
     pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("put_acc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_putacc(self.ptr,accidx_,domidx_,numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"put_acc")?;
       return Result::Ok(());
@@ -9507,7 +9531,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccn(self.ptr,accidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccn")?;
       if doty_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'doty' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_acc_dot_y: Argument 'doty' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putaccdoty(self.ptr,whichsol_,accidx_,doty_.as_mut_ptr()) },"put_acc_dot_y")?;
       return Result::Ok(());
@@ -9527,7 +9551,7 @@ impl Task
       let numaccs_ : i64 = std::cmp::min(accidxs_.len(),domidxs_.len()) as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("put_acc_list: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       self.handle_res(unsafe { MSK_putacclist(self.ptr,numaccs_,accidxs_.as_ptr(),domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"put_acc_list")?;
       return Result::Ok(());
@@ -9557,7 +9581,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacol>
     #[allow(unused_parens)]
     pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> {
-      let nzj_ : i32 = std::cmp::min(subj_.len(),valj_.len()) as i32;
+      let nzj_ : i32 = std::cmp::min(valj_.len(),subj_.len()) as i32;
       self.handle_res(unsafe { MSK_putacol(self.ptr,j_,nzj_,subj_.as_ptr(),valj_.as_ptr()) },"put_a_col")?;
       return Result::Ok(());
     } // putacol
@@ -9575,11 +9599,11 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid ptrb/ptre construction".to_string()); } 
-      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("Invalid ptre construction".to_string()); } } 
+      if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
+      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_list: Invalid ptrb construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putacollist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_list")?;
       return Result::Ok(());
     } // putacollist64
@@ -9597,11 +9621,11 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacolslice64>
     #[allow(unused_parens)]
     pub fn put_a_col_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      if asub_.len() != aval_.len() { return Err("Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid ptrb/ptre construction".to_string()); } 
-      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("Invalid ptre construction".to_string()); } } 
+      if asub_.len() != aval_.len() { return Err("put_a_col_slice: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_slice: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_slice: Invalid ptrb/ptre construction".to_string()); } 
+      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_slice: Invalid ptrb construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_slice: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putacolslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_slice")?;
       return Result::Ok(());
     } // putacolslice64
@@ -9620,19 +9644,19 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,numtrip_ : i64,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
+        return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
       if barvaridx_.len() != (numtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'barvaridx' has the wrong length, expected numtrip_".to_string());
+        return Result::Err("put_afe_barf_block_triplet: Argument 'barvaridx' has the wrong length, expected numtrip_".to_string());
       }
       if subk_.len() != (numtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected numtrip_".to_string());
+        return Result::Err("put_afe_barf_block_triplet: Argument 'subk' has the wrong length, expected numtrip_".to_string());
       }
       if subl_.len() != (numtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected numtrip_".to_string());
+        return Result::Err("put_afe_barf_block_triplet: Argument 'subl' has the wrong length, expected numtrip_".to_string());
       }
       if valkl_.len() != (numtrip_).try_into().unwrap() {
-        return Result::Err("Argument 'valkl' has the wrong length, expected numtrip_".to_string());
+        return Result::Err("put_afe_barf_block_triplet: Argument 'valkl' has the wrong length, expected numtrip_".to_string());
       }
       self.handle_res(unsafe { MSK_putafebarfblocktriplet(self.ptr,numtrip_,afeidx_.as_ptr(),barvaridx_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valkl_.as_ptr()) },"put_afe_barf_block_triplet")?;
       return Result::Ok(());
@@ -9667,7 +9691,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),afeidx_.len()),ptrterm_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),afeidx_.len()),ptrterm_.len()),barvaridx_.len()) as i64;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
@@ -9686,7 +9710,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),ptrterm_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -9763,12 +9787,12 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),afeidx_.len()),numnzrow_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
       let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
-      if varidx_.len() != val_.len() { return Err("Mismatching varidx/val lengths".to_string()); } 
-      if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("Invalid numnzrow value".to_string()); } }
-      if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("Invalid ptrrow value".to_string()); } }
-      if let Some(v) = ptrrow_.iter().zip(numnzrow_.iter()).map(|(a,b)| *a as usize + *b as usize).max() { if v > varidx_.len() { return Err("Invalid ptrrow/numnzrow construction".to_string()); } }
+      if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
+      if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
+      if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
+      if let Some(v) = ptrrow_.iter().zip(numnzrow_.iter()).map(|(a,b)| *a as usize + *b as usize).max() { if v > varidx_.len() { return Err("put_afe_f_row_list: Invalid ptrrow/numnzrow construction".to_string()); } }
       self.handle_res(unsafe { MSK_putafefrowlist(self.ptr,numafeidx_,afeidx_.as_ptr(),numnzrow_.as_ptr(),ptrrow_.as_ptr(),lenidxval_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row_list")?;
       return Result::Ok(());
     } // putafefrowlist
@@ -9795,7 +9819,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafeglist>
     #[allow(unused_parens)]
     pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(g_.len(),afeidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(afeidx_.len(),g_.len()) as i64;
       self.handle_res(unsafe { MSK_putafeglist(self.ptr,numafeidx_,afeidx_.as_ptr(),g_.as_ptr()) },"put_afe_g_list")?;
       return Result::Ok(());
     } // putafeglist
@@ -9811,7 +9835,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_afe_g_slice(&mut self,first_ : i64,last_ : i64,slice_ : &[f64]) -> Result<(),String> {
       if slice_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slice' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_afe_g_slice: Argument 'slice' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putafegslice(self.ptr,first_,last_,slice_.as_ptr()) },"put_afe_g_slice")?;
       return Result::Ok(());
@@ -9841,7 +9865,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -9874,11 +9898,11 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid ptrb/ptre construction".to_string()); } 
-      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("Invalid ptre construction".to_string()); } } 
+      if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
+      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_list: Invalid ptrb construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putarowlist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_list")?;
       return Result::Ok(());
     } // putarowlist64
@@ -9897,16 +9921,16 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_a_row_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       if ptrb_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_a_row_slice: Argument 'ptrb' has the wrong length, expected (last_-first_)".to_string());
       }
       if ptre_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_a_row_slice: Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
       }
-      if asub_.len() != aval_.len() { return Err("Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid ptrb/ptre construction".to_string()); } 
-      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("Invalid ptre construction".to_string()); } } 
+      if asub_.len() != aval_.len() { return Err("put_a_row_slice: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_slice: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_slice: Invalid ptrb/ptre construction".to_string()); } 
+      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_slice: Invalid ptrb construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_slice: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putarowslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_slice")?;
       return Result::Ok(());
     } // putarowslice64
@@ -9937,19 +9961,19 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,num_ : i64,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
       if subi_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subi' has the wrong length, expected num_".to_string());
+        return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
       if subj_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected num_".to_string());
+        return Result::Err("put_bara_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
       if subk_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected num_".to_string());
+        return Result::Err("put_bara_block_triplet: Argument 'subk' has the wrong length, expected num_".to_string());
       }
       if subl_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected num_".to_string());
+        return Result::Err("put_bara_block_triplet: Argument 'subl' has the wrong length, expected num_".to_string());
       }
       if valijkl_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'valijkl' has the wrong length, expected num_".to_string());
+        return Result::Err("put_bara_block_triplet: Argument 'valijkl' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_putbarablocktriplet(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valijkl_.as_ptr()) },"put_bara_block_triplet")?;
       return Result::Ok(());
@@ -9966,7 +9990,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
@@ -9984,12 +10008,12 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptre_.len(),subj_.len()),subi_.len()),alphaptrb_.len()) as i32;
-      if matidx_.len() != weights_.len() { return Err("Mismatching matidx/weights lengths".to_string()); } 
-      if alphaptrb_.len() != alphaptre_.len() { return Err("Mismatching alphaptrb/alphaptre lengths".to_string()); } 
-      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid alphaptrb/alphaptre construction".to_string()); } 
-      if let Some(v) = alphaptrb_.iter().min() { if *v < 0 { return Err("Invalid alphaptrb construction".to_string()); } }
-      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("Invalid alphaptre construction".to_string()); } } 
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),alphaptre_.len()),subj_.len()),subi_.len()) as i32;
+      if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
+      if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
+      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
+      if let Some(v) = alphaptrb_.iter().min() { if *v < 0 { return Err("put_bara_ij_list: Invalid alphaptrb construction".to_string()); } }
+      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("put_bara_ij_list: Invalid alphaptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putbaraijlist(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_ij_list")?;
       return Result::Ok(());
     } // putbaraijlist
@@ -10008,25 +10032,25 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),subi_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),subi_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
-        return Result::Err("Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
+        return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
       let mut __tmp_0 : i64 = i64::default();
       for __tmp_1 in nummat_ { __tmp_0 += __tmp_1; }
       if matidx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'matidx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_bara_row_list: Argument 'matidx' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i64 = i64::default();
       for __tmp_3 in nummat_ { __tmp_2 += __tmp_3; }
       if weights_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'weights' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("put_bara_row_list: Argument 'weights' has the wrong length, expected __tmp_2".to_string());
       }
-      if subj_.len() != nummat_.len() { return Err("Mismatching subj/nummat lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("Invalid ptrb/ptre construction".to_string()); } 
-      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("Invalid ptre construction".to_string()); } } 
+      if subj_.len() != nummat_.len() { return Err("put_bara_row_list: Mismatching subj/nummat lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_bara_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_row_list: Invalid ptrb/ptre construction".to_string()); } 
+      if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_bara_row_list: Invalid ptrb construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("put_bara_row_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putbararowlist(self.ptr,num_,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_row_list")?;
       return Result::Ok(());
     } // putbararowlist
@@ -10044,16 +10068,16 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,num_ : i64,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
       if subj_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subj' has the wrong length, expected num_".to_string());
+        return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
       if subk_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subk' has the wrong length, expected num_".to_string());
+        return Result::Err("put_barc_block_triplet: Argument 'subk' has the wrong length, expected num_".to_string());
       }
       if subl_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'subl' has the wrong length, expected num_".to_string());
+        return Result::Err("put_barc_block_triplet: Argument 'subl' has the wrong length, expected num_".to_string());
       }
       if valjkl_.len() != (num_).try_into().unwrap() {
-        return Result::Err("Argument 'valjkl' has the wrong length, expected num_".to_string());
+        return Result::Err("put_barc_block_triplet: Argument 'valjkl' has the wrong length, expected num_".to_string());
       }
       self.handle_res(unsafe { MSK_putbarcblocktriplet(self.ptr,num_,subj_.as_ptr(),subk_.as_ptr(),subl_.as_ptr(),valjkl_.as_ptr()) },"put_barc_block_triplet")?;
       return Result::Ok(());
@@ -10069,7 +10093,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -10089,7 +10113,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getlenbarvarj(self.ptr,j_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getlenbarvarj")?;
       if barsj_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'barsj' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_bars_j: Argument 'barsj' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putbarsj(self.ptr,whichsol_,j_,barsj_.as_ptr()) },"put_bars_j")?;
       return Result::Ok(());
@@ -10124,7 +10148,7 @@ impl Task
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getlenbarvarj(self.ptr,j_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getlenbarvarj")?;
       if barxj_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'barxj' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_barx_j: Argument 'barxj' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putbarxj(self.ptr,whichsol_,j_,barxj_.as_ptr()) },"put_barx_j")?;
       return Result::Ok(());
@@ -10199,7 +10223,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),sub_.len()),blc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),sub_.len()),blc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -10237,13 +10261,13 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_con_bound_slice(&mut self,first_ : i32,last_ : i32,bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
       if bkc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bkc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_con_bound_slice: Argument 'bkc' has the wrong length, expected (last_-first_)".to_string());
       }
       if blc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'blc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_con_bound_slice: Argument 'blc' has the wrong length, expected (last_-first_)".to_string());
       }
       if buc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'buc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_con_bound_slice: Argument 'buc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putconboundslice(self.ptr,first_,last_,bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_slice")?;
       return Result::Ok(());
@@ -10345,7 +10369,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_c_slice(&mut self,first_ : i32,last_ : i32,slice_ : &[f64]) -> Result<(),String> {
       if slice_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slice' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_c_slice: Argument 'slice' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putcslice(self.ptr,first_,last_,slice_.as_ptr()) },"put_c_slice")?;
       return Result::Ok(());
@@ -10366,7 +10390,7 @@ impl Task
       let numdomidx_ : i64 = domidxlist_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("put_djc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       let numterms_ : i64 = termsizelist_.len() as i64;
       self.handle_res(unsafe { MSK_putdjc(self.ptr,djcidx_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_,termsizelist_.as_ptr()) },"put_djc")?;
@@ -10404,11 +10428,11 @@ impl Task
       let numdomidx_ : i64 = domidxlist_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
-        return Result::Err("Argument 'b' has the wrong length, expected numafeidx_".to_string());
+        return Result::Err("put_djc_slice: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       let numterms_ : i64 = termsizelist_.len() as i64;
       if termsindjc_.len() != ((idxlast_-idxfirst_)).try_into().unwrap() {
-        return Result::Err("Argument 'termsindjc' has the wrong length, expected (idxlast_-idxfirst_)".to_string());
+        return Result::Err("put_djc_slice: Argument 'termsindjc' has the wrong length, expected (idxlast_-idxfirst_)".to_string());
       }
       self.handle_res(unsafe { MSK_putdjcslice(self.ptr,idxfirst_,idxlast_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_,termsizelist_.as_ptr(),termsindjc_.as_ptr()) },"put_djc_slice")?;
       return Result::Ok(());
@@ -10687,7 +10711,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -10703,8 +10727,8 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
-      if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
+      if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
     } // putqconk
@@ -10719,8 +10743,8 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qoval_.len(),qosubi_.len()),qosubj_.len()) as i32;
-      if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qosubj_.len()),qoval_.len()) as i32;
+      if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
     } // putqobj
@@ -10755,7 +10779,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if skc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_skc: Argument 'skc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putskc(self.ptr,whichsol_,skc_.as_ptr()) },"put_skc")?;
       return Result::Ok(());
@@ -10777,7 +10801,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_skc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &[i32]) -> Result<(),String> {
       if skc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'skc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_skc_slice: Argument 'skc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putskcslice(self.ptr,whichsol_,first_,last_,skc_.as_ptr()) },"put_skc_slice")?;
       return Result::Ok(());
@@ -10799,7 +10823,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if skx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_skx: Argument 'skx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putskx(self.ptr,whichsol_,skx_.as_ptr()) },"put_skx")?;
       return Result::Ok(());
@@ -10821,7 +10845,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_skx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &[i32]) -> Result<(),String> {
       if skx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'skx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_skx_slice: Argument 'skx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putskxslice(self.ptr,whichsol_,first_,last_,skx_.as_ptr()) },"put_skx_slice")?;
       return Result::Ok(());
@@ -10841,7 +10865,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if slc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_slc: Argument 'slc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putslc(self.ptr,whichsol_,slc_.as_ptr()) },"put_slc")?;
       return Result::Ok(());
@@ -10861,7 +10885,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_slc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &[f64]) -> Result<(),String> {
       if slc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_slc_slice: Argument 'slc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putslcslice(self.ptr,whichsol_,first_,last_,slc_.as_ptr()) },"put_slc_slice")?;
       return Result::Ok(());
@@ -10881,7 +10905,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if slx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_slx: Argument 'slx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putslx(self.ptr,whichsol_,slx_.as_ptr()) },"put_slx")?;
       return Result::Ok(());
@@ -10901,7 +10925,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_slx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &[f64]) -> Result<(),String> {
       if slx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'slx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_slx_slice: Argument 'slx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putslxslice(self.ptr,whichsol_,first_,last_,slx_.as_ptr()) },"put_slx_slice")?;
       return Result::Ok(());
@@ -10921,7 +10945,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if sux_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_snx: Argument 'sux' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putsnx(self.ptr,whichsol_,sux_.as_ptr()) },"put_snx")?;
       return Result::Ok(());
@@ -10941,7 +10965,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_snx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &[f64]) -> Result<(),String> {
       if snx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'snx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_snx_slice: Argument 'snx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putsnxslice(self.ptr,whichsol_,first_,last_,snx_.as_ptr()) },"put_snx_slice")?;
       return Result::Ok(());
@@ -11056,7 +11080,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if suc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_suc: Argument 'suc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putsuc(self.ptr,whichsol_,suc_.as_ptr()) },"put_suc")?;
       return Result::Ok(());
@@ -11076,7 +11100,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_suc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &[f64]) -> Result<(),String> {
       if suc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'suc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_suc_slice: Argument 'suc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putsucslice(self.ptr,whichsol_,first_,last_,suc_.as_ptr()) },"put_suc_slice")?;
       return Result::Ok(());
@@ -11096,7 +11120,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if sux_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_sux: Argument 'sux' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putsux(self.ptr,whichsol_,sux_.as_ptr()) },"put_sux")?;
       return Result::Ok(());
@@ -11116,7 +11140,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_sux_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &[f64]) -> Result<(),String> {
       if sux_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'sux' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_sux_slice: Argument 'sux' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putsuxslice(self.ptr,whichsol_,first_,last_,sux_.as_ptr()) },"put_sux_slice")?;
       return Result::Ok(());
@@ -11165,7 +11189,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),bux_.len()),blx_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),sub_.len()),bux_.len()),bkx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -11203,13 +11227,13 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_var_bound_slice(&mut self,first_ : i32,last_ : i32,bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
       if bkx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bkx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_var_bound_slice: Argument 'bkx' has the wrong length, expected (last_-first_)".to_string());
       }
       if blx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'blx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_var_bound_slice: Argument 'blx' has the wrong length, expected (last_-first_)".to_string());
       }
       if bux_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'bux' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_var_bound_slice: Argument 'bux' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putvarboundslice(self.ptr,first_,last_,bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_slice")?;
       return Result::Ok(());
@@ -11295,7 +11319,7 @@ impl Task
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
     #[allow(unused_parens)]
     pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(vartype_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),vartype_.len()) as i32;
       self.handle_res(unsafe { MSK_putvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_ptr()) },"put_var_type_list")?;
       return Result::Ok(());
     } // putvartypelist
@@ -11314,7 +11338,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if xc_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_xc: Argument 'xc' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putxc(self.ptr,whichsol_,xc_.as_mut_ptr()) },"put_xc")?;
       return Result::Ok(());
@@ -11334,7 +11358,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_xc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &[f64]) -> Result<(),String> {
       if xc_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'xc' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_xc_slice: Argument 'xc' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putxcslice(self.ptr,whichsol_,first_,last_,xc_.as_ptr()) },"put_xc_slice")?;
       return Result::Ok(());
@@ -11354,7 +11378,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
       if xx_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_xx: Argument 'xx' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_putxx(self.ptr,whichsol_,xx_.as_ptr()) },"put_xx")?;
       return Result::Ok(());
@@ -11374,7 +11398,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_xx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &[f64]) -> Result<(),String> {
       if xx_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'xx' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_xx_slice: Argument 'xx' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putxxslice(self.ptr,whichsol_,first_,last_,xx_.as_ptr()) },"put_xx_slice")?;
       return Result::Ok(());
@@ -11394,7 +11418,7 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if y_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("put_y: Argument 'y' has the wrong length, expected __tmp_0".to_string());
       }
       self.handle_res(unsafe { MSK_puty(self.ptr,whichsol_,y_.as_ptr()) },"put_y")?;
       return Result::Ok(());
@@ -11414,7 +11438,7 @@ impl Task
     #[allow(unused_parens)]
     pub fn put_y_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &[f64]) -> Result<(),String> {
       if y_.len() != ((last_-first_)).try_into().unwrap() {
-        return Result::Err("Argument 'y' has the wrong length, expected (last_-first_)".to_string());
+        return Result::Err("put_y_slice: Argument 'y' has the wrong length, expected (last_-first_)".to_string());
       }
       self.handle_res(unsafe { MSK_putyslice(self.ptr,whichsol_,first_,last_,y_.as_ptr()) },"put_y_slice")?;
       return Result::Ok(());
@@ -11730,12 +11754,12 @@ impl Task
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
       if sub_.len() != (__tmp_0).try_into().unwrap() {
-        return Result::Err("Argument 'sub' has the wrong length, expected __tmp_0".to_string());
+        return Result::Err("solve_with_basis: Argument 'sub' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
       if val_.len() != (__tmp_2).try_into().unwrap() {
-        return Result::Err("Argument 'val' has the wrong length, expected __tmp_2".to_string());
+        return Result::Err("solve_with_basis: Argument 'val' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i32 = i32::default();
       self.handle_res(unsafe { MSK_solvewithbasis(self.ptr,transp_,numnz_,sub_.as_mut_ptr(),val_.as_mut_ptr(),&mut __tmp_4) },"solve_with_basis")?;
