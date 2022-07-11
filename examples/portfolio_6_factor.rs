@@ -4,20 +4,22 @@
 //! Purpose :   Implements a portfolio optimization model using factor model.
 
 extern crate mosek;
+extern crate itertools;
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Transpose};
+use itertools::{iproduct};
+use std::convert::TryInto;
 
-use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 
 const INF : f64 = 0.0;
 
 //TAG:begin-factor-markowitz-helper 
 
-fn portfolio(n : i32,
-             w : f64,
-             mu : &[f64],
-             x0 : &[f64]
-             GT : &[f64]
-             B : &[f64],
-             S_F : &[f64]) -> Result<Vec<f64>,String> {
+#[allow(non_snake_case)]
+fn portfolio(w      : f64,
+             mu     : &[f64],
+             x0     : &[f64],
+             gammas : &[f64],
+             GT     : &Matrix) -> Result<Vec<(f64,f64)>,String> {
 
     let mut task = match Task::new() {
         Some(e) => e,
@@ -25,7 +27,12 @@ fn portfolio(n : i32,
         };
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
-    let k : i32 = (GT.len() / n as usize).try_into().unwrap();
+    let (kx,nx) = GT.size();
+    if mu.len() != nx { panic!("Mismatching data"); }
+
+    
+    let k : i32 = kx.try_into().unwrap();
+    let n : i32 = nx.try_into().unwrap();
     let total_budget : f64 = w + x0.iter().sum::<f64>();
 
     /*TAG:begin-offsets*/
@@ -49,7 +56,7 @@ fn portfolio(n : i32,
 
     // One linear constraint: total budget
     task.append_cons(1)?;
-    task.put_con_name(coff_bud, "budget");
+    task.put_con_name(coff_bud, "budget")?;
 
     /* Coefficients in the first row of A */
     for j in 0..n {
@@ -59,23 +66,24 @@ fn portfolio(n : i32,
 
     // Input (gamma, GTx) in the AFE (affine expression) storage
     // We need k+1 rows
-    task.append_afes(k + 1)?;
+    task.append_afes(k as i64 + 1)?;
     // The first affine expression = gamma
     // NOTE: We change this in a loop, so specified below.
     // The remaining k expressions comprise GT*x, we add them row by row
     // In more realisic scenarios it would be better to extract nonzeros and input in sparse form
-    task.put_afe_f_row_((1..k as i64+1).collect().as_slice(),
-                        vec![n; k as usize].as_slice(),
-                        (0..GT.len() as i64).step_by(n).collect::<Vec<i64>>().as_slice(),
-                        (0..k).product(0..n).map(|(_,b)| b).collect::<Vec<i32>>().as_slice(),
-                        GT)?;
+
+    task.put_afe_f_row_list((1..1+k as i64).collect::<Vec<i64>>().as_slice(), // f row idxs
+                            vec![n; k as usize].as_slice(), // row lengths
+                            (0..GT.len() as i64).step_by(n as usize).collect::<Vec<i64>>().as_slice(), // row ptr
+                            iproduct!(0..k,0..n).map(|(_,b)| b).collect::<Vec<i32>>().as_slice(), // varidx, 0..n repeated k times
+                            GT.data_by_row().as_slice())?;
 
     // Input the affine conic constraint (gamma, GT*x) \in QCone
     // Add the quadratic domain of dimension k+1
     let qdom = task.append_quadratic_cone_domain(k as i64+ 1)?;
     // Add the constraint
-    task.append_acc_seq(qdom, 0, vec![0.0; k as usize+1]);
-    task.put_acc_name(0, "risk");
+    task.append_acc_seq(qdom, 0, vec![0.0; k as usize+1].as_slice())?;
+    task.put_acc_name(0, "risk")?;
 
     // Objective: maximize expected return mu^T x
     for (j,&muj) in (0..n).zip(mu.iter()) {
@@ -83,25 +91,23 @@ fn portfolio(n : i32,
     }
     task.put_obj_sense(Objsense::MAXIMIZE)?;
 
-    Some(gammas.map(|&gamma| {
+    Ok(gammas.iter().filter_map(|&gamma| {
         // Specify gamma in ACC
-        task.put_afe_g(0, gamma);
+        if let Err(_) = task.put_afe_g(0, gamma) { None }
+        else if let Err(_) = task.optimize() { None }
+        else {
+            /* Display solution summary for quick inspection of results */
+            let _ = task.solution_summary(Streamtype::LOG);
+            let _ = task.write_data("dump.ptf");
 
-        task.optimize()?;
-
-        /* Display solution summary for quick inspection of results */
-        task.solution_summary(Streamtype::LOG)?;
-
-        task.write_data("dump.ptf")?;
-
-        /* Read the results */
-        let mut xx = vec![0.0; n as usize];
-        task.get_xx_slice(Soltype::ITR, voff_x, voff_x + n, xx.as_mut_slice());
-
-        let expret : f64 = xx.iter().zip(mu.iter()).map(|(&xj,&muj)| xj*muj).sum();
-    }.collect::<Vec<f64>>())
-  }
+            /* Read the results */
+            let mut xx = vec![0.0; n as usize];
+            if let Err(_) = task.get_xx_slice(Soltype::ITR, voff_x, voff_x + n, xx.as_mut_slice()) { None }
+            else { Some((gamma,xx.iter().zip(mu.iter()).map(|(&xj,&muj)| xj*muj).sum::<f64>())) }
+        }
+    }).collect::<Vec<(f64,f64)>>())
 }
+
 
 
 #[allow(non_snake_case)]
@@ -114,286 +120,177 @@ fn main() -> Result<(),String> {
     let x0 = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
     //TAG:begin-factor-model-vars
     // Factor exposure matrix, n x 2
-    let B = Matrix::new(n as usize, 2,
-                        [ 0.4256, 0.1869,
-                          0.2413, 0.3877,
-                          0.2235, 0.3697,
-                          0.1503, 0.4612,
-                          1.5325, -0.2633,
-                          1.2741, -0.2613,
-                          0.6939, 0.2372,
-                          0.5425, 0.2116 ].to_vec()).unwrap();
+    let B = Matrix::new_by_row(n as usize, 2,
+                               [ 0.4256,  0.1869,
+                                 0.2413,  0.3877,
+                                 0.2235,  0.3697,
+                                 0.1503,  0.4612,
+                                 1.5325, -0.2633,
+                                 1.2741, -0.2613,
+                                 0.6939,  0.2372,
+                                 0.5425,  0.2116 ].to_vec()).unwrap();
 
     // Factor covariance matrix, 2x2
-    let S_F = Matrix::new(2,2,
-                          [ 0.0620, 0.0577,
-                            0.0577, 0.0908 ].to_vec()).unwrap();
+    let S_F = Matrix::new_by_row(2,2,
+                                 [ 0.0620, 0.0577,
+                                   0.0577, 0.0908 ].to_vec()).unwrap();
 
     // Specific risk components
-    let resid_risk = &[0.0720, 0.0508, 0.0377, 0.0394, 0.0663, 0.0224, 0.0417, 0.0459];
-
-    let S_theta = Matrix::diag_matrix(resid_risk);
+    let theta : &[f64] = &[0.0720, 0.0508, 0.0377, 0.0394, 0.0663, 0.0224, 0.0417, 0.0459];
+    let S_sqrt_theta = Matrix::diag_matrix(theta.iter().map(|&v| v.sqrt()).collect());
     //TAG:end-factor-model-vars
     //TAG:begin-factor-model-G
     let P = S_F.cholesky().unwrap();
-    let BP = B.mul(P).unwrap();
-    let G  = BP.concat_h(S_theta.sqrt_element());
+    let BP = B.mul(&P).unwrap();
+
+    //let GT  = BP.concat_h(&S_theta.sqrt_element().unwrap()).unwrap().transpose();
+    let GT  = BP.concat_h(&S_sqrt_theta).unwrap().transpose();
     //TAG:end-factor-model-G
-    let GT = G.transpose();
-    let k = GT.dimi; // ?
     let gammas = &[0.24, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48];
 
-    let expret = portfolio(n,
-                           w,
-                           mu,
-                           x0,
-                           GT,
-                           B,
-                           S_F)?;
-    for (&gamma,&expret) in gamma.iter().zip(expret.iter()) {
-        println!("Expected return {:e} for gamma {:e}\n", expret, gamma);
+    for (gamma,expret) in portfolio(w,
+                                    mu,
+                                    x0,
+                                    gammas,
+                                    &GT)? {
+        println!("Expected return {:.4e} for gamma {:.2}", expret, gamma);
     }
-
+    Ok(())
 }
 /*TAG:end-code*/
 
 
 // Matrix with data stored in colunn format
-struct Matrix {
-    colfmt : bool;
-    dimi : usize;
-    dimj : usize;
+#[derive(Copy,Clone)]
+pub enum MatrixOrder {
+    ByRow,
+    ByCol
+}
+
+pub struct Matrix {
+    fmt  : MatrixOrder,
+    dimi : usize,
+    dimj : usize,
     data : Vec<f64>
 }
 
 impl Matrix {
-    pub fn new(colfmt : bool, dimi : usize, dimj : usize, data : Vec<f64>) -> Option<Matrix> {
-        if dimi*dimj == data.size() {
-            Some(Matrix{colfmt,dimi,dimj,data})
+    pub fn new(fmt : MatrixOrder, dimi : usize, dimj : usize, data : Vec<f64>) -> Option<Matrix> {
+        if dimi*dimj == data.len() {
+            Some(Matrix{fmt,dimi,dimj,data})
         }
         else {
             None
         }
     }
 
-    pub fn diag_matrix(data : Vec<f64>) -> Matrix { new(true,data.size(),data.size(),data) }
+    pub fn new_by_col(dimi : usize, dimj : usize, data : Vec<f64>) -> Option<Matrix> {
+        Matrix::new(MatrixOrder::ByCol,dimi,dimj,data)
+    }
+    pub fn new_by_row(dimi : usize, dimj : usize, data : Vec<f64>) -> Option<Matrix> {
+        Matrix::new(MatrixOrder::ByRow,dimi,dimj,data)
+    }
+
+    pub fn size(&self) -> (usize,usize) { (self.dimi,self.dimj) }
+    pub fn len(&self) -> usize { self.data.len() }
+    pub fn diag_matrix(data : Vec<f64>) -> Matrix {
+        let mut rdata = vec![0.0; data.len()*data.len()];
+        for (r,&v) in rdata.iter_mut().step_by(data.len()+1).zip(data.iter()) { *r = v; }
+        Matrix{fmt:MatrixOrder::ByCol,dimi:data.len(),dimj:data.len(),data:rdata}
+    }
     pub fn transpose(&self) -> Matrix {
         Matrix {
-            colfmt : ! self.colfmt,
+            fmt : match self.fmt { MatrixOrder::ByRow => MatrixOrder::ByCol, MatrixOrder::ByCol => MatrixOrder::ByRow },
             dimi : self.dimj,
             dimj : self.dimi,
             data : self.data.as_slice().to_vec()
         }
     }
 
-    pub fn sqrt_element(& self) -> Option<Matrix> {
-        if let Some(m) = self.data.iter().min() {
-            if m < 0 { None }
-            else {
-                let mut newdata = self.data.as_slice().to_vec();
-                for r in newdata.iter_mut() { *r = *r.sqrt(); }
-                Some(Matrix{colfmt:self.colfmt,dimi:self.dimi,dimj:self.dimj,data:newdata})
+    pub fn data_by_row(&self) -> Vec<f64> {
+        match self.fmt {
+            MatrixOrder::ByRow => self.data.clone(),
+            MatrixOrder::ByCol => iproduct!(0..self.dimi,0..self.dimj).map(|(i,j)| unsafe { *self.data.get_unchecked(self.dimi*j+i) }).collect()
+        }
+    }
+
+    pub fn data_by_col(&self) -> Vec<f64> {
+        match self.fmt {
+            MatrixOrder::ByCol => self.data.clone(),
+            MatrixOrder::ByRow => iproduct!(0..self.dimj,0..self.dimi).map(|(j,i)| unsafe { *self.data.get_unchecked(self.dimj*i+j) }).collect()
+        }
+    }
+
+    pub fn data_by_row_to(&self,r : &mut[f64]) {
+        match self.fmt {
+            MatrixOrder::ByRow => { r.clone_from_slice(self.data.as_slice()); },
+            MatrixOrder::ByCol => {
+                if r.len() != self.data.len() { panic!("Incorrect result array length"); }
+                for (r,(i,j)) in r.iter_mut().zip(iproduct!(0..self.dimi,0..self.dimj)) {
+                    *r = unsafe { *self.data.get_unchecked(self.dimi*j+i) }
+                }
             }
         }
-        else {
-            Some(Matrix{colfmt:true,dimi:self.dimi,dimj:self.dimj,data:vec![]})
+    }
+
+    pub fn data_by_col_to(&self,r : &mut[f64]) {
+        match self.fmt {
+            MatrixOrder::ByCol => { r.clone_from_slice(self.data.as_slice()); },
+            MatrixOrder::ByRow => {
+                for (r,(j,i)) in r.iter_mut().zip(iproduct!(0..self.dimj,0..self.dimi)) {
+                    *r = unsafe { *self.data.get_unchecked(self.dimj*i+j) };
+                }
+            }
         }
     }
 
     pub fn cholesky(&self) -> Option<Matrix> {
         if self.dimi != self.dimj { None }
-        else if (self.colfmt) {
-            let mut resdata = self.data.as_slice().to_vec();
-            if let Ok(_) = mosek::potrf(mosek::Uplo::LO,self.dimi, resdata.as_mut_slice()) { Some(Matrix{dimi:self.dimi,dimj:self.dimj,data:resdata}) }
-            else { None }
-        }
         else {
-            let mut resdata = vec![0.0; self.data.len()];
-            for (r,(j,i)) in resdata.iter_mut().zip(iproduct!(0..self.dimj,0..self.dimi)) { *r = unsafe{ *self.data.get_unchecked(i*self.dimj_j) }; }
-            if let Ok(_) = mosek::potrf(mosek::Uplo::LO,self.dimi, resdata.as_mut_slice()) { Some(Matrix{true,dimi:self.dimi,dimj:self.dimj,data:resdata}) }
+            let mut resdata = self.data_by_col();
+            if let Ok(_) = mosek::potrf(mosek::Uplo::LO,
+                                        self.dimi.try_into().unwrap(),
+                                        resdata.as_mut_slice()) { Some(Matrix{fmt:MatrixOrder::ByCol,dimi:self.dimi,dimj:self.dimj,data:resdata}) }
             else { None }
         }
     }
 
-    pub fn mul(&self,other : &Matrix) : Option<Matrix> {
+    pub fn mul(&self,other : &Matrix) -> Option<Matrix> {
         if self.dimj != other.dimi { None }
         else {
-            let resdata = vec![0.0; self.dimi * other.dimj]
-                if let Ok(_) = mosek::gemm(if self.colfmt  {mosek::Transpose::NO} else {mosek::Transpose::YES},
-                                           if other.colfmt {mosek::Transpose::NO} else {mosek::Transpose::YES},
-                                           self.dimi.try_into().unwrap(),
-                                           other.dimj.try_into().unwrap(),
-                                           self.dimj.try_into().unwrap(),
-                                           1.0,
-                                           self.data.as_slice(),
-                                           other.data.as_slice(),
-                                           1.0,
-                                           resdata.as_mut_slice()) { Some(Matrix{colfmt:true,dimi:self.dimi,dimj:other.dimj,data:resdata}) }
-            else
+            let mut resdata = vec![0.0; self.dimi * other.dimj];
+            if let Ok(_) = mosek::gemm(match self.fmt { MatrixOrder::ByCol => Transpose::NO, MatrixOrder::ByRow => Transpose::YES },
+                                       match other.fmt { MatrixOrder::ByCol => Transpose::NO, MatrixOrder::ByRow => Transpose::YES },
+                                       self.dimi.try_into().unwrap(),
+                                       other.dimj.try_into().unwrap(),
+                                       self.dimj.try_into().unwrap(),
+                                       1.0,
+                                       self.data.as_slice(),
+                                       other.data.as_slice(),
+                                       1.0,
+                                       resdata.as_mut_slice()) {
+                Matrix::new_by_col(self.dimi,other.dimj,resdata)
+            }
+            else {
                 None
+            }
         }
     }
 
     pub fn concat_h(&self, other : & Matrix) -> Option<Matrix> {
-        if self.dimi != other.dimi { None }
+        if self.dimi != other.dimi {
+            None
+        }
         else {
-            let resdimi = self.dimi;
-            let resdimj = self.dimj + other.dimj;
-
-            let data1 = ( if self.colfmt {self.data}
-                          else {
-                              let mut newdata = vec![0.0; self.data.len()];
-                              for (r,(j,i)) in newdata.iter_mut().zip(iproduct!(0..self.dimj,0..self.dimi)) { *r = unsafe{*self.data.get_unchecked(i*self.dimj+j)}; })
-                          newdata);
-            let data2 = ( if other.colfmt {other.data}
-                          else {
-                              let mut newdata = vec![0.0; other.data.len()];
-                              for (r,(j,i)) in newdata.iter_mut().zip(iproduct!(0..other.dimj,0..other.dimi)) { *r = unsafe{*other.data.get_unchecked(i*other.dimj+j)}; })
-                          newdata);
-
             let mut resdata = vec![0.0; self.data.len() + other.data.len()];
-            resdata[0..self.data.len()].copy_from_slice(self.data.as_slice());
-            resdata[self.data.len()..].copy_from_slice(other.data.as_slice());
 
-            Some(Matrix{colfmt:true,dimi:self.dimi,dimj:self.dimj+other.dimj,data:resdata})
-      }
+            self.data_by_col_to(& mut resdata[..self.len()]);
+            other.data_by_col_to(& mut resdata[self.len()..]);
+
+            println!("new matrix : shape1 = {:?}, data1 len = {}, shape2 = {:?}, data2 len = {}",self.size(),self.data.len(), other.size(),other.data.len());
+
+            Matrix::new_by_col(self.dimi,self.dimj+other.dimj,resdata)
+        }
     }
 }
-
-// public static double sum(double[] x) 
-// {
-//     double r = 0.0;
-//     for (int i = 0; i < x.length; ++i) r += x[i];
-//     return r;
-// }
-
-// public static double dot(double[] x, double[] y) 
-// {
-//     double r = 0.0;
-//     for (int i = 0; i < x.length; ++i) r += x[i] * y[i];
-//     return r;
-// }
-
-// Create diagonal matrix from an array.
-// public static double[][] diag_matrix(double[] x) 
-// {
-//     int n = x.length;
-//     double[][] m = new double[n][n];  
-//     for (double[] row : m) Arrays.fill(row, 0.0);
-//     for (int i = 0; i < n; ++i) m[i][i] = x[i];
-//     return m;
-// }
-
-// public static double[][] transpose(double[][] m) 
-// {
-//     int ni = m.length; 
-//     int nj = m[0].length;
-//     double[][] mt = new double[nj][ni];  
-    
-//     for (int i = 0; i < ni; ++i) 
-//     {
-//         for (int j = 0; j < nj; ++j) 
-//         {
-//             mt[j][i] = m[i][j];
-//         }
-//     }
-//     return mt;
-// }
-
-// public static double[][] array_sqrt(double[][] m) 
-// {
-//     int ni = m.length;
-//     int nj = m[0].length;
-//     double[][] sqrtm = new double[ni][nj];  
-    
-//     for (int i = 0; i < ni; ++i) 
-//     {
-//         for (int j = 0; j < nj; ++j) 
-//         {
-//             sqrtm[i][j] = Math.sqrt(m[i][j]);
-//         }
-//     }
-//     return sqrtm;
-// }
-
-//   // Create horizontal block matrix
-//   public static double[][] concat_h(double[][] ml, double[][] mr) 
-//   {
-//     int ni = ml.length;
-//     int njl = ml[0].length;
-//     int njr = mr[0].length;
-//     double[][] b = new double[ni][njl + njr];
-    
-//     for (int i = 0; i < ni; ++i) 
-//     {
-//       System.arraycopy(ml[i], 0, b[i], 0, njl);
-//       System.arraycopy(mr[i], 0, b[i], njl, njr);
-//     }
-//     return b;
-//   }
-
-//   // Vectorize matrix (column-major order)
-//   public static double[] mat_to_vec_c(double[][] m) 
-//   {
-//     int ni = m.length;
-//     int nj = m[0].length;
-//     double[] c = new double[nj * ni];  
-    
-//     for (int j = 0; j < nj; ++j) 
-//     {
-//       for (int i = 0; i < ni; ++i) 
-//       {
-//         c[j * ni + i] = m[i][j];
-//       }
-//     }
-//     return c;
-//   }
-
-//   // Reshape vector to matrix (column-major order)
-//   public static double[][] vec_to_mat_c(double[] c, int ni, int nj) 
-//   {
-//     double[][] m = new double[ni][nj];
-    
-//     for (int j = 0; j < nj; ++j) 
-//     {
-//       for (int i = 0; i < ni; ++i) 
-//       {
-//         m[i][j] = c[j * ni + i];
-//       }
-//     }
-//     return m;
-//   }
-
-//   public static double[][] cholesky(double[][] m) 
-//   {
-//     int n = m.length;
-//     double[] vecs = mat_to_vec_c(m);
-//     LinAlg.potrf(mosek.uplo.lo, n, vecs);
-//     double[][] s = vec_to_mat_c(vecs, n, n);
-
-//     // Zero out upper triangular part (LinAlg.potrf does not use it, original matrix values remain there)
-//     for (int i = 0; i < n; ++i) 
-//     {
-//       for (int j = i+1; j < n; ++j) 
-//       {
-//         s[i][j] = 0.0;
-//       }
-//     }
-//     return s;
-//   }
-
-//   // Matrix multiplication
-//   public static double[][] matrix_mul(double[][] a, double[][] b) 
-//   {
-//     int na = a.length;
-//     int nb = b[0].length;
-//     int k = b.length;
-
-//     double[] vecm = new double[na * nb];
-//     Arrays.fill(vecm, 0.0);
-//     LinAlg.gemm(mosek.transpose.no, mosek.transpose.no, na, nb, k, 1.0, mat_to_vec_c(a), mat_to_vec_c(b), 1.0, vecm);
-//     double[][] m = vec_to_mat_c(vecm, na, nb);     
-    
-//     return m;
-//   }
   //TAG:end-factor-markowitz-helper 
