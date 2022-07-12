@@ -44,7 +44,7 @@ fn portfolio(n : i32,     // number of assets
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     /* Total budget */

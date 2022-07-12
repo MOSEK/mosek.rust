@@ -18,7 +18,7 @@ fn main() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(t) => t,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
     let infinity = 0.0; // for symbolic use, value is irrelevant
 
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;

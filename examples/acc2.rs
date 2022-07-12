@@ -18,6 +18,7 @@ extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
 
+#[allow(non_upper_case_globals)]
 fn main() -> Result<(),String> {
     // Define problem data
     const n : i32 = 3;
@@ -27,7 +28,7 @@ fn main() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
     // Attach a printer to the task
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     // Create n free variables

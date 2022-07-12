@@ -44,7 +44,7 @@ fn main() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        };
+        }.with_callbacks();
 
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
@@ -88,7 +88,7 @@ fn main() -> Result<(),String> {
     let solsta = task.get_sol_sta(Soltype::ITR)?;
 
 
-    assert!(solsta == Solsta::Optimal);
+    assert!(solsta == Solsta::OPTIMAL);
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITR, & mut xx[..])?;
     println!("Optimal primal solution");

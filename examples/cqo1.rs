@@ -15,7 +15,6 @@ fn main() -> Result<(),String>
 {
     let numvar  : usize = 6;
     let numcon  : usize = 1;
-    let numcone : usize = 2;
 
     let bkc = vec![ mosek::Boundkey::FX ];
     let blc = vec![ 1.0 ];
@@ -40,7 +39,7 @@ fn main() -> Result<(),String>
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        };
+        }.with_callbacks();
 
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 

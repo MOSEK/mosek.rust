@@ -24,7 +24,7 @@ fn portfolio(w      : f64,
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        };
+        }.with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     let (kx,nx) = GT.size();

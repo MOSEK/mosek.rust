@@ -98,10 +98,7 @@ fn main() -> Result<(),String> {
     else {
 
         /* Create the optimization task. */
-        let mut task = match Task::new() {
-            Some(e) => e,
-            None => return Err("Failed to create task".to_string()),
-        };
+        let mut task = Task::new().unwrap().with_callbacks();
         task.read_data(args[2].as_str())?;
 
         match args[1].as_str() {

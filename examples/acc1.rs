@@ -18,7 +18,9 @@ use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
 
 // Define problem data
 
+#[allow(non_upper_case_globals)]
 const n : i32 = 3;
+#[allow(non_upper_case_globals)]
 const k : i64 = 2;
 
 #[allow(non_snake_case)]
@@ -27,7 +29,7 @@ fn main() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
     // Attach a printer to the task
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     // Create n free variables

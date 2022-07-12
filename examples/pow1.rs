@@ -30,7 +30,7 @@ fn main()  -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
     // Directs the log task stream to the user specified
     // method msgclass.streamCB
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;

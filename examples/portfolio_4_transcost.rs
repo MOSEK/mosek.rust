@@ -52,7 +52,7 @@ fn portfolio(n : i32,
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-    };
+    }.with_callbacks();
 
     let k = (GT.len() / n as usize) as i32;
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;

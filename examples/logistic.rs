@@ -9,13 +9,13 @@
 extern crate mosek;
 extern crate itertools;
 
-use mosek::{Task,Boundkey,Objsense,Soltype,Streamtype};
+use mosek::{Task,TaskCB,Boundkey,Objsense,Soltype,Streamtype};
 use itertools::{izip,iproduct};
 
 const INF : f64 = 0.0;
 
 #[allow(non_snake_case)]
-fn softplus(task : & mut Task, d : i32, n : i32, theta : i32, t : i32, X : &[f64], Y : &[bool]) -> Result<(),String> {
+fn softplus(task : & mut TaskCB, d : i32, n : i32, theta : i32, t : i32, X : &[f64], Y : &[bool]) -> Result<(),String> {
     let nvar = task.get_num_var()?;
     let ncon = task.get_num_con()?;
     let nafe = task.get_num_afe()?;
@@ -143,7 +143,7 @@ fn logistic_regression(X : &[f64],
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        };
+        }.with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     // Variables [r; theta; t]

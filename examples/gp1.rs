@@ -30,7 +30,7 @@ fn max_volume_box(Aw : f64,
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        };
+        }.with_callbacks();
 
     // Directs the log task stream to the user specified
     // method task_msg_obj.stream
