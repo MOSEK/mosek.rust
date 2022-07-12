@@ -17,57 +17,56 @@ use std::cmp::Ordering;
 use std::thread;
 use std::env;
 
-fn optimize(t : Arc<Mutex<mosek::Task>>, stop : Arc<Mutex<bool>>) -> Option<i32> {
-    let t = t.lock().unwrap();
-    if let Ok(trm) = (*t).optimize() {
+fn optimize(t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
+    let mut t = t.with_callbacks();
+    let cbstop = Arc::clone(&stop);
+    if let Err(_) = t.put_callback(move |_,_,_,_| ! *(cbstop.lock().unwrap()) ) { None }
+    else if let Ok(trm) = t.optimize() {
         let mut st = stop.lock().unwrap();
         *st = true;
-        Some(trm)
+        Some((trm,t.without_callbacks()))
     }
     else { None }
 }
 
 fn optimize_concurrent(task       : &mut mosek::Task,
-                       optimizers : &[mosek::Optimizertype]) -> Vec<(usize,i32,Arc<Mutex<mosek::Task>>)> {
-    let flag = Arc::new(Mutex::new(false));
-
-
+                       optimizers : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
+    let stop = Arc::new(Mutex::new(false));
     optimizers.iter().enumerate()
         .filter_map(|(i,&ot)|
-                    if let Ok(t) = task.clone_task() {
-                        let stop = Arc::clone(&flag);
-                        if      let Err(_) = t.put_callback(move |_,_,_,_| ! *stop.lock().unwrap() ) { None }
-                        else if let Err(_) = t.put_int_param(mosek::Iparam::OPTIMIZER, ot as i32) { None }
-                        else { Some((i,Arc::new(Mutex::new(t)))) }
+                    if let Some(mut t) = task.clone() {
+                        if let Err(_) = t.put_int_param(mosek::Iparam::OPTIMIZER, ot as i32) { None }
+                        else {
+                            let stopopt = Arc::clone(&stop);
+                            Some((i,thread::spawn(move || optimize(t,stopopt))))
+                        }
                     }
                     else { None })
-        .map(|(i,t)| (i,t,thread::spawn(move || optimize(Arc::clone(&t),Arc::clone(&flag)))))
-        .filter_map(|(i,t,br)|
-                    match br.join().unwrap() {
+        .filter_map(|(i,th)|
+                    match th.join().unwrap() {
                         None => None,
-                        Some(r) => Some((i,r,t)) } )
+                        Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
 
 fn optimize_concurrent_mio(task  : & mut mosek::Task,
-                           seeds : &[i32]) -> Vec<(usize,i32,Arc<Mutex<mosek::Task>>)> {
-    let flag = Arc::new(Mutex::new(false));
+                           seeds : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
+    let stop = Arc::new(Mutex::new(false));
 
     seeds.iter().enumerate()
         .filter_map(|(i,&seed)| {
-            if let Ok(t) = task.clone_task() {
-                let stop = Arc::clone(&flag);
-                if      let Err(_) = t.put_callback(move |_,_,_,_| { let s = stop.lock().unwrap(); ! *s }) { None }
-                else if let Err(_) = t.put_int_param(mosek::Iparam::MIO_SEED, seed) { None }
-                else { Some((i,Arc::new(Mutex::new(t)))) }
+            if let Some(mut t) = task.clone() {
+                if let Err(_) = t.put_int_param(mosek::Iparam::MIO_SEED, seed) { None }
+                else {
+                    let stopopt = Arc::clone(&stop);
+                    Some((i,thread::spawn(move || optimize(t,stopopt))))
+                }
             }
-            else { None }
-        })
-        .map(|(i,t)| (i,t,thread::spawn(move || optimize(Arc::clone(&t),Arc::clone(&flag)))))
-        .filter_map(|(i,t,br)|
-                    match br.join().unwrap() {
+            else { None }})
+        .filter_map(|(i,th)|
+                    match th.join().unwrap() {
                         None => None,
-                        Some(r) => Some((i,t,r)) } )
+                        Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
 
@@ -104,13 +103,12 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
     // }
   
     // return -1;
-//u  }
+//  }
 
 
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
-    println!("args = {:?}",args);
     if args.len() < 2 {
         println!("Syntax: concurrent1 FILENAME [ TIMELIMIT ]");
         return Err("Invalid argument list".to_string());
@@ -133,11 +131,11 @@ fn main() -> Result<(),String> {
         let optimizers = &[mosek::Optimizertype::CONIC,
                            mosek::Optimizertype::DUAL_SIMPLEX,
                            mosek::Optimizertype::PRIMAL_SIMPLEX];
-        optimize_concurrent(& mut task, optimizers)?
+        optimize_concurrent(& mut task, optimizers)
     }
     else {
         let seeds = &[ 42, 13, 71749373 ];
-        optimize_concurrent_mio(& mut task, seeds)?
+        optimize_concurrent_mio(& mut task, seeds)
     };
 
 
@@ -146,93 +144,113 @@ fn main() -> Result<(),String> {
     // solutions should be the same if more than one is returned, but
     // for integer problems tasks may have hit the time limit and
     // returned non-optimal solutions.
-    if r.len() == 0 {
+
+    let n = r.len();
+
+    if n == 0 {
         println!("All optimizers failed.");
     }
     else if numintvar > 0 {
-        let sols = r.filter_map(|(i,(_trm,t))|
-                                match t.solution_def(Soltype::ITG) {
-                                    Err(_) => None,
-                                    Ok(false) => None,
-                                    _ => match t.get_sol_sta(Soltype::ITG).unwrap() {
-                                        Solsta::PRIM_FEAS|Solsta::INTEGER_OPTIMAL => Some((i,t.get_primal_obj(Soltype::ITG).unwrap(),t)),
-                                        _ => None
-                                    }
-                                }).collect();
-        let (besti,bestobj) = sols
-            .map(|(&i,&v,_)| (i,v))
-            .max_by(|(_,&o1),(_,&o2)|
+        let (ii,_,tasks) = split3vec(r);
+
+        let pobjs : Vec<(usize,f64)> =
+            ii.iter().zip(tasks.iter()).enumerate()
+            .filter_map(|(k,(_i,t))|
+                match (*t).solution_def(Soltype::ITG) {
+                    Ok(true) => match t.get_sol_sta(Soltype::ITG).unwrap() {
+                        Solsta::PRIM_FEAS|Solsta::INTEGER_OPTIMAL => Some((k,t.get_primal_obj(Soltype::ITG).unwrap())),
+                        _ => None
+                    },
+                    _ => None
+                })
+            .collect();
+
+        let &(besti,bestobj) = pobjs.iter()
+            .max_by(|(_,o1),(_,o2)|
                     match sense {
                         Objsense::MAXIMIZE => if o1 < o2 {Ordering::Less} else if o2 < o1 {Ordering::Greater} else {Ordering::Equal},
-                        Objsense::MINIMIZE => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
-                    });
+                        _ => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
+                    }).unwrap();
+
         {
-            let (_,(_,& mut t)) = sols[besti];
+            let mut t = drop_except(tasks,besti).unwrap().with_callbacks();
+
             t.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
             t.optimizer_summary(mosek::Streamtype::LOG)?;
             t.solution_summary(mosek::Streamtype::LOG)?;
         }
 
-        println!("{} optimizers succeeded:",r.len());
-        for (&i,&v,_t) in sols {
-            println!("Optimizer with seed #{} produced result : {:.5e}",i,v);
+        println!("{} optimizers succeeded:",pobjs.len());
+        for &(k,v) in pobjs.iter() {
+            println!("Optimizer with seed #{} produced result : {:.5e}",ii[k],v);
         }
 
-        println!("\tBest solution is: {:.5e}",bestobj);
+        println!("\tBest solution is #{}: {:.5e}",ii[besti],bestobj);
     }
     else {
-        let sols = r.filter_map(|(i,(_trm,t))|
-                                match t.solution_def(Soltype::BAS) {
-                                    Ok(true) => match t.get_sol_sta(Soltype::BAS).unwrap() {
-                                        Solsta::PRIM_FEAS|Solsta::OPTIMAL => Some((Soltype::BAS,i,t.get_primal_obj(Soltype::BAS).unwrap(),t)),
-                                        _ => None
-                                    }
-                                }.or_else(||
-                                          match t.solution_def(Soltype::ITR) {
-                                              Ok(true) => match t.get_sol_sta(Soltype::ITR).unwrap() {
-                                                  Solsta::PRIM_FEAS|Solsta::OPTIMAL => Some((Soltype::ITR,i,t.get_primal_obj(Soltype::ITR).unwrap(),t)),
-                                                  _ => None
-                                              }
-                                          }
-                                )).collect();
-        let (besti,bestobj) = sols
-            .map(|(&i,&v,_)| (i,v))
-            .max_by(|(_,&o1),(_,&o2)|
+        let (ii,_,tasks) = split3vec(r);
+
+        let pobjs : Vec<(usize,f64)> =
+            tasks.iter().enumerate()
+            .filter_map(|(k,t)|
+                        match t.get_sol_sta(Soltype::BAS) {
+                            Ok(Solsta::PRIM_FEAS)|Ok(Solsta::OPTIMAL) => Some((k,t.get_primal_obj(Soltype::BAS).unwrap())),
+                            _ => None
+                        }.or_else(|| match t.get_sol_sta(Soltype::ITR) {
+                            Ok(Solsta::PRIM_FEAS)|Ok(Solsta::OPTIMAL) => Some((k,t.get_primal_obj(Soltype::ITR).unwrap())),
+                            _ => None
+                        }) )
+            .collect();
+
+        let &(besti,bestobj) = pobjs.iter()
+            .max_by(|(_,o1),(_,o2)|
                     match sense {
                         Objsense::MAXIMIZE => if o1 < o2 {Ordering::Less} else if o2 < o1 {Ordering::Greater} else {Ordering::Equal},
-                        Objsense::MINIMIZE => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
-                    });
+                        _ => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
+                    }).unwrap();
+
         {
-            let (_,(_,& mut t)) = sols[besti];
+            let mut t = drop_except(tasks,besti).unwrap().with_callbacks();
+
             t.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
             t.optimizer_summary(mosek::Streamtype::LOG)?;
             t.solution_summary(mosek::Streamtype::LOG)?;
         }
 
-        println!("{} optimizers succeeded:",r.len());
-        for (&i,&v,_t) in sols {
-            println!("Optimizer with seed #{} produced result : {:.5e}",i,v);
+        println!("{} optimizers succeeded:",pobjs.len());
+        for &(k,v) in pobjs.iter() {
+            println!("Optimizer with seed #{} produced result : {:.5e}",ii[k],v);
         }
 
-        println!("\tBest solution is: {:.5e}",bestobj);
+        println!("\tBest solution is #{}: {:.5e}",ii[besti],bestobj);
     }
 
 
+    Result::Ok(())
+}
 
 
+fn drop_except<A>(mut a : Vec<A>, idx : usize ) -> Option<A> {
+    if idx >= a.len() { None }
+    else {
+        for _i in 0..a.len()-idx-1 { let _ = a.pop(); }
+        a.pop()
+    }
+}
 
+fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
+    let mut ra = Vec::with_capacity(v.len());
+    let mut rb = Vec::with_capacity(v.len());
+    let mut rc = Vec::with_capacity(v.len());
 
+    while let Some((va,vb,vc)) = v.pop() {
+        ra.push(va);
+        rb.push(vb);
+        rc.push(vc);
+    }
 
-
-
-
-
-
-
-
-
-
-
-    
-    return Result::Ok(());
+    ra.reverse();
+    rb.reverse();
+    rc.reverse();
+    (ra,rb,rc)
 }
