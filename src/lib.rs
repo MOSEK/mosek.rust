@@ -541,7 +541,6 @@ extern {
 }
 
 
-
 /// Basis identification
 #[non_exhaustive]
 pub struct Basindtype;
@@ -3644,11 +3643,24 @@ pub struct Env {
 
 /// The Task structure encapsulates a MOSEK Task containing problem
 /// data, parameters and other information used to solve the
-/// optimization problem.
+/// optimization problem, and provides the API for interacting with
+/// the task data.
+///
+/// The Task object does not support callbacks, but can be passed or
+/// shared between threads. If callbacks are needed, use the
+/// `with_callbacks` metho to convert it into a `TaskCB` object.
 pub struct Task {
     ptr : * const u8,
 }
 unsafe impl Send for Task {}
+
+
+/// The `TaskCB` object has all the same API functions as the `Task`
+/// object, plus functions for setting and clearing callbacks. The
+/// `TaskCB` is not safe to pass or share between threads.
+///
+/// A `TaskCB` can be converted back into a `Task` by the member
+/// function `without_callbacks()`.
 pub struct TaskCB {
     task : Task,
     streamcb  : [ Option<Box<Box<dyn Fn(&str)>>>; 4 ],
@@ -4088,12 +4100,14 @@ extern fn callback_proxy(_       : * const c_void,
 }
 
 impl TaskCB {
+    /// Create a new `TaskCB` object from a given `Task`.
     pub fn new(task : Task) -> TaskCB {
         TaskCB { task     : task,
                  streamcb : [None,None,None,None],
                  valuecb  : None,}
     }
 
+    /// Convert a `TaskCB` object into a `Task` object.
     pub fn without_callbacks(self) -> Task {
         for (whichstream,obj) in self.streamcb.iter().enumerate() {
             if let Some(ref _f) = *obj {
@@ -4105,8 +4119,10 @@ impl TaskCB {
         self.task
     }
 
+    /// Clone a `TaskCB`. Since callbacks are not shaerd between
+    /// cloned objects, this returns a plain `Task` object.
     pub fn clone(&self) -> Option<Task> { self.task.clone() }
-    
+
     // NOTE on callback with handles:
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
     /// Set a stream callback handler.
@@ -8898,6 +8914,12 @@ impl Task {
     /// Create a new task in the default environment
     pub fn new()  -> Option<Task> { Task::with_capacity(None,0,0) }
 
+
+    /// This converts the Task object into a TaskCB object. The main
+    /// difference is the the TaskCB enables attaching callback
+    /// functions (message printing and information callbacks), and
+    /// that it due to the callbacks cannot be shared between multiple
+    /// threads.
     pub fn with_callbacks(self) -> TaskCB { TaskCB::new(self) }
 
     #[allow(unused_parens)]
