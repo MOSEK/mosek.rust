@@ -70,42 +70,6 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
         .collect()
 }
 
-    // f (firstOK >= 0)
-    // {
-    //   // Pick the task that ended with res = ok
-    //   // and contains an integer solution with best objective value
-    //   mosek.objsense sense = task.getobjsense();
-    //   double bestObj = (sense == mosek.objsense.minimize) ? 1.0e+10 : -1.0e+10;
-    //   int bestPos = -1;
-
-    //   for (int i = 0; i < n; ++i)
-    //     System.out.println(i + "    " + tasks[i].getprimalobj(mosek.soltype.itg));
-
-    //   for (int i = 0; i < n; ++i)
-    //     if ((res[i] == mosek.rescode.ok) &&
-    //         (tasks[i].getsolsta(mosek.soltype.itg) == mosek.solsta.prim_feas ||
-    //          tasks[i].getsolsta(mosek.soltype.itg) == mosek.solsta.integer_optimal) &&
-    //         ((sense == mosek.objsense.minimize) ? 
-    //             (tasks[i].getprimalobj(mosek.soltype.itg) < bestObj) :
-    //             (tasks[i].getprimalobj(mosek.soltype.itg) > bestObj)   )   )
-    //     {
-    //       bestObj = tasks[i].getprimalobj(mosek.soltype.itg);
-    //       bestPos = i;
-    //     }
-
-    //   if (bestPos != -1)
-    //   {
-    //     winTask[0]  = tasks[bestPos]; 
-    //     winTrm[0]   = trm[bestPos]; 
-    //     winRes[0]   = res[bestPos];
-    //     return bestPos;
-    //   }
-    // }
-  
-    // return -1;
-//  }
-
-
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
