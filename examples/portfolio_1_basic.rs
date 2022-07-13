@@ -31,12 +31,12 @@ use itertools::{iproduct};
 /// - `x0` vector if initial investment
 /// - `w` initial uninvested wealth
 #[allow(non_snake_case)]
-fn portfolio(n : i32,     // number of assets
+fn portfolio(n     : i32,     // number of assets
              gamma : f64, // risk bound: maximum stddev
-             mu : &[f64], // vector of expected returns
-             GT : &[f64], // covariance matrix factor
-             x0 : &[f64], // initial investment
-             w : f64)     // initial wealth
+             mu    : &[f64], // vector of expected returns
+             GT    : &[f64], // covariance matrix factor
+             x0    : &[f64], // initial investment
+             w     : f64)     // initial wealth
              -> Result<(Vec<f64>,f64),String> {
 
     let k = (GT.len() / n as usize) as i32;

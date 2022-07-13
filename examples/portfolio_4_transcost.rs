@@ -156,8 +156,8 @@ fn portfolio(n : i32,
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
 
-    let mut xx = vec![0.0;(3*n) as usize];
-    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
+    let mut xx = vec![0.0;n as usize];
+    task.get_xx_slice(Soltype::ITG, 0,n, xx.as_mut_slice())?;
     let expret = xx[0..n as usize].iter().zip(mu.iter()).map(|(a,b)| a*b).sum::<f64>();
 
     Ok((xx,expret))
@@ -181,15 +181,16 @@ fn main() -> Result<(),String> {
     let g = vec![0.001; n as usize];
     let gamma = 0.36;
 
-    let (_level,expret) = portfolio(n,
-                                    mu,
-                                    f.as_slice(),
-                                    g.as_slice(),
-                                    GT,
+    let (level,expret) = portfolio(n,
+                                   mu,
+                                   f.as_slice(),
+                                   g.as_slice(),
+                                   GT,
                                     x0,
-                                    gamma,
-                                    w)?;
+                                   gamma,
+                                   w)?;
 
-    println!("\nExpected return {:.4e} for gamma {:.4e}\n", expret, gamma);
+    println!("Expected return {:.4e} for gamma {:.4e}\n", expret, gamma);
+    println!("Solution vector = {:?}\n", level);
     Ok(())
 }
