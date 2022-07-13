@@ -24,17 +24,17 @@
 - `portfolio_3_impact.rs` Portfolio example with market impact term
 - `portfolio_4_transcost.rs` Portfolio example with fixed and proportional transaction costs
 - `portfolio_5_card.rs` Portfolio with cardinality constraint
-- `portfolio_6_factor.rs` 
+- `portfolio_6_factor.rs` Portfolio example with factor model
 - `pow1.rs` Small power cone example
 - `qcqo1.rs` Small example with quadratic objective and constraints
 - `qo1.rs` Small example with quadratic objective
-- `reoptimization.rs`
+- `reoptimization.rs` Small example demonstrating modifying and re-optimizing a task.
 - `response.rs`
 - `sdo1.rs` Small semidefinite example
 - `sdo2.rs` Small semidefinite example
 - `sdo_lmi.rs`
-- `sensitivity.rs`
-- `simple.rs` 
-- `solutionquality.rs`
-- `solvebasis.rs`
+- `sensitivity.rs` Small example demonstrating sensitivity analysis
+- `simple.rs` Very simple example demonstrating how to read, solve and write a file
+- `solutionquality.rs` Demonstrates how to examine solution quality
+- `solvebasis.rs` Demonstrates use of the `solve_with_basis` function
 - `solvelinear.rs`

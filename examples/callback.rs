@@ -90,7 +90,6 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
-    println!("args = {:?}",args);
     if args.len() < 3 {
         println!("Syntax: callback (psim|dsim|intpnt) FILENAME");
         Err("Invalid argument list".to_string())
