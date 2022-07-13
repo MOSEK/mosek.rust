@@ -1,0 +1,40 @@
+- `acc1.rs` Small example demonstrating affine conic constraint interface functions
+- `acc2.rs` Small example demonstrating affine conic constraint interface functions
+- `blas_lapack.rs`
+- `callback.rs` Example demonstrating the progress callback function
+- `ceo1.rs` Small exponential cone example
+- `concurrent1.rs` Example demonstrating how to optimize in parallel and pass Tasks between threads
+- `cqo1.rs` Small conic quadratic example
+- `djc1.rs` Small example demonstrating integer programming with disjunctive constraints
+- `feasrepairex1.rs` Small example demonstrating featibility repair
+- `gp1.rs` Simple geometric programming example using primal exponential cones
+- `helloworld.rs` Smallest viable example
+- `lo1.rs` Small linear example
+- `lo2.rs` Small linear example, alternative formulation
+- `logistic.rs` Small logistics example
+- `mico1.rs` Small conic MIP example
+- `milo1.rs` Small linear MIP example
+- `mioinitsol.rs` Small example showing how to input an initial solution for a MIP
+- `opt_server_async.rs`
+- `opt_server_sync.rs`
+- `parallel.rs`
+- `parameters.rs`
+- `portfolio_1_basic.rs` Basic Markowitz portfolio example, maximizing expected return subject to a bound on compound risk
+- `portfolio_2_frontier.rs` Compute the efficient frontier of the basic Markowitz portfolio example
+- `portfolio_3_impact.rs` Portfolio example with market impact term
+- `portfolio_4_transcost.rs` Portfolio example with fixed and proportional transaction costs
+- `portfolio_5_card.rs` Portfolio with cardinality constraint
+- `portfolio_6_factor.rs` 
+- `pow1.rs` Small power cone example
+- `qcqo1.rs` Small example with quadratic objective and constraints
+- `qo1.rs` Small example with quadratic objective
+- `reoptimization.rs`
+- `response.rs`
+- `sdo1.rs` Small semidefinite example
+- `sdo2.rs` Small semidefinite example
+- `sdo_lmi.rs`
+- `sensitivity.rs`
+- `simple.rs` 
+- `solutionquality.rs`
+- `solvebasis.rs`
+- `solvelinear.rs`
