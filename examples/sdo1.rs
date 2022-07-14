@@ -13,7 +13,7 @@
 
 extern crate mosek;
 
-use mosek::{Task,Streamtype,Solsta,Soltype,Conetype};
+use mosek::{Task,Streamtype,Solsta,Soltype};
 
 const INF : f64 = 0.0;
 
@@ -27,23 +27,23 @@ fn main() -> Result<(),String>
 {
     let dimbarvar = vec![3];         /* Dimension of semidefinite cone */
 
-    let bkc = vec![ mosek::Boundkey::FX, mosek::Boundkey::FX ];
-    let blc = vec![ 1.0, 0.5 ];
-    let buc = vec![ 1.0, 0.5 ];
+    let bkc = &[ mosek::Boundkey::FX, mosek::Boundkey::FX ];
+    let blc = &[ 1.0, 0.5 ];
+    let buc = &[ 1.0, 0.5 ];
 
-    let barc_i = vec![0, 1, 1, 2, 2];
-    let barc_j = vec![0, 0, 1, 1, 2];
-    let barc_v = vec![2.0, 1.0, 2.0, 1.0, 2.0];
+    let barc_i = &[0, 1, 1, 2, 2];
+    let barc_j = &[0, 0, 1, 1, 2];
+    let barc_v = &[2.0, 1.0, 2.0, 1.0, 2.0];
 
-    let aptrb = vec![0, 1];
-    let aptre = vec![1, 3];
-    let asub  = vec![0, 1, 2]; /* column subscripts of A */
-    let aval  = vec![1.0, 1.0, 1.0];
+    let aptrb = &[0, 1];
+    let aptre = &[1, 3];
+    let asub  = &[0, 1, 2]; /* column subscripts of A */
+    let aval  = &[1.0, 1.0, 1.0];
 
-    let bara_i = vec![0, 1, 2, 0, 1, 2, 1, 2, 2];
-    let bara_j = vec![0, 1, 2, 0, 0, 0, 1, 1, 2];
-    let bara_v = vec![1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
-    let conesub = vec![0, 1, 2];
+    let bara_i = &[0, 1, 2, 0, 1, 2, 1, 2, 2];
+    let bara_j = &[0, 1, 2, 0, 0, 0, 1, 1, 2];
+    let bara_v = &[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+    let conesub = &[0, 1, 2];
 
     let falpha = 1.0;
 
@@ -83,11 +83,11 @@ fn main() -> Result<(),String>
 
     /* Set the linear term barc_j in the objective.*/
     let c_symmat_idx = task.append_sparse_sym_mat(dimbarvar[0],
-                                                  & barc_i,
-                                                  & barc_j,
-                                                  & barc_v)?;
+                                                  barc_i,
+                                                  barc_j,
+                                                  barc_v)?;
 
-    task.put_barc_j(0, &[c_symmat_idx][..], &[falpha][..])?;
+    task.put_barc_j(0, &[c_symmat_idx], &[falpha])?;
 
     for i in 0..NUMCON
     {
@@ -104,10 +104,16 @@ fn main() -> Result<(),String>
                            buc[i])?;     /* Numerical value of upper bound.*/
     }
 
-    /* Append the conic quadratic cone */
-    task.append_cone(Conetype::QUAD,
-                     0.0,
-                     & conesub)?;
+    {
+        /* Append the conic quadratic cone */
+        let afei = task.get_num_afe()?;
+        task.append_afes(3)?;
+        task.put_afe_f_entry_list(&[0,1,2],
+                                  &[1,2,3],
+                                  *[1.0,1.0,1.0])?;
+        let dom = task.append_quadratic_cone_domain(3)?;
+        task.append_acc_seq(dom,afei,&[0.0,0.0,0.0])?;
+    }
 
     /* Add the first row of barA */
     let a_symmat_idx1 =
@@ -128,6 +134,8 @@ fn main() -> Result<(),String>
 
     let _trmcode = task.optimize()?;
 
+    task.write_data("sdo1.ptf")?;
+    
     /* Print a summary containing information
      * about the solution for debugging purposes*/
     task.solution_summary (Streamtype::MSG)?;

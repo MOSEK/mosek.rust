@@ -68,13 +68,13 @@ fn main() -> Result<(),String> {
     task.append_barvars(dimbarvar)?;
 
     /* Set objective (6 nonzeros).*/
-    task.put_barc_block_triplet(6, Cj, Ck, Cl, Cv)?;
+    task.put_barc_block_triplet(Cj, Ck, Cl, Cv)?;
 
     /* Set the equality constraint (6 nonzeros).*/
-    task.put_bara_block_triplet(6, Ai, Aj, Ak, Al, Av)?;
+    task.put_bara_block_triplet(Ai, Aj, Ak, Al, Av)?;
 
     /* Set the inequality constraint (1 nonzero).*/
-    task.put_bara_block_triplet(1, A2i, A2j, A2k, A2l, A2v)?;
+    task.put_bara_block_triplet(A2i, A2j, A2k, A2l, A2v)?;
 
     /* Set constraint bounds */
     task.put_con_bound_slice(0, 2, bkc, blc, buc)?;
