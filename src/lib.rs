@@ -3805,27 +3805,27 @@ impl Env {
       let len_perm_ : usize = n_.try_into().unwrap_or(0);
       perm_.resize(len_perm_,Default::default());
       perm_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_0,len_perm_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_0 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_0 as * mut u8); };
       let len_diag_ : usize = n_.try_into().unwrap_or(0);
       diag_.resize(len_diag_,Default::default());
       diag_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_1,len_diag_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_1 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_1 as * mut u8); };
       let len_lnzc_ : usize = n_.try_into().unwrap_or(0);
       lnzc_.resize(len_lnzc_,Default::default());
       lnzc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_2,len_lnzc_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_2 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_2 as * mut u8); };
       let len_lptrc_ : usize = n_.try_into().unwrap_or(0);
       lptrc_.resize(len_lptrc_,Default::default());
       lptrc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_3,len_lptrc_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_3 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_3 as * mut u8); };
       let len_lsubc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
       lsubc_.resize(len_lsubc_,Default::default());
       lsubc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_5,len_lsubc_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_5 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_5 as * mut u8); };
       let len_lvalc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
       lvalc_.resize(len_lvalc_,Default::default());
       lvalc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_6,len_lvalc_) } );
-      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_6 as * const u8); };
+      let _ = unsafe { MSK_freeenv(self.ptr,__tmp_6 as * mut u8); };
       return Result::Ok(());
     } // computesparsecholesky
     /// Computes the inner product of two vectors.
@@ -3973,10 +3973,11 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.potrf>
     #[allow(unused_parens)]
     pub fn potrf(&self,uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> {
-      if a_.len() != ((n_*n_)).try_into().unwrap() {
+        if a_.len() != ((n_*n_)).try_into().unwrap() {
         return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+        handle_res_static(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+        
       return Result::Ok(());
     } // potrf
     /// Input a runtime license code.

@@ -1,6 +1,8 @@
+# API examples
+
 - `acc1.rs` Small example demonstrating affine conic constraint interface functions
 - `acc2.rs` Small example demonstrating affine conic constraint interface functions
-- `blas_lapack.rs`
+- `blas_lapack.rs` 
 - `callback.rs` Example demonstrating the progress callback function
 - `ceo1.rs` Small exponential cone example
 - `concurrent1.rs` Example demonstrating how to optimize in parallel and pass Tasks between threads
@@ -17,7 +19,7 @@
 - `mioinitsol.rs` Small example showing how to input an initial solution for a MIP
 - `opt_server_async.rs`
 - `opt_server_sync.rs`
-- `parallel.rs`
+- `parallel.rs` Small example showing the use of `optimize_batch()` to solve tasks in parallel
 - `parameters.rs`
 - `portfolio_1_basic.rs` Basic Markowitz portfolio example, maximizing expected return subject to a bound on compound risk
 - `portfolio_2_frontier.rs` Compute the efficient frontier of the basic Markowitz portfolio example

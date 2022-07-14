@@ -98,7 +98,7 @@ fn portfolio(w      : f64,
         else {
             /* Display solution summary for quick inspection of results */
             let _ = task.solution_summary(Streamtype::LOG);
-            let _ = task.write_data("dump.ptf");
+            let _ = task.write_data(format!("portfolio_6_factor-{}.ptf",gamma).as_str());
 
             /* Read the results */
             let mut xx = vec![0.0; n as usize];
@@ -248,9 +248,13 @@ impl Matrix {
         if self.dimi != self.dimj { None }
         else {
             let mut resdata = self.data_by_col();
+            // zero data in the non-tril part
+            for ((j,i),d) in iproduct!(0..self.dimj,0..self.dimi).zip(resdata.iter_mut()) { if i < j {*d = 0.0}; }
             if let Ok(_) = mosek::potrf(mosek::Uplo::LO,
                                         self.dimi.try_into().unwrap(),
-                                        resdata.as_mut_slice()) { Some(Matrix{fmt:MatrixOrder::ByCol,dimi:self.dimi,dimj:self.dimj,data:resdata}) }
+                                        resdata.as_mut_slice()) {
+                Some(Matrix{fmt:MatrixOrder::ByCol,dimi:self.dimi,dimj:self.dimj,data:resdata})
+            }
             else { None }
         }
     }
@@ -286,8 +290,6 @@ impl Matrix {
 
             self.data_by_col_to(& mut resdata[..self.len()]);
             other.data_by_col_to(& mut resdata[self.len()..]);
-
-            println!("new matrix : shape1 = {:?}, data1 len = {}, shape2 = {:?}, data2 len = {}",self.size(),self.data.len(), other.size(),other.data.len());
 
             Matrix::new_by_col(self.dimi,self.dimj+other.dimj,resdata)
         }
