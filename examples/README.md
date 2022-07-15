@@ -17,8 +17,8 @@
 - `mico1.rs` Small conic MIP example
 - `milo1.rs` Small linear MIP example
 - `mioinitsol.rs` Small example showing how to input an initial solution for a MIP
-#- `opt_server_async.rs`
-#- `opt_server_sync.rs`
+- `opt_server_async.rs`
+- `opt_server_sync.rs`
 - `parallel.rs` Small example showing the use of `optimize_batch()` to solve tasks in parallel
 - `parameters.rs`
 - `portfolio_1_basic.rs` Basic Markowitz portfolio example, maximizing expected return subject to a bound on compound risk
