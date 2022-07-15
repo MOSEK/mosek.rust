@@ -2,7 +2,7 @@
 
 - `acc1.rs` Small example demonstrating affine conic constraint interface functions
 - `acc2.rs` Small example demonstrating affine conic constraint interface functions
-- `blas_lapack.rs` 
+#- `blas_lapack.rs` 
 - `callback.rs` Example demonstrating the progress callback function
 - `ceo1.rs` Small exponential cone example
 - `concurrent1.rs` Example demonstrating how to optimize in parallel and pass Tasks between threads
@@ -17,8 +17,8 @@
 - `mico1.rs` Small conic MIP example
 - `milo1.rs` Small linear MIP example
 - `mioinitsol.rs` Small example showing how to input an initial solution for a MIP
-- `opt_server_async.rs`
-- `opt_server_sync.rs`
+#- `opt_server_async.rs`
+#- `opt_server_sync.rs`
 - `parallel.rs` Small example showing the use of `optimize_batch()` to solve tasks in parallel
 - `parameters.rs`
 - `portfolio_1_basic.rs` Basic Markowitz portfolio example, maximizing expected return subject to a bound on compound risk
@@ -31,10 +31,10 @@
 - `qcqo1.rs` Small example with quadratic objective and constraints
 - `qo1.rs` Small example with quadratic objective
 - `reoptimization.rs` Small example demonstrating modifying and re-optimizing a task.
-- `response.rs`
+#- `response.rs`
 - `sdo1.rs` Small semidefinite example
 - `sdo2.rs` Small semidefinite example
-- `sdo_lmi.rs`
+- `sdo_lmi.rs` Small semidefinite example
 - `sensitivity.rs` Small example demonstrating sensitivity analysis
 - `simple.rs` Very simple example demonstrating how to read, solve and write a file
 - `solutionquality.rs` Demonstrates how to examine solution quality
