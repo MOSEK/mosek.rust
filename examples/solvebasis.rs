@@ -84,7 +84,7 @@ fn solve() -> Result<(),String> {
             //  On return b contains the solution x and
             // varsub the index of the non-zeros in x.
             {
-                let nz = task.solve_with_basis(0, 2, varsub.as_mut_slice(), w1.as_mut_slice())?;
+                let nz = task.solve_with_basis(false, 2, varsub.as_mut_slice(), w1.as_mut_slice())?;
                 println!("nz = {}",nz);
                 println!("Solution to Bx = {:?}",w1);
 
@@ -101,7 +101,7 @@ fn solve() -> Result<(),String> {
             // Solve B^Tx = w2
             {
                 varsub[0] = 1;
-                let nz = task.solve_with_basis(1,1,varsub.as_mut_slice(),w2.as_mut_slice())?;
+                let nz = task.solve_with_basis(true,1,varsub.as_mut_slice(),w2.as_mut_slice())?;
                 println!("nz = {}",nz);
 
                 println!("Solution to B^Tx = {:?}",w2);

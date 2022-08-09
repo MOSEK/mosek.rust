@@ -96,7 +96,7 @@ fn main() -> Result<(),String> {
 
     b[0]    = 1.0; b[1]    = -2.0;
     bsub[0] = 0;   bsub[1] = 1;
-    let nz = task.solve_with_basis(0, 2, bsub.as_mut_slice(), b.as_mut_slice())?;
+    let nz = task.solve_with_basis(false, 2, bsub.as_mut_slice(), b.as_mut_slice())?;
     println!("\nSolution to Bx = b:\n");
 
     // Print solution and show correspondents to original variables in
@@ -112,7 +112,7 @@ fn main() -> Result<(),String> {
 
     b[0]    = 7.0;
     bsub[0] = 0;
-    let nz = task.solve_with_basis(0, 1, bsub.as_mut_slice(), b.as_mut_slice())?;
+    let nz = task.solve_with_basis(false, 1, bsub.as_mut_slice(), b.as_mut_slice())?;
 
     println!("Solution to Bx = b:");
     // Print solution and show correspondents to original variables in

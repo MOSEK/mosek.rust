@@ -43,7 +43,7 @@ fn main() -> Result<(),String>
     let bara_i = &[0, 1, 2, 0, 1, 2, 1, 2, 2];
     let bara_j = &[0, 1, 2, 0, 0, 0, 1, 1, 2];
     let bara_v = &[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
-    let conesub = &[0, 1, 2];
+    // let conesub = &[0, 1, 2];
 
     let falpha = 1.0;
 
@@ -110,7 +110,7 @@ fn main() -> Result<(),String>
         task.append_afes(3)?;
         task.put_afe_f_entry_list(&[0,1,2],
                                   &[1,2,3],
-                                  *[1.0,1.0,1.0])?;
+                                  &[1.0,1.0,1.0])?;
         let dom = task.append_quadratic_cone_domain(3)?;
         task.append_acc_seq(dom,afei,&[0.0,0.0,0.0])?;
     }
