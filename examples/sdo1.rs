@@ -43,7 +43,6 @@ fn main() -> Result<(),String>
     let bara_i = &[0, 1, 2, 0, 1, 2, 1, 2, 2];
     let bara_j = &[0, 1, 2, 0, 0, 0, 1, 1, 2];
     let bara_v = &[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
-    // let conesub = &[0, 1, 2];
 
     let falpha = 1.0;
 
