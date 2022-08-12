@@ -13,7 +13,7 @@ extern crate mosek;
 use mosek::{Task,Streamtype,Solsta,Soltype};
 use std::env;
 
-const cqo1_ptf : &str = "
+const CQO1_PTF : &str = "
 Task 'CQO1 EXAMPLE'
 Objective obj
     Minimize + x4 + x5 + x6
@@ -36,7 +36,7 @@ fn main() -> Result<(),String> {
 
     let mut task = Task::new().unwrap().with_callbacks();
     if args.len() < 2 {
-        task.read_ptf_string(cqo1_ptf)?;
+        task.read_ptf_string(CQO1_PTF)?;
     }
     else {
         task.read_data(args[1].as_str())?;
@@ -56,7 +56,7 @@ fn main() -> Result<(),String> {
             let numvar = task.get_num_var()?;
             let mut xx = vec![0.0; numvar as usize];
             task.get_xx(Soltype::ITR, xx.as_mut_slice())?;
-            println!("xx = {:?}",xx);
+            println!("xx = {:?}",xx)
         },
         Solsta::DUAL_INFEAS_CER =>
           println!("Dual infeasibility certificate found."),
@@ -65,11 +65,12 @@ fn main() -> Result<(),String> {
         Solsta::UNKNOWN => {
           // The solutions status is unknown. The termination code
           // indicates why the optimizer terminated prematurely.
-          println("The solution status is unknown.");
+          println!("The solution status is unknown.");
           let (symname,desc) = mosek::get_code_desc(trm)?;
-          println("   Termination code: {} {}\n", symname, desc);
+          println!("   Termination code: {} {}\n", symname, desc)
         },
         _ =>
-          println!("Unexpected solution status {}\n",solsta);
+          println!("Unexpected solution status {}\n",solsta)
     }
+    Ok(())
 }
