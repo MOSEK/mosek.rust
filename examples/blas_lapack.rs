@@ -1,14 +1,13 @@
 /*
-   Copyright: $$copyright
+   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 
-   File:      $${file}
+   File:      blas_lapack.rs
 
    Purpose: To demonstrate how to call BLAS/LAPACK routines for
             which MOSEK provides simplified interfaces.
 
  */
 /*TAG:begin-code*/
-
 extern crate mosek;
 
 fn print_matrix(x : &[f64], r : i32, c : i32) {
