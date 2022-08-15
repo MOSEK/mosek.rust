@@ -13,8 +13,7 @@ extern crate mosek;
 use mosek::{Task,Streamtype,Solsta,Soltype};
 use std::env;
 
-const CQO1_PTF : &str = "
-Task 'CQO1 EXAMPLE'
+const CQO1_PTF : &str = "Task 'CQO1 EXAMPLE'
 Objective obj
     Minimize + x4 + x5 + x6
 Constraints
