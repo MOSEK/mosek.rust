@@ -1,20 +1,19 @@
-/*
-  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-  File :      $${file}
-
-  Purpose :   Solves the semidefinite problem with two symmetric variables:
-
-                 min   <C1,X1> + <C2,X2>
-                 st.   <A1,X1> + <A2,X2> = b
-                             (X2)_{1,2} <= k
-
-                 where X1, X2 are symmetric positive semidefinite,
-
-                 C1, C2, A1, A2 are assumed to be constant symmetric matrices,
-                 and b, k are constants.
-*/
-
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : sdo2.rs
+//!
+//!  Purpose :   Solves the semidefinite problem with two symmetric variables:
+//!
+//!                 min   <C1,X1> + <C2,X2>
+//!                 st.   <A1,X1> + <A2,X2> = b
+//!                             (X2)_{1,2} <= k
+//!
+//!                 where X1, X2 are symmetric positive semidefinite,
+//!
+//!                 C1, C2, A1, A2 are assumed to be constant symmetric matrices,
+//!                 and b, k are constants.
+//!
 
 extern crate mosek;
 

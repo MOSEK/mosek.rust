@@ -1,10 +1,11 @@
-/*
-   Copyright: MOSEK ApS
-
-   Purpose:   To demonstrate how to solve a small conic quadratic
-              optimization problem using the MOSEK API.
- */
-
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : cqo1.rs
+//!
+//!  Purpose:   To demonstrate how to solve a small conic quadratic
+//!             optimization problem using the MOSEK API.
+//!
 extern crate mosek;
 extern crate itertools;
 
@@ -77,7 +78,6 @@ fn main() -> Result<(),String>
     }
 
     /* Append the first cone. */
-//TAG:begin-appendcone
         // Create a matrix F such that F * x = [x(3),x(0),x(1),x(4),x(5),x(2)]
     {
         task.append_afes(6)?;
@@ -97,7 +97,6 @@ fn main() -> Result<(),String>
                         &[3, 4, 5],              // Rows from F
                         &[0.0,0.0,0.0])?;        // Unused
     }
-//TAG:end-appendcone
 
     /* Run optimizer */
     let trm = task.optimize()?;

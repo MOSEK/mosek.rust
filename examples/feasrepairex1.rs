@@ -1,17 +1,18 @@
-
-//!   Copyright : MOSEK ApS
 //!
-//!   Purpose :   To demonstrate how to use the MSK_relaxprimal function to
-//!               locate the cause of an infeasibility.
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   Syntax :     On command line
+//!  File : feasrepairex1.rs
 //!
-//!                   feasrepairex1 feasrepair.lp
+//!  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
+//!              locate the cause of an infeasibility.
 //!
-//!                feasrepair.lp is located in mosek/<version>/tools/examples/data
+//!  Syntax :     On command line
+//!
+//!                  feasrepairex1 feasrepair.lp
+//!
+//!               feasrepair.lp is located in mosek/<version>/tools/examples/data
 //!*/
 
-//TAG:begin-code
 extern crate mosek;
 
 use std::env;
@@ -60,4 +61,3 @@ fn main() -> Result<(),String> {
     Ok(())
 }
 
-/*TAG:end-code*/

@@ -1,12 +1,14 @@
-/*
-  Copyright: MOSEK ApS
-
-  Purpose: Demonstrates how to solve the problem
-
-    maximize x^0.2*y^0.8 + z^0.4 - x
-          st x + y + 0.5z = 2
-             x,y,z >= 0
-*/
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : pow1.rs
+//!
+//!  Purpose: Demonstrates how to solve the problem
+//!
+//!    maximize x^0.2*y^0.8 + z^0.4 - x
+//!          st x + y + 0.5z = 2
+//!             x,y,z >= 0
+//!
 
 extern crate mosek;
 use mosek::*;
@@ -34,7 +36,6 @@ fn main()  -> Result<(),String> {
     // Directs the log task stream to the user specified
     // method msgclass.streamCB
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    /*TAG:end-maketask*/
 
     /* Append 'numcon' empty constraints.
     The constraints will initially have no bounds. */
@@ -73,7 +74,6 @@ fn main()  -> Result<(),String> {
     task.append_acc(pc2,                  // Domain
                     &[3, 4, 5],           // Rows from F
                     &[0.0,0.0,0.0])?;     // Unused
-    //TAG:end-appendcone
 
     task.put_obj_sense(Objsense::MAXIMIZE)?;
     task.optimize()?;
@@ -96,5 +96,5 @@ fn main()  -> Result<(),String> {
         println!("x[{}]: {}",j+1,xj);
     }
 
-    return Ok(());
+    Ok(())
 }

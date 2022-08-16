@@ -1,10 +1,11 @@
-
-//!   Copyright : MOSEK ApS
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : mioinitsol.rs
 //!
 //!   Purpose :   Demonstrates how to solve a MIP with a start guess.
 //!
 
-/*TAG:begin-code*/
 
 extern crate mosek;
 
@@ -43,10 +44,8 @@ fn main() -> Result<(),String> {
                     Variabletype::TYPE_INT,
                     Variabletype::TYPE_INT ];
 
-    /*TAG:begin-maketask*/
     let mut task = Task::new().unwrap().with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    /*TAG:end-maketask*/
 
     task.input_data(numcon, numvar,
                     c, 0.0,
@@ -60,7 +59,6 @@ fn main() -> Result<(),String> {
     /* A maximization problem */
     task.put_obj_sense(Objsense::MAXIMIZE)?;
 
-    //TAG:begin-init-sol
 
     // Assign values to integer variables
     // We only set that slice of xx
@@ -68,7 +66,6 @@ fn main() -> Result<(),String> {
 
     // Request constructing the solution from integer variable values
     task.put_int_param(mosek::Iparam::MIO_CONSTRUCT_SOL, mosek::Onoffkey::ON)?;
-    //TAG:end-init-sol
 
     // solve
     let _ = task.optimize()?;
@@ -83,12 +80,9 @@ fn main() -> Result<(),String> {
     }
 
     // Was the initial solution used?
-    //TAG:begin-report-initsol
     let constr = task.get_int_inf(mosek::Iinfitem::MIO_CONSTRUCT_SOLUTION)?;
     let constr_val = task.get_dou_inf(mosek::Dinfitem::MIO_CONSTRUCT_SOLUTION_OBJ)?;
     println!("Construct solution utilization: {}", constr);
     println!("Construct solution objective: {}",  constr_val);
-    //TAG:end-report-initsol
     Ok(())
 }
-/*TAG:end-code*/

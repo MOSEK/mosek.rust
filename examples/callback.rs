@@ -1,4 +1,6 @@
-//!  Copyright: MOSEK ApS
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : callback.rs
 //!
 //!  Purpose :   To demonstrate how to use the progress
 //!              callback.

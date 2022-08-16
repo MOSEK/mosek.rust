@@ -1,11 +1,11 @@
-/*
-   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-   File :      $${file}
-
-   Purpose :   Demonstrates how to solve a small mixed
-               integer linear optimization problem using the MOSEK Java API.
-*/
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : milo1.rs
+//!
+//!   Purpose :   Demonstrates how to solve a small mixed
+//!               integer linear optimization problem using the MOSEK Java API.
+//!
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Prosta,Soltype,Variabletype,Dparam};
@@ -71,8 +71,8 @@ fn main() -> Result<(),String> {
                        &asub[ptrb[j as usize]..ptre[j as usize]],               /* Row index of non-zeros in column j.*/
                        &aval[ptrb[j as usize]..ptre[j as usize]])?;              /* Non-zero Values of column j. */
     }
-    /* Set the bounds on constraints.
-    for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] */
+    // Set the bounds on constraints.
+    // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
     for (((i,bk),bl),bu) in (0..numcon).zip(bkc.iter()).zip(blc.iter()).zip(buc.iter()) {
         task.put_con_bound(i, *bk, *bl, *bu)?;
     }

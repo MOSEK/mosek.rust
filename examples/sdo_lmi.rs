@@ -1,6 +1,7 @@
+//!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //! 
-//!   File :      sdo_lmi.java
+//!   File : sdo_lmi.rs
 //! 
 //!   Purpose :   To solve a problem with an LMI and an affine conic constrained problem with a PSD term
 //!    
@@ -49,7 +50,7 @@ fn main() -> Result<(),String> {
     The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar)?;
 
-      /* Append 'NUMBARVAR' semidefinite variables. */
+    /* Append 'NUMBARVAR' semidefinite variables. */
     task.append_barvars(dimbarvar)?;
 
 
@@ -100,8 +101,8 @@ fn main() -> Result<(),String> {
     match solsta {
         Solsta::OPTIMAL => {
             let mut xx = vec![0.0; numvar as usize];
-            let mut barx = vec![0.0; lenbarvar[0]];
             task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
+            let mut barx = vec![0.0; lenbarvar[0]];
             task.get_barx_j(Soltype::ITR, 0, barx.as_mut_slice())?;    /* Request the interior solution. */
             println!("Optimal primal solution");
             println!("  x = {:?}",xx);

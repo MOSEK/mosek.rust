@@ -1,9 +1,10 @@
-//!   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File:      parallel.rs
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : parallel.rs
 //!
 //!   Purpose: Demonstrates parallel optimization using optimizebatch()
-
+//!
 extern crate mosek;
 extern crate itertools;
 
@@ -16,7 +17,7 @@ use itertools::{izip};
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 3{
+    if args.len() < 3 {
         println!("Syntax: parallel FILENAME FILENAME [ FILENAME ... ]");
         Err("Invalid argument list".to_string())
     }

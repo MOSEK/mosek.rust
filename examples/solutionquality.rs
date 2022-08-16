@@ -1,6 +1,9 @@
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! Purpose :   To demonstrate how to examine the quality of a solution.
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : solutionquality.rs
+//!
+//!  Purpose :   To demonstrate how to examine the quality of a solution.
 
 extern crate mosek;
 

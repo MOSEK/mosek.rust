@@ -1,10 +1,11 @@
-/*
-   Copyright: MOSEK ApS
-
-   Purpose: To demonstrate how to solve a quadratic optimization
-              problem using the MOSEK API.
- */
-
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : qo1.rs
+//!
+//!  Purpose: To demonstrate how to solve a quadratic optimization
+//!           problem using the MOSEK API.
+//!
 extern crate mosek;
 use mosek::{Task,Boundkey,Streamtype,Solsta,Soltype};
 
@@ -94,7 +95,6 @@ fn main() -> Result<(),String> {
 
         task.put_q_obj(&qsubi,&qsubj,&qval)?;
     }
-
 
     let _trmcode = task.optimize()?;
 

@@ -1,4 +1,7 @@
+//!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : simple.rs
 //!
 //!   Purpose :   Demonstrates a very simple example using MOSEK by
 //!               reading a problem file, solving the problem and

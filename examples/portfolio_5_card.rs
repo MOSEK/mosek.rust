@@ -1,3 +1,6 @@
+//!
+//!  File : portfolio_5_card.rs
+//!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
 //!  Description :  Implements a basic portfolio optimization model
@@ -124,7 +127,7 @@ fn portfolio(n     : i32,
         task.put_a_row(coni, y, n_ones.as_slice())?;
         task.put_con_bound(coni,mosek::Boundkey::UP,p as f64,p as f64)?;
     }
-    
+
     // (gamma,G'x) in Q
     {
         let afei = task.get_num_afe()?;
@@ -166,7 +169,6 @@ fn portfolio(n     : i32,
     Ok((xx[0..n as usize].to_vec(),task.get_primal_obj(Soltype::ITG)?))
 }
 
-
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     let n : i32 = 8;
@@ -196,4 +198,3 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-

@@ -1,10 +1,12 @@
-//! File : portfolio_3_impact
+//!
+//! File : portfolio_3_impact.rs
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
 //! Description :  Implements a basic portfolio optimization model with transaction costs of order x^(3/2).
 //!
 //! More details can be found at <https://docs.mosek.com/latest/capi/case-portfolio.html#doc-optimizer-case-portfolio>
+//!
 
 extern crate mosek;
 extern crate itertools;

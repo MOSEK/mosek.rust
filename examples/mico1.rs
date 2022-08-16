@@ -1,15 +1,15 @@
-/*
-   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
-   File :      $${file}
-
-   Purpose :   Demonstrates how to solve a small mixed
-               integer conic optimization problem.
-
-               minimize    x^2 + y^2
-               subject to  x >= e^y + 3.8
-                           x, y - integer
-*/
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : mico1.rs
+//!
+//!   Purpose :   Demonstrates how to solve a small mixed
+//!               integer conic optimization problem.
+//!
+//!               minimize    x^2 + y^2
+//!               subject to  x >= e^y + 3.8
+//!                           x, y - integer
+//!
 extern crate mosek;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Variabletype};
 

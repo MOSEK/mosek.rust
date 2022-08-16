@@ -1,20 +1,20 @@
-/*
-   Copyright
-       $$copyright
-   File
-       $${file}
-   Description
-       Demonstrates how to solve a small conic exponential
-       optimization problem using the MOSEK API.
-
-       Min x1 + x2
-       Such that
-           x1 + x2 + x3 = 1.0
-           |1    |   |x1|
-           |  1  | x |x2| in K_exp
-           |    1|   |x3|
-           x1,x2,x3 are free
-*/
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : ceo1.rs
+//!
+//!   Description:
+//!       Demonstrates how to solve a small conic exponential
+//!       optimization problem using the MOSEK API.
+//!
+//!       Min x1 + x2
+//!       Such that
+//!           x1 + x2 + x3 = 1.0
+//!           |1    |   |x1|
+//!           |  1  | x |x2| in K_exp
+//!           |    1|   |x3|
+//!           x1,x2,x3 are free
+//!
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -86,7 +86,6 @@ fn main() -> Result<(),String> {
 
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(Soltype::ITR)?;
-
 
     assert!(solsta == Solsta::OPTIMAL);
     let mut xx = vec![0.0; numvar as usize];

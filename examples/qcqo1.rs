@@ -1,6 +1,6 @@
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! File :      qcqo1.rs
+//! File : qcqo1.rs
 //!
 //! Purpose :   Demonstrate how to solve a quadratic
 //!             optimization problem using the MOSEK API.
@@ -139,4 +139,3 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 } /* Main */
-

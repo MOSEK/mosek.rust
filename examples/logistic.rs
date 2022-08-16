@@ -1,4 +1,6 @@
-//!  Copyright: MOSEK ApS
+//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//! File : logistic.rs
 //!
 //! Purpose: Implements logistic regression with regulatization.
 //!
@@ -125,9 +127,7 @@ fn softplus(task : & mut TaskCB, d : i32, n : i32, theta : i32, t : i32, X : &[f
 
     Ok(())
 }
-//TAG:end-logistic-lse
 
-//TAG:begin-logistic-main
   // Model logistic regression (regularized with full 2-norm of theta)
   // X - n x d matrix of data points
   // y - length n vector classifying training points
@@ -187,7 +187,6 @@ fn logistic_regression(X : &[f64],
     task.get_xx_slice(Soltype::ITR, theta, theta+d as i32,xx.as_mut_slice())?;
     Ok(xx)
 }
-//TAG:end-logistic-main
 
 
 #[allow(non_snake_case)]

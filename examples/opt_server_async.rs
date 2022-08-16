@@ -1,12 +1,11 @@
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File :      opt_server_async.rs
+//!   File : opt_server_async.rs
 //!
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem asynchronously
 
 extern crate mosek;
-
 
 use mosek::{Task,Streamtype,Sparam};
 use std::env;

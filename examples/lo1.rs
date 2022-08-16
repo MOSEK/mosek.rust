@@ -1,9 +1,11 @@
-//!  Copyright: MOSEK ApS
+//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  Purpose: To demonstrate how to solve a small linear
-//!           optimization problem using the MOSEK C API,
-//!           and handle the solver result and the problem
-//!           solution.
+//! File : lo1.rs
+//!
+//! Purpose: To demonstrate how to solve a small linear
+//!          optimization problem using the MOSEK C API,
+//!          and handle the solver result and the problem
+//!          solution.
 //!
 //! ```
 //! Maximize 3 x1 + x2 + 5 x3 + x4
@@ -90,8 +92,7 @@ fn main() -> Result<(),String> {
 
     /* Set the bounds on constraints.
      * for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] */
-    for i in 0..numcon
-    {
+    for i in 0..numcon {
       task.put_con_bound(i as i32,    /* Index of constraint.*/
                          bkc[i],      /* Bound key.*/
                          blc[i],      /* Numerical value of lower bound.*/
@@ -144,5 +145,5 @@ fn main() -> Result<(),String> {
             println!("Other solution status.");
         }
     }
-    return Result::Ok(());
+    Ok(())
 }

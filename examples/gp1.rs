@@ -1,14 +1,14 @@
-//
-//   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-//
-//   File:      gp1
-//
-//   Purpose:   Demonstrates how to solve a simple Geometric Program (GP)
-//              cast into conic form with exponential cones and log-sum-exp.
-//
-//              Example from
-//                https://gpkit.readthedocs.io/en/latest/examples.html//maximizing-the-volume-of-a-box
-//
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : gp1.rs
+//!
+//!   Purpose:   Demonstrates how to solve a simple Geometric Program (GP)
+//!              cast into conic form with exponential cones and log-sum-exp.
+//!
+//!              Example from
+//!                https://gpkit.readthedocs.io/en/latest/examples.html//maximizing-the-volume-of-a-box
+//!
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype};
@@ -93,10 +93,9 @@ fn max_volume_box(Aw : f64,
             let dom = task.append_rzero_domain(1)?;
             // The constraint u1+u2-1 \in \ZERO is added also as an ACC
             task.append_acc(dom, &[5], &[0.0])?;
-            //TAG:end-logsumexp-axb
         }
     }
-    
+
     let _trm = task.optimize()?;
     task.write_data("gp1.ptf")?;
     let mut xyz = vec![0.0; 3];

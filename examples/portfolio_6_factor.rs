@@ -1,5 +1,8 @@
 
-//! Copyright : MOSEK ApS
+//!
+//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//! File : portfolio_6_factor.rs
 //!
 //! Purpose :   Implements a portfolio optimization model using factor model.
 
@@ -11,8 +14,6 @@ use std::convert::TryInto;
 
 
 const INF : f64 = 0.0;
-
-//TAG:begin-factor-markowitz-helper 
 
 #[allow(non_snake_case)]
 fn portfolio(w      : f64,
@@ -30,19 +31,16 @@ fn portfolio(w      : f64,
     let (kx,nx) = GT.size();
     if mu.len() != nx { panic!("Mismatching data"); }
 
-    
     let k : i32 = kx.try_into().unwrap();
     let n : i32 = nx.try_into().unwrap();
     let total_budget : f64 = w + x0.iter().sum::<f64>();
 
-    /*TAG:begin-offsets*/
     //Offset of variables into the API variable.
     let numvar = n;
     let voff_x : i32 = 0;
 
     // Constraint offset
     let coff_bud : i32 = 0;
-    /*TAG:end-offsets*/
 
     // Holding variable x of length n
     // No other auxiliary variables are needed in this formulation
@@ -118,7 +116,6 @@ fn main() -> Result<(),String> {
     let w  = 1.0;
     let mu = &[0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379];
     let x0 = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-    //TAG:begin-factor-model-vars
     // Factor exposure matrix, n x 2
     let B = Matrix::new_by_row(n as usize, 2,
                                [ 0.4256,  0.1869,
@@ -138,14 +135,11 @@ fn main() -> Result<(),String> {
     // Specific risk components
     let theta : &[f64] = &[0.0720, 0.0508, 0.0377, 0.0394, 0.0663, 0.0224, 0.0417, 0.0459];
     let S_sqrt_theta = Matrix::diag_matrix(theta.iter().map(|&v| v.sqrt()).collect());
-    //TAG:end-factor-model-vars
-    //TAG:begin-factor-model-G
     let P = S_F.cholesky().unwrap();
     let BP = B.mul(&P).unwrap();
 
     //let GT  = BP.concat_h(&S_theta.sqrt_element().unwrap()).unwrap().transpose();
     let GT  = BP.concat_h(&S_sqrt_theta).unwrap().transpose();
-    //TAG:end-factor-model-G
     let gammas = &[0.24, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48];
 
     for (gamma,expret) in portfolio(w,
@@ -157,8 +151,6 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-/*TAG:end-code*/
-
 
 // Matrix with data stored in colunn format
 #[derive(Copy,Clone)]
@@ -295,4 +287,3 @@ impl Matrix {
         }
     }
 }
-  //TAG:end-factor-markowitz-helper 

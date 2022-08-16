@@ -1,10 +1,11 @@
-//   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-//
-//   File :      opt_server_sync.java
-//
-//   Purpose :   Demonstrates how to use MOSEK OptServer
-//               to solve optimization problem synchronously
-//
+//!
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!   File : opt_server_sync.rs
+//!
+//!   Purpose :   Demonstrates how to use MOSEK OptServer
+//!               to solve optimization problem synchronously
+//!
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Sparam};

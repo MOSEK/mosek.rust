@@ -1,3 +1,4 @@
+//!
 //! File : portfolio_1_basic.rs
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
@@ -5,6 +6,7 @@
 //! Description :  Implements a basic portfolio optimization model.
 //!
 //! More details can be found at <https://docs.mosek.com/latest/capi/case-portfolio.html#doc-optimizer-case-portfolio>
+//!
 
 extern crate mosek;
 extern crate itertools;
@@ -109,9 +111,6 @@ fn portfolio(n     : i32,     // number of assets
 
     Ok((level.to_vec(),expret))
 }
-
-
-
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {

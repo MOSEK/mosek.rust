@@ -1,15 +1,17 @@
-/*
-   Copyright: MOSEK ApS
-
-   Purpose:   Solves the following small semidefinite optimization problem
-              using the MOSEK API.
-
-     minimize    Tr [2, 1, 0; 1, 2, 1; 0, 1, 2]*X + x0
-
-     subject to  Tr [1, 0, 0; 0, 1, 0; 0, 0, 1]*X + x0           = 1
-                 Tr [1, 1, 1; 1, 1, 1; 1, 1, 1]*X      + x1 + x2 = 0.5
-                 (x0,x1,x2) \in Q,  X \in PSD
-*/
+//!
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!
+//!  File : sdo1.rs
+//!
+//!  Purpose:   Solves the following small semidefinite optimization problem
+//!             using the MOSEK API.
+//!
+//!    minimize    Tr [2, 1, 0; 1, 2, 1; 0, 1, 2]*X + x0
+//!
+//!    subject to  Tr [1, 0, 0; 0, 1, 0; 0, 0, 1]*X + x0           = 1
+//!                Tr [1, 1, 1; 1, 1, 1; 1, 1, 1]*X      + x1 + x2 = 0.5
+//!                (x0,x1,x2) \in Q,  X \in PSD
+//!
 
 extern crate mosek;
 
@@ -19,9 +21,6 @@ const INF : f64 = 0.0;
 
 const NUMCON    : usize = 2;   /* Number of constraints.              */
 const NUMVAR    : usize = 3;   /* Number of conic quadratic variables */
-//const NUMANZ    : usize = 3;   /* Number of non-zeros in A            */
-//const NUMBARVAR : usize = 1;   /* Number of semidefinite variables    */
-
 
 fn main() -> Result<(),String>
 {
@@ -146,9 +145,9 @@ fn main() -> Result<(),String>
         Solsta::OPTIMAL =>
         {
             let mut xx = vec![0.0,0.0,0.0];
-            let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
             task.get_xx(Soltype::ITR,    /* Request the basic solution. */
                         & mut xx[..])?;
+            let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
             task.get_barx_j(Soltype::ITR,    /* Request the interior solution. */
                             0,
                             & mut barx[..])?;

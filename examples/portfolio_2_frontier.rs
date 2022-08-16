@@ -1,9 +1,11 @@
-//! File : portfolio_2_basic.rs
+//!
+//! File : portfolio_2_frontier.rs
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
 //! Description :  Implements a basic portfolio optimization model.
 //!                Determines points on the efficient frontier.
+//!
 
 extern crate mosek;
 extern crate itertools;

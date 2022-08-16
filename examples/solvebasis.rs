@@ -1,6 +1,6 @@
 //!
 //!
-//!  File: solvebasis.rs
+//!  File : solvebasis.rs
 //!
 
 extern crate mosek;
