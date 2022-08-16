@@ -17,8 +17,6 @@ The package should work on
 - Mac OSX x86_64
 - Mac OSX aarch64
 
-API reference is included under `doc/` and is fairly complete, but currently contains a lot of dead links.
-
 Building the API requires the MOSEK library.
 - If the environment variable `MOSEK_BINDIR_XY` (where `X` and `Y` are
   the MOSEK major an minor versions) is defined it is expected to
