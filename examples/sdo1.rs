@@ -71,8 +71,7 @@ fn main() -> Result<(),String>
     /* Set the linear term c_j in the objective.*/
     task.put_c_j(0,1.0)?;
 
-    for j in 0..NUMVAR
-    {
+    for j in 0..NUMVAR {
         task.put_var_bound(j as i32,
                            mosek::Boundkey::FR,
                            -INF,
@@ -107,7 +106,7 @@ fn main() -> Result<(),String>
         let afei = task.get_num_afe()?;
         task.append_afes(3)?;
         task.put_afe_f_entry_list(&[0,1,2],
-                                  &[1,2,3],
+                                  &[0,1,2],
                                   &[1.0,1.0,1.0])?;
         let dom = task.append_quadratic_cone_domain(3)?;
         task.append_acc_seq(dom,afei,&[0.0,0.0,0.0])?;
@@ -133,7 +132,7 @@ fn main() -> Result<(),String>
     let _trmcode = task.optimize()?;
 
     task.write_data("sdo1.ptf")?;
-    
+
     /* Print a summary containing information
      * about the solution for debugging purposes*/
     task.solution_summary (Streamtype::MSG)?;
