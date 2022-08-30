@@ -8,6 +8,7 @@ readme = "README.md"
 
 build = "build.rs"
 license = "BSD-4-Clause"
+rust-version = "1.59"
 
 [dependencies]
 libc = "0.2"
