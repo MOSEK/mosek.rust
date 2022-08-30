@@ -44,13 +44,13 @@ fn main() -> Result<(),String> {
     println!("alpha={}", alpha);
     println!("beta={}", beta);
 
-    mosek::dot(x,y.as_slice(),& mut xy)?;
+    mosek::dot(n,x,y.as_slice(),& mut xy)?;
     println!("dot results = {}\n", xy);
 
     print_matrix(x, 1, n);
     print_matrix(y.as_slice(), 1, n);
 
-    mosek::axpy(alpha, x, y.as_mut_slice())?;
+    mosek::axpy(n, alpha, x, y.as_mut_slice())?;
     println!("axpy results is:\n");
     print_matrix(y.as_slice(), 1, n);
 
