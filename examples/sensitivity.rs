@@ -131,7 +131,7 @@ fn main() -> Result<(),String> {
     let mut rightrange = vec![0.0; 2];
     let subc = [2i32, 5i32];
 
-    task.dual_sensitivity(subc.as_slice(),
+    task.dual_sensitivity(&subc,
                           leftprice.as_mut_slice(),
                           rightprice.as_mut_slice(),
                           leftrange.as_mut_slice(),
