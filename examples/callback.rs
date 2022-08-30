@@ -94,27 +94,54 @@ fn main() -> Result<(),String> {
 
     if args.len() < 3 {
         println!("Syntax: callback (psim|dsim|intpnt) FILENAME");
-        Err("Invalid argument list".to_string())
+    }
+
+    /* Create the optimization task. */
+    let mut task = Task::new().unwrap().with_callbacks();
+    if args.len() < 3 {
+        task.read_ptf_string(DFLT_FILE)?;
     }
     else {
-
-        /* Create the optimization task. */
-        let mut task = Task::new().unwrap().with_callbacks();
         task.read_data(args[2].as_str())?;
-
         match args[1].as_str() {
             "psim"   => task.put_int_param(Iparam::OPTIMIZER,Optimizertype::PRIMAL_SIMPLEX)?,
             "dsim"   => task.put_int_param(Iparam::OPTIMIZER,Optimizertype::DUAL_SIMPLEX)?,
             "intpnt" => task.put_int_param(Iparam::OPTIMIZER,Optimizertype::INTPNT)?,
             s => return Err(format!("Invalid argument '{}'",s))
         }
-
-        /* Directs the log task stream to the 'printstr' function. */
-        task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-        task.put_callback(callback)?;
-
-        task.optimize()?;
-
-        Result::Ok(())
     }
+
+    /* Directs the log task stream to the 'printstr' function. */
+    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
+    task.put_callback(callback)?;
+
+    task.optimize()?;
+
+    Result::Ok(())
 }
+
+const DFLT_FILE : &str = "Task
+    # Written by MOSEK v10.0.18
+    # problemtype: Conic Problem
+    # number of linear variables: 3
+    # number of linear constraints: 1
+    # number of  old-style cones: 0
+    # number of positive semidefinite variables: 0
+    # number of positive semidefinite matrixes: 0
+    # number of affine conic constraints: 1
+    # number of disjunctive constraints: 0
+    # number scalar affine expressions/nonzeros : 3/4
+    # number of old-style A nonzeros: 3
+Objective
+    Maximize + 2 @x0 + 3 @x1 - @x2
+Constraints
+    @c0 [1] + @x0 + @x1 + @x2
+    @C0 [QUAD(3)]
+        @ac1: + 0.03
+        @ac2: + 1.5 @x0 + 0.1 @x1
+        @ac3: + 0.3 @x0 + 2.1 @x2 + 0.1
+Variables
+    @x0
+    @x1
+    @x2
+";
