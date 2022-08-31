@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : gp1.rs
 //!
 //!   Purpose:   Demonstrates how to solve a simple Geometric Program (GP)
 //!              cast into conic form with exponential cones and log-sum-exp.
@@ -17,7 +17,6 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype};
 // for symbolic purposes
 const INF : f64 = 0.0;
 
-//TAG:begin-maxbox
 #[allow(non_snake_case)]
 fn max_volume_box(Aw : f64,
                   Af : f64,
@@ -61,7 +60,6 @@ fn max_volume_box(Aw : f64,
     task.put_con_bound(2,Boundkey::RA,gamma.ln(),delta.ln())?;
 
 
-    //TAG:begin-logsumexp-axb
     {
         let afei = task.get_num_afe()?;
         let u1 = task.get_num_var()?;
@@ -97,7 +95,6 @@ fn max_volume_box(Aw : f64,
             task.append_acc(dom, &[5], &[0.0])?;
         }
     }
-    //TAG:end-logsumexp-axb
 
     let _trm = task.optimize()?;
     task.write_data("gp1.ptf")?;
@@ -108,9 +105,7 @@ fn max_volume_box(Aw : f64,
 
     Ok(xyz.iter().map(|v| v.exp()).collect())
 }
-//TAG:end-maxbox
 
-//TAG:begin-solvemaxbox
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     // maximize     h*w*d
@@ -155,4 +150,3 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
-//TAG:end-solvemaxbox

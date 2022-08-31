@@ -1,4 +1,4 @@
-//!  File : $${file}
+//!  File : portfolio_4_transcost.rs
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
@@ -7,8 +7,6 @@
 //!                 as a mixed-integer problem.
 //!
 
-/*TAG:begin-code*/
-/*TAG:begin-transactions-cost*/
 extern crate mosek;
 use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype,Boundkey};
 extern crate itertools;
@@ -196,5 +194,3 @@ fn main() -> Result<(),String> {
     println!("Solution vector = {:?}\n", level);
     Ok(())
 }
-/*TAG:end-code*/
-/*TAG:end-transactions-cost*/

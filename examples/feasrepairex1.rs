@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : feasrepairex1.rs
 //!
 //!  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
 //!              locate the cause of an infeasibility.
@@ -32,7 +32,6 @@ x2 >= 650
 end
 ";
 
-/*TAG:begin-code*/
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
@@ -61,4 +60,3 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
-/*TAG:end-code*/

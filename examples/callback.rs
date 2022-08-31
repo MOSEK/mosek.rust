@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : callback.rs
 //!
 //!  Purpose :   To demonstrate how to use the progress
 //!              callback.
@@ -24,7 +24,6 @@ use mosek::{Task,Streamtype,Iparam,Optimizertype,Callbackcode,Dinfitem,Iinfitem}
 
 const MAXTIME : f64 = 0.05;
 
-/*TAG:begin-callback*/
 fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool {
     let mut opttime = 0.0;
     match caller {
@@ -89,7 +88,6 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
         true
     }
 }
-  /*TAG:end-callback*/
 
 
 fn main() -> Result<(),String> {
@@ -116,9 +114,7 @@ fn main() -> Result<(),String> {
 
     /* Directs the log task stream to the 'printstr' function. */
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    /*TAG:begin-callback-handler*/
     task.put_callback(callback)?;
-    /*TAG:end-callback-handler*/
 
     task.optimize()?;
 

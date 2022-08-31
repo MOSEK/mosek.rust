@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : ceo1.rs
 //!
 //!   Description:
 //!       Demonstrates how to solve a small conic exponential
@@ -15,7 +15,6 @@
 //!           |    1|   |x3|
 //!           x1,x2,x3 are free
 //!
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -52,13 +51,11 @@ fn main() -> Result<(),String> {
 
     /* Append 'numcon' empty constraints.
        The constraints will initially have no bounds. */
-    /*TAG:begin-append*/
     task.append_cons(numcon)?;
 
       /* Append 'numvar' variables.
          The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar)?;
-    /*TAG:end-append*/
 
     /* Define the linear part of the problem */
     task.put_c_slice(0, numvar, c.as_slice())?;
@@ -67,7 +64,6 @@ fn main() -> Result<(),String> {
     task.put_var_bound_slice(0, numvar, bkx.as_slice(), blx.as_slice(), bux.as_slice())?;
 
     /* Add a conic constraint */
-    //TAG:begin-appendcone
     task.append_afes(3)?;
     let afeidxs = vec![0,  1,  2  ];
     let b       = vec![0.0,0.0,0.0];
@@ -78,15 +74,12 @@ fn main() -> Result<(),String> {
                             vec![0,1,2].as_slice(),
                             vec![1.0,1.0,1.0].as_slice())?;
     task.append_acc(domidx,afeidxs.as_slice(),b.as_slice())?;
-    //TAG:end-appendcone
 
     task.put_obj_sense(Objsense::MINIMIZE)?;
 
     println!("optimize");
     /* Solve the problem */
-    /*TAG:begin-optimize*/
     task.optimize()?;
-    /*TAG:end-optimize*/
     // Print a summary containing information
     // about the solution for debugging purposes
     task.solution_summary(Streamtype::MSG)?;
@@ -96,9 +89,7 @@ fn main() -> Result<(),String> {
 
     assert!(solsta == Solsta::OPTIMAL);
     let mut xx = vec![0.0; numvar as usize];
-    /*TAG:begin-getsolution*/
     task.get_xx(Soltype::ITR, & mut xx[..])?;
-    /*TAG:end-getsolution*/
     println!("Optimal primal solution");
     for j in 0..numvar as usize {
         println!("x[{}]: {:.4}",j,xx[j]);
@@ -106,4 +97,3 @@ fn main() -> Result<(),String> {
 
     return Result::Ok(());
 }
-/*TAG:end-code*/

@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : mico1.rs
 //!
 //!   Purpose :   Demonstrates how to solve a small mixed
 //!               integer conic optimization problem.
@@ -13,7 +13,6 @@
 extern crate mosek;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Variabletype};
 
-/*TAG:begin-mico1*/
 fn main() -> Result<(),String> {
     /* Create the optimization task. */
     let mut task = match Task::new() {
@@ -69,4 +68,3 @@ fn main() -> Result<(),String> {
     println!("x = {}  y = {}",xx[0],xx[1]);
     Ok(())
 }
-/*TAG:end-mico1*/

@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : sdo1.rs
 //!
 //!  Purpose:   Solves the following small semidefinite optimization problem
 //!             using the MOSEK API.
@@ -13,7 +13,6 @@
 //!                (x0,x1,x2) \in Q,  X \in PSD
 //!
 
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Solsta,Soltype};
@@ -64,9 +63,7 @@ fn main() -> Result<(),String>
     task.append_vars(NUMVAR as i32)?;
 
     /* Append 'NUMBARVAR' semidefinite variables. */
-    /*TAG:begin-appendbarvars*/
     task.append_barvars(&dimbarvar[..])?;
-    /*TAG:end-appendbarvars*/
 
     /* Optionally add a constant term to the objective. */
     task.put_cfix(0.0)?;
@@ -82,15 +79,11 @@ fn main() -> Result<(),String>
     }
 
     /* Set the linear term barc_j in the objective.*/
-    /*TAG:begin-appendsparsesymmat*/
     let c_symmat_idx = task.append_sparse_sym_mat(dimbarvar[0],
                                                   barc_i,
                                                   barc_j,
                                                   barc_v)?;
-    /*TAG:end-appendsparsesymmat*/
-    /*TAG:begin-putbarcj*/
     task.put_barc_j(0, &[c_symmat_idx], &[falpha])?;
-    /*TAG:end-putbarcj*/
 
     for i in 0..NUMCON
     {
@@ -125,9 +118,7 @@ fn main() -> Result<(),String>
                                    & bara_j[..3],
                                    & bara_v[..3])?;
 
-    /*TAG:begin-putbaraij*/
     task.put_bara_ij(0, 0, &[a_symmat_idx1][..], &[falpha][..])?;
-    /*TAG:end-putbaraij*/
 
     /* Add the second row of barA */
     let a_symmat_idx2 =
@@ -154,12 +145,10 @@ fn main() -> Result<(),String>
             let mut xx = vec![0.0,0.0,0.0];
             task.get_xx(Soltype::ITR,    /* Request the basic solution. */
                         & mut xx[..])?;
-            /*TAG:begin-getsolution*/
             let mut barx = vec![0.0,0.0,0.0,0.0,0.0,0.0];
             task.get_barx_j(Soltype::ITR,    /* Request the interior solution. */
                             0,
                             & mut barx[..])?;
-            /*TAG:end-getsolution*/
             println!("Optimal primal solution");
             for j in 0..NUMVAR as usize
             {
@@ -196,4 +185,3 @@ fn main() -> Result<(),String>
     }
     Ok(())
 } /* main */
-/*TAG:end-code*/

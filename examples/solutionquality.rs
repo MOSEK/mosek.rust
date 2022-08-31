@@ -1,11 +1,10 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : solutionquality.rs
 //!
 //!  Purpose :   To demonstrate how to examine the quality of a solution.
 
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Solsta,Soltype};
@@ -109,4 +108,3 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
-/*TAG:end-code*/

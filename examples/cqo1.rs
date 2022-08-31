@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : cqo1.rs
 //!
 //!  Purpose:   To demonstrate how to solve a small conic quadratic
 //!             optimization problem using the MOSEK API.
@@ -14,7 +14,6 @@ const INF : f64 = 0.0;
 use mosek::{Task,Streamtype,Solsta,Soltype};
 use itertools::izip;
 
-/*TAG:begin-code*/
 fn main() -> Result<(),String>
 {
     let numvar  : i32 = 6;
@@ -47,51 +46,40 @@ fn main() -> Result<(),String>
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
-    /*TAG:begin-append*/
     task.append_cons(numcon)?;
 
     /* Append 'numvar' variables.
      * The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar)?;
-    /*TAG:end-append*/
 
     for (j,&cj,&bkj,&blj,&buj) in izip!(0..numvar,c,bkx,blx,bux) {
         /* Set the linear term c_j in the objective.*/
-        /*TAG:begin-putcj*/
         task.put_c_j(j,cj)?;
-        /*TAG:end-putcj*/
 
         /* Set the bounds on variable j.
          * blx[j] <= x_j <= bux[j] */
-        /*TAG:begin-putbound-var*/
         task.put_var_bound( j,    /* Index of variable.*/
                             bkj,      /* Bound key.*/
                             blj,      /* Numerical value of lower bound.*/
                             buj)?;     /* Numerical value of upper bound.*/
-        /*TAG:end-putbound-var*/
     }
 
     /* Input columns of A */
-    /*TAG:begin-putavec*/
     task.put_a_row(0, asub, aval)?;
-    /*TAG:end-putavec*/
     
 
     /* Set the bounds on constraints.
      * for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] */
-    /*TAG:begin-putbound-con*/
     for (i,&bki,&bli,&bui) in izip!(0..numcon,bkc,blc,buc) {
         task.put_con_bound( i,    /* Index of constraint.*/
                             bki,      /* Bound key.*/
                             bli,      /* Numerical value of lower bound.*/
                             bui)?;     /* Numerical value of upper bound.*/
     }
-    /*TAG:end-putbound-con*/
 
 
     /* Append the first cone. */
         // Create a matrix F such that F * x = [x(3),x(0),x(1),x(4),x(5),x(2)]
-    //TAG:begin-appendcone
     {
         task.append_afes(6)?;
         task.put_afe_f_entry_list(&[0,1,2,3,4,5],                      // Rows
@@ -110,12 +98,9 @@ fn main() -> Result<(),String>
                         &[3, 4, 5],              // Rows from F
                         &[0.0,0.0,0.0])?;        // Unused
     }
-    //TAG:end-appendcone
 
     /* Run optimizer */
-    /*TAG:begin-optimize*/
     let trm = task.optimize()?;
-    /*TAG:end-optimize*/
 
     task.write_data("cqo1.ptf")?;
     /* Print a summary containing information
@@ -128,11 +113,9 @@ fn main() -> Result<(),String>
     {
         Solsta::OPTIMAL =>
         {
-            /*TAG:begin-getsolution*/
             let mut xx = vec![0.0; numvar as usize];
             task.get_xx(Soltype::ITR,    /* Request the basic solution. */
                         xx.as_mut_slice())?;
-            /*TAG:end-getsolution*/
             println!("Optimal primal solution");
             for (j,xj) in izip!(0..numvar,xx) {
                 println!("x[{}]: {}",j,xj);
@@ -159,4 +142,3 @@ fn main() -> Result<(),String>
     }
     Ok(())
 } /* main */
-/*TAG:end-code*/

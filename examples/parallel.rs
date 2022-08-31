@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : parallel.rs
 //!
 //!   Purpose: Demonstrates parallel optimization using optimizebatch()
 //!
@@ -14,7 +14,6 @@ use itertools::{izip};
 
 /// Example of how to use env.optimize_batch().
 /// Optimizes tasks whose names were read from command line.
-//TAG:begin-paroptexample
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
@@ -61,4 +60,3 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
-//TAG:end-paroptexample

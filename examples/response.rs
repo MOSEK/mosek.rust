@@ -1,12 +1,11 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : response.rs
 //!
 //!  Purpose :   This example demonstrates proper response handling
 //!              for problems solved with the interior-point optimizers.
 //!
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Solsta,Soltype};
@@ -72,4 +71,3 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-/*TAG:end-code*/

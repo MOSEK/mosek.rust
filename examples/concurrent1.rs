@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : $${file}
+//!  File : concurrent1.rs
 //!
 //!  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
 //!
@@ -20,13 +20,10 @@ use std::cmp::Ordering;
 use std::thread;
 use std::env;
 
-//TAG:begin-setup
 fn optimize(t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
     let mut t = t.with_callbacks();
     let cbstop = Arc::clone(&stop);
-//TAG:begin-cb
     if let Err(_) = t.put_callback(move |_,_,_,_| ! *(cbstop.lock().unwrap()) ) { None }
-//TAG:end-cb
     else if let Ok(trm) = t.optimize() {
         let mut st = stop.lock().unwrap();
         *st = true;
@@ -34,9 +31,7 @@ fn optimize(t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task
     }
     else { None }
 }
-//TAG:end-setup
 
-//TAG:begin-linear
 fn optimize_concurrent(task       : &mut mosek::Task,
                        optimizers : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
     let stop = Arc::new(Mutex::new(false));
@@ -56,9 +51,7 @@ fn optimize_concurrent(task       : &mut mosek::Task,
                         Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
-//TAG:end-linear
 
-//TAG:begin-mio
 fn optimize_concurrent_mio(task  : & mut mosek::Task,
                            seeds : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
     let stop = Arc::new(Mutex::new(false));
@@ -79,7 +72,6 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
                         Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
-//TAG:end-mio
 
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
@@ -102,20 +94,16 @@ fn main() -> Result<(),String> {
 
     let numintvar = task.get_num_int_var()?;
 
-    //TAG:begin-demo-linear
     let r = if numintvar == 0 {
         let optimizers = &[mosek::Optimizertype::CONIC,
                            mosek::Optimizertype::DUAL_SIMPLEX,
                            mosek::Optimizertype::PRIMAL_SIMPLEX];
         optimize_concurrent(& mut task, optimizers)
     }
-    //TAG:end-demo-linear
-    //TAG:begin-demo-mio
     else {
         let seeds = &[ 42, 13, 71749373 ];
         optimize_concurrent_mio(& mut task, seeds)
     };
-    //TAG:end-demo-mio
 
 
     let sense = task.get_obj_sense()?;

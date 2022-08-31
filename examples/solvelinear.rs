@@ -1,6 +1,6 @@
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : solvelinear.rs
 //!
 //!   Purpose :   To demonstrate the usage of MSK_solvewithbasis
 //!               when solving the linear system:
@@ -17,7 +17,6 @@
 //!               b = (7.0, 0.0)
 
 
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Streamtype,Soltype,Stakey};
@@ -126,4 +125,3 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-/*TAG:end-code*/

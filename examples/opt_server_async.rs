@@ -1,11 +1,10 @@
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : $${file}
+//!   File : opt_server_async.rs
 //!
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem asynchronously
 
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Sparam};
@@ -87,4 +86,3 @@ fn main() -> Result<(),String> {
         }
     }
 }
-/*TAG:end-code*/
