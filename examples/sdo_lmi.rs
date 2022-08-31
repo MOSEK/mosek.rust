@@ -12,6 +12,7 @@
 //!                             X >> 0
 //!
 
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -51,7 +52,9 @@ fn main() -> Result<(),String> {
     task.append_vars(numvar)?;
 
     /* Append 'NUMBARVAR' semidefinite variables. */
+    /*TAG:begin-appendbarvars*/
     task.append_barvars(dimbarvar)?;
+    /*TAG:end-appendbarvars*/
 
 
     task.put_obj_sense(Objsense::MINIMIZE)?;
@@ -76,13 +79,18 @@ fn main() -> Result<(),String> {
     task.put_afe_g_slice(0, 4, g)?;
 
     /* barF block triplets */
+    /*TAG:begin-putbarF */
     task.put_afe_barf_block_triplet(barf_i, barf_j, barf_k, barf_l, barf_v)?;
+    /*TAG:end-putbarF */
 
+    /*TAG:begin-putcones */
     /* Append R+ domain and the corresponding ACC */
     {
         let dom = task.append_rplus_domain(1)?;
         task.append_acc(dom, &[0], &[0.0])?;
     }
+    /*TAG:end-putcones */
+
     /* Append SVEC_PSD domain and the corresponding ACC */
     {
         let dom = task.append_svec_psd_cone_domain(3)?;
@@ -102,8 +110,10 @@ fn main() -> Result<(),String> {
         Solsta::OPTIMAL => {
             let mut xx = vec![0.0; numvar as usize];
             task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
+            /*TAG:begin-getsolution*/
             let mut barx = vec![0.0; lenbarvar[0]];
             task.get_barx_j(Soltype::ITR, 0, barx.as_mut_slice())?;    /* Request the interior solution. */
+            /*TAG:end-getsolution*/
             println!("Optimal primal solution");
             println!("  x = {:?}",xx);
             println!("  barx = {:?}",barx);
@@ -117,3 +127,4 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+/*TAG:end-code*/

@@ -7,6 +7,7 @@
 //!               reading a problem file, solving the problem and
 //!               writing the problem+solution to a file.
 
+/*TAG:begin-code*/
 extern crate mosek;
 use mosek::{Task,Streamtype,Iparam,Onoffkey};
 use std::env;
@@ -27,7 +28,9 @@ fn main() -> Result<(),String> {
 
         // We assume that a problem file was given as the first command
         // line argument (received in `args')
+        /*TAG:begin-readdata*/
         task.read_data (filename)?;
+        /*TAG:end-readdata*/
 
         // Solve the problem
             let _ = task.optimize()?;
@@ -45,8 +48,11 @@ fn main() -> Result<(),String> {
 
             task.put_int_param(Iparam::PTF_WRITE_SOLUTIONS,  Onoffkey::ON)?;
 
+            /*TAG:begin-writedata*/
             task.write_data(outfile)?;
+            /*TAG:end-writedata*/
         }
         Ok(())
     }
 }
+/*TAG:end-code*/

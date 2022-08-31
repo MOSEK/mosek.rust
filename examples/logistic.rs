@@ -16,6 +16,7 @@ use itertools::{izip,iproduct};
 
 const INF : f64 = 0.0;
 
+//TAG:begin-logistic-lse
 #[allow(non_snake_case)]
 fn softplus(task : & mut TaskCB, d : i32, n : i32, theta : i32, t : i32, X : &[f64], Y : &[bool]) -> Result<(),String> {
     let nvar = task.get_num_var()?;
@@ -127,11 +128,13 @@ fn softplus(task : & mut TaskCB, d : i32, n : i32, theta : i32, t : i32, X : &[f
 
     Ok(())
 }
+//TAG:end-logistic-lse
 
   // Model logistic regression (regularized with full 2-norm of theta)
   // X - n x d matrix of data points
   // y - length n vector classifying training points
   // lamb - regularization parameter
+//TAG:begin-logistic-main
 #[allow(non_snake_case)]
 fn logistic_regression(X : &[f64],
                        Y : &[bool],
@@ -187,7 +190,7 @@ fn logistic_regression(X : &[f64],
     task.get_xx_slice(Soltype::ITR, theta, theta+d as i32,xx.as_mut_slice())?;
     Ok(xx)
 }
-
+//TAG:end-logistic-main
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {

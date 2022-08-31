@@ -11,6 +11,7 @@
 //!                          gamma >= |Gx+h|_2
 //!
 
+/*TAG:begin-code*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
@@ -46,9 +47,12 @@ fn main() -> Result<(),String> {
     task.put_a_row(0,x.as_slice(), vec![1.0; n as usize].as_slice())?;
     task.put_con_bound(0, Boundkey::FX, 1.0, 1.0)?;
 
+    /*TAG:begin-appendafes*/
     // Append empty AFE rows for affine expression storage
     task.append_afes(k + 1)?;
+    /*TAG:end-appendafes*/
 
+    /*TAG:begin-putafe*/
     // G matrix in sparse form
     let Gsubi : &[i64] = &[0, 0, 1, 1];
     let Gsubj : &[i32] = &[0, 1, 0, 2];
@@ -67,22 +71,31 @@ fn main() -> Result<(),String> {
     // Fill in g storage
     task.put_afe_g(0, gamma)?;
     task.put_afe_g_slice(1, k+1, h)?;
+    /*TAG:end-putafe*/
 
+    /*TAG:begin-appenddomain*/
     // Define a conic quadratic domain
     let quadDom = task.append_quadratic_cone_domain(k + 1)?;
+    /*TAG:end-appenddomain*/
 
+    /*TAG:begin-appendacc*/
     // Create the ACC
     task.append_acc(quadDom,    // Domain index
                     (0..k+1).collect::<Vec<i64>>().as_slice(), // Indices of AFE rows [0,...,k]
                     vec![0.0; (k+1) as usize].as_slice())?;       // Ignored
+    /*TAG:end-appendacc*/
 
     // Solve and retrieve solution
+    /*TAG:begin-optimize*/
     let _ = task.optimize()?;
+    /*TAG:end-optimize*/
     task.write_data("acc1.ptf")?;
     let mut xx = vec![0.0; n as usize];
     task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
 
+    /*TAG:ASSERT:begin-checksolsta*/
     assert!(task.get_sol_sta(Soltype::ITR)? == Solsta::OPTIMAL);
+    /*TAG:ASSERT:end-checksolsta*/
     println!("Solution: {:?}",xx);
 
     // Demonstrate retrieving activity of ACC
@@ -93,7 +106,9 @@ fn main() -> Result<(),String> {
     println!("Activity of ACC:: {:?}",activity);
 
     // Demonstrate retrieving the dual of ACC
+    /*TAG:begin-getdoty*/
     task.get_acc_dot_y(Soltype::ITR,0,doty.as_mut_slice())?;
+    /*TAG:end-getdoty*/
     println!("Dual of ACC:: {:?}",doty);
 
     let compl : f64 = dot(activity.as_slice(),doty.as_slice());
@@ -112,3 +127,4 @@ fn maxgap(a : &[f64], b : &[f64]) -> f64 {
 fn dot(a : &[f64], b : &[f64]) -> f64 {
     a.iter().zip(b.iter()).map(|(&a,&b)| (a * b)).sum()
 }
+/*TAG:end-code*/

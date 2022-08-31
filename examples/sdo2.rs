@@ -20,6 +20,7 @@ extern crate mosek;
 use mosek::{Task,Streamtype,Solsta,Soltype};
 
 
+/*TAG:begin-code*/
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
 
@@ -63,8 +64,10 @@ fn main() -> Result<(),String> {
     The constraints will initially have no bounds. */
     task.append_cons(numcon)?;
 
+    /*TAG:begin-appendbarvars*/
     /* Append numbarvar semidefinite variables. */
     task.append_barvars(dimbarvar)?;
+    /*TAG:end-appendbarvars*/
 
     /* Set objective (6 nonzeros).*/
     task.put_barc_block_triplet(Cj, Ck, Cl, Cv)?;
@@ -110,3 +113,4 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+/*TAG:end-code*/

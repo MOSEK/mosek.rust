@@ -32,6 +32,7 @@ x2 >= 650
 end
 ";
 
+/*TAG:begin-code*/
 fn main() -> Result<(),String> {
     let args: Vec<String> = env::args().collect();
 
@@ -60,4 +61,4 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
-
+/*TAG:end-code*/

@@ -1,4 +1,5 @@
 //!
+//!  Copyright : $$copyright
 //!
 //!  File : solvebasis.rs
 //!
@@ -29,6 +30,7 @@ use mosek::{Task,Boundkey,Objsense,Streamtype};
 ///     xc1 <=  0 , xc2 <= 0
 /// ```
 ///
+/*TAG:begin-code*/
 fn solve() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
@@ -44,6 +46,7 @@ fn solve() -> Result<(),String> {
     let mut w1  = vec![2.0, 6.0];
     let mut w2  = vec![1.0, 0.0];
 
+    /*TAG:begin-inputdata*/
     task.input_data(numcon, numvar,
                     &[1.0, 1.0], // c
                     0.0, // cfix
@@ -61,6 +64,7 @@ fn solve() -> Result<(),String> {
                       Boundkey::LO], // bkx
                     &[0.0, 0.0], // blx
                     &[0.0,0.0])?; // bux;
+    /*TAG:end-inputdata*/
 
     task.put_obj_sense(Objsense::MAXIMIZE)?;
 
@@ -119,6 +123,7 @@ fn solve() -> Result<(),String> {
     }
     Ok(())
 }
+/*TAG:end-code*/
 
 fn main() -> Result<(),String> {
     solve()

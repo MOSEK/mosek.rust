@@ -11,6 +11,7 @@
 //                  x0=2.5 or x1=2.5 or x2=2.5 or x3=2.5
 //
 
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -46,8 +47,11 @@ fn main() -> Result<(),String> {
 
     // Fill in the affine expression storage F, g
     let numafe : i64 = 10;
+    /*TAG:begin-appendafes*/
     task.append_afes(numafe)?;
+    /*TAG:end-appendafes*/
 
+    /*TAG:begin-putafe*/
     let fafeidx : &[i64] = &[0, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     let fvaridx : &[i32] = &[0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];
     let fval             = &[1.0, -2.0, 1.0, -3.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
@@ -55,29 +59,38 @@ fn main() -> Result<(),String> {
 
     task.put_afe_f_entry_list(fafeidx, fvaridx, fval)?;
     task.put_afe_g_slice(0, numafe, g)?;
+    /*TAG:end-putafe*/
 
     // Create domains
+    /*TAG:begin-appenddomain*/
     let zero1   = task.append_rzero_domain(1)?;
     let zero2   = task.append_rzero_domain(2)?;
     let rminus1 = task.append_rminus_domain(1)?;
+    /*TAG:end-appenddomain*/
 
     // Append disjunctive constraints
+    /*TAG:begin-appenddjc*/
     let numdjc : i64 = 2;
     task.append_djcs(numdjc)?;
+    /*TAG:end-appenddjc*/
 
     // First disjunctive constraint
+    /*TAG:begin-djc-first*/
     task.put_djc(0,                                        // DJC index
                  &[rminus1, zero2, rminus1, zero2],        // Domains     (domidxlist)
                  &[0, 4, 5, 1, 2, 3],                      // AFE indices (afeidxlist)
                  &[0.0,0.0,0.0,0.0,0.0,0.0],               // Unused
                  &[2, 2])?;                                // Term sizes  (termsizelist)
+    /*TAG:end-djc-first*/
 
     // Second disjunctive constraint
+    /*TAG:begin-djc-second*/
     task.put_djc(1,                                        // DJC index
                  &[zero1, zero1, zero1, zero1],            // Domains     (domidxlist)
                  &[6, 7, 8, 9],                            // AFE indices (afeidxlist)
                  &[0.0,0.0,0.0,0.0],                       // Unused
                  &[1, 1, 1, 1])?;                          // Term sizes  (termidxlist)
+    /*TAG:end-djc-second*/
 
     // Useful for debugging
     task.write_data("djc1.ptf")?;                         // Write file in human-readable format
@@ -92,20 +105,19 @@ fn main() -> Result<(),String> {
     // Get status information about the solution
     let sta = task.get_sol_sta(Soltype::ITG)?;
 
-    assert!(sta == Solsta::INTEGER_OPTIMAL);
-
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITG,xx.as_mut_slice())?;
+
+    /*TAG:ASSERT:begin-check*/
+    assert!(sta == Solsta::INTEGER_OPTIMAL);
+    assert(xx.iter().zip([0.0, 0.0, -12.5, 2.5].iter()).all(|(&a,&b)| (a-b).abs() < 1e-7))
+    /*TAG:ASSERT:end-check*/
 
     println!("Optimal solution: ");
     for (i,&xi) in xx.iter().enumerate() {
         println!("x[{}]={}",i,xi);
     }
 
-    assert!(xx.iter().
-            zip([0.0, 0.0, -12.5, 2.5].iter()).map(|(&a,&b)| (a-b).abs()).max_by(|a,b| if a < b { std::cmp::Ordering::Less } else if b < a { std::cmp::Ordering::Greater } else { std::cmp::Ordering::Equal }).unwrap() < 1e-7);
-    // maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
-    //     assert maxgap(xx, [0, 0, -12.5, 2.5]) < 1e-7
-
     Ok(())
 }
+/*TAG:end-code*/

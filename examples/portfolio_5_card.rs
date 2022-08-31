@@ -42,6 +42,8 @@ const INF : f64 = 0.0;
 /// - `gamma` risk bound (bound on the standard deviation)
 /// - `w` initial uninvested wealth
 /// - `p` maximum number of assets to invest in
+/*TAG:begin-code*/
+/*TAG:begin-cardinality*/
 #[allow(non_snake_case)]
 fn portfolio(n     : i32,
              mu    : &[f64],
@@ -168,6 +170,8 @@ fn portfolio(n     : i32,
     task.get_xx_slice(Soltype::ITG, 0,n,xx.as_mut_slice())?;
     Ok((xx[0..n as usize].to_vec(),task.get_primal_obj(Soltype::ITG)?))
 }
+/*TAG:end-code*/
+/*TAG:end-cardinality*/
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {

@@ -10,6 +10,7 @@
 //!             x,y,z >= 0
 //!
 
+/*TAG:begin-code*/
 extern crate mosek;
 use mosek::*;
 
@@ -39,11 +40,13 @@ fn main()  -> Result<(),String> {
 
     /* Append 'numcon' empty constraints.
     The constraints will initially have no bounds. */
+    /*TAG:begin-append*/
     task.append_cons(numcon)?;
 
     /* Append 'numvar' variables.
     The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar)?;
+    /*TAG:end-append*/
 
     /* Set up the linear part of the problem */
     task.put_c_list(&csub, &cval)?;
@@ -54,6 +57,7 @@ fn main()  -> Result<(),String> {
     task.put_var_bound_slice_const(0, numvar, Boundkey::FR, -INF, INF)?;
 
     /* Add a conic constraint */
+      //TAG:begin-appendcone
     let pc1 = task.append_primal_power_cone_domain(3, &[0.2, 0.8])?;
     let pc2 = task.append_primal_power_cone_domain(3, &[4.0, 6.0])?;
 
@@ -74,9 +78,12 @@ fn main()  -> Result<(),String> {
     task.append_acc(pc2,                  // Domain
                     &[3, 4, 5],           // Rows from F
                     &[0.0,0.0,0.0])?;     // Unused
+    //TAG:end-appendcone
 
     task.put_obj_sense(Objsense::MAXIMIZE)?;
+    /*TAG:begin-optimize*/
     task.optimize()?;
+    /*TAG:end-optimize*/
 
     task.write_data("pow1.ptf")?;
     // Print a summary containing information
@@ -88,8 +95,10 @@ fn main()  -> Result<(),String> {
     assert!(solsta == Solsta::OPTIMAL);
 
     let mut xx = vec![0.0; numvar as usize];
+    /*TAG:begin-getsolution*/
     task.get_xx(Soltype::ITR,
                 xx.as_mut_slice())?;
+    /*TAG:end-getsolution*/
 
     println!("Optimal primal solution");
     for (j,&xj) in xx[0..3].iter().enumerate() {
@@ -98,3 +107,4 @@ fn main()  -> Result<(),String> {
 
     Ok(())
 }
+/*TAG:end-code*/

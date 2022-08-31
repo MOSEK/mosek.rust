@@ -6,6 +6,7 @@
 //!  Purpose: To demonstrate how to call BLAS/LAPACK routines for
 //!           which MOSEK provides simplified interfaces.
 //!
+/*TAG:begin-code*/
 extern crate mosek;
 
 fn print_matrix(x : &[f64], r : i32, c : i32) {
@@ -44,43 +45,60 @@ fn main() -> Result<(),String> {
     println!("alpha={}", alpha);
     println!("beta={}", beta);
 
+    /*TAG:begin-dot*/
     mosek::dot(n,x,y.as_slice(),& mut xy)?;
+    /*TAG:end-dot*/
     println!("dot results = {}\n", xy);
 
     print_matrix(x, 1, n);
     print_matrix(y.as_slice(), 1, n);
 
+    /*TAG:begin-axpy*/
     mosek::axpy(n, alpha, x, y.as_mut_slice())?;
+    /*TAG:end-axpy*/
     println!("axpy results is:\n");
     print_matrix(y.as_slice(), 1, n);
 
 
+    /*TAG:begin-gemv*/
     mosek::gemv(mosek::Transpose::NO, m, n, alpha, A, x, beta, z.as_mut_slice())?;
+    /*TAG:end-gemv*/
     println!("gemv results is:");
     print_matrix(z.as_slice(), 1, m);
 
+    /*TAG:begin-gemm*/
     mosek::gemm(mosek::Transpose::NO, mosek::Transpose::NO, m, n, k, alpha, A, B, beta, C.as_mut_slice())?;
+    /*TAG:end-gemm*/
     println!("gemm results is");
     print_matrix(C.as_slice(), m, n);
 
+    /*TAG:begin-syrk*/
     mosek::syrk(mosek::Uplo::LO, mosek::Transpose::NO, m, k, 1., A, beta, D.as_mut_slice())?;
+    /*TAG:end-syrk*/
     println!("syrk results is");
     print_matrix(D.as_slice(), m, m);
 
     /* LAPACK routines*/
 
+    /*TAG:begin-potrf*/
     mosek::potrf(mosek::Uplo::LO, m, Q.as_mut_slice())?;
+    /*TAG:end-potrf*/
     println!("potrf results is");
     print_matrix(Q.as_slice(), m, m);
 
+    /*TAG:begin-syeig*/
     mosek::syeig(mosek::Uplo::LO, m, Q.as_slice(), & mut v[0..m as usize])?;
+    /*TAG:end-syeig*/
     println!("syeig results is");
     print_matrix(v.as_slice(), 1, m);
 
+    /*TAG:begin-syevd*/
     mosek::syevd(mosek::Uplo::LO, m, Q.as_mut_slice(), &mut v[0..m as usize])?;
+    /*TAG:end-syevd*/
     println!("syevd results is");
     print_matrix(v.as_slice(), 1, m);
     print_matrix(Q.as_slice(), m, m);
 
     Ok(())
 }
+/*TAG:end-code*/

@@ -21,6 +21,7 @@
 //!               The example uses basis type sensitivity analysis.
 //!
 
+/*TAG:begin-code*/
 extern crate mosek;
 use mosek::{Task,Boundkey,Streamtype,Mark,Objsense};
 
@@ -146,3 +147,4 @@ fn main() -> Result<(),String> {
 
     return Result::Ok(());
 }
+/*TAG:end-code*/

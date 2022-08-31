@@ -4,6 +4,7 @@
 //!               optimization problem using the MOSEK API
 //!               and modify and re-optimize the problem.
 
+/*TAG:begin-code*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Boundkey,Objsense,Soltype};
@@ -12,7 +13,6 @@ use itertools::izip;
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
-
     let numcon = 3;
     let numvar = 3;
     let c = &[1.5, 2.5, 3.0 ];
@@ -89,16 +89,21 @@ fn main() -> Result<(),String> {
     }
 
     /****************** Make a change to the A matrix ******************/
+    /*TAG:begin-putaij*/
     task.put_aij(0, 0, 3.0)?;
+    /*TAG:end-putaij*/
 
+    /*TAG:begin-reoptimize1*/
     let _trm = task.optimize()?;
     task.get_xx(Soltype::BAS, // Request the basic solution.
                 xx.as_mut_slice())?;
+    /*TAG:end-reoptimize1*/
 
     for (j,xj) in xx.iter().enumerate() {
         println!("x[{}]: {}",j,xj);
     }
 
+    /*TAG:begin-addcol*/
     /***************** Add a new variable ******************************/
     /* Get index of new variable. */
 
@@ -121,8 +126,10 @@ fn main() -> Result<(),String> {
     task.put_a_col(varidx, /* column index */
                    acolsub,
                    acolval)?;
+    /*TAG:end-addcol*/
 
     /* Change optimizer to simplex free and reoptimize */
+    /*TAG:begin-reoptimize2*/
     task.put_int_param(mosek::Iparam::OPTIMIZER, mosek::Optimizertype::FREE_SIMPLEX)?;
     let _trm = task.optimize()?;
 
@@ -132,7 +139,9 @@ fn main() -> Result<(),String> {
     for (j,xj) in (0..numvar).zip(xx.iter()) {
         println!("x[{}]: {}",j,xj);
     }
+    /*TAG:end-reoptimize2*/
 
+    /*TAG:begin-addcon*/
     /********************** Add a new constraint ***************************/
     /* Get index of new constraint. */
     let conidx = task.get_num_con()?;
@@ -155,6 +164,8 @@ fn main() -> Result<(),String> {
                    arowsub,
                    arowval)?;
 
+    /*TAG:end-addcon*/
+    /*TAG:begin-reoptimize3*/
     let _trm = task.optimize()?;
 
     task.get_xx(Soltype::BAS, // Request the basic solution.
@@ -163,8 +174,9 @@ fn main() -> Result<(),String> {
     for (j,xj) in (0..numvar).zip(xx.iter()) {
         println!("x[{}]: {}",j,xj);
     }
+    /*TAG:end-reoptimize3*/
 
-
+    /*TAG:begin-changebounds*/
     /********************** Change constraint bounds ********************/
     let newbkc = &[Boundkey::UP,
                    Boundkey::UP,
@@ -177,6 +189,7 @@ fn main() -> Result<(),String> {
     let newbuc = &[ 80000.0, 40000.0, 50000.0, 22000.0 ];
 
     task.put_con_bound_slice(0, numcon, newbkc, newblc, newbuc)?;
+    /*TAG:end-changebounds*/
 
     let _ = task.optimize()?;
 
@@ -189,3 +202,4 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
+/*TAG:end-code*/

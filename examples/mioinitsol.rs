@@ -6,7 +6,7 @@
 //!   Purpose :   Demonstrates how to solve a MIP with a start guess.
 //!
 
-
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Variabletype,Objsense,Streamtype,Soltype};
@@ -44,7 +44,9 @@ fn main() -> Result<(),String> {
                     Variabletype::TYPE_INT,
                     Variabletype::TYPE_INT ];
 
+    /*TAG:begin-maketask*/
     let mut task = Task::new().unwrap().with_callbacks();
+    /*TAG:end-maketask*/
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     task.input_data(numcon, numvar,
@@ -62,10 +64,12 @@ fn main() -> Result<(),String> {
 
     // Assign values to integer variables
     // We only set that slice of xx
+    //TAG:begin-init-sol
     task.put_xx_slice(Soltype::ITG, 0, 3, &[1.0,1.0,0.0])?;
 
     // Request constructing the solution from integer variable values
     task.put_int_param(mosek::Iparam::MIO_CONSTRUCT_SOL, mosek::Onoffkey::ON)?;
+    //TAG:end-init-sol
 
     // solve
     let _ = task.optimize()?;
@@ -80,9 +84,12 @@ fn main() -> Result<(),String> {
     }
 
     // Was the initial solution used?
+    //TAG:begin-report-initsol
     let constr = task.get_int_inf(mosek::Iinfitem::MIO_CONSTRUCT_SOLUTION)?;
     let constr_val = task.get_dou_inf(mosek::Dinfitem::MIO_CONSTRUCT_SOLUTION_OBJ)?;
     println!("Construct solution utilization: {}", constr);
     println!("Construct solution objective: {}",  constr_val);
+    //TAG:end-report-initsol
     Ok(())
 }
+/*TAG:end-code*/

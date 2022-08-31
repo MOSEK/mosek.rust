@@ -10,7 +10,7 @@
 //!                       1 <=  x0 + x1 + x2 - x0^2 - x1^2 - 0.1 x2^2 + 0.2 x0 x2
 //!                       x >= 0
 
-
+/*TAG:begin-code*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -50,31 +50,41 @@ fn main() -> Result<(),String> {
     // However, it is optional.
     // Append 'numcon' empty constraints.
     // The constraints will initially have no bounds.
+    /*TAG:begin-append*/
     task.append_cons(NUMCON)?;
 
     // Append 'numvar' variables.
     // The variables will initially be fixed at zero (x=0).
     task.append_vars(NUMVAR)?;
+    /*TAG:end-append*/
 
     for (j,cj,bkj,blj,buj) in izip!(0..NUMVAR,c,bkx,blx,bux) {
+        /*TAG:begin-putcj*/
         // Set the linear term c_j in the objective.
         task.put_c_j(j, cj)?;
+        /*TAG:end-putcj*/
         // Set the bounds on variable j.
         // blx[j] <= x_j <= bux[j]
+        /*TAG:begin-putbound-var*/
         task.put_var_bound(j, bkj, blj, buj)?;
+        /*TAG:end-putbound-var*/
     }
 
     for (j,asubj,avalj) in izip!(0..NUMVAR, asub, aval) {
         /* Input column j of A */
+        /*TAG:begin-putavec*/
         task.put_a_col(j,                     /* Variable (column) index.*/
                        asubj,               /* Row index of non-zeros in column j.*/
                        avalj)?;              /* Non-zero Values of column j. */
+        /*TAG:end-putavec*/
     }
     // Set the bounds on constraints.
     // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
+    /*TAG:begin-putbound-con*/
     for (i,bki,bli,bui) in izip!(0..NUMCON,bkc,blc,buc) {
         task.put_con_bound(i, bki, bli, bui)?;
     }
+    /*TAG:end-putbound-con*/
 
     {
         // The lower triangular part of the Q
@@ -92,6 +102,7 @@ fn main() -> Result<(),String> {
     // This corresponds to adding the term
     // x0^2 - x1^2 - 0.1 x2^2 + 0.2 x0 x2
 
+    /*TAG:begin-putq0*/
     {
       let qsubi = &[0,   1,    2,   2  ];
       let qsubj = &[0,   1,    2,   0  ];
@@ -104,12 +115,15 @@ fn main() -> Result<(),String> {
                        qsubj,
                        qval)?;
     }
+    /*TAG:end-putq0*/
 
     task.put_obj_sense(Objsense::MINIMIZE)?;
 
     /* Solve the problem */
 
+    /*TAG:begin-optimize*/
     let _trm = task.optimize()?;
+    /*TAG:end-optimize*/
 
     // Print a summary containing information
     //   about the solution for debugging purposes
@@ -118,9 +132,11 @@ fn main() -> Result<(),String> {
     /* Get status information about the solution */
     let solsta = task.get_sol_sta(Soltype::ITR)?;
 
+    /*TAG:begin-getsolution*/
     let mut xx = vec![0.0; NUMVAR as usize];
     task.get_xx(Soltype::ITR, // Interior solution.
                  xx.as_mut_slice())?;
+    /*TAG:end-getsolution*/
 
     match solsta {
         Solsta::OPTIMAL => {
@@ -139,3 +155,4 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 } /* Main */
+/*TAG:end-code*/

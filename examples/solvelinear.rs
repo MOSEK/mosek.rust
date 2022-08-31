@@ -17,13 +17,12 @@
 //!               b = (7.0, 0.0)
 
 
+/*TAG:begin-code*/
 extern crate mosek;
-
 
 use mosek::{Task,Boundkey,Streamtype,Soltype,Stakey};
 
 const INF : f64 = 0.0;
-
 
 fn setup(task : & mut mosek::Task,
          aval : &[f64],
@@ -127,4 +126,4 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-
+/*TAG:end-code*/

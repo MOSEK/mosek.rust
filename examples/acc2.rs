@@ -12,6 +12,7 @@
 //!
 //!              This version inputs the linear constraint as an affine conic constraint.
 //!
+/*TAG:begin-code*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
@@ -41,6 +42,7 @@ fn main() -> Result<(),String> {
     task.put_c_list(x.as_slice(), c)?;
 
     // Set AFE rows representing the linear constraint
+    /*TAG:begin-putafe*/
     task.append_afes(1)?;
     task.put_afe_f_row(0, x.as_slice(), vec![1.0; n as usize].as_slice())?;
     task.put_afe_g(0, -1.0)?;
@@ -58,25 +60,36 @@ fn main() -> Result<(),String> {
     let gamma = 0.03;
     task.put_afe_g(1, gamma)?;
     task.put_afe_g_slice(2, k+2, h)?;
+    /*TAG:end-putafe*/
 
     // Define domains
+    /*TAG:begin-appenddomain*/
     let zero_dom = task.append_rzero_domain(1)?;
     let quad_dom = task.append_quadratic_cone_domain(k + 1)?;
+    /*TAG:end-appenddomain*/
 
+    /*TAG:begin-appendacc1*/
     // Append affine conic constraints
     task.append_acc(zero_dom,    // Domain index
                     &[0i64],        // Indices of AFE rows
                     &[0.0])?;       // Ignored
+    /*TAG:end-appendacc1*/
+    /*TAG:begin-appendacc2*/
     task.append_acc(quad_dom,    // Domain index
                    &[1i64,2,3],    // Indices of AFE rows
                    &[0.0,0.0,0.0])?; // Ignored
+    /*TAG:end-appendacc2*/
 
     // Solve and retrieve solution
+    /*TAG:begin-optimize*/
     let _ = task.optimize()?;
+    /*TAG:end-optimize*/
     task.write_data("acc2.ptf")?;
     let mut xx = vec![0.0; n as usize];
     task.get_xx(Soltype::ITR,xx.as_mut_slice())?;
+    /*TAG:ASSERT:begin-checksolsta*/
     assert! (task.get_sol_sta(Soltype::ITR)? == Solsta::OPTIMAL);
+    /*TAG:ASSERT:end-checksolsta*/
     println!("Solution: {:?}",xx);
 
     // Demonstrate retrieving activity of ACC
@@ -86,8 +99,10 @@ fn main() -> Result<(),String> {
     println!("Activity of quadratic ACC:: {:?}",activity);
 
     // Demonstrate retrieving the dual of ACC
+    /*TAG:begin-getdoty*/
     task.get_acc_dot_y(Soltype::ITR,1,doty.as_mut_slice())?;
     println!("Dual of quadratic ACC:: {:?}",doty);
+    /*TAG:end-getdoty*/
 
     //maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
     let compl : f64 = dot(activity.as_slice(),doty.as_slice());
@@ -106,3 +121,4 @@ fn maxgap(a : &[f64], b : &[f64]) -> f64 {
 fn dot(a : &[f64], b : &[f64]) -> f64 {
     a.iter().zip(b.iter()).map(|(&a,&b)| (a * b)).sum()
 }
+/*TAG:end-code*/

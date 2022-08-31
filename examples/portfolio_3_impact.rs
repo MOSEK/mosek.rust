@@ -8,6 +8,8 @@
 //! More details can be found at <https://docs.mosek.com/latest/capi/case-portfolio.html#doc-optimizer-case-portfolio>
 //!
 
+/*TAG:begin-code*/
+/*TAG:begin-market-impact*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
@@ -151,6 +153,7 @@ pub fn portfolio(n : i32,
         }
     }
     // MI
+    /*TAG:begin-make-power-cone*/
     {
         let mut acci = task.get_num_acc()?;
         let mut afei = task.get_num_afe()?;
@@ -172,6 +175,7 @@ pub fn portfolio(n : i32,
             acci += 1;
         }
     }
+    /*TAG:end-make-power-cone*/          
 
     let _ = task.optimize()?;
     task.write_data("portfolio_3_impact.ptf")?;
@@ -223,3 +227,5 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
+/*TAG:end-code*/
+/*TAG:end-market-impact*/

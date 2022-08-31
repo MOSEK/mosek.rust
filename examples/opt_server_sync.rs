@@ -6,6 +6,7 @@
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem synchronously
 //!
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Streamtype,Sparam};
@@ -46,3 +47,4 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
+/*TAG:end-code*/

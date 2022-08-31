@@ -6,6 +6,7 @@
 //!   Purpose :   Demonstrates how to solve a small mixed
 //!               integer linear optimization problem using the MOSEK Java API.
 //!
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Prosta,Soltype,Variabletype,Dparam};
@@ -54,52 +55,74 @@ fn main() -> Result<(),String> {
 
     /* Append 'numcon' empty constraints.
     The constraints will initially have no bounds. */
+    /*TAG:begin-inputdata*/
+    /*TAG:begin-append*/
     task.append_cons(numcon)?;
 
     /* Append 'numvar' variables.
     The variables will initially be fixed at zero (x=0). */
     task.append_vars(numvar)?;
+    /*TAG:end-append*/
 
     for ((((j,cj),bk),bl),bu) in (0..numvar).zip(c.iter()).zip(bkx.iter()).zip(blx.iter()).zip(bux.iter()) {
         /* Set the linear term c_j in the objective.*/
+        /*TAG:begin-putcj*/
         task.put_c_j(j, *cj)?;
+        /*TAG:end-putcj*/
         /* Set the bounds on variable j.
            blx[j] <= x_j <= bux[j] */
+        /*TAG:begin-putbound-var*/
         task.put_var_bound(j, *bk, *bl, *bu)?;
+        /*TAG:end-putbound-var*/
         /* Input column j of A */
+        /*TAG:begin-putavec*/
         task.put_a_col(j,                     /* Variable (column) index.*/
                        &asub[ptrb[j as usize]..ptre[j as usize]],               /* Row index of non-zeros in column j.*/
                        &aval[ptrb[j as usize]..ptre[j as usize]])?;              /* Non-zero Values of column j. */
+        /*TAG:end-putavec*/
     }
     // Set the bounds on constraints.
     // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
+    /*TAG:begin-putbound-con*/
     for (((i,bk),bl),bu) in (0..numcon).zip(bkc.iter()).zip(blc.iter()).zip(buc.iter()) {
         task.put_con_bound(i, *bk, *bl, *bu)?;
     }
+    /*TAG:end-putbound-con*/
 
     /* Specify integer variables. */
+    /*TAG:begin-putvartype*/
     for j in 0..numvar {
         task.put_var_type(j, Variabletype::TYPE_INT)?;
     }
+    /*TAG:end-putvartype*/
     /* Set max solution time */
+    /*TAG:begin-set-parameters*/
     task.put_dou_param(Dparam::MIO_MAX_TIME, 60.0)?;
+    /*TAG:end-set-parameters*/
+    /*TAG:end-inputdata*/
 
     /* A maximization problem */
     task.put_obj_sense(Objsense::MAXIMIZE)?;
     /* Solve the problem */
 
+    /*TAG:begin-optimize*/
     let _trm = task.optimize()?;
+    /*TAG:end-optimize*/
 
     // Print a summary containing information
     //   about the solution for debugging purposes
     task.solution_summary(Streamtype::MSG)?;
 
     let mut xx = vec![0.0; numvar as usize];
+    /*TAG:begin-getsolution*/
     task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
+    /*TAG:end-getsolution*/
 
     /* Get status information about the solution */
 
+    /*TAG:begin-getsolutionstatus*/
     match task.get_sol_sta(Soltype::ITG)? {
+        /*TAG:end-getsolutionstatus*/
         Solsta::INTEGER_OPTIMAL => {
             println!("Optimal solution");
             for (j,xj) in (0..numvar).zip(xx.iter()) {
@@ -134,3 +157,4 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+/*TAG:end-code*/

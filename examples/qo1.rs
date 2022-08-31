@@ -6,6 +6,7 @@
 //!  Purpose: To demonstrate how to solve a quadratic optimization
 //!           problem using the MOSEK API.
 //!
+/*TAG:begin-code*/
 extern crate mosek;
 use mosek::{Task,Boundkey,Streamtype,Solsta,Soltype};
 
@@ -37,9 +38,11 @@ fn main() -> Result<(),String> {
     let asub  = vec![ 0,   0,   0 ];
     let aval  = vec![ 1.0, 1.0, 1.0 ];
 
+    //TAG:begin-sparseq
     let qsubi = vec![ 0,  1,   2,  2 ];
     let qsubj = vec![ 0,  1,   0,  2 ];
     let qval  = vec![ 2.0,0.2,-1.0,2.0 ];
+    //TAG:end-sparseq
 
 
     /* Create the optimization task. */
@@ -52,11 +55,13 @@ fn main() -> Result<(),String> {
 
     //r = MSK_linkfunctotaskstream(task,MSK_STREAM_LOG,NULL,printstr);
 
+    /*TAG:begin-append*/
     task.append_cons(NUMCON as i32)?;
 
     /* Append 'NUMVAR' variables.
      * The variables will initially be fixed at zero (x=0). */
     task.append_vars(NUMVAR as i32)?;
+    /*TAG:end-append*/
 
     /* Optionally add a constant term to the objective. */
     task.put_cfix(0.0)?;
@@ -64,28 +69,36 @@ fn main() -> Result<(),String> {
     for j in 0..NUMVAR
     {
         /* Set the linear term c_j in the objective.*/
+        /*TAG:begin-putcj*/
         task.put_c_j(j as i32,c[j])?;
+        /*TAG:end-putcj*/
 
         /* Set the bounds on variable j.
          * blx[j] <= x_j <= bux[j] */
+        /*TAG:begin-putbound-var*/
         task.put_var_bound(j as i32, /* Index of variable.*/
                            bkx[j],   /* Bound key.*/
                            blx[j],   /* Numerical value of lower bound.*/
                            bux[j])?;  /* Numerical value of upper bound.*/
+        /*TAG:end-putbound-var*/
         /* Input column j of A */
+        /*TAG:begin-putavec*/
         task.put_a_col(j as i32,                  /* Variable (column) index.*/
                        &asub[aptrb[j]..aptre[j]],  /* Pointer to row indexes of column j.*/
                        &aval[aptrb[j]..aptre[j]])?; /* Pointer to Values of column j.*/
+        /*TAG:end-putavec*/
     }
     /* Set the bounds on constraints.
      * for i=1, ...,NUMCON : blc[i] <= constraint i <= buc[i] */
     for i in 0..NUMCON
     {
+        /*TAG:begin-putbound-con*/
         task.put_con_bound(i as i32,    /* Index of constraint.*/
                            bkc[i],      /* Bound key.*/
                            blc[i],      /* Numerical value of lower bound.*/
                            buc[i])?;     /* Numerical value of upper bound.*/
 
+        /*TAG:end-putbound-con*/
         /*
          * The lower triangular part of the Q
          * matrix in the objective is specified.
@@ -93,10 +106,14 @@ fn main() -> Result<(),String> {
 
         /* Input the Q for the objective. */
 
+        /*TAG:begin-putqobj*/
         task.put_q_obj(&qsubi,&qsubj,&qval)?;
+        /*TAG:end-putqobj*/
     }
 
+    /*TAG:begin-optimize*/
     let _trmcode = task.optimize()?;
+    /*TAG:end-optimize*/
 
     /* Run optimizer */
     /* Print a summary containing information
@@ -109,9 +126,11 @@ fn main() -> Result<(),String> {
     {
         Solsta::OPTIMAL =>
         {
+            /*TAG:begin-getsolution*/
             let mut xx = vec![0.0, 0.0, 0.0];
             task.get_xx(Soltype::ITR,    /* Request the interior solution. */
                         & mut xx[..])?;
+            /*TAG:end-getsolution*/
 
             println!("Optimal primal solution");
             for j in 0..NUMVAR
@@ -137,3 +156,4 @@ fn main() -> Result<(),String> {
     }
     return Ok(());
 } /* main */
+/*TAG:end-code*/
