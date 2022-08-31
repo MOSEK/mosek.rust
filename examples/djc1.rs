@@ -96,7 +96,7 @@ fn main() -> Result<(),String> {
     task.get_xx(Soltype::ITG,xx.as_mut_slice())?;
 
     assert!(sta == Solsta::INTEGER_OPTIMAL);
-    assert(xx.iter().zip([0.0, 0.0, -12.5, 2.5].iter()).all(|(&a,&b)| (a-b).abs() < 1e-7))
+    assert(xx.iter().zip([0.0, 0.0, -12.5, 2.5].iter()).all(|(&a,&b)| (a-b).abs() < 1e-7));
 
     println!("Optimal solution: ");
     for (i,&xi) in xx.iter().enumerate() {
