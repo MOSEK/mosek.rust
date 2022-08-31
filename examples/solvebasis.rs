@@ -1,7 +1,7 @@
 //!
-//!  Copyright : $$copyright
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : solvebasis.rs
+//!  File : $${file}
 //!
 
 extern crate mosek;

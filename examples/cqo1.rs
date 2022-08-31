@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : cqo1.rs
+//!  File : $${file}
 //!
 //!  Purpose:   To demonstrate how to solve a small conic quadratic
 //!             optimization problem using the MOSEK API.

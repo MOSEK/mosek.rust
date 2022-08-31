@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : ceo1.rs
+//!   File : $${file}
 //!
 //!   Description:
 //!       Demonstrates how to solve a small conic exponential

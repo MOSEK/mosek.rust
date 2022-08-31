@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : sensitivity.rs
+//!   File : $${file}
 //!
 //!   Purpose :   To demonstrate how to perform sensitivity
 //!               analysis from the API on a small problem:

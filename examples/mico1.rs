@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : mico1.rs
+//!   File : $${file}
 //!
 //!   Purpose :   Demonstrates how to solve a small mixed
 //!               integer conic optimization problem.

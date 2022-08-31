@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : helloworld.rs
+//!  File : $${file}
 //!
 //!  The most basic example of how to get started with MOSEK.
 //!

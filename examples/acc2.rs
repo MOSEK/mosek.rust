@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : acc2.rs
+//!  File : $${file}
 //!
 //!  Purpose :   Tutorial example for affine conic constraints.
 //!              Models the problem:

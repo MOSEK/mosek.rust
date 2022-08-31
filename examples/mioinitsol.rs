@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : mioinitsol.rs
+//!   File : $${file}
 //!
 //!   Purpose :   Demonstrates how to solve a MIP with a start guess.
 //!

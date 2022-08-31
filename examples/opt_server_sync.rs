@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : opt_server_sync.rs
+//!   File : $${file}
 //!
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem synchronously

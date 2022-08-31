@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : concurrent1.rs
+//!  File : $${file}
 //!
 //!  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
 //!

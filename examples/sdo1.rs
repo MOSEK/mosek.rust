@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : sdo1.rs
+//!  File : $${file}
 //!
 //!  Purpose:   Solves the following small semidefinite optimization problem
 //!             using the MOSEK API.

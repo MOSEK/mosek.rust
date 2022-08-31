@@ -1,6 +1,6 @@
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! File : lo1.rs
+//! File : $${file}
 //!
 //! Purpose: To demonstrate how to solve a small linear
 //!          optimization problem using the MOSEK C API,

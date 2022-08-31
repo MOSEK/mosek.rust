@@ -1,5 +1,5 @@
 //!
-//! File : portfolio_2_frontier.rs
+//! File : $${file}
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!

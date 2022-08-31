@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : parallel.rs
+//!   File : $${file}
 //!
 //!   Purpose: Demonstrates parallel optimization using optimizebatch()
 //!

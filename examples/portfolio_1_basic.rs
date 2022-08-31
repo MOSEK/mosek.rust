@@ -1,5 +1,5 @@
 //!
-//! File : portfolio_1_basic.rs
+//! File : $${file}
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!

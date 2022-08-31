@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : sdo2.rs
+//!  File : $${file}
 //!
 //!  Purpose :   Solves the semidefinite problem with two symmetric variables:
 //!

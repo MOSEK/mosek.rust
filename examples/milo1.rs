@@ -1,7 +1,7 @@
 //!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : milo1.rs
+//!   File : $${file}
 //!
 //!   Purpose :   Demonstrates how to solve a small mixed
 //!               integer linear optimization problem using the MOSEK Java API.

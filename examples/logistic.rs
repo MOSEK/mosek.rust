@@ -1,6 +1,6 @@
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! File : logistic.rs
+//! File : $${file}
 //!
 //! Purpose: Implements logistic regression with regulatization.
 //!

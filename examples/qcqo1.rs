@@ -1,6 +1,6 @@
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! File : qcqo1.rs
+//! File : $${file}
 //!
 //! Purpose :   Demonstrate how to solve a quadratic
 //!             optimization problem using the MOSEK API.

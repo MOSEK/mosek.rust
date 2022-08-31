@@ -1,6 +1,6 @@
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : solvelinear.rs
+//!   File : $${file}
 //!
 //!   Purpose :   To demonstrate the usage of MSK_solvewithbasis
 //!               when solving the linear system:

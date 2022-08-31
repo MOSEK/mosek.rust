@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : blas_lapack.rs
+//!  File : $${file}
 //!
 //!  Purpose: To demonstrate how to call BLAS/LAPACK routines for
 //!           which MOSEK provides simplified interfaces.

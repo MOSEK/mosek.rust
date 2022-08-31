@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : feasrepairex1.rs
+//!  File : $${file}
 //!
 //!  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
 //!              locate the cause of an infeasibility.

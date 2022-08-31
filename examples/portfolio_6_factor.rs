@@ -2,7 +2,7 @@
 //!
 //! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//! File : portfolio_6_factor.rs
+//! File : $${file}
 //!
 //! Purpose :   Implements a portfolio optimization model using factor model.
 //!

@@ -1,7 +1,7 @@
 //!
 //!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : solutionquality.rs
+//!  File : $${file}
 //!
 //!  Purpose :   To demonstrate how to examine the quality of a solution.
 
