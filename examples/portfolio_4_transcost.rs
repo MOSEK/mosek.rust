@@ -194,3 +194,12 @@ fn main() -> Result<(),String> {
     println!("Solution vector = {:?}\n", level);
     Ok(())
 }
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test() {
+        super::main().unwrap();
+    }
+}

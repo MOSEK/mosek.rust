@@ -29,3 +29,12 @@ fn main() -> Result<(),String> {
     println!("Solution x = {}",x[0]);              // Print solution
     return Result::Ok(());
 }
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test() {
+        super::main().unwrap();
+    }
+}
