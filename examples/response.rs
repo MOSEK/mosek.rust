@@ -71,3 +71,11 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_response() {
+        super::main().unwrap();
+    }
+}

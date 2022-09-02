@@ -124,3 +124,11 @@ fn solve() -> Result<(),String> {
 fn main() -> Result<(),String> {
     solve()
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_solvebasis() {
+        super::main().unwrap();
+    }
+}

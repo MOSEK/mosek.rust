@@ -112,3 +112,11 @@ fn maxgap(a : &[f64], b : &[f64]) -> f64 {
 fn dot(a : &[f64], b : &[f64]) -> f64 {
     a.iter().zip(b.iter()).map(|(&a,&b)| (a * b)).sum()
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_acc1() {
+        super::main().unwrap();
+    }
+}

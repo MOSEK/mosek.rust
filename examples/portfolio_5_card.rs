@@ -198,3 +198,11 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_portfolio_5() {
+        super::main().unwrap();
+    }
+}

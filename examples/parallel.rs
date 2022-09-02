@@ -60,3 +60,11 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_parallel() {
+        super::main().unwrap();
+    }
+}

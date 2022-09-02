@@ -146,3 +146,11 @@ Variables
     @x1
     @x2
 ";
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_callback() {
+        super::main().unwrap();
+    }
+}

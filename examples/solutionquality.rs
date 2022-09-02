@@ -108,3 +108,11 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_solutionquality() {
+        super::main().unwrap();
+    }
+}

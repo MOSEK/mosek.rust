@@ -221,3 +221,11 @@ fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
     rc.reverse();
     (ra,rb,rc)
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_concurrent1() {
+        super::main().unwrap();
+    }
+}

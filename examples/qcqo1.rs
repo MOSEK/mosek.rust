@@ -138,3 +138,11 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 } /* Main */
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_qcqo1() {
+        super::main().unwrap();
+    }
+}

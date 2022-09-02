@@ -86,3 +86,11 @@ fn main() -> Result<(),String> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_opt_server_async() {
+        super::main().unwrap();
+    }
+}

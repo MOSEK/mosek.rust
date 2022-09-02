@@ -118,3 +118,11 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_sdo_lmi() {
+        super::main().unwrap();
+    }
+}
