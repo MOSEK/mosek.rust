@@ -85,11 +85,3 @@ fn main() -> Result<(),String> {
     println!("Construct solution objective: {}",  constr_val);
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_mioinitsol() {
-        super::main().unwrap();
-    }
-}

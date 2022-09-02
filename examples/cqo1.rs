@@ -146,7 +146,7 @@ fn main() -> Result<(),String>
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_cqo1() {
+    fn test() {
         super::main().unwrap();
     }
 }

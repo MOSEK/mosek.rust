@@ -46,11 +46,3 @@ fn main() -> Result<(),String> {
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_opt_server_sync() {
-        super::main().unwrap();
-    }
-}

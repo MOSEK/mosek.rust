@@ -110,7 +110,7 @@ fn dot(a : &[f64], b : &[f64]) -> f64 {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_acc2() {
+    fn test() {
         super::main().unwrap();
     }
 }

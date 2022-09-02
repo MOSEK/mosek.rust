@@ -73,23 +73,37 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
         .collect()
 }
 
-fn main() -> Result<(),String> {
-    let args: Vec<String> = env::args().collect();
 
+enum FileOrText {
+    File(String),
+    Text(String)
+}
+fn main() -> Result<(),String> {
+    let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: concurrent1 FILENAME [ TIMELIMIT ]");
         return Err("Invalid argument list".to_string());
     }
+    let _ = args.next();
+    let filename = args.next().unwrap();
+    let timelimit = args.next();
+    concurrent1(FileOrText::File(filename),
+                timelimit)
+}
 
+fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),String> {
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
         };
 
-    task.read_data(args[1].as_str())?;
-    if args.len() > 2 {
-        task.put_dou_param(mosek::Dparam::OPTIMIZER_MAX_TIME, args[2].parse().unwrap())?;
+    match data {
+        FileOrText::File(fname) => task.read_data(fname.as_str())?,
+        FileOrText::Text(text)  => task.read_ptf_string(text.as_str())?
+    }
+    if let Some(timelimit) = timelimit {
+        task.put_dou_param(mosek::Dparam::OPTIMIZER_MAX_TIME, timelimit.parse().unwrap())?;
     }
 
     let numintvar = task.get_num_int_var()?;
@@ -222,10 +236,40 @@ fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
     (ra,rb,rc)
 }
 
+
+
 #[cfg(test)]
 mod tests {
+    const DFLT_FILE1 : &str = "Task
+Objective
+    Maximize + 2 @x0 + 3 @x1 - @x2
+Constraints
+    @c0 [1] + @x0 + @x1 + @x2
+    @C0 [QUAD(3)]
+        @ac1: + 0.03
+        @ac2: + 1.5 @x0 + 0.1 @x1
+        @ac3: + 0.3 @x0 + 2.1 @x2 + 0.1
+Variables
+    @x0
+    @x1
+    @x2
+";
+
+    const DFLT_FILE2 : &str = "Task
+Objective
+    Maximize + @x0 + 0.64 @x1
+Constraints
+    @c0 [-inf;250] + 50 @x0 + 31 @x1
+    @c1 [-4;+inf] + 3 @x0 - 2 @x1
+Variables
+    @x0[0;+inf]
+    @x1[0;+inf]
+Integers
+    @x0 @x1
+";
     #[test]
-    fn test_concurrent1() {
-        super::main().unwrap();
+    fn test() {
+        super::concurrent1(super::FileOrText::Text(DFLT_FILE1.to_string()),None).unwrap();
+        super::concurrent1(super::FileOrText::Text(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
     }
 }

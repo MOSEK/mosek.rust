@@ -185,11 +185,3 @@ fn main() -> Result<(),String>
     }
     Ok(())
 } /* main */
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_sdo1() {
-        super::main().unwrap();
-    }
-}

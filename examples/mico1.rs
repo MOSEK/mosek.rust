@@ -68,11 +68,3 @@ fn main() -> Result<(),String> {
     println!("x = {}  y = {}",xx[0],xx[1]);
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_mico1() {
-        super::main().unwrap();
-    }
-}

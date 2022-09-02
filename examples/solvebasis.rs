@@ -128,7 +128,7 @@ fn main() -> Result<(),String> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_solvebasis() {
+    fn test() {
         super::main().unwrap();
     }
 }

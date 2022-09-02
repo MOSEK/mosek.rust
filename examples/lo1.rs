@@ -147,11 +147,10 @@ fn main() -> Result<(),String> {
 
 }
 
-
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_lo1() {
+    fn test() {
         super::main().unwrap();
     }
 }

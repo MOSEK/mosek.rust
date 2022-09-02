@@ -134,11 +134,3 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_milo1() {
-        super::main().unwrap();
-    }
-}

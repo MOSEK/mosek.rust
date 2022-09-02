@@ -286,11 +286,3 @@ impl Matrix {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_portfolio_6() {
-        super::main().unwrap();
-    }
-}

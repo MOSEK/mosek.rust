@@ -98,11 +98,10 @@ fn main() -> Result<(),String> {
     return Result::Ok(());
 }
 
-
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_ceo1() {
+    fn test() {
         super::main().unwrap();
     }
 }
