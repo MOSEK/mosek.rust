@@ -1,3 +1,4 @@
+//!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
 //!   Purpose :   Demonstrates how to solve a  linear
@@ -12,6 +13,7 @@ use itertools::izip;
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+
     let numcon = 3;
     let numvar = 3;
     let c = &[1.5, 2.5, 3.0 ];
@@ -89,7 +91,6 @@ fn main() -> Result<(),String> {
 
     /****************** Make a change to the A matrix ******************/
     task.put_aij(0, 0, 3.0)?;
-
     let _trm = task.optimize()?;
     task.get_xx(Soltype::BAS, // Request the basic solution.
                 xx.as_mut_slice())?;

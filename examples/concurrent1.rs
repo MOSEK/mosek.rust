@@ -73,7 +73,6 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
         .collect()
 }
 
-
 enum FileOrText {
     File(String),
     Text(String)
@@ -235,7 +234,6 @@ fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
     rc.reverse();
     (ra,rb,rc)
 }
-
 
 
 #[cfg(test)]

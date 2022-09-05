@@ -66,7 +66,6 @@ fn main() -> Result<(),String>
 
     /* Input columns of A */
     task.put_a_row(0, asub, aval)?;
-    
 
     /* Set the bounds on constraints.
      * for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] */

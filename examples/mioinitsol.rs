@@ -58,7 +58,6 @@ fn main() -> Result<(),String> {
     /* A maximization problem */
     task.put_obj_sense(Objsense::MAXIMIZE)?;
 
-
     // Assign values to integer variables
     // We only set that slice of xx
     task.put_xx_slice(Soltype::ITG, 0, 3, &[1.0,1.0,0.0])?;

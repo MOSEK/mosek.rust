@@ -131,7 +131,6 @@ fn main() -> Result<(),String>
     let _trmcode = task.optimize()?;
 
     task.write_data("sdo1.ptf")?;
-
     /* Print a summary containing information
      * about the solution for debugging purposes*/
     task.solution_summary (Streamtype::MSG)?;

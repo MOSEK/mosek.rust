@@ -1,3 +1,4 @@
+//!
 //!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
 //!   File : opt_server_async.rs

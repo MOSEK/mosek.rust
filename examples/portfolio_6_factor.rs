@@ -107,6 +107,8 @@ fn portfolio(w      : f64,
     }).collect::<Vec<(f64,f64)>>())
 }
 
+
+
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
     // Since the value infinity is never used, we define
@@ -286,7 +288,6 @@ impl Matrix {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

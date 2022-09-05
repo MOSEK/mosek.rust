@@ -147,7 +147,6 @@ fn main() -> Result<(),String> {
     return Result::Ok(());
 }
 
-
 #[cfg(test)]
 mod tests {
     #[test]

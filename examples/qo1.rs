@@ -41,7 +41,6 @@ fn main() -> Result<(),String> {
     let qsubj = vec![ 0,  1,   0,  2 ];
     let qval  = vec![ 2.0,0.2,-1.0,2.0 ];
 
-
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
@@ -85,7 +84,6 @@ fn main() -> Result<(),String> {
                            bkc[i],      /* Bound key.*/
                            blc[i],      /* Numerical value of lower bound.*/
                            buc[i])?;     /* Numerical value of upper bound.*/
-
         /*
          * The lower triangular part of the Q
          * matrix in the objective is specified.
