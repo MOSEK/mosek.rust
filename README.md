@@ -4,7 +4,7 @@ This software is still experimental. We (MOSEK) will attempt to fix
 errors and bugs, but provide no guarantee on how or how quickly we do
 so.
 
-# Mosek 10.0 Rust interface
+# Mosek 10.1 Rust interface
 
 - Mosek optimization software: https://mosek.com/
 - Rust language: https://www.rust-lang.com
@@ -32,7 +32,7 @@ cargo build
 ```
 or
 ```
-export MOSEK_BINDIR_100=$HOME/local/mosek/10.0/tools/platform/linux64x86/bin
+export MOSEK_BINDIR_101=$HOME/local/mosek/10.0/tools/platform/linux64x86/bin
 cargo build
 ```
 
