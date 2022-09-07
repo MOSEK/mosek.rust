@@ -4324,6 +4324,22 @@ impl TaskCB {
         }
     }
 
+    pub fn clear_callback(& mut self) -> Result<(),String> {
+        self.valuecb = None;
+        let nullptr : * const u8 = std::ptr::null();
+        let nullptrptr = &nullptr as * const _ as * mut libc::c_void;
+
+        let mut f = nullptrptr as * mut extern fn(* const c_void,* const libc::c_void,i32,*const f64,*const i32,*const i64) -> i32;
+        if 0 != unsafe { MSK_putcallbackfunc(self.task.ptr,
+                                             *f,
+                                             std::ptr::null_mut()) } {
+            Err("put_callback: Failed to attach callback".to_string())
+        }
+        else {
+            Ok(())
+        }
+    }
+
     /// Analyze the names and issue an error for the first invalid name.
     ///
     /// # Arguments
@@ -9040,7 +9056,7 @@ impl TaskCB {
 extern fn wrap_data_write_handle(handle : * const libc::c_void,
                                  src    : * const u8,
                                  count  : usize) -> usize {
-    let h = handle as * const Box<dyn Fn(&[u8]) -> usize>;
+    let h = handle as * mut Box<dyn FnMut(&[u8]) -> usize>;
     unsafe {
         (*h)(std::slice::from_raw_parts(src,count))
     }
@@ -9109,8 +9125,8 @@ impl Task {
     }
 
     pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
-    where F : Fn(&[u8]) -> usize {
-        let boxfunc : Box<dyn Fn(&[u8]) -> usize> = Box::new(func);
+    where F : FnMut(&[u8]) -> usize {
+        let boxfunc : Box<dyn FnMut(&[u8]) -> usize> = Box::new(func);
         let hnd =  (&boxfunc) as * const _ as * mut libc::c_void;
         self.handle_res(unsafe { MSK_writedatahandle(self.ptr, wrap_data_write_handle, hnd, format,compress ) }, "write_data_stream")
     }
