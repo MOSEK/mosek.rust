@@ -67,6 +67,11 @@ extern {
                           sizelastmsg  : i64,
                           lastmsglen   : * mut i64,
                           lastmsg      : * mut u8) -> i32;
+    fn MSK_writedatahandle(task     : * const u8,
+	                   func     : extern fn (handle : * const c_void, src : * const u8, count : usize) -> usize,
+	                   handle   : * const c_void,
+	                   format   : i32,
+                           compress : i32) -> i32;
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
@@ -9030,6 +9035,17 @@ impl TaskCB {
     pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.write_task_solver_result_file(filename_,compress_) }
 
 }
+
+
+extern fn wrap_data_write_handle(handle : * const libc::c_void,
+                                 src    : * const u8,
+                                 count  : usize) -> usize {
+    let h = handle as * const Box<dyn Fn(&[u8]) -> usize>;
+    unsafe {
+        (*h)(std::slice::from_raw_parts(src,count))
+    }
+}
+
 impl Task {
     /// Create a new task in the given environment or with the default environment with a given capacity
     pub fn with_capacity(env : Option<&Env>, numcon : i32, numvar : i32) -> Option<Task> {
@@ -9092,7 +9108,12 @@ impl Task {
         );
     }
 
-
+    pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+    where F : Fn(&[u8]) -> usize {
+        let boxfunc : Box<dyn Fn(&[u8]) -> usize> = Box::new(func);
+        let hnd =  (&boxfunc) as * const _ as * mut libc::c_void;
+        self.handle_res(unsafe { MSK_writedatahandle(self.ptr, wrap_data_write_handle, hnd, format,compress ) }, "write_data_stream")
+    }
 
     /// Analyze the names and issue an error for the first invalid name.
     ///
