@@ -101,7 +101,7 @@ fn main() -> Result<(),String> {
         println!("Syntax: callback (psim|dsim|intpnt) FILENAME");
     }
 
-    callbackmain(args[2].as_str(),FileOrText::File(args[1].as_str()))
+    callbackmain(args[1].as_str(),FileOrText::File(args[2].as_str()))
 }
 
 fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
