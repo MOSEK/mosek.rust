@@ -88,8 +88,10 @@ fn main() -> Result<(),String> {
     let solsta = task.get_sol_sta(Soltype::ITR)?;
 
     assert!(solsta == Solsta::OPTIMAL);
+    
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITR, & mut xx[..])?;
+    
     println!("Optimal primal solution");
     for j in 0..numvar as usize {
         println!("x[{}]: {:.4}",j,xx[j]);

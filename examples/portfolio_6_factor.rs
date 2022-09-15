@@ -21,6 +21,7 @@ fn portfolio(w      : f64,
              mu     : &[f64],
              x0     : &[f64],
              gammas : &[f64],
+             theta  : &[f64],
              GT     : &Matrix) -> Result<Vec<(f64,f64)>,String> {
 
     let mut task = match Task::new() {
@@ -63,19 +64,21 @@ fn portfolio(w      : f64,
     }
     task.put_con_bound(coff_bud, Boundkey::FX, total_budget, total_budget)?;
 
-    // Input (gamma, GTx) in the AFE (affine expression) storage
-    // We need k+1 rows
-    task.append_afes(k as i64 + 1)?;
-    // The first affine expression = gamma
-    // NOTE: We change this in a loop, so specified below.
-    // The remaining k expressions comprise GT*x, we add them row by row
-    // In more realisic scenarios it would be better to extract nonzeros and input in sparse form
-
+    // Input (gamma, G_factor_T x, diag(sqrt(theta))*x) in the AFE (affine expression) storage
+    // We need k+n+1 rows and we fill them in in three parts
+    task.append_afes((k+n) as i64 + 1)?;
+    // 1. The first affine expression = gamma, will be specified later
+    // 2. The next k expressions comprise G_factor_T*x, we add them row by row
+    //    transposing the matrix G_factor on the fly
     task.put_afe_f_row_list((1..1+k as i64).collect::<Vec<i64>>().as_slice(), // f row idxs
                             vec![n; k as usize].as_slice(), // row lengths
                             (0..GT.len() as i64).step_by(n as usize).collect::<Vec<i64>>().as_slice(), // row ptr
                             iproduct!(0..k,0..n).map(|(_,b)| b).collect::<Vec<i32>>().as_slice(), // varidx, 0..n repeated k times
                             GT.data_by_row().as_slice())?;
+    // 3. The remaining n rows contain sqrt(theta) on the diagonal
+    for (i,thetai) in (0..n).zip(theta.iter()) {
+        task.put_afe_f_entry(i as i64 + 1 + k as i64, voff_x + i, thetai.sqrt());
+    }
 
     // Input the affine conic constraint (gamma, GT*x) \in QCone
     // Add the quadratic domain of dimension k+1
@@ -92,18 +95,17 @@ fn portfolio(w      : f64,
 
     Ok(gammas.iter().filter_map(|&gamma| {
         // Specify gamma in ACC
-        if let Err(_) = task.put_afe_g(0, gamma) { None }
-        else if let Err(_) = task.optimize() { None }
-        else {
-            /* Display solution summary for quick inspection of results */
-            let _ = task.solution_summary(Streamtype::LOG);
-            let _ = task.write_data(format!("portfolio_6_factor-{}.ptf",gamma).as_str());
+        
+        task.put_afe_g(0, gamma).ok()?;
+        task.optimize().ok()?;
+        /* Display solution summary for quick inspection of results */
+        let _ = task.solution_summary(Streamtype::LOG);
+        let _ = task.write_data(format!("portfolio_6_factor-{}.ptf",gamma).as_str());
 
-            /* Read the results */
-            let mut xx = vec![0.0; n as usize];
-            if let Err(_) = task.get_xx_slice(Soltype::ITR, voff_x, voff_x + n, xx.as_mut_slice()) { None }
-            else { Some((gamma,xx.iter().zip(mu.iter()).map(|(&xj,&muj)| xj*muj).sum::<f64>())) }
-        }
+        /* Read the results */
+        let mut xx = vec![0.0; n as usize];
+        task.get_xx_slice(Soltype::ITR, voff_x, voff_x + n, xx.as_mut_slice()).ok()?;
+        Some((gamma,xx.iter().zip(mu.iter()).map(|(&xj,&muj)| xj*muj).sum::<f64>()))
     }).collect::<Vec<(f64,f64)>>())
 }
 
@@ -147,6 +149,7 @@ fn main() -> Result<(),String> {
                                     mu,
                                     x0,
                                     gammas,
+                                    theta,
                                     &GT)? {
         println!("Expected return {:.4e} for gamma {:.2}", expret, gamma);
     }

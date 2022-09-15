@@ -90,8 +90,6 @@ fn main() -> Result<(),String> {
 
     let _trm = task.optimize()?;
 
-    task.write_data("milo1.ptf")?;
-
     // Print a summary containing information
     //   about the solution for debugging purposes
     task.solution_summary(Streamtype::MSG)?;
