@@ -1,121 +1,104 @@
 /*
-   Copyright: $$copyright
+   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 
-   File:      $${file}
+   File:      sparsecholesky.rs
 
    Purpose:   Demonstrate the sparse Cholesky factorization.
 
  */
-package com.mosek.example;
-import mosek.*;
+extern crate mosek;
+extern crate itertools;
+use mosek::Transpose;
+use itertools::{iproduct,izip};
 
-public class sparsecholesky {
-  public static void printsparse(int      n,
-                                 int[]    perm,
-                                 double[] diag,
-                                 int[]    lnzc,
-                                 long[]   lptrc,
-                                 long     lensubnval,
-                                 int[]    lsubc,
-                                 double[] lvalc) {
-    int i, j;
-    System.out.print("P = [ ");
-    for (i = 0; i < n; i++) System.out.print(perm[i] + " ");
-    System.out.println("]");
-    System.out.print("diag(D) = [ ");
-    for (i = 0; i < n; i++) System.out.print(diag[i] + " ");
-    System.out.println("]");
-    double[] l = new double[n * n];
-    for (j = 0; j < n; j++)
-      for (i = (int)lptrc[j]; i < lptrc[j] + lnzc[j]; i++)
-        l[lsubc[i] * n + j] = lvalc[i];
-    System.out.println("L=");
-    for (i = 0; i < n; i++) {
-      for (j = 0; j < n; j++) System.out.print(l[i * n + j] + " ");
-      System.out.println("");
-    }
-  }
+fn print_sparse(n     : usize,
+                perm  : &[i32],
+                diag  : &[f64],
+                lnzc  : &[i32],
+                lptrc : &[i64],
+                lsubc : &[i32],
+                lvalc : &[f64]) {
+    println!("P = {:?}",perm);
+    println!("diag(D) = {:?}",diag);
+
+    let mut l = vec![0.0; n*n];
+
+    for (j,(&ptr,&sz)) in lptrc.iter().zip(lnzc.iter()).enumerate() {
+        let pfrom = ptr as usize;
+        let pto = ptr as usize + sz as usize;
+        for (&subci,&valci) in lsubc[pfrom..pto].iter().zip(lvalc[pfrom..pto].iter()) {
+            l[subci as usize * n + j] = valci;
+        }
+    };
+    println!("L = [");
+    (0..n*n).step_by(n).for_each(|i| {
+        print!("  {:?}",&l[i..i+n]);
+    });
+    println!("  ]");
+}
 
 
-  public static void main(String[] args) {
+fn main() -> Result<(),String> {
     /* Create the mosek environment. */
-    try (Env env = new Env()) {
-      {
-        //Example from the manual
-        /*TAG:begin-example1*/
-        //Observe that anzc, aptrc, asubc and avalc only specify the lower triangular part.
-        int n                 = 4;
-        int[] anzc            = {4, 1, 1, 1};
-        int[] asubc           = {0, 1, 2, 3, 1, 2, 3};
-        long[] aptrc          = {0, 4, 5, 6};
-        double[] avalc        = {4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-        double[] b            = {13.0, 3.0, 4.0, 5.0};
-        /*TAG:end-example1*/
+    //Example from the manual
+    //Observe that anzc, aptrc, asubc and avalc only specify the lower triangular part.
+    let n     = 4;
+    let anzc  = [4, 1, 1, 1];
+    let asubc = [0, 1, 2, 3, 1, 2, 3];
+    let aptrc = [0, 4, 5, 6];
+    let avalc = [4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+    let b     = [13.0, 3.0, 4.0, 5.0];
 
-        int[][] perm      = new int[1][];
-        int[][] lnzc      = new int[1][];
-        int[][] lsubc     = new int[1][];
-        long[] lensubnval = new long[1];
-        double[][] diag   = new double[1][];
-        long[][] lptrc    = new long[1][];
-        double[][] lvalc  = new double[1][];
+    let mut perm   = Vec::new();
+    let mut lnzc   = Vec::new();
+    let mut lsubc  = Vec::new();
+    let mut diag   = Vec::new();
+    let mut lptrc  = Vec::new();
+    let mut lvalc  = Vec::new();
+    let mut lensubnval = 0;
 
-        /*TAG:begin-factorization*/
-        env.computesparsecholesky(0,        //Mosek chooses number of threads
-                                  1,        //Apply reordering heuristic
-                                  1.0e-14,  //Singularity tolerance
-                                  anzc, aptrc, asubc, avalc,
-                                  perm, diag,
-                                  lnzc, lptrc, lensubnval, lsubc, lvalc);
+    mosek::compute_sparse_cholesky(0,        //Mosek chooses number of threads
+                                   1,        //Apply reordering heuristic
+                                   1.0e-14,  //Singularity tolerance
+                                   &anzc, &aptrc, &asubc, &avalc,
+                                   & mut perm, & mut diag,
+                                   & mut lnzc, & mut lptrc, & mut lensubnval, & mut lsubc, & mut lvalc)?;
+    print_sparse(n, perm.as_slice(), diag.as_slice(), lnzc.as_slice(), lptrc.as_slice(), lsubc.as_slice(), lvalc.as_slice());
 
-        printsparse(n, perm[0], diag[0], lnzc[0], lptrc[0], lensubnval[0], lsubc[0], lvalc[0]);
+    /* Permuted b is stored as x. */
+    let mut x : Vec<f64> = perm.iter().map(|&i| b[i as usize]).collect();
 
-        /* Permuted b is stored as x. */
-        double[] x = new double[n];
-        for (int i = 0; i < n; i++) x[i] = b[perm[0][i]];
+    /*Compute  inv(L)*x.*/
+    mosek::sparse_triangular_solve_dense(Transpose::NO,  lnzc.as_slice(), lptrc.as_slice(), lsubc.as_slice(), lvalc.as_slice(), x.as_mut_slice())?;
+    /*Compute  inv(L^T)*x.*/
+    mosek::sparse_triangular_solve_dense(Transpose::YES, lnzc.as_slice(), lptrc.as_slice(), lsubc.as_slice(), lvalc.as_slice(), x.as_mut_slice())?;
 
-        /*Compute  inv(L)*x.*/
-        env.sparsetriangularsolvedense(mosek.transpose.no, lnzc[0], lptrc[0], lsubc[0], lvalc[0], x);
-        /*Compute  inv(L^T)*x.*/
-        env.sparsetriangularsolvedense(mosek.transpose.yes, lnzc[0], lptrc[0], lsubc[0], lvalc[0], x);
+    print!("\nSolution A x = b, x = [ {:?} ]",
+           iproduct!(0..n,izip!(perm.iter(),x.iter()))
+           .filter_map(|(i,(&pj,&xj))|if pj as usize == i { Some(xj) } else { None })
+           .collect::<Vec<f64>>());
+    let n     = 3;
+    let anzc  = [3, 2, 1];
+    let asubc = [0, 1, 2, 1, 2, 2];
+    let aptrc = [0, 3, 5, ];
+    let avalc = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
 
-        System.out.print("\nSolution A x = b, x = [ ");
-        for (int i = 0; i < n; i++)
-          for (int j = 0; j < n; j++) if (perm[0][j] == i) System.out.print(x[j] + " ");
-        System.out.println("]\n");
-        /*TAG:end-factorization*/
-      }
+    let mut perm   = Vec::new();
+    let mut lnzc   = Vec::new();
+    let mut lsubc  = Vec::new();
+    let mut diag   = Vec::new();
+    let mut lptrc  = Vec::new();
+    let mut lvalc  = Vec::new();
+    let mut lensubnval = 0;
 
-      {
-        /*TAG:begin-example2 */
-        int n                 = 3;
-        int[] anzc            = {3, 2, 1};
-        int[] asubc           = {0, 1, 2, 1, 2, 2};
-        long[] aptrc          = {0, 3, 5, };
-        double[] avalc        = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-        /*TAG:end-example2 */
+    mosek::compute_sparse_cholesky(0,        //Mosek chooses number of threads
+                                   1,        //Apply reordering heuristic
+                                   1.0e-14,  //Singularity tolerance
+                                   &anzc, &aptrc, &asubc, &avalc,
+                                   & mut perm, & mut diag,
+                                   & mut lnzc, & mut lptrc, & mut lensubnval, & mut lsubc, & mut lvalc)?;
 
-        int[][] perm      = new int[1][];
-        int[][] lnzc      = new int[1][];
-        int[][] lsubc     = new int[1][];
-        long[] lensubnval = new long[1];
-        double[][] diag   = new double[1][];
-        long[][] lptrc    = new long[1][];
-        double[][] lvalc  = new double[1][];
+    print_sparse(n, perm.as_slice(), diag.as_slice(), lnzc.as_slice(), lptrc.as_slice(), lsubc.as_slice(), lvalc.as_slice());
 
-        env.computesparsecholesky(0,        //Mosek chooses number of threads
-                                  1,        //Apply reordering heuristic
-                                  1.0e-14,  //Singularity tolerance
-                                  anzc, aptrc, asubc, avalc,
-                                  perm, diag,
-                                  lnzc, lptrc, lensubnval, lsubc, lvalc);
-
-        printsparse(n, perm[0], diag[0], lnzc[0], lptrc[0], lensubnval[0], lsubc[0], lvalc[0]);
-      }
-    } catch (mosek.Exception e) {
-      System.out.println("An error was encountered");
-      System.out.println(e.getMessage());
-      throw e;
-    }
-  }
+    Ok(())
 }
