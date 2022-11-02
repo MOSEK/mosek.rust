@@ -69,7 +69,7 @@ change between minor versions (though usually it will not change much).
 For example, add to your `Cargo.toml`:
 ```
 [dependencies]
-mosek = "10.0"
+mosek = "10.1"
 ```
 
 # Why Use Rust with Mosek?
