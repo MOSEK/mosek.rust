@@ -1,6 +1,7 @@
 # Mosek 10.0 Rust interface
 
 - Mosek optimization software: [https://mosek.com/]
+- Github repository for this package: [https://github.com/MOSEK/mosek.rust]
 - Rust language: [https://www.rust-lang.com]
 - Pre-packaged crates are available from [https://crates.io]
 
@@ -36,7 +37,11 @@ MOSEK library.
 
 ## Documentation
 
-```cargo doc``` will build the simple API documentation for all
+```
+cargo doc
+```
+
+will build the simple API documentation for all
 functions, objects and constants. For a more complete documentation,
 see <https://docs.mosek.com/latest/capi/index.html>.
 
@@ -66,3 +71,19 @@ For example, add to your `Cargo.toml`:
 [dependencies]
 mosek = "10.0"
 ```
+
+# Why Use Rust with Mosek?
+
+Rust has many advantages over other languages supported directly by MOSEK. For
+data wrangling it is faster than Python, Java or .NET, and it is significantly
+safer than C or C++. When building non-trivial models, the time it takes to
+form the input data for a problem may become non-trivial as well. When
+efficiency is critical, the traditional language of choice would have been C or C++, 
+but now Rust provides a much safer alternative. 
+
+Compared to Java and .NET Rust is in many cases somewhat faster when e.g.
+building complex constraint matrixes.
+
+Finally, it looks good. Rust language facilities allow us to write many array
+operations very compactly, yielding concise and readable model code.
+
