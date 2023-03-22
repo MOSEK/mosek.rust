@@ -3,6 +3,9 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::str::FromStr;
 use std::io::prelude::*;
+//use curl::easy::Easy;
+use std::process::Command;
+
 
 fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     if cfg!(target_os = "windows") {
@@ -43,7 +46,8 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     }
 }
 
-fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> String {
+
+fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> Option<String> {
     let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
 
     let mut bindir_b = PathBuf::new();
@@ -62,7 +66,7 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
                                         let mut r = env::var_os("HOMEDRIVE").unwrap();
                                         r.push(p);
                                         r },
-                                    None => panic!("No MOSEK installation found"),
+                                    None => return None,
                                 }
                         }
                 };
@@ -77,10 +81,72 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
         }
 
     if ! bindir_b.as_path().is_dir() {
-        panic!("MOSEK bin directory {} does not exist or is not a directory",bindir_b.as_path().to_str().unwrap());
+        return None
+        //panic!("MOSEK bin directory {} does not exist or is not a directory",bindir_b.as_path().to_str().unwrap());
     }
 
-    bindir_b.as_path().to_str().unwrap().to_string()
+    Some(bindir_b.as_path().to_str().unwrap().to_string())
+}
+
+fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
+    let mut outdir = PathBuf::new();
+    outdir.push(env::var_os("OUT_DIR").unwrap());
+    let targetdir = outdir.as_path();
+    let (archname,iszip) = match pfname.as_str() {
+        "linux64x86"   => ("mosektoolslinux64x86.tar.bz2",false),
+        "linuxaarch64" => ("mosektoolslinuxaarch64.tar.bz2",false),
+        "osx64x86"     => ("mosektoolsosx64x86.tar.bz2",false),
+        "osxaarch64"   => ("mosektoolsosxaarch64.tar.bz2",false),
+        "win32x86"     => ("mosektoolswin32x86.zip",true),
+        "win64x86"     => ("mosektoolswin64x86.zip",true),
+        _ => panic!("Invalid platform")
+    };
+    let mut archfile = PathBuf::new();
+    archfile.push(targetdir);
+    archfile.push(archname);
+
+    if ! archfile.exists() {
+        let res =  Command::new("curl")
+            .arg("--silent")
+            .arg(format!("https://download.mosek.com/stable/{}.{}/version",majorver,minorver).as_str())
+            .output()
+            .expect("Failed to get latest version");
+        let verstr = match String::from_utf8_lossy(res.stdout.as_ref()) {
+            std::borrow::Cow::Owned(s) => s,
+            std::borrow::Cow::Borrowed(s) => s.to_string()
+        };
+        
+        let ver = verstr.trim();
+
+       
+        Command::new("curl")
+            .arg("-o").arg(archfile.as_path())
+            .arg("--silent")
+            .arg(format!("https://download.mosek.com/stable/{}/{}",ver,archname).as_str())
+            .status()
+            .expect("Failed to get distro file");
+    }
+    // File written, now we have to unpack
+    if iszip {
+        panic!("Not implemented: Unzipping distro on Windows");
+    }
+    else {
+        Command::new("tar")
+            .arg("xjf").arg(archfile)
+            .arg("-C").arg(outdir.as_path())
+            .status()
+            .expect("Failed to unpack distro");
+    }
+
+    let mut res = PathBuf::new();
+    res.push(outdir.as_path());
+    res.push("mosek");
+    res.push(format!("{}.{}",majorver,minorver).as_str());
+    res.push("tools");
+    res.push("platform");
+    res.push(pfname.as_str());
+    res.push("bin");
+    res.as_path().to_str().unwrap().to_string()
 }
 
 fn readversion(filename : &str) -> (i32,i32) {
@@ -105,7 +171,9 @@ fn main() {
     let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
 
     let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
-    let libdir = find_mosek_installation(&pfname,mskvermajor,mskverminor);
+    let libdir = 
+        if let Some(p) = find_mosek_installation(&pfname,mskvermajor,mskverminor) { p } 
+        else { getmosek(&pfname, mskvermajor, mskverminor) };
 
     println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);
