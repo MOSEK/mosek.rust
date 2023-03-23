@@ -9,7 +9,8 @@ documentation = "https://docs.rs/mosek"
 repository = "https://github.com/MOSEK/Mosek.rust"
 build = "build.rs"
 license = "BSD-4-Clause"
-
+keywords = ["mosek","optimization","conic optimization","linear optimization","integer optimization"]
+categories = ["api-bindings","mathematics","science"]
 [dependencies]
 libc = "0.2"
 itertools = "0.10"
