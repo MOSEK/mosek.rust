@@ -125,17 +125,18 @@ fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
             .arg(format!("https://download.mosek.com/stable/{}/{}",ver,archname).as_str())
             .status()
             .expect("Failed to get distro file");
-    }
-    // File written, now we have to unpack
-    if iszip {
-        panic!("Not implemented: Unzipping distro on Windows");
-    }
-    else {
-        Command::new("tar")
-            .arg("xjf").arg(archfile)
-            .arg("-C").arg(outdir.as_path())
-            .status()
-            .expect("Failed to unpack distro");
+
+        // File written, now we have to unpack
+        if iszip {
+            panic!("Not implemented: Unzipping distro on Windows");
+        }
+        else {
+            Command::new("tar")
+                .arg("xjf").arg(archfile)
+                .arg("-C").arg(outdir.as_path())
+                .status()
+                .expect("Failed to unpack distro");
+        }
     }
 
     let mut res = PathBuf::new();
