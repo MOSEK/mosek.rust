@@ -19,6 +19,9 @@ Building the API requires the MOSEK library.
 - otherwise if the environment variable `MOSEK_INST_BASE`, the build
   script will look for mosek `$MOSEK_INST_BASE/mosek`,
 - otherwise  the build script will look for MOSEK in `$HOME/mosek`.
+- If none of the above produces a MOSEK distro, on linux and OSX it will
+  attempt to download and unpack the latest MOSEK distro (this requires
+  external tools `curl`, `tar` and `bzip2`). On Windows it will fail.
 
 For example
 ```
