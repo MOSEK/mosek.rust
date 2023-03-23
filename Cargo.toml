@@ -5,7 +5,8 @@ authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
 readme = "README.md"
-
+documentation = "https://docs.rs/mosek"
+repository = "https://github.com/MOSEK/Mosek.rust"
 build = "build.rs"
 license = "BSD-4-Clause"
 
