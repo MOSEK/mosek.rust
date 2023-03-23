@@ -12,3 +12,6 @@ license = "BSD-4-Clause"
 [dependencies]
 libc = "0.2"
 itertools = "0.10"
+
+#[build-dependencies]
+#curl = "0.4"
