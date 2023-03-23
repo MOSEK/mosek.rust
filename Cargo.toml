@@ -5,10 +5,13 @@ authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
 readme = "README.md"
-
+documentation = "https://docs.rs/mosek"
+repository = "https://github.com/MOSEK/Mosek.rust"
 build = "build.rs"
 license = "BSD-4-Clause"
 rust-version = "1.59"
+keywords = ["mosek","optimization","conic optimization","linear optimization","integer optimization"]
+categories = ["api-bindings","mathematics","science"]
 
 [dependencies]
 libc = "0.2"
