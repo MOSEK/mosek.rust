@@ -16915,7 +16915,7 @@ impl Drop for Task
 /// - `y_` The y vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.axpy>
-pub fn prototypepfx::axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
+pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
 /// Compares a version of the MOSEK DLL with a specified version.
 ///
 /// # Arguments
@@ -16925,7 +16925,7 @@ pub fn prototypepfx::axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> R
 /// - `revision_` Revision number.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
-pub fn prototypepfx::check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
+pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
 /// Computes a Cholesky factorization of sparse matrix.
 ///
 /// # Arguments
@@ -16946,7 +16946,7 @@ pub fn prototypepfx::check_version(major_ : i32,minor_ : i32,revision_ : i32) ->
 /// - `lvalc_` The values corresponding to row indexed stored in lsubc.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
-pub fn prototypepfx::compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
+pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
 /// Computes the inner product of two vectors.
 ///
 /// # Arguments
@@ -16957,7 +16957,7 @@ pub fn prototypepfx::compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i3
 /// - `xty_` The result of the inner product.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.dot>
-pub fn prototypepfx::dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
+pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
 /// Prints an intro to message stream.
 ///
 /// # Arguments
@@ -16965,7 +16965,7 @@ pub fn prototypepfx::dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Re
 /// - `longver_` If non-zero, then the intro is slightly longer.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
-pub fn prototypepfx::echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
+pub fn echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
 /// Performs a dense matrix multiplication.
 ///
 /// # Arguments
@@ -16986,7 +16986,7 @@ pub fn prototypepfx::echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBA
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemm>
-pub fn prototypepfx::gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
+pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
 /// Computes dense matrix times a dense vector product.
 ///
 /// # Arguments
@@ -17003,7 +17003,7 @@ pub fn prototypepfx::gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32
 /// - `y_` A pointer to the array storing the vector y.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemv>
-pub fn prototypepfx::gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
+pub fn gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
 /// Obtains build information.
 ///
 /// # Returns
@@ -17106,7 +17106,7 @@ pub fn license_cleanup() -> Result<(),String> {
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
-pub fn prototypepfx::optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
+pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
 /// Computes a Cholesky factorization of a dense matrix.
 ///
 /// # Arguments
@@ -17118,7 +17118,7 @@ pub fn prototypepfx::optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : 
 /// - `a_` A symmetric matrix stored in column-major order.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.potrf>
-pub fn prototypepfx::potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
+pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
 /// Solves a sparse triangular system of linear equations.
 ///
 /// # Arguments
@@ -17133,7 +17133,7 @@ pub fn prototypepfx::potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),Str
 /// - `b_` The right-hand side of linear equation system to be solved as a dense vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
-pub fn prototypepfx::sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
+pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
 /// Computes all eigenvalues of a symmetric dense matrix.
 ///
 /// # Arguments
@@ -17146,7 +17146,7 @@ pub fn prototypepfx::sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syeig>
-pub fn prototypepfx::syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
+pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
 /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 ///
 /// # Arguments
@@ -17159,7 +17159,7 @@ pub fn prototypepfx::syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> R
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syevd>
-pub fn prototypepfx::syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
+pub fn syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
 /// Obtains the value corresponding to a symbolic name defined by MOSEK.
 ///
 /// # Arguments
@@ -17196,5 +17196,5 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syrk>
-pub fn prototypepfx::syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
+pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
 
