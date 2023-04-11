@@ -14,7 +14,7 @@ The package should work on
 - Mac OSX aarch64
 
 Building the API requires the MOSEK library.
-- If the environment variable `MOSEK_BINDIR_100` is defined it is expected to
+- If the environment variable `MOSEK_BINDIR_101` is defined it is expected to
   point the the directory containing the MOSEK binaries,
 - otherwise if the environment variable `MOSEK_INST_BASE`, the build
   script will look for mosek `$MOSEK_INST_BASE/mosek`,
@@ -30,7 +30,7 @@ cargo build
 ```
 or
 ```
-export MOSEK_BINDIR_101=$HOME/local/mosek/10.0/tools/platform/linux64x86/bin
+export MOSEK_BINDIR_101=$HOME/local/mosek/10.1/tools/platform/linux64x86/bin
 cargo build
 ```
 
