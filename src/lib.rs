@@ -1872,156 +1872,158 @@ impl Iparam {
   pub const PRESOLVE_LEVEL : i32 = 108;
   /// Controls linear dependency check in presolve.
   pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 109;
+  /// Controls whether whether a new experimental linear depdency checker is employed.
+  pub const PRESOLVE_LINDEP_NEW : i32 = 110;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 110;
+  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 111;
   /// Controls whether the linear constraints are checked for linear dependencies.
-  pub const PRESOLVE_LINDEP_USE : i32 = 111;
+  pub const PRESOLVE_LINDEP_USE : i32 = 112;
   /// Control the maximum number of times presolve passes over the problem.
-  pub const PRESOLVE_MAX_NUM_PASS : i32 = 112;
+  pub const PRESOLVE_MAX_NUM_PASS : i32 = 113;
   /// Controls the maximum number of reductions performed by the presolve.
-  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 113;
+  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 114;
   /// Controls whether the presolve is applied to a problem before it is optimized.
-  pub const PRESOLVE_USE : i32 = 114;
+  pub const PRESOLVE_USE : i32 = 115;
   /// Controls which optimizer that is used to find the optimal repair.
-  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 115;
+  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 116;
   /// Controls whether parameters section is written in PTF files.
-  pub const PTF_WRITE_PARAMETERS : i32 = 116;
+  pub const PTF_WRITE_PARAMETERS : i32 = 117;
   /// Controls whether solution section is written in PTF files.
-  pub const PTF_WRITE_SOLUTIONS : i32 = 117;
+  pub const PTF_WRITE_SOLUTIONS : i32 = 118;
   /// Controls if simple transformation are done when writing PTF files.
-  pub const PTF_WRITE_TRANSFORM : i32 = 118;
+  pub const PTF_WRITE_TRANSFORM : i32 = 119;
   /// Turns on additional debugging information when reading files.
-  pub const READ_DEBUG : i32 = 119;
+  pub const READ_DEBUG : i32 = 120;
   /// Controls whether the free constraints are included in the problem.
-  pub const READ_KEEP_FREE_CON : i32 = 120;
+  pub const READ_KEEP_FREE_CON : i32 = 121;
   /// Controls how strictly the MPS file reader interprets the MPS format.
-  pub const READ_MPS_FORMAT : i32 = 121;
+  pub const READ_MPS_FORMAT : i32 = 122;
   /// Controls the maximal number of characters allowed in one line of the MPS file.
-  pub const READ_MPS_WIDTH : i32 = 122;
+  pub const READ_MPS_WIDTH : i32 = 123;
   /// Controls what information is used from the task files.
-  pub const READ_TASK_IGNORE_PARAM : i32 = 123;
+  pub const READ_TASK_IGNORE_PARAM : i32 = 124;
   /// Use compression when sending data to an optimization server
-  pub const REMOTE_USE_COMPRESSION : i32 = 124;
+  pub const REMOTE_USE_COMPRESSION : i32 = 125;
   /// Removes unused solutions before the optimization is performed.
-  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 125;
+  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 126;
   /// Controls sensitivity report behavior.
-  pub const SENSITIVITY_ALL : i32 = 126;
+  pub const SENSITIVITY_ALL : i32 = 127;
   /// Controls which optimizer is used for optimal partition sensitivity analysis.
-  pub const SENSITIVITY_OPTIMIZER : i32 = 127;
+  pub const SENSITIVITY_OPTIMIZER : i32 = 128;
   /// Controls which type of sensitivity analysis is to be performed.
-  pub const SENSITIVITY_TYPE : i32 = 128;
+  pub const SENSITIVITY_TYPE : i32 = 129;
   /// Controls whether an LU factorization of the basis is used in a hot-start.
-  pub const SIM_BASIS_FACTOR_USE : i32 = 129;
+  pub const SIM_BASIS_FACTOR_USE : i32 = 130;
   /// Controls how aggressively degeneration is handled.
-  pub const SIM_DEGEN : i32 = 130;
+  pub const SIM_DEGEN : i32 = 131;
   /// Not in use.
-  pub const SIM_DETECT_PWL : i32 = 131;
+  pub const SIM_DETECT_PWL : i32 = 132;
   /// Controls whether crashing is performed in the dual simplex optimizer.
-  pub const SIM_DUAL_CRASH : i32 = 132;
+  pub const SIM_DUAL_CRASH : i32 = 133;
   /// An experimental feature.
-  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 133;
+  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 134;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 134;
+  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 135;
   /// Controls the dual simplex strategy.
-  pub const SIM_DUAL_SELECTION : i32 = 135;
+  pub const SIM_DUAL_SELECTION : i32 = 136;
   /// Controls if the simplex optimizers are allowed to exploit duplicated columns.
-  pub const SIM_EXPLOIT_DUPVEC : i32 = 136;
+  pub const SIM_EXPLOIT_DUPVEC : i32 = 137;
   /// Controls the type of hot-start that the simplex optimizer perform.
-  pub const SIM_HOTSTART : i32 = 137;
+  pub const SIM_HOTSTART : i32 = 138;
   /// Determines if the simplex optimizer should exploit the initial factorization.
-  pub const SIM_HOTSTART_LU : i32 = 138;
+  pub const SIM_HOTSTART_LU : i32 = 139;
   /// Maximum number of iterations that can be used by a simplex optimizer.
-  pub const SIM_MAX_ITERATIONS : i32 = 139;
+  pub const SIM_MAX_ITERATIONS : i32 = 140;
   /// Controls how many set-backs that are allowed within a simplex optimizer.
-  pub const SIM_MAX_NUM_SETBACKS : i32 = 140;
+  pub const SIM_MAX_NUM_SETBACKS : i32 = 141;
   /// Controls if the simplex optimizer ensures a non-singular basis, if possible.
-  pub const SIM_NON_SINGULAR : i32 = 141;
+  pub const SIM_NON_SINGULAR : i32 = 142;
   /// Controls the simplex crash.
-  pub const SIM_PRIMAL_CRASH : i32 = 142;
+  pub const SIM_PRIMAL_CRASH : i32 = 143;
   /// An experimental feature.
-  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 143;
+  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 144;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 144;
+  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 145;
   /// Controls the primal simplex strategy.
-  pub const SIM_PRIMAL_SELECTION : i32 = 145;
+  pub const SIM_PRIMAL_SELECTION : i32 = 146;
   /// Controls the basis refactoring frequency.
-  pub const SIM_REFACTOR_FREQ : i32 = 146;
+  pub const SIM_REFACTOR_FREQ : i32 = 147;
   /// Controls if the simplex optimizers are allowed to reformulate the problem.
-  pub const SIM_REFORMULATION : i32 = 147;
+  pub const SIM_REFORMULATION : i32 = 148;
   /// Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
-  pub const SIM_SAVE_LU : i32 = 148;
+  pub const SIM_SAVE_LU : i32 = 149;
   /// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
-  pub const SIM_SCALING : i32 = 149;
+  pub const SIM_SCALING : i32 = 150;
   /// Controls how the problem is scaled before a simplex optimizer is used.
-  pub const SIM_SCALING_METHOD : i32 = 150;
+  pub const SIM_SCALING_METHOD : i32 = 151;
   /// Sets the random seed used for randomization in the simplex optimizers.
-  pub const SIM_SEED : i32 = 151;
+  pub const SIM_SEED : i32 = 152;
   /// Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
-  pub const SIM_SOLVE_FORM : i32 = 152;
+  pub const SIM_SOLVE_FORM : i32 = 153;
   /// Controls how high priority the numerical stability should be given.
-  pub const SIM_STABILITY_PRIORITY : i32 = 153;
+  pub const SIM_STABILITY_PRIORITY : i32 = 154;
   /// Controls the simplex behavior.
-  pub const SIM_SWITCH_OPTIMIZER : i32 = 154;
+  pub const SIM_SWITCH_OPTIMIZER : i32 = 155;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_BASIC : i32 = 155;
+  pub const SOL_FILTER_KEEP_BASIC : i32 = 156;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_RANGED : i32 = 156;
+  pub const SOL_FILTER_KEEP_RANGED : i32 = 157;
   /// Controls the input solution file format.
-  pub const SOL_READ_NAME_WIDTH : i32 = 157;
+  pub const SOL_READ_NAME_WIDTH : i32 = 158;
   /// Controls the input solution file format.
-  pub const SOL_READ_WIDTH : i32 = 158;
+  pub const SOL_READ_WIDTH : i32 = 159;
   /// Indicates whether solution callbacks will be performed during the optimization.
-  pub const SOLUTION_CALLBACK : i32 = 159;
+  pub const SOLUTION_CALLBACK : i32 = 160;
   /// Controls the amount of timing performed inside MOSEK.
-  pub const TIMING_LEVEL : i32 = 160;
+  pub const TIMING_LEVEL : i32 = 161;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_CONSTRAINTS : i32 = 161;
+  pub const WRITE_BAS_CONSTRAINTS : i32 = 162;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_HEAD : i32 = 162;
+  pub const WRITE_BAS_HEAD : i32 = 163;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_VARIABLES : i32 = 163;
+  pub const WRITE_BAS_VARIABLES : i32 = 164;
   /// Controls output file compression.
-  pub const WRITE_COMPRESSION : i32 = 164;
+  pub const WRITE_COMPRESSION : i32 = 165;
   /// Controls output file data.
-  pub const WRITE_DATA_PARAM : i32 = 165;
+  pub const WRITE_DATA_PARAM : i32 = 166;
   /// Controls the output file data.
-  pub const WRITE_FREE_CON : i32 = 166;
+  pub const WRITE_FREE_CON : i32 = 167;
   /// Controls the output file data.
-  pub const WRITE_GENERIC_NAMES : i32 = 167;
+  pub const WRITE_GENERIC_NAMES : i32 = 168;
   /// Index origin used in  generic names.
-  pub const WRITE_GENERIC_NAMES_IO : i32 = 168;
+  pub const WRITE_GENERIC_NAMES_IO : i32 = 169;
   /// Controls if the writer ignores incompatible problem items when writing files.
-  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 169;
+  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 170;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_CONSTRAINTS : i32 = 170;
+  pub const WRITE_INT_CONSTRAINTS : i32 = 171;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_HEAD : i32 = 171;
+  pub const WRITE_INT_HEAD : i32 = 172;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_VARIABLES : i32 = 172;
+  pub const WRITE_INT_VARIABLES : i32 = 173;
   /// When set, the JSON task and solution files are written with indentation for better readability.
-  pub const WRITE_JSON_INDENTATION : i32 = 173;
+  pub const WRITE_JSON_INDENTATION : i32 = 174;
   /// Write full linear objective
-  pub const WRITE_LP_FULL_OBJ : i32 = 174;
+  pub const WRITE_LP_FULL_OBJ : i32 = 175;
   /// Controls the LP output file format.
-  pub const WRITE_LP_LINE_WIDTH : i32 = 175;
+  pub const WRITE_LP_LINE_WIDTH : i32 = 176;
   /// Controls in which format the MPS is written.
-  pub const WRITE_MPS_FORMAT : i32 = 176;
+  pub const WRITE_MPS_FORMAT : i32 = 177;
   /// Controls the output file data.
-  pub const WRITE_MPS_INT : i32 = 177;
+  pub const WRITE_MPS_INT : i32 = 178;
   /// Controls the solution file format.
-  pub const WRITE_SOL_BARVARIABLES : i32 = 178;
+  pub const WRITE_SOL_BARVARIABLES : i32 = 179;
   /// Controls the solution file format.
-  pub const WRITE_SOL_CONSTRAINTS : i32 = 179;
+  pub const WRITE_SOL_CONSTRAINTS : i32 = 180;
   /// Controls solution file format.
-  pub const WRITE_SOL_HEAD : i32 = 180;
+  pub const WRITE_SOL_HEAD : i32 = 181;
   /// Controls whether the user specified names are employed even if they are invalid names.
-  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 181;
+  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 182;
   /// Controls the solution file format.
-  pub const WRITE_SOL_VARIABLES : i32 = 182;
+  pub const WRITE_SOL_VARIABLES : i32 = 183;
   /// Controls whether the solutions are stored in the task file too.
-  pub const WRITE_TASK_INC_SOL : i32 = 183;
+  pub const WRITE_TASK_INC_SOL : i32 = 184;
   /// Controls if linear coefficients should be written by row or column when writing in the XML file format.
-  pub const WRITE_XML_MODE : i32 = 184;
+  pub const WRITE_XML_MODE : i32 = 185;
 } // impl Iparam
 
 /// Specifies the branching direction.
@@ -3623,7 +3625,7 @@ impl Variabletype {
 #[allow(unused_parens)]
 fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
     return
-        ( if r != 0 { Err(format!("Error in call to {}: {}",r,funname)) }
+        ( if r != 0 { Err(format!("Error in call to {}: {}",funname,r)) }
           else {
               Ok(())
           })
@@ -4093,7 +4095,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lnzc_.len()),lptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(lptrc_.len(),lnzc_.len()),b_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
@@ -9297,7 +9299,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),nummem_.len()),conepar_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),ct_.len()),conepar_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -9541,7 +9543,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subi_.len()),subj_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
@@ -14130,7 +14132,7 @@ impl Task {
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
       let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),bkx_.len()),c_.len()),blx_.len()),aptrb_.len()),aptre_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptre_.len(),blx_.len()),bux_.len()),aptrb_.len()),c_.len()),bkx_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -14325,7 +14327,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
       let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
@@ -14442,7 +14444,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
     #[allow(unused_parens)]
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),accidxs_.len()) as i64;
+      let numaccs_ : i64 = std::cmp::min(accidxs_.len(),domidxs_.len()) as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_acc_list: Argument 'b' has the wrong length, expected numafeidx_".to_string());
@@ -14536,7 +14538,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),afeidx_.len()),valkl_.len()),subl_.len()),barvaridx_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),barvaridx_.len()),valkl_.len()),afeidx_.len()),subl_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -14604,7 +14606,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),barvaridx_.len()),ptrterm_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -14649,7 +14651,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),val_.len()),afeidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),varidx_.len()),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -14664,7 +14666,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrow>
     #[allow(unused_parens)]
     pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i32 = std::cmp::min(varidx_.len(),val_.len()) as i32;
+      let numnz_ : i32 = std::cmp::min(val_.len(),varidx_.len()) as i32;
       self.handle_res(unsafe { MSK_putafefrow(self.ptr,afeidx_,numnz_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row")?;
       return Result::Ok(());
     } // putafefrow
@@ -14682,7 +14684,7 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),numnzrow_.len()),afeidx_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
@@ -14759,7 +14761,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subi_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -14774,7 +14776,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(subi_.len(),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
@@ -14853,7 +14855,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subk_.len()),subl_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),subk_.len()),valijkl_.len()),subj_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -14902,7 +14904,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),alphaptre_.len()),subi_.len()),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),alphaptre_.len()),alphaptrb_.len()),subj_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -14926,7 +14928,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),subi_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(subi_.len(),ptrb_.len()),ptre_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -14960,7 +14962,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subk_.len()),subl_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),valjkl_.len()),subk_.len()),subj_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -15117,7 +15119,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blc_.len(),buc_.len()),bkc_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),sub_.len()),blc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -15605,7 +15607,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubj_.len()),qcsubi_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -15621,7 +15623,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubj_.len()),qcsubi_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
       if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
@@ -15637,7 +15639,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qosubj_.len()),qoval_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubj_.len(),qosubi_.len()),qoval_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -16083,7 +16085,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),bux_.len()),sub_.len()),bkx_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),blx_.len()),sub_.len()),bkx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -16915,7 +16917,7 @@ impl Drop for Task
 /// - `y_` The y vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.axpy>
-pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
+pub fn prototypepfx::axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
 /// Compares a version of the MOSEK DLL with a specified version.
 ///
 /// # Arguments
@@ -16925,7 +16927,7 @@ pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),Strin
 /// - `revision_` Revision number.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
-pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
+pub fn prototypepfx::check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
 /// Computes a Cholesky factorization of sparse matrix.
 ///
 /// # Arguments
@@ -16946,7 +16948,7 @@ pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),Str
 /// - `lvalc_` The values corresponding to row indexed stored in lsubc.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
-pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
+pub fn prototypepfx::compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
 /// Computes the inner product of two vectors.
 ///
 /// # Arguments
@@ -16957,7 +16959,7 @@ pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_
 /// - `xty_` The result of the inner product.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.dot>
-pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
+pub fn prototypepfx::dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
 /// Prints an intro to message stream.
 ///
 /// # Arguments
@@ -16965,7 +16967,7 @@ pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String
 /// - `longver_` If non-zero, then the intro is slightly longer.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
-pub fn echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
+pub fn prototypepfx::echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
 /// Performs a dense matrix multiplication.
 ///
 /// # Arguments
@@ -16986,7 +16988,7 @@ pub fn echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_int
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemm>
-pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
+pub fn prototypepfx::gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
 /// Computes dense matrix times a dense vector product.
 ///
 /// # Arguments
@@ -17003,7 +17005,7 @@ pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,
 /// - `y_` A pointer to the array storing the vector y.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemv>
-pub fn gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
+pub fn prototypepfx::gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
 /// Obtains build information.
 ///
 /// # Returns
@@ -17106,7 +17108,7 @@ pub fn license_cleanup() -> Result<(),String> {
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
-pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
+pub fn prototypepfx::optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
 /// Computes a Cholesky factorization of a dense matrix.
 ///
 /// # Arguments
@@ -17118,7 +17120,7 @@ pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[
 /// - `a_` A symmetric matrix stored in column-major order.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.potrf>
-pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
+pub fn prototypepfx::potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
 /// Solves a sparse triangular system of linear equations.
 ///
 /// # Arguments
@@ -17133,7 +17135,7 @@ pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLO
 /// - `b_` The right-hand side of linear equation system to be solved as a dense vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
-pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
+pub fn prototypepfx::sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
 /// Computes all eigenvalues of a symmetric dense matrix.
 ///
 /// # Arguments
@@ -17146,7 +17148,7 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syeig>
-pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
+pub fn prototypepfx::syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
 /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 ///
 /// # Arguments
@@ -17159,7 +17161,7 @@ pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),Strin
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syevd>
-pub fn syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
+pub fn prototypepfx::syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
 /// Obtains the value corresponding to a symbolic name defined by MOSEK.
 ///
 /// # Arguments
@@ -17196,5 +17198,5 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syrk>
-pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
+pub fn prototypepfx::syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
 
