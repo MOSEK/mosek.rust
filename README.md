@@ -1,9 +1,9 @@
 # Mosek 10.1 Rust interface
 
-- Mosek optimization software: [https://mosek.com/]
-- Github repository for this package: [https://github.com/MOSEK/mosek.rust]
-- Rust language: [https://www.rust-lang.com]
-- Pre-packaged crates are available from [https://crates.io]
+- Mosek optimization software: https://mosek.com/
+- Github repository for this package: https://github.com/MOSEK/mosek.rust
+- Rust language: https://www.rust-lang.com
+- Pre-packaged crates are available from https://crates.io/crates/MOSEK
 
 The package should work on
 
