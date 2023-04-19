@@ -67,457 +67,960 @@ extern {
                           sizelastmsg  : i64,
                           lastmsglen   : * mut i64,
                           lastmsg      : * mut u8) -> i32;
+    fn MSK_writedatahandle(task     : * const u8,
+	                   func     : extern fn (handle : * const c_void, src : * const u8, count : usize) -> usize,
+	                   handle   : * const c_void,
+	                   format   : i32,
+                           compress : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendacc(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccs(task_ : * const u8,numaccs_ : i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccseq(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccsseq(task_ : * const u8,numaccs_ : i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendafes(task_ : * const u8,num_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendbarvars(task_ : * const u8,num_ : i32,dim_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddjcs(task_ : * const u8,num_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendquadraticconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrminusdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrplusdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrquadraticconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrzerodomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsvecpsdconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncgetlog(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncgetresult(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncoptimize(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncpoll(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncstop(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_bktostr(task_ : * const u8,bk_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_chgconbound(task_ : * const u8,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_chgvarbound(task_ : * const u8,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
     #[allow(dead_code)]
     fn MSK_clonetask(task_ : * const u8,clonedtask_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_commitchanges(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_conetypetostr(task_ : * const u8,ct_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_deletesolution(task_ : * const u8,whichsol_ : i32) -> i32;
     #[allow(dead_code)]
     fn MSK_deletetask(task_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_dualsensitivity(task_ : * const u8,numj_ : i32,subj_ : * const i32,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafebarfrow(task_ : * const u8,afeidx_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafebarfrowlist(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefcol(task_ : * const u8,varidx_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefcollist(task_ : * const u8,numvaridx_ : i64,varidx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefrow(task_ : * const u8,afeidx_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefrowlist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_evaluateacc(task_ : * const u8,whichsol_ : i32,accidx_ : i64,activity_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_evaluateaccs(task_ : * const u8,whichsol_ : i32,activity_ : * mut f64) -> i32;
     #[allow(dead_code)]
     fn MSK_freetask(task_ : * const u8,buffer_ : *mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateaccnames(task_ : * const u8,num_ : i64,sub_ : * const i64,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatebarvarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatedjcnames(task_ : * const u8,num_ : i64,sub_ : * const i64,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccafeidxlist(task_ : * const u8,accidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccb(task_ : * const u8,accidx_ : i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccbarfblocktriplet(task_ : * const u8,maxnumtrip_ : i64,numtrip_ : & mut i64,acc_afe_ : * mut i64,bar_var_ : * mut i32,blk_row_ : * mut i32,blk_col_ : * mut i32,blk_val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccbarfnumblocktriplets(task_ : * const u8,numtrip_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdomain(task_ : * const u8,accidx_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdoty(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdotys(task_ : * const u8,whichsol_ : i32,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccfnumnz(task_ : * const u8,accfnnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccftrip(task_ : * const u8,frow_ : * mut i64,fcol_ : * mut i32,fval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccgvector(task_ : * const u8,g_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccn(task_ : * const u8,accidx_ : i64,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccname(task_ : * const u8,accidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccnamelen(task_ : * const u8,accidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccntot(task_ : * const u8,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccs(task_ : * const u8,domidxlist_ : * mut i64,afeidxlist_ : * mut i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getacolslice(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i32,ptrb_ : * mut i32,ptre_ : * mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslice64(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,ptrb_ : * mut i64,ptre_ : * mut i64,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getacolslicenumnz(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslicetrip(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfblocktriplet(task_ : * const u8,maxnumtrip_ : i64,numtrip_ : & mut i64,afeidx_ : * mut i64,barvaridx_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfnumblocktriplets(task_ : * const u8,numtrip_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfnumrowentries(task_ : * const u8,afeidx_ : i64,numentr_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfrow(task_ : * const u8,afeidx_ : i64,barvaridx_ : * mut i32,ptrterm_ : * mut i64,numterm_ : * mut i64,termidx_ : * mut i64,termweight_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfrowinfo(task_ : * const u8,afeidx_ : i64,numentr_ : & mut i32,numterm_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefnumnz(task_ : * const u8,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefrow(task_ : * const u8,afeidx_ : i64,numnz_ : & mut i32,varidx_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefrownumnz(task_ : * const u8,afeidx_ : i64,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafeftrip(task_ : * const u8,afeidx_ : * mut i64,varidx_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafeg(task_ : * const u8,afeidx_ : i64,g_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafegslice(task_ : * const u8,first_ : i64,last_ : i64,g_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarow(task_ : * const u8,i_ : i32,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarownumnz(task_ : * const u8,i_ : i32,nzi_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getarowslice(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i32,ptrb_ : * mut i32,ptre_ : * mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslice64(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,ptrb_ : * mut i64,ptre_ : * mut i64,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getarowslicenumnz(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslicetrip(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getatrip(task_ : * const u8,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getatruncatetol(task_ : * const u8,tolzero_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subi_ : * mut i32,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valijkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,i_ : & mut i32,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidxij(task_ : * const u8,idx_ : i64,i_ : & mut i32,j_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxij_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valjkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidxj(task_ : * const u8,idx_ : i64,j_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxj_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarname(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcj(task_ : * const u8,j_ : i32,cj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getclist(task_ : * const u8,num_ : i32,subj_ : * const i32,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconbound(task_ : * const u8,i_ : i32,bk_ : &mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcone(task_ : * const u8,k_ : i32,ct_ : &mut i32,conepar_ : & mut f64,nummem_ : & mut i32,submem_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconeinfo(task_ : * const u8,k_ : i32,ct_ : &mut i32,conepar_ : & mut f64,nummem_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconename(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconenameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconenamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconname(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcslice(task_ : * const u8,first_ : i32,last_ : i32,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdimbarvarj(task_ : * const u8,j_ : i32,dimbarvarj_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcafeidxlist(task_ : * const u8,djcidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcb(task_ : * const u8,djcidx_ : i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcdomainidxlist(task_ : * const u8,djcidx_ : i64,domidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcname(task_ : * const u8,djcidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnamelen(task_ : * const u8,djcidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumafe(task_ : * const u8,djcidx_ : i64,numafe_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumafetot(task_ : * const u8,numafetot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumdomain(task_ : * const u8,djcidx_ : i64,numdomain_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumdomaintot(task_ : * const u8,numdomaintot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumterm(task_ : * const u8,djcidx_ : i64,numterm_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumtermtot(task_ : * const u8,numtermtot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcs(task_ : * const u8,domidxlist_ : * mut i64,afeidxlist_ : * mut i64,b_ : * mut f64,termsizelist_ : * mut i64,numterms_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjctermsizelist(task_ : * const u8,djcidx_ : i64,termsizelist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainn(task_ : * const u8,domidx_ : i64,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainname(task_ : * const u8,domidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainnamelen(task_ : * const u8,domidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomaintype(task_ : * const u8,domidx_ : i64,domtype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdualsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmy_ : & mut f64,nrmslc_ : & mut f64,nrmsuc_ : & mut f64,nrmslx_ : & mut f64,nrmsux_ : & mut f64,nrmsnx_ : & mut f64,nrmbars_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolacc(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     #[allow(dead_code)]
     fn MSK_getenv(task_ : * const u8,env_ : & mut * const u8) -> i32;
     #[allow(dead_code)]
     fn MSK_getinfeasiblesubproblem(task_ : * const u8,whichsol_ : i32,inftask_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfindex(task_ : * const u8,inftype_ : i32,infname_ : * const libc::c_char,infindex_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfmax(task_ : * const u8,inftype_ : i32,infmax_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfname(task_ : * const u8,inftype_ : i32,whichinf_ : i32,infname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getintinf(task_ : * const u8,whichiinf_ : i32,ivalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getlenbarvarj(task_ : * const u8,j_ : i32,lenbarvarj_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getmaxnumanz(task_ : * const u8,maxnumanz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumcone(task_ : * const u8,maxnumcone_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getmaxnumqnz(task_ : * const u8,maxnumqnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut i64,maxmemuse_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmionumthreads(task_ : * const u8,numthreads_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnadouinf(task_ : * const u8,infitemname_ : * const libc::c_char,dvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : i32,len_ : & mut i32,parvalue : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumacc(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumafe(task_ : * const u8,numafe_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbaranz(task_ : * const u8,nz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarcblocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarcnz(task_ : * const u8,nz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarvar(task_ : * const u8,numbarvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumdjc(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumdomain(task_ : * const u8,numdomain_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getnumqconknz(task_ : * const u8,k_ : i32,numqcnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getnumqobjnz(task_ : * const u8,numqonz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjname(task_ : * const u8,sizeobjname_ : i32,objname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjsense(task_ : * const u8,sense_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getparamname(task_ : * const u8,partype_ : i32,param_ : i32,parname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpowerdomainalpha(task_ : * const u8,domidx_ : i64,alpha_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpowerdomaininfo(task_ : * const u8,domidx_ : i64,n_ : & mut i64,nleft_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprimalobj(task_ : * const u8,whichsol_ : i32,primalobj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprimalsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmxc_ : & mut f64,nrmxx_ : & mut f64,nrmbarx_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprobtype(task_ : * const u8,probtype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprosta(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolacc(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpvioldjc(task_ : * const u8,whichsol_ : i32,numdjcidx_ : i64,djcidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getqconk(task_ : * const u8,k_ : i32,maxnumqcnz_ : i32,numqcnz_ : & mut i32,qcsubi_ : * mut i32,qcsubj_ : * mut i32,qcval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqconk64(task_ : * const u8,k_ : i32,maxnumqcnz_ : i64,numqcnz_ : & mut i64,qcsubi_ : * mut i32,qcsubj_ : * mut i32,qcval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getqobj(task_ : * const u8,maxnumqonz_ : i32,numqonz_ : & mut i32,qosubi_ : * mut i32,qosubj_ : * mut i32,qoval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqobj64(task_ : * const u8,maxnumqonz_ : i64,numqonz_ : & mut i64,qosubi_ : * mut i32,qosubj_ : * mut i32,qoval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskc(task_ : * const u8,whichsol_ : i32,skc_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskn(task_ : * const u8,whichsol_ : i32,skn_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskx(task_ : * const u8,whichsol_ : i32,skx_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslc(task_ : * const u8,whichsol_ : i32,slc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslx(task_ : * const u8,whichsol_ : i32,slx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsnx(task_ : * const u8,whichsol_ : i32,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solutionsta_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32,solutionsta_ : &mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutioninfonew(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolacc_ : & mut f64,pvioldjc_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64,dviolacc_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutionnew(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32,solutionsta_ : &mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsparsesymmat(task_ : * const u8,idx_ : i64,maxlen_ : i64,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : i32,len_ : & mut i32,parvalue : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getstrparamlen(task_ : * const u8,param_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsuc(task_ : * const u8,whichsol_ : i32,suc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsymbcon(task_ : * const u8,i_ : i32,sizevalue_ : i32,name : * mut u8,value_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsymmatinfo(task_ : * const u8,idx_ : i64,dim_ : & mut i32,nz_ : & mut i64,mattype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : i32,taskname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarbound(task_ : * const u8,i_ : i32,bk_ : &mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarname(task_ : * const u8,j_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvartype(task_ : * const u8,j_ : i32,vartype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxx(task_ : * const u8,whichsol_ : i32,xx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_gety(task_ : * const u8,whichsol_ : i32,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_infeasibilityreport(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_inputdata(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i32,aptre_ : * const i32,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i64,aptre_ : * const i64,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_isintparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_isstrparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_optimize(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizermt(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,trmcode_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_primalrepair(task_ : * const u8,wlc_ : * const f64,wuc_ : * const f64,wlx_ : * const f64,wux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_primalsensitivity(task_ : * const u8,numi_ : i32,subi_ : * const i32,marki_ : * const i32,numj_ : i32,subj_ : * const i32,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_printparam(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_prostatostr(task_ : * const u8,problemsta_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacc(task_ : * const u8,accidx_ : i64,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccb(task_ : * const u8,accidx_ : i64,lengthb_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccbj(task_ : * const u8,accidx_ : i64,j_ : i64,bj_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccdoty(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacclist(task_ : * const u8,numaccs_ : i64,accidxs_ : * const i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccname(task_ : * const u8,accidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacol(task_ : * const u8,j_ : i32,nzj_ : i32,subj_ : * const i32,valj_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putacollist(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putacolslice(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfblocktriplet(task_ : * const u8,numtrip_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,subk_ : * const i32,subl_ : * const i32,valkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfentry(task_ : * const u8,afeidx_ : i64,barvaridx_ : i32,numterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfentrylist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,numterm_ : * const i64,ptrterm_ : * const i64,lenterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfrow(task_ : * const u8,afeidx_ : i64,numentr_ : i32,barvaridx_ : * const i32,numterm_ : * const i64,ptrterm_ : * const i64,lenterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefcol(task_ : * const u8,varidx_ : i32,numnz_ : i64,afeidx_ : * const i64,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefentry(task_ : * const u8,afeidx_ : i64,varidx_ : i32,value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefentrylist(task_ : * const u8,numentr_ : i64,afeidx_ : * const i64,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefrow(task_ : * const u8,afeidx_ : i64,numnz_ : i32,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefrowlist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,numnzrow_ : * const i32,ptrrow_ : * const i64,lenidxval_ : i64,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafeg(task_ : * const u8,afeidx_ : i64,g_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafeglist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,g_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafegslice(task_ : * const u8,first_ : i64,last_ : i64,slice_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putaijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaijlist64(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarow(task_ : * const u8,i_ : i32,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putarowlist(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarowlist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putarowslice(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarowslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putatruncatetol(task_ : * const u8,tolzero_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarablocktriplet(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valijkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbaraij(task_ : * const u8,i_ : i32,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbaraijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,alphaptrb_ : * const i64,alphaptre_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbararowlist(task_ : * const u8,num_ : i32,subi_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,subj_ : * const i32,nummat_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : i64,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valjkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarcj(task_ : * const u8,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcfix(task_ : * const u8,cfix_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcj(task_ : * const u8,j_ : i32,cj_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putclist(task_ : * const u8,num_ : i32,subj_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconbound(task_ : * const u8,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcone(task_ : * const u8,k_ : i32,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconename(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconname(task_ : * const u8,i_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconsolutioni(task_ : * const u8,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcslice(task_ : * const u8,first_ : i32,last_ : i32,slice_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjc(task_ : * const u8,djcidx_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjcname(task_ : * const u8,djcidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjcslice(task_ : * const u8,idxfirst_ : i64,idxlast_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64,termsindjc_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdomainname(task_ : * const u8,domidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumacc(task_ : * const u8,maxnumacc_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumafe(task_ : * const u8,maxnumafe_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumdjc(task_ : * const u8,maxnumdjc_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumdomain(task_ : * const u8,maxnumdomain_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putobjname(task_ : * const u8,objname_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putobjsense(task_ : * const u8,sense_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putoptserverhost(task_ : * const u8,host_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putparam(task_ : * const u8,parname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqcon(task_ : * const u8,numqcnz_ : i32,qcsubk_ : * const i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqconk(task_ : * const u8,k_ : i32,numqcnz_ : i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqobj(task_ : * const u8,numqonz_ : i32,qosubi_ : * const i32,qosubj_ : * const i32,qoval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskc(task_ : * const u8,whichsol_ : i32,skc_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskx(task_ : * const u8,whichsol_ : i32,skx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslc(task_ : * const u8,whichsol_ : i32,slc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslx(task_ : * const u8,whichsol_ : i32,slx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsnx(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolution(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolutionnew(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64,doty_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolutionyi(task_ : * const u8,i_ : i32,whichsol_ : i32,y_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putstrparam(task_ : * const u8,param_ : i32,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsuc(task_ : * const u8,whichsol_ : i32,suc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsux(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_puttaskname(task_ : * const u8,taskname_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarbound(task_ : * const u8,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarsolutionj(task_ : * const u8,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvartype(task_ : * const u8,j_ : i32,vartype_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxx(task_ : * const u8,whichsol_ : i32,xx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_puty(task_ : * const u8,whichsol_ : i32,y_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_readbsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_readdata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readdataautoformat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readdataformat(task_ : * const u8,filename_ : * const libc::c_char,format_ : i32,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_readjsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readjsonstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readlpstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readopfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readptfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_readtask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_removebarvars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removecones(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removecons(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removevars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_setdefaults(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_sktostr(task_ : * const u8,sk_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_solstatostr(task_ : * const u8,solutionsta_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_solvewithbasis(task_ : * const u8,transp_ : bool,numnz_ : i32,sub_ : * mut i32,val_ : * mut f64,numnzout_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_toconic(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_unlinkfuncfromtaskstream(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : &mut i32,param_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_writebsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writejsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writeparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writesolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writesolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writestat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writetask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writetasksolverresult_file(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_callbackcodetostr(code_ : i32,callbackcodestr : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkinall(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkversion(env_ : * const u8,major_ : i32,minor_ : i32,revision_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_computesparsecholesky(env_ : * const u8,numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,n_ : i32,anzc_ : * const i32,aptrc_ : * const i64,asubc_ : * const i32,avalc_ : * const f64,perm_ : & mut * const i32,diag_ : & mut * const f64,lnzc_ : & mut * const i32,lptrc_ : & mut * const i64,lensubnval_ : & mut i64,lsubc_ : & mut * const i32,lvalc_ : & mut * const f64) -> i32;
     #[allow(dead_code)]
     fn MSK_deleteenv(env_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_dinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_dot(env_ : * const u8,n_ : i32,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_echointro(env_ : * const u8,longver_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_enablegarcolenv(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_expirylicenses(env_ : * const u8,expiry_ : & mut i64) -> i32;
     #[allow(dead_code)]
     fn MSK_freeenv(env_ : * const u8,buffer_ : *mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbuildinfo(buildstate : * mut u8,builddate : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcodedesc(code_ : i32,symname : * mut u8,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getresponseclass(r_ : i32,rc_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getversion(major_ : & mut i32,minor_ : & mut i32,revision_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_iinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_isinfinity(value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_licensecleanup() -> i32;
+    #[allow(dead_code)]
+    fn MSK_liinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     #[allow(dead_code)]
     fn MSK_makeemptytask(env_ : * const u8,task_ : & mut * const u8) -> i32;
@@ -527,18 +1030,34 @@ extern {
     fn MSK_makeenvdebug(env_ : & mut * const u8,maxnumalloc_ : i64,dbgfile_ : * const libc::c_char) -> i32;
     #[allow(dead_code)]
     fn MSK_maketask(env_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,task_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizebatch(env_ : * const u8,israce_ : bool,maxtime_ : f64,numthreads_ : i32,numtask_ : i64,task_ : * const * const u8,trmcode_ : * mut i32,rcode_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_rescodetostr(res_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_resetexpirylicenses(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const i64,lensubnval_ : i64,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * const f64,w_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64,w_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_symnamtovalue(name_ : * const libc::c_char,value : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_unlinkfuncfromenvstream(env_ : * const u8,whichstream_ : i32) -> i32;
 
 }
 
@@ -3625,7 +4144,7 @@ impl Variabletype {
 #[allow(unused_parens)]
 fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
     return
-        ( if r != 0 { Err(format!("Error in call to {}: {}",funname,r)) }
+        ( if r != 0 { Err(format!("Error in call to {}: {}",r,funname)) }
           else {
               Ok(())
           })
@@ -3717,7 +4236,7 @@ impl Env {
       if y_.len() != (n_).try_into().unwrap() {
         return Result::Err("axpy: Argument 'y' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_axpy(self.ptr,n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
+      self.handle_res(unsafe { MSK_axpy(self.ptr,n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
       return Result::Ok(());
     } // axpy
     /// Check in all unused license features to the license token server.
@@ -3767,7 +4286,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
     #[allow(unused_parens)]
     pub fn check_version(&self,major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> {
-      handle_res_static(unsafe { MSK_checkversion(self.ptr,major_,minor_,revision_) },"check_version")?;
+      self.handle_res(unsafe { MSK_checkversion(self.ptr,major_,minor_,revision_) },"check_version")?;
       return Result::Ok(());
     } // checkversion
     /// Computes a Cholesky factorization of sparse matrix.
@@ -3799,7 +4318,7 @@ impl Env {
       let mut __tmp_3 : * const i64 = std::ptr::null();
       let mut __tmp_5 : * const i32 = std::ptr::null();
       let mut __tmp_6 : * const f64 = std::ptr::null();
-      handle_res_static(unsafe { MSK_computesparsecholesky(self.ptr,numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
+      self.handle_res(unsafe { MSK_computesparsecholesky(self.ptr,numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
       let len_perm_ : usize = n_.try_into().unwrap_or(0);
       perm_.resize(len_perm_,Default::default());
       perm_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_0,len_perm_) } );
@@ -3844,7 +4363,7 @@ impl Env {
       if y_.len() != (n_).try_into().unwrap() {
         return Result::Err("dot: Argument 'y' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_dot(self.ptr,n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
+      self.handle_res(unsafe { MSK_dot(self.ptr,n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
       return Result::Ok(());
     } // dot
     /// Prints an intro to message stream.
@@ -3856,7 +4375,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
     #[allow(unused_parens)]
     pub fn echo_intro(&self,longver_ : i32) -> Result<(),String> {
-      handle_res_static(unsafe { MSK_echointro(self.ptr,longver_) },"echo_intro")?;
+      self.handle_res(unsafe { MSK_echointro(self.ptr,longver_) },"echo_intro")?;
       return Result::Ok(());
     } // echointro
     /// Enable reference counting for environments.
@@ -3910,7 +4429,7 @@ impl Env {
       if c_.len() != ((m_*n_)).try_into().unwrap() {
         return Result::Err("gemm: Argument 'c' has the wrong length, expected (m_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_gemm(self.ptr,transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
+      self.handle_res(unsafe { MSK_gemm(self.ptr,transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
       return Result::Ok(());
     } // gemm
     /// Computes dense matrix times a dense vector product.
@@ -3952,7 +4471,7 @@ impl Env {
       if y_.len() != (__tmp_1).try_into().unwrap() {
         return Result::Err("gemv: Argument 'y' has the wrong length, expected __tmp_1".to_string());
       }
-      handle_res_static(unsafe { MSK_gemv(self.ptr,transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
+      self.handle_res(unsafe { MSK_gemv(self.ptr,transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
       return Result::Ok(());
     } // gemv
     /// Directs all output from a stream to a file.
@@ -3997,7 +4516,7 @@ impl Env {
       if rcode_.len() != (numtask_).try_into().unwrap() {
         return Result::Err("optimize_batch: Argument 'rcode' has the wrong length, expected numtask_".to_string());
       }
-      handle_res_static(unsafe { MSK_optimizebatch(self.ptr,israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
+      self.handle_res(unsafe { MSK_optimizebatch(self.ptr,israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
       return Result::Ok(());
     } // optimizebatch
     /// Computes a Cholesky factorization of a dense matrix.
@@ -4016,7 +4535,7 @@ impl Env {
       if a_.len() != ((n_*n_)).try_into().unwrap() {
         return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+      self.handle_res(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
       return Result::Ok(());
     } // potrf
     /// Input a runtime license code.
@@ -4095,7 +4614,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(lptrc_.len(),lnzc_.len()),b_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),lptrc_.len()),b_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
@@ -4112,7 +4631,7 @@ impl Env {
       if b_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'b' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_sparsetriangularsolvedense(self.ptr,transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
+      self.handle_res(unsafe { MSK_sparsetriangularsolvedense(self.ptr,transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
       return Result::Ok(());
     } // sparsetriangularsolvedense
     /// Computes all eigenvalues of a symmetric dense matrix.
@@ -4135,7 +4654,7 @@ impl Env {
       if w_.len() != (n_).try_into().unwrap() {
         return Result::Err("syeig: Argument 'w' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_syeig(self.ptr,uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
+      self.handle_res(unsafe { MSK_syeig(self.ptr,uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
       return Result::Ok(());
     } // syeig
     /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
@@ -4158,7 +4677,7 @@ impl Env {
       if w_.len() != (n_).try_into().unwrap() {
         return Result::Err("syevd: Argument 'w' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_syevd(self.ptr,uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
+      self.handle_res(unsafe { MSK_syevd(self.ptr,uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
       return Result::Ok(());
     } // syevd
     /// Performs a rank-k update of a symmetric matrix.
@@ -4187,13 +4706,13 @@ impl Env {
       if c_.len() != ((n_*n_)).try_into().unwrap() {
         return Result::Err("syrk: Argument 'c' has the wrong length, expected (n_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
+      self.handle_res(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
       return Result::Ok(());
     } // syrk
 
 }
 
-const MSK_GLOBAL_ENV : Env = Env{ ptr : std::ptr::null() };
+//const MSK_GLOBAL_ENV : Env = Env{ ptr : std::ptr::null() };
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
     let h = handle as * const Box<dyn Fn(&str)>;
@@ -4324,6 +4843,22 @@ impl TaskCB {
                 }
             },
             None => Ok(())
+        }
+    }
+
+    pub fn clear_callback(& mut self) -> Result<(),String> {
+        self.valuecb = None;
+        let nullptr : * const u8 = std::ptr::null();
+        let nullptrptr = &nullptr as * const _ as * mut libc::c_void;
+
+        let f = nullptrptr as * mut extern fn(* const c_void,* const libc::c_void,i32,*const f64,*const i32,*const i64) -> i32;
+        if 0 != unsafe { MSK_putcallbackfunc(self.task.ptr,
+                                             *f,
+                                             std::ptr::null_mut()) } {
+            Err("put_callback: Failed to attach callback".to_string())
+        }
+        else {
+            Ok(())
         }
     }
 
@@ -4986,10 +5521,13 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `accidx_` The index of the affine conic constraint.
-    /// - `domidx_` The index of domain in the affine conic constraint.
+    ///
+    /// # Returns
+    ///
+    ///   - `domidx` The index of domain in the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdomain>
-    pub fn get_acc_domain(&mut self,accidx_ : i64,domidx_ : &mut i64) -> Result<(),String> { self.task.get_acc_domain(accidx_,domidx_) }
+    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> { self.task.get_acc_domain(accidx_) }
     /// Obtains the doty vector for an affine conic constraint.
     ///
     /// # Arguments
@@ -9038,6 +9576,17 @@ impl TaskCB {
     pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.write_task_solver_result_file(filename_,compress_) }
 
 }
+
+
+extern fn wrap_data_write_handle(handle : * const libc::c_void,
+                                 src    : * const u8,
+                                 count  : usize) -> usize {
+    let h = handle as * mut Box<dyn FnMut(&[u8]) -> usize>;
+    unsafe {
+        (*h)(std::slice::from_raw_parts(src,count))
+    }
+}
+
 impl Task {
     /// Create a new task in the given environment or with the default environment with a given capacity
     pub fn with_capacity(env : Option<&Env>, numcon : i32, numvar : i32) -> Option<Task> {
@@ -9100,7 +9649,12 @@ impl Task {
         );
     }
 
-
+    pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+    where F : FnMut(&[u8]) -> usize {
+        let boxfunc : Box<dyn FnMut(&[u8]) -> usize> = Box::new(func);
+        let hnd =  (&boxfunc) as * const _ as * mut libc::c_void;
+        self.handle_res(unsafe { MSK_writedatahandle(self.ptr, wrap_data_write_handle, hnd, format,compress ) }, "write_data_stream")
+    }
 
     /// Analyze the names and issue an error for the first invalid name.
     ///
@@ -9299,7 +9853,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),ct_.len()),conepar_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),conepar_.len()),nummem_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -9543,7 +10097,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
@@ -10189,13 +10743,17 @@ impl Task {
     /// # Arguments
     ///
     /// - `accidx_` The index of the affine conic constraint.
-    /// - `domidx_` The index of domain in the affine conic constraint.
+    ///
+    /// # Returns
+    ///
+    ///   - `domidx` The index of domain in the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdomain>
     #[allow(unused_parens)]
-    pub fn get_acc_domain(&mut self,accidx_ : i64,domidx_ : &mut i64) -> Result<(),String> {
-      self.handle_res(unsafe { MSK_getaccdomain(self.ptr,accidx_,domidx_) },"get_acc_domain")?;
-      return Result::Ok(());
+    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      self.handle_res(unsafe { MSK_getaccdomain(self.ptr,accidx_,&mut __tmp_0) },"get_acc_domain")?;
+      return Result::Ok(__tmp_0);
     } // getaccdomain
     /// Obtains the doty vector for an affine conic constraint.
     ///
@@ -14131,8 +14689,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptre_.len(),blx_.len()),bux_.len()),aptrb_.len()),c_.len()),bkx_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),blc_.len()),buc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),bkx_.len()),blx_.len()),aptrb_.len()),aptre_.len()),c_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -14328,7 +14886,7 @@ impl Task {
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
       let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
+      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
@@ -14477,7 +15035,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacol>
     #[allow(unused_parens)]
     pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> {
-      let nzj_ : i32 = std::cmp::min(valj_.len(),subj_.len()) as i32;
+      let nzj_ : i32 = std::cmp::min(subj_.len(),valj_.len()) as i32;
       self.handle_res(unsafe { MSK_putacol(self.ptr,j_,nzj_,subj_.as_ptr(),valj_.as_ptr()) },"put_a_col")?;
       return Result::Ok(());
     } // putacol
@@ -14494,7 +15052,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),sub_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -14538,7 +15096,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),barvaridx_.len()),valkl_.len()),afeidx_.len()),subl_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),afeidx_.len()),subl_.len()),subk_.len()),valkl_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -14569,7 +15127,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentry>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentry(self.ptr,afeidx_,barvaridx_,numterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry")?;
       return Result::Ok(());
     } // putafebarfentry
@@ -14587,8 +15145,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()),afeidx_.len()) as i64;
-      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),afeidx_.len()),ptrterm_.len()),numterm_.len()) as i64;
+      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
     } // putafebarfentrylist
@@ -14606,8 +15164,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()) as i32;
-      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(barvaridx_.len(),ptrterm_.len()),numterm_.len()) as i32;
+      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
     } // putafebarfrow
@@ -14651,7 +15209,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),varidx_.len()),afeidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),afeidx_.len()),varidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -14683,7 +15241,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),numnzrow_.len()),afeidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(numnzrow_.len(),afeidx_.len()),ptrrow_.len()) as i64;
       let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
@@ -14761,7 +15319,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -14793,7 +15351,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),sub_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -14855,7 +15413,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),subk_.len()),valijkl_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),valijkl_.len()),subl_.len()),subk_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -14886,7 +15444,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
@@ -14904,7 +15462,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),alphaptre_.len()),alphaptrb_.len()),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),alphaptrb_.len()),alphaptre_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -14962,7 +15520,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),valjkl_.len()),subk_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subl_.len()),subk_.len()),valjkl_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -14989,7 +15547,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -15084,7 +15642,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putclist>
     #[allow(unused_parens)]
     pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(val_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putclist(self.ptr,num_,subj_.as_ptr(),val_.as_ptr()) },"put_c_list")?;
       return Result::Ok(());
     } // putclist
@@ -15119,7 +15677,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),sub_.len()),blc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()),sub_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -15607,7 +16165,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -15623,7 +16181,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubj_.len(),qcval_.len()),qcsubi_.len()) as i32;
       if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
@@ -15639,7 +16197,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubj_.len(),qosubi_.len()),qoval_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qoval_.len(),qosubj_.len()),qosubi_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -16085,7 +16643,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),blx_.len()),sub_.len()),bkx_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),blx_.len()),bux_.len()),sub_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -16215,7 +16773,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
     #[allow(unused_parens)]
     pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(vartype_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),vartype_.len()) as i32;
       self.handle_res(unsafe { MSK_putvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_ptr()) },"put_var_type_list")?;
       return Result::Ok(());
     } // putvartypelist
@@ -16917,7 +17475,53 @@ impl Drop for Task
 /// - `y_` The y vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.axpy>
-pub fn prototypepfx::axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
+#[allow(unused_parens)]
+pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> {
+  if x_.len() != (n_).try_into().unwrap() {
+    return Result::Err("axpy: Argument 'x' has the wrong length, expected n_".to_string());
+  }
+  if y_.len() != (n_).try_into().unwrap() {
+    return Result::Err("axpy: Argument 'y' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_axpy(std::ptr::null(),n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
+  return Result::Ok(());
+} // axpy
+/// Check in all unused license features to the license token server.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinall>
+#[allow(unused_parens)]
+pub fn check_in_all() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkinall(std::ptr::null()) },"check_in_all")?;
+  return Result::Ok(());
+} // checkinall
+/// Check in a license feature back to the license server ahead of time.
+///
+/// # Arguments
+///
+/// - `feature_` Feature to check in to the license system.
+///   
+///   See [Feature]
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
+#[allow(unused_parens)]
+pub fn check_in_license(feature_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkinlicense(std::ptr::null(),feature_) },"check_in_license")?;
+  return Result::Ok(());
+} // checkinlicense
+/// Check out a license feature from the license server ahead of time.
+///
+/// # Arguments
+///
+/// - `feature_` Feature to check out from the license system.
+///   
+///   See [Feature]
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
+#[allow(unused_parens)]
+pub fn check_out_license(feature_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkoutlicense(std::ptr::null(),feature_) },"check_out_license")?;
+  return Result::Ok(());
+} // checkoutlicense
 /// Compares a version of the MOSEK DLL with a specified version.
 ///
 /// # Arguments
@@ -16927,7 +17531,11 @@ pub fn prototypepfx::axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> R
 /// - `revision_` Revision number.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
-pub fn prototypepfx::check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
+#[allow(unused_parens)]
+pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkversion(std::ptr::null(),major_,minor_,revision_) },"check_version")?;
+  return Result::Ok(());
+} // checkversion
 /// Computes a Cholesky factorization of sparse matrix.
 ///
 /// # Arguments
@@ -16948,7 +17556,42 @@ pub fn prototypepfx::check_version(major_ : i32,minor_ : i32,revision_ : i32) ->
 /// - `lvalc_` The values corresponding to row indexed stored in lsubc.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
-pub fn prototypepfx::compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
+#[allow(unused_parens)]
+pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
+  let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
+  let mut __tmp_0 : * const i32 = std::ptr::null();
+  let mut __tmp_1 : * const f64 = std::ptr::null();
+  let mut __tmp_2 : * const i32 = std::ptr::null();
+  let mut __tmp_3 : * const i64 = std::ptr::null();
+  let mut __tmp_5 : * const i32 = std::ptr::null();
+  let mut __tmp_6 : * const f64 = std::ptr::null();
+  handle_res_static(unsafe { MSK_computesparsecholesky(std::ptr::null(),numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
+  let len_perm_ : usize = n_.try_into().unwrap_or(0);
+  perm_.resize(len_perm_,Default::default());
+  perm_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_0,len_perm_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_0 as * mut u8); };
+  let len_diag_ : usize = n_.try_into().unwrap_or(0);
+  diag_.resize(len_diag_,Default::default());
+  diag_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_1,len_diag_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_1 as * mut u8); };
+  let len_lnzc_ : usize = n_.try_into().unwrap_or(0);
+  lnzc_.resize(len_lnzc_,Default::default());
+  lnzc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_2,len_lnzc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_2 as * mut u8); };
+  let len_lptrc_ : usize = n_.try_into().unwrap_or(0);
+  lptrc_.resize(len_lptrc_,Default::default());
+  lptrc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_3,len_lptrc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_3 as * mut u8); };
+  let len_lsubc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
+  lsubc_.resize(len_lsubc_,Default::default());
+  lsubc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_5,len_lsubc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_5 as * mut u8); };
+  let len_lvalc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
+  lvalc_.resize(len_lvalc_,Default::default());
+  lvalc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_6,len_lvalc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_6 as * mut u8); };
+  return Result::Ok(());
+} // computesparsecholesky
 /// Computes the inner product of two vectors.
 ///
 /// # Arguments
@@ -16959,7 +17602,17 @@ pub fn prototypepfx::compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i3
 /// - `xty_` The result of the inner product.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.dot>
-pub fn prototypepfx::dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
+#[allow(unused_parens)]
+pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> {
+  if x_.len() != (n_).try_into().unwrap() {
+    return Result::Err("dot: Argument 'x' has the wrong length, expected n_".to_string());
+  }
+  if y_.len() != (n_).try_into().unwrap() {
+    return Result::Err("dot: Argument 'y' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_dot(std::ptr::null(),n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
+  return Result::Ok(());
+} // dot
 /// Prints an intro to message stream.
 ///
 /// # Arguments
@@ -16967,7 +17620,31 @@ pub fn prototypepfx::dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Re
 /// - `longver_` If non-zero, then the intro is slightly longer.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
-pub fn prototypepfx::echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
+#[allow(unused_parens)]
+pub fn echo_intro(longver_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_echointro(std::ptr::null(),longver_) },"echo_intro")?;
+  return Result::Ok(());
+} // echointro
+/// Enable reference counting for environments.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.enablegarcolenv>
+#[allow(unused_parens)]
+pub fn enable_gar_col_env() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_enablegarcolenv(std::ptr::null()) },"enable_gar_col_env")?;
+  return Result::Ok(());
+} // enablegarcolenv
+/// Reports when the first license feature expires.
+///
+/// # Arguments
+///
+/// - `expiry_` If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.expirylicenses>
+#[allow(unused_parens)]
+pub fn expirylicenses(expiry_ : &mut i64) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_expirylicenses(std::ptr::null(),expiry_) },"expirylicenses")?;
+  return Result::Ok(());
+} // expirylicenses
 /// Performs a dense matrix multiplication.
 ///
 /// # Arguments
@@ -16988,7 +17665,20 @@ pub fn prototypepfx::echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBA
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemm>
-pub fn prototypepfx::gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
+#[allow(unused_parens)]
+pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((m_*k_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'a' has the wrong length, expected (m_*k_)".to_string());
+  }
+  if b_.len() != ((k_*n_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'b' has the wrong length, expected (k_*n_)".to_string());
+  }
+  if c_.len() != ((m_*n_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'c' has the wrong length, expected (m_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_gemm(std::ptr::null(),transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
+  return Result::Ok(());
+} // gemm
 /// Computes dense matrix times a dense vector product.
 ///
 /// # Arguments
@@ -17005,7 +17695,32 @@ pub fn prototypepfx::gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32
 /// - `y_` A pointer to the array storing the vector y.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemv>
-pub fn prototypepfx::gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
+#[allow(unused_parens)]
+pub fn gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*m_)).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'a' has the wrong length, expected (n_*m_)".to_string());
+  }
+  let __tmp_0 = if ((transa_==Transpose::NO)) {
+    n_
+  }
+  else {
+    m_
+  };
+  if x_.len() != (__tmp_0).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'x' has the wrong length, expected __tmp_0".to_string());
+  }
+  let __tmp_1 = if ((transa_==Transpose::NO)) {
+    m_
+  }
+  else {
+    n_
+  };
+  if y_.len() != (__tmp_1).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'y' has the wrong length, expected __tmp_1".to_string());
+  }
+  handle_res_static(unsafe { MSK_gemv(std::ptr::null(),transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
+  return Result::Ok(());
+} // gemv
 /// Obtains build information.
 ///
 /// # Returns
@@ -17093,6 +17808,23 @@ pub fn license_cleanup() -> Result<(),String> {
   handle_res_static(unsafe { MSK_licensecleanup() },"license_cleanup")?;
   return Result::Ok(());
 } // licensecleanup
+/// Directs all output from a stream to a file.
+///
+/// # Arguments
+///
+/// - `whichstream_` Index of the stream.
+///   
+///   See [Streamtype]
+/// - `filename_` A valid file name.
+/// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
+#[allow(unused_parens)]
+pub fn linkfiletostream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+  let __tmp_1 = CString::new(filename_).unwrap();
+  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletostream")?;
+  return Result::Ok(());
+} // linkfiletoenvstream
 /// Optimize a number of tasks in parallel using a specified number of threads.
 ///
 /// # Arguments
@@ -17108,7 +17840,19 @@ pub fn license_cleanup() -> Result<(),String> {
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
-pub fn prototypepfx::optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
+#[allow(unused_parens)]
+pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> {
+  let numtask_ : i64 = task_.len() as i64;
+  let arrptrs_task : Vec<* const u8> = task_.iter().map(|t| t.ptr).collect();
+  if trmcode_.len() != (numtask_).try_into().unwrap() {
+    return Result::Err("optimize_batch: Argument 'trmcode' has the wrong length, expected numtask_".to_string());
+  }
+  if rcode_.len() != (numtask_).try_into().unwrap() {
+    return Result::Err("optimize_batch: Argument 'rcode' has the wrong length, expected numtask_".to_string());
+  }
+  handle_res_static(unsafe { MSK_optimizebatch(std::ptr::null(),israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
+  return Result::Ok(());
+} // optimizebatch
 /// Computes a Cholesky factorization of a dense matrix.
 ///
 /// # Arguments
@@ -17120,7 +17864,74 @@ pub fn prototypepfx::optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : 
 /// - `a_` A symmetric matrix stored in column-major order.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.potrf>
-pub fn prototypepfx::potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
+#[allow(unused_parens)]
+pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_potrf(std::ptr::null(),uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+  return Result::Ok(());
+} // potrf
+/// Input a runtime license code.
+///
+/// # Arguments
+///
+/// - `code_` A license key string.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensecode>
+#[allow(unused_parens)]
+pub fn put_license_code(code_ : &[i32]) -> Result<(),String> {
+  if code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
+    return Result::Err("put_license_code: Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
+  }
+  handle_res_static(unsafe { MSK_putlicensecode(std::ptr::null(),code_.as_ptr()) },"put_license_code")?;
+  return Result::Ok(());
+} // putlicensecode
+/// Enables debug information for the license system.
+///
+/// # Arguments
+///
+/// - `licdebug_` Enable output of license check-out debug information.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensedebug>
+#[allow(unused_parens)]
+pub fn put_license_debug(licdebug_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_putlicensedebug(std::ptr::null(),licdebug_) },"put_license_debug")?;
+  return Result::Ok(());
+} // putlicensedebug
+/// Set the path to the license file.
+///
+/// # Arguments
+///
+/// - `licensepath_` A path specifying where to search for the license.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensepath>
+#[allow(unused_parens)]
+pub fn put_license_path(licensepath_ : &str) -> Result<(),String> {
+  let __tmp_1 = CString::new(licensepath_).unwrap();
+  handle_res_static(unsafe { MSK_putlicensepath(std::ptr::null(),__tmp_1.as_ptr()) },"put_license_path")?;
+  return Result::Ok(());
+} // putlicensepath
+/// Control whether mosek should wait for an available license if no license is available.
+///
+/// # Arguments
+///
+/// - `licwait_` Enable waiting for a license.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensewait>
+#[allow(unused_parens)]
+pub fn put_license_wait(licwait_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_putlicensewait(std::ptr::null(),licwait_) },"put_license_wait")?;
+  return Result::Ok(());
+} // putlicensewait
+/// Reset the license expiry reporting startpoint.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetexpirylicenses>
+#[allow(unused_parens)]
+pub fn reset_expiry_licenses() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_resetexpirylicenses(std::ptr::null()) },"reset_expiry_licenses")?;
+  return Result::Ok(());
+} // resetexpirylicenses
 /// Solves a sparse triangular system of linear equations.
 ///
 /// # Arguments
@@ -17135,7 +17946,28 @@ pub fn prototypepfx::potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),Str
 /// - `b_` The right-hand side of linear equation system to be solved as a dense vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
-pub fn prototypepfx::sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
+#[allow(unused_parens)]
+pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
+  let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),lptrc_.len()),b_.len()) as i32;
+  if lnzc_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
+  }
+  if lptrc_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
+  }
+  let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
+  if lsubc_.len() != (lensubnval_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
+  }
+  if lvalc_.len() != (lensubnval_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lvalc' has the wrong length, expected lensubnval_".to_string());
+  }
+  if b_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'b' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_sparsetriangularsolvedense(std::ptr::null(),transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
+  return Result::Ok(());
+} // sparsetriangularsolvedense
 /// Computes all eigenvalues of a symmetric dense matrix.
 ///
 /// # Arguments
@@ -17148,7 +17980,17 @@ pub fn prototypepfx::sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syeig>
-pub fn prototypepfx::syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
+#[allow(unused_parens)]
+pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syeig: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  if w_.len() != (n_).try_into().unwrap() {
+    return Result::Err("syeig: Argument 'w' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_syeig(std::ptr::null(),uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
+  return Result::Ok(());
+} // syeig
 /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 ///
 /// # Arguments
@@ -17161,7 +18003,17 @@ pub fn prototypepfx::syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> R
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syevd>
-pub fn prototypepfx::syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
+#[allow(unused_parens)]
+pub fn syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syevd: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  if w_.len() != (n_).try_into().unwrap() {
+    return Result::Err("syevd: Argument 'w' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_syevd(std::ptr::null(),uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
+  return Result::Ok(());
+} // syevd
 /// Obtains the value corresponding to a symbolic name defined by MOSEK.
 ///
 /// # Arguments
@@ -17198,5 +18050,15 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syrk>
-pub fn prototypepfx::syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
+#[allow(unused_parens)]
+pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*k_)).try_into().unwrap() {
+    return Result::Err("syrk: Argument 'a' has the wrong length, expected (n_*k_)".to_string());
+  }
+  if c_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syrk: Argument 'c' has the wrong length, expected (n_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_syrk(std::ptr::null(),uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
+  return Result::Ok(());
+} // syrk
 
