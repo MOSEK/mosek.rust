@@ -156,11 +156,13 @@ fn readversion(filename : &str) -> (i32,i32) {
         Err(_) => panic!("Failed to open version file '{}'",filename),
         Ok(mut f) => { let _ = f.read_to_string(& mut mosekverstr).unwrap(); }
     }
+    
+    let mosekverstr = mosekverstr.trim();
     match mosekverstr.find('.') {
         None => panic!("Invalid version file '{}'",filename),
         Some(p) => {
             let vmajor : i32 = FromStr::from_str(&mosekverstr[0..p]).unwrap();
-            let vminor : i32 = FromStr::from_str(&mosekverstr[p+1..mosekverstr.len()-1]).unwrap();
+            let vminor : i32 = FromStr::from_str(&mosekverstr[p+1..mosekverstr.len()]).unwrap();
 
             (vmajor,vminor)
         }
