@@ -46,7 +46,12 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     }
 }
 
-
+// Given platform name and version, look for a MOSEK installation in the default locations:
+// - $MOSEK_INST_BASE (all platforms)
+// - $HOME/mosek (on linux/osx)
+// - %HOMEDRIVE%%HOMEPATH%\mosek (on windows)
+// 
+// Returns `Some(path: String)` if found, otherwise `None`
 fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> Option<String> {
     let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
 
@@ -88,6 +93,14 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
     Some(bindir_b.as_path().to_str().unwrap().to_string())
 }
 
+// Given platform name and version, attempt to download and install the MOSEK distro.
+// 
+// This requires the external commands
+// - `curl` (all platforms)
+// - `zip`/`unzip` (on windows)
+// - `tar` and `bzip` (in linux/osx)
+// 
+// Returns `Some(path: String)` on success, otherwise `None`.
 fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     let mut outdir = PathBuf::new();
     outdir.push(env::var_os("OUT_DIR").unwrap());
@@ -150,6 +163,7 @@ fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     res.as_path().to_str().unwrap().to_string()
 }
 
+// Read a version stored in a file. The version must have the format `[0-9]+ '.' [0-9]+`
 fn readversion(filename : &str) -> (i32,i32) {
     let mut mosekverstr = String::new();
     match File::open(filename) {
@@ -168,7 +182,6 @@ fn readversion(filename : &str) -> (i32,i32) {
 }
 
 fn main() {
-    // 1. if MOSEK_BINDIR is set, use that
     let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
 
     let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
@@ -178,4 +191,8 @@ fn main() {
 
     println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);
+
+    if cfg!(target_os = "linux") || cfg!(target_os = "macos") {
+        println!("cargo:rustc-link-arg=-Wl,-rpath={}",libdir);
+    }
 }
