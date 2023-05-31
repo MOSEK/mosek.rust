@@ -194,7 +194,10 @@ fn main() {
     println!("cargo:rustc-link-search={}",libdir);
     println!("cargo:rustc-flags=-L {} -l {}",libdir,libname);
 
-    if cfg!(target_os = "linux") || cfg!(target_os = "macos") {
+    if cfg!(target_os = "linux") {
         println!("cargo:rustc-link-arg=-Wl,-rpath={}",libdir);
+    }
+    else if cfg!(target_os = "macos") {
+        println!("cargo:rustc-link-arg=-Wl,-rpath,{}",libdir);
     }
 }
