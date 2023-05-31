@@ -208,7 +208,7 @@ fn basic_tests() {
     t.append_cone(mosek::Conetype::RQUAD,0.0,&[3,4,5]).unwrap();
     assert_eq!(2, t.get_num_acc().unwrap(),"Expected two accs");
     assert_eq!(2, t.get_num_cone().unwrap(),"Expected two cones");
-    if let Ok(_) = t.remove_cones(&[0]) { panic!("Fail: Should no be allowed to remove variable belonging to a cone"); }
+    if let Ok(_) = t.remove_vars(&[0]) { panic!("Fail: Should no be allowed to remove variable belonging to a cone"); }
     assert_eq!(2, t.get_num_cone().unwrap(),"Expected two cones");
     t.remove_cones(&[0]).unwrap();
     t.remove_cones(&[0]).unwrap();
