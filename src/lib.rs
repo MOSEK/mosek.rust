@@ -67,457 +67,960 @@ extern {
                           sizelastmsg  : i64,
                           lastmsglen   : * mut i64,
                           lastmsg      : * mut u8) -> i32;
+    fn MSK_writedatahandle(task     : * const u8,
+	                   func     : extern fn (handle : * const c_void, src : * const u8, count : usize) -> usize,
+	                   handle   : * const c_void,
+	                   format   : i32,
+                           compress : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzeproblem(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_analyzesolution(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendacc(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccs(task_ : * const u8,numaccs_ : i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccseq(task_ : * const u8,domidx_ : i64,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendaccsseq(task_ : * const u8,numaccs_ : i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxfirst_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendafes(task_ : * const u8,num_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendbarvars(task_ : * const u8,num_ : i32,dim_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendcone(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendconeseq(task_ : * const u8,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendconesseq(task_ : * const u8,num_ : i32,ct_ : * const i32,conepar_ : * const f64,nummem_ : * const i32,j_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendcons(task_ : * const u8,num_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddjcs(task_ : * const u8,num_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appenddualpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalexpconedomain(task_ : * const u8,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalgeomeanconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendprimalpowerconedomain(task_ : * const u8,n_ : i64,nleft_ : i64,alpha_ : * const f64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendquadraticconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrminusdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrplusdomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrquadraticconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendrzerodomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsparsesymmat(task_ : * const u8,dim_ : i32,nz_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsparsesymmatlist(task_ : * const u8,num_ : i32,dims_ : * const i32,nz_ : * const i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64,idx_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendsvecpsdconedomain(task_ : * const u8,n_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_appendvars(task_ : * const u8,num_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncgetlog(task_ : * const u8,addr_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncgetresult(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncoptimize(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncpoll(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char,respavailable_ : & mut i32,resp_ : &mut i32,trm_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_asyncstop(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,token_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_basiscond(task_ : * const u8,nrmbasis_ : & mut f64,nrminvbasis_ : & mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_bktostr(task_ : * const u8,bk_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_checkmemtask(task_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_chgconbound(task_ : * const u8,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_chgvarbound(task_ : * const u8,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> i32;
     #[allow(dead_code)]
     fn MSK_clonetask(task_ : * const u8,clonedtask_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_commitchanges(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_conetypetostr(task_ : * const u8,ct_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_deletesolution(task_ : * const u8,whichsol_ : i32) -> i32;
     #[allow(dead_code)]
     fn MSK_deletetask(task_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_dualsensitivity(task_ : * const u8,numj_ : i32,subj_ : * const i32,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafebarfrow(task_ : * const u8,afeidx_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafebarfrowlist(task_ : * const u8,numafeidx_ : i64,afeidxlist_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefcol(task_ : * const u8,varidx_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefcollist(task_ : * const u8,numvaridx_ : i64,varidx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefrow(task_ : * const u8,afeidx_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_emptyafefrowlist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_evaluateacc(task_ : * const u8,whichsol_ : i32,accidx_ : i64,activity_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_evaluateaccs(task_ : * const u8,whichsol_ : i32,activity_ : * mut f64) -> i32;
     #[allow(dead_code)]
     fn MSK_freetask(task_ : * const u8,buffer_ : *mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateaccnames(task_ : * const u8,num_ : i64,sub_ : * const i64,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatebarvarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateconenames(task_ : * const u8,num_ : i32,subk_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generateconnames(task_ : * const u8,num_ : i32,subi_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatedjcnames(task_ : * const u8,num_ : i64,sub_ : * const i64,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_generatevarnames(task_ : * const u8,num_ : i32,subj_ : * const i32,fmt_ : * const libc::c_char,ndims_ : i32,dims_ : * const i32,sp_ : * const i64,numnamedaxis_ : i32,namedaxisidxs_ : * const i32,numnames_ : i64,names_ : * const * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccafeidxlist(task_ : * const u8,accidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccb(task_ : * const u8,accidx_ : i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccbarfblocktriplet(task_ : * const u8,maxnumtrip_ : i64,numtrip_ : & mut i64,acc_afe_ : * mut i64,bar_var_ : * mut i32,blk_row_ : * mut i32,blk_col_ : * mut i32,blk_val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccbarfnumblocktriplets(task_ : * const u8,numtrip_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdomain(task_ : * const u8,accidx_ : i64,domidx_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdoty(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccdotys(task_ : * const u8,whichsol_ : i32,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccfnumnz(task_ : * const u8,accfnnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccftrip(task_ : * const u8,frow_ : * mut i64,fcol_ : * mut i32,fval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccgvector(task_ : * const u8,g_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccn(task_ : * const u8,accidx_ : i64,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccname(task_ : * const u8,accidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccnamelen(task_ : * const u8,accidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccntot(task_ : * const u8,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaccs(task_ : * const u8,domidxlist_ : * mut i64,afeidxlist_ : * mut i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacol(task_ : * const u8,j_ : i32,nzj_ : & mut i32,subj_ : * mut i32,valj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolnumnz(task_ : * const u8,i_ : i32,nzj_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getacolslice(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i32,ptrb_ : * mut i32,ptre_ : * mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslice64(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,ptrb_ : * mut i64,ptre_ : * mut i64,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getacolslicenumnz(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getacolslicetrip(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfblocktriplet(task_ : * const u8,maxnumtrip_ : i64,numtrip_ : & mut i64,afeidx_ : * mut i64,barvaridx_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfnumblocktriplets(task_ : * const u8,numtrip_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfnumrowentries(task_ : * const u8,afeidx_ : i64,numentr_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfrow(task_ : * const u8,afeidx_ : i64,barvaridx_ : * mut i32,ptrterm_ : * mut i64,numterm_ : * mut i64,termidx_ : * mut i64,termweight_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafebarfrowinfo(task_ : * const u8,afeidx_ : i64,numentr_ : & mut i32,numterm_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefnumnz(task_ : * const u8,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefrow(task_ : * const u8,afeidx_ : i64,numnz_ : & mut i32,varidx_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafefrownumnz(task_ : * const u8,afeidx_ : i64,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafeftrip(task_ : * const u8,afeidx_ : * mut i64,varidx_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafeg(task_ : * const u8,afeidx_ : i64,g_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getafegslice(task_ : * const u8,first_ : i64,last_ : i64,g_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getapiecenumnz(task_ : * const u8,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarow(task_ : * const u8,i_ : i32,nzi_ : & mut i32,subi_ : * mut i32,vali_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarownumnz(task_ : * const u8,i_ : i32,nzi_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getarowslice(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i32,ptrb_ : * mut i32,ptre_ : * mut i32,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslice64(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,ptrb_ : * mut i64,ptre_ : * mut i64,sub_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getarowslicenumnz(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslicenumnz64(task_ : * const u8,first_ : i32,last_ : i32,numnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getarowslicetrip(task_ : * const u8,first_ : i32,last_ : i32,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getatrip(task_ : * const u8,maxnumnz_ : i64,subi_ : * mut i32,subj_ : * mut i32,val_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getatruncatetol(task_ : * const u8,tolzero_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarablocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subi_ : * mut i32,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valijkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,i_ : & mut i32,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidxij(task_ : * const u8,idx_ : i64,i_ : & mut i32,j_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbaraidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarasparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxij_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcblocktriplet(task_ : * const u8,maxnum_ : i64,num_ : & mut i64,subj_ : * mut i32,subk_ : * mut i32,subl_ : * mut i32,valjkl_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidx(task_ : * const u8,idx_ : i64,maxnum_ : i64,j_ : & mut i32,num_ : & mut i64,sub_ : * mut i64,weights_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidxinfo(task_ : * const u8,idx_ : i64,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcidxj(task_ : * const u8,idx_ : i64,j_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarcsparsity(task_ : * const u8,maxnumnz_ : i64,numnz_ : & mut i64,idxj_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarsslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarname(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbarxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getc(task_ : * const u8,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcfix(task_ : * const u8,cfix_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcj(task_ : * const u8,j_ : i32,cj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getclist(task_ : * const u8,num_ : i32,subj_ : * const i32,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconbound(task_ : * const u8,i_ : i32,bk_ : &mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcone(task_ : * const u8,k_ : i32,ct_ : &mut i32,conepar_ : & mut f64,nummem_ : & mut i32,submem_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconeinfo(task_ : * const u8,k_ : i32,ct_ : &mut i32,conepar_ : & mut f64,nummem_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconename(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconenameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconenamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconname(task_ : * const u8,i_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getconnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcslice(task_ : * const u8,first_ : i32,last_ : i32,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdimbarvarj(task_ : * const u8,j_ : i32,dimbarvarj_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcafeidxlist(task_ : * const u8,djcidx_ : i64,afeidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcb(task_ : * const u8,djcidx_ : i64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcdomainidxlist(task_ : * const u8,djcidx_ : i64,domidxlist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcname(task_ : * const u8,djcidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnamelen(task_ : * const u8,djcidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumafe(task_ : * const u8,djcidx_ : i64,numafe_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumafetot(task_ : * const u8,numafetot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumdomain(task_ : * const u8,djcidx_ : i64,numdomain_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumdomaintot(task_ : * const u8,numdomaintot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumterm(task_ : * const u8,djcidx_ : i64,numterm_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcnumtermtot(task_ : * const u8,numtermtot_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjcs(task_ : * const u8,domidxlist_ : * mut i64,afeidxlist_ : * mut i64,b_ : * mut f64,termsizelist_ : * mut i64,numterms_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdjctermsizelist(task_ : * const u8,djcidx_ : i64,termsizelist_ : * mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainn(task_ : * const u8,domidx_ : i64,n_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainname(task_ : * const u8,domidx_ : i64,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomainnamelen(task_ : * const u8,domidx_ : i64,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdomaintype(task_ : * const u8,domidx_ : i64,domtype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdouinf(task_ : * const u8,whichdinf_ : i32,dvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdouparam(task_ : * const u8,param_ : i32,parvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdualobj(task_ : * const u8,whichsol_ : i32,dualobj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdualsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmy_ : & mut f64,nrmslc_ : & mut f64,nrmsuc_ : & mut f64,nrmslx_ : & mut f64,nrmsux_ : & mut f64,nrmsnx_ : & mut f64,nrmbars_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolacc(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getdviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
     #[allow(dead_code)]
     fn MSK_getenv(task_ : * const u8,env_ : & mut * const u8) -> i32;
     #[allow(dead_code)]
     fn MSK_getinfeasiblesubproblem(task_ : * const u8,whichsol_ : i32,inftask_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfindex(task_ : * const u8,inftype_ : i32,infname_ : * const libc::c_char,infindex_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfmax(task_ : * const u8,inftype_ : i32,infmax_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getinfname(task_ : * const u8,inftype_ : i32,whichinf_ : i32,infname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getintinf(task_ : * const u8,whichiinf_ : i32,ivalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getlenbarvarj(task_ : * const u8,j_ : i32,lenbarvarj_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getmaxnumanz(task_ : * const u8,maxnumanz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumanz64(task_ : * const u8,maxnumanz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumcon(task_ : * const u8,maxnumcon_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumcone(task_ : * const u8,maxnumcone_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getmaxnumqnz(task_ : * const u8,maxnumqnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumqnz64(task_ : * const u8,maxnumqnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnumvar(task_ : * const u8,maxnumvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmemusagetask(task_ : * const u8,meminuse_ : & mut i64,maxmemuse_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmionumthreads(task_ : * const u8,numthreads_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnadouinf(task_ : * const u8,infitemname_ : * const libc::c_char,dvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnaintinf(task_ : * const u8,infitemname_ : * const libc::c_char,ivalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,sizeparamname_ : i32,len_ : & mut i32,parvalue : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumacc(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumafe(task_ : * const u8,numafe_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumanz(task_ : * const u8,numanz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumanz64(task_ : * const u8,numanz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarablocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbaranz(task_ : * const u8,nz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarcblocktriplets(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarcnz(task_ : * const u8,nz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumbarvar(task_ : * const u8,numbarvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumcon(task_ : * const u8,numcon_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumcone(task_ : * const u8,numcone_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumconemem(task_ : * const u8,k_ : i32,nummem_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumdjc(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumdomain(task_ : * const u8,numdomain_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumintvar(task_ : * const u8,numintvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumparam(task_ : * const u8,partype_ : i32,numparam_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getnumqconknz(task_ : * const u8,k_ : i32,numqcnz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumqconknz64(task_ : * const u8,k_ : i32,numqcnz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getnumqobjnz(task_ : * const u8,numqonz_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumqobjnz64(task_ : * const u8,numqonz_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumsymmat(task_ : * const u8,num_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getnumvar(task_ : * const u8,numvar_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjname(task_ : * const u8,sizeobjname_ : i32,objname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjnamelen(task_ : * const u8,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getobjsense(task_ : * const u8,sense_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getparammax(task_ : * const u8,partype_ : i32,parammax_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getparamname(task_ : * const u8,partype_ : i32,param_ : i32,parname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpowerdomainalpha(task_ : * const u8,domidx_ : i64,alpha_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpowerdomaininfo(task_ : * const u8,domidx_ : i64,n_ : & mut i64,nleft_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprimalobj(task_ : * const u8,whichsol_ : i32,primalobj_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprimalsolutionnorms(task_ : * const u8,whichsol_ : i32,nrmxc_ : & mut f64,nrmxx_ : & mut f64,nrmbarx_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprobtype(task_ : * const u8,probtype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getprosta(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolacc(task_ : * const u8,whichsol_ : i32,numaccidx_ : i64,accidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolbarvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolcon(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolcones(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpvioldjc(task_ : * const u8,whichsol_ : i32,numdjcidx_ : i64,djcidxlist_ : * const i64,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getpviolvar(task_ : * const u8,whichsol_ : i32,num_ : i32,sub_ : * const i32,viol_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getqconk(task_ : * const u8,k_ : i32,maxnumqcnz_ : i32,numqcnz_ : & mut i32,qcsubi_ : * mut i32,qcsubj_ : * mut i32,qcval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqconk64(task_ : * const u8,k_ : i32,maxnumqcnz_ : i64,numqcnz_ : & mut i64,qcsubi_ : * mut i32,qcsubj_ : * mut i32,qcval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_getqobj(task_ : * const u8,maxnumqonz_ : i32,numqonz_ : & mut i32,qosubi_ : * mut i32,qosubj_ : * mut i32,qoval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqobj64(task_ : * const u8,maxnumqonz_ : i64,numqonz_ : & mut i64,qosubi_ : * mut i32,qosubj_ : * mut i32,qoval_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getreducedcosts(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskc(task_ : * const u8,whichsol_ : i32,skc_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskn(task_ : * const u8,whichsol_ : i32,skn_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskx(task_ : * const u8,whichsol_ : i32,skx_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslc(task_ : * const u8,whichsol_ : i32,slc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslx(task_ : * const u8,whichsol_ : i32,slx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsnx(task_ : * const u8,whichsol_ : i32,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolsta(task_ : * const u8,whichsol_ : i32,solutionsta_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolution(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32,solutionsta_ : &mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutioninfo(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutioninfonew(task_ : * const u8,whichsol_ : i32,pobj_ : & mut f64,pviolcon_ : & mut f64,pviolvar_ : & mut f64,pviolbarvar_ : & mut f64,pviolcone_ : & mut f64,pviolacc_ : & mut f64,pvioldjc_ : & mut f64,pviolitg_ : & mut f64,dobj_ : & mut f64,dviolcon_ : & mut f64,dviolvar_ : & mut f64,dviolbarvar_ : & mut f64,dviolcone_ : & mut f64,dviolacc_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutionnew(task_ : * const u8,whichsol_ : i32,problemsta_ : &mut i32,solutionsta_ : &mut i32,skc_ : * mut i32,skx_ : * mut i32,skn_ : * mut i32,xc_ : * mut f64,xx_ : * mut f64,y_ : * mut f64,slc_ : * mut f64,suc_ : * mut f64,slx_ : * mut f64,sux_ : * mut f64,snx_ : * mut f64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsolutionslice(task_ : * const u8,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsparsesymmat(task_ : * const u8,idx_ : i64,maxlen_ : i64,subi_ : * mut i32,subj_ : * mut i32,valij_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getstrparam(task_ : * const u8,param_ : i32,maxlen_ : i32,len_ : & mut i32,parvalue : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getstrparamlen(task_ : * const u8,param_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsuc(task_ : * const u8,whichsol_ : i32,suc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsux(task_ : * const u8,whichsol_ : i32,sux_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsymbcon(task_ : * const u8,i_ : i32,sizevalue_ : i32,name : * mut u8,value_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getsymmatinfo(task_ : * const u8,idx_ : i64,dim_ : & mut i32,nz_ : & mut i64,mattype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_gettaskname(task_ : * const u8,sizetaskname_ : i32,taskname : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_gettasknamelen(task_ : * const u8,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarbound(task_ : * const u8,i_ : i32,bk_ : &mut i32,bl_ : & mut f64,bu_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bk_ : * mut i32,bl_ : * mut f64,bu_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarname(task_ : * const u8,j_ : i32,sizename_ : i32,name : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarnameindex(task_ : * const u8,somename_ : * const libc::c_char,asgn_ : & mut i32,index_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvarnamelen(task_ : * const u8,i_ : i32,len_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvartype(task_ : * const u8,j_ : i32,vartype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxx(task_ : * const u8,whichsol_ : i32,xx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_gety(task_ : * const u8,whichsol_ : i32,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_infeasibilityreport(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_initbasissolve(task_ : * const u8,basis_ : * mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_inputdata(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i32,aptre_ : * const i32,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_inputdata64(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,numcon_ : i32,numvar_ : i32,c_ : * const f64,cfix_ : f64,aptrb_ : * const i64,aptre_ : * const i64,asub_ : * const i32,aval_ : * const f64,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_isdouparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_isintparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_isstrparname(task_ : * const u8,parname_ : * const libc::c_char,param_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_linkfiletotaskstream(task_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_onesolutionsummary(task_ : * const u8,whichstream_ : i32,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_optimize(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizermt(task_ : * const u8,address_ : * const libc::c_char,accesstoken_ : * const libc::c_char,trmcode_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizersummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizetrm(task_ : * const u8,trmcode_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_primalrepair(task_ : * const u8,wlc_ : * const f64,wuc_ : * const f64,wlx_ : * const f64,wux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_primalsensitivity(task_ : * const u8,numi_ : i32,subi_ : * const i32,marki_ : * const i32,numj_ : i32,subj_ : * const i32,markj_ : * const i32,leftpricei_ : * mut f64,rightpricei_ : * mut f64,leftrangei_ : * mut f64,rightrangei_ : * mut f64,leftpricej_ : * mut f64,rightpricej_ : * mut f64,leftrangej_ : * mut f64,rightrangej_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_printparam(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_probtypetostr(task_ : * const u8,probtype_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_prostatostr(task_ : * const u8,problemsta_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacc(task_ : * const u8,accidx_ : i64,domidx_ : i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccb(task_ : * const u8,accidx_ : i64,lengthb_ : i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccbj(task_ : * const u8,accidx_ : i64,j_ : i64,bj_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccdoty(task_ : * const u8,whichsol_ : i32,accidx_ : i64,doty_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacclist(task_ : * const u8,numaccs_ : i64,accidxs_ : * const i64,domidxs_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaccname(task_ : * const u8,accidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacol(task_ : * const u8,j_ : i32,nzj_ : i32,subj_ : * const i32,valj_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putacollist(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacollist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putacolslice(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putacolslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfblocktriplet(task_ : * const u8,numtrip_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,subk_ : * const i32,subl_ : * const i32,valkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfentry(task_ : * const u8,afeidx_ : i64,barvaridx_ : i32,numterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfentrylist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,barvaridx_ : * const i32,numterm_ : * const i64,ptrterm_ : * const i64,lenterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafebarfrow(task_ : * const u8,afeidx_ : i64,numentr_ : i32,barvaridx_ : * const i32,numterm_ : * const i64,ptrterm_ : * const i64,lenterm_ : i64,termidx_ : * const i64,termweight_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefcol(task_ : * const u8,varidx_ : i32,numnz_ : i64,afeidx_ : * const i64,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefentry(task_ : * const u8,afeidx_ : i64,varidx_ : i32,value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefentrylist(task_ : * const u8,numentr_ : i64,afeidx_ : * const i64,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefrow(task_ : * const u8,afeidx_ : i64,numnz_ : i32,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafefrowlist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,numnzrow_ : * const i32,ptrrow_ : * const i64,lenidxval_ : i64,varidx_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafeg(task_ : * const u8,afeidx_ : i64,g_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafeglist(task_ : * const u8,numafeidx_ : i64,afeidx_ : * const i64,g_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putafegslice(task_ : * const u8,first_ : i64,last_ : i64,slice_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaij(task_ : * const u8,i_ : i32,j_ : i32,aij_ : f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putaijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putaijlist64(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,valij_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarow(task_ : * const u8,i_ : i32,nzi_ : i32,subi_ : * const i32,vali_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putarowlist(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarowlist64(task_ : * const u8,num_ : i32,sub_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_putarowslice(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i32,ptre_ : * const i32,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putarowslice64(task_ : * const u8,first_ : i32,last_ : i32,ptrb_ : * const i64,ptre_ : * const i64,asub_ : * const i32,aval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putatruncatetol(task_ : * const u8,tolzero_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarablocktriplet(task_ : * const u8,num_ : i64,subi_ : * const i32,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valijkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbaraij(task_ : * const u8,i_ : i32,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbaraijlist(task_ : * const u8,num_ : i32,subi_ : * const i32,subj_ : * const i32,alphaptrb_ : * const i64,alphaptre_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbararowlist(task_ : * const u8,num_ : i32,subi_ : * const i32,ptrb_ : * const i64,ptre_ : * const i64,subj_ : * const i32,nummat_ : * const i64,matidx_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarcblocktriplet(task_ : * const u8,num_ : i64,subj_ : * const i32,subk_ : * const i32,subl_ : * const i32,valjkl_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarcj(task_ : * const u8,j_ : i32,num_ : i64,sub_ : * const i64,weights_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarsj(task_ : * const u8,whichsol_ : i32,j_ : i32,barsj_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putbarxj(task_ : * const u8,whichsol_ : i32,j_ : i32,barxj_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcfix(task_ : * const u8,cfix_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcj(task_ : * const u8,j_ : i32,cj_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putclist(task_ : * const u8,num_ : i32,subj_ : * const i32,val_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconbound(task_ : * const u8,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : * const i32,blc_ : * const f64,buc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcone(task_ : * const u8,k_ : i32,ct_ : i32,conepar_ : f64,nummem_ : i32,submem_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconename(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconname(task_ : * const u8,i_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putconsolutioni(task_ : * const u8,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putcslice(task_ : * const u8,first_ : i32,last_ : i32,slice_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjc(task_ : * const u8,djcidx_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjcname(task_ : * const u8,djcidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdjcslice(task_ : * const u8,idxfirst_ : i64,idxlast_ : i64,numdomidx_ : i64,domidxlist_ : * const i64,numafeidx_ : i64,afeidxlist_ : * const i64,b_ : * const f64,numterms_ : i64,termsizelist_ : * const i64,termsindjc_ : * const i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdomainname(task_ : * const u8,domidx_ : i64,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putdouparam(task_ : * const u8,param_ : i32,parvalue_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumacc(task_ : * const u8,maxnumacc_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumafe(task_ : * const u8,maxnumafe_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumanz(task_ : * const u8,maxnumanz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumbarvar(task_ : * const u8,maxnumbarvar_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumcon(task_ : * const u8,maxnumcon_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumcone(task_ : * const u8,maxnumcone_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumdjc(task_ : * const u8,maxnumdjc_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumdomain(task_ : * const u8,maxnumdomain_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumqnz(task_ : * const u8,maxnumqnz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumvar(task_ : * const u8,maxnumvar_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnadouparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnaintparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putnastrparam(task_ : * const u8,paramname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putobjname(task_ : * const u8,objname_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putobjsense(task_ : * const u8,sense_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putoptserverhost(task_ : * const u8,host_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putparam(task_ : * const u8,parname_ : * const libc::c_char,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqcon(task_ : * const u8,numqcnz_ : i32,qcsubk_ : * const i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqconk(task_ : * const u8,k_ : i32,numqcnz_ : i32,qcsubi_ : * const i32,qcsubj_ : * const i32,qcval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqobj(task_ : * const u8,numqonz_ : i32,qosubi_ : * const i32,qosubj_ : * const i32,qoval_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putqobjij(task_ : * const u8,i_ : i32,j_ : i32,qoij_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskc(task_ : * const u8,whichsol_ : i32,skc_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskx(task_ : * const u8,whichsol_ : i32,skx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putskxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslc(task_ : * const u8,whichsol_ : i32,slc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslx(task_ : * const u8,whichsol_ : i32,slx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putslxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsnx(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsnxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolution(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolutionnew(task_ : * const u8,whichsol_ : i32,skc_ : * const i32,skx_ : * const i32,skn_ : * const i32,xc_ : * const f64,xx_ : * const f64,y_ : * const f64,slc_ : * const f64,suc_ : * const f64,slx_ : * const f64,sux_ : * const f64,snx_ : * const f64,doty_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsolutionyi(task_ : * const u8,i_ : i32,whichsol_ : i32,y_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putstrparam(task_ : * const u8,param_ : i32,parvalue_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsuc(task_ : * const u8,whichsol_ : i32,suc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsucslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsux(task_ : * const u8,whichsol_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putsuxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_puttaskname(task_ : * const u8,taskname_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarbound(task_ : * const u8,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundlist(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundlistconst(task_ : * const u8,num_ : i32,sub_ : * const i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundslice(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : * const i32,blx_ : * const f64,bux_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarboundsliceconst(task_ : * const u8,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarname(task_ : * const u8,j_ : i32,name_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvarsolutionj(task_ : * const u8,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvartype(task_ : * const u8,j_ : i32,vartype_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putvartypelist(task_ : * const u8,num_ : i32,subj_ : * const i32,vartype_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxc(task_ : * const u8,whichsol_ : i32,xc_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxcslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxx(task_ : * const u8,whichsol_ : i32,xx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putxxslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_puty(task_ : * const u8,whichsol_ : i32,y_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putyslice(task_ : * const u8,whichsol_ : i32,first_ : i32,last_ : i32,y_ : * const f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_readbsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_readdata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readdataautoformat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readdataformat(task_ : * const u8,filename_ : * const libc::c_char,format_ : i32,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_readjsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readjsonstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readlpstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readopfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readptfstring(task_ : * const u8,data_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_readsummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_readtask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_removebarvars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removecones(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removecons(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_removevars(task_ : * const u8,num_ : i32,subset_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_resizetask(task_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_sensitivityreport(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_setdefaults(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_sktostr(task_ : * const u8,sk_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_solstatostr(task_ : * const u8,solutionsta_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_solutiondef(task_ : * const u8,whichsol_ : i32,isdef_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_solutionsummary(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_solvewithbasis(task_ : * const u8,transp_ : bool,numnz_ : i32,sub_ : * mut i32,val_ : * mut f64,numnzout_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_strtoconetype(task_ : * const u8,str_ : * const libc::c_char,conetype_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_strtosk(task_ : * const u8,str_ : * const libc::c_char,sk_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_toconic(task_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_unlinkfuncfromtaskstream(task_ : * const u8,whichstream_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_updatesolutioninfo(task_ : * const u8,whichsol_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_whichparam(task_ : * const u8,parname_ : * const libc::c_char,partype_ : &mut i32,param_ : & mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_writebsolution(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_writedata(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writejsonsol(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writeparamfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writesolution(task_ : * const u8,whichsol_ : i32,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writesolutionfile(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writestat(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writetask(task_ : * const u8,filename_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_writetasksolverresult_file(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_callbackcodetostr(code_ : i32,callbackcodestr : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkinall(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkinlicense(env_ : * const u8,feature_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_checkmemenv(env_ : * const u8,file_ : * const libc::c_char,line_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkoutlicense(env_ : * const u8,feature_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_checkversion(env_ : * const u8,major_ : i32,minor_ : i32,revision_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_computesparsecholesky(env_ : * const u8,numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,n_ : i32,anzc_ : * const i32,aptrc_ : * const i64,asubc_ : * const i32,avalc_ : * const f64,perm_ : & mut * const i32,diag_ : & mut * const f64,lnzc_ : & mut * const i32,lptrc_ : & mut * const i64,lensubnval_ : & mut i64,lsubc_ : & mut * const i32,lvalc_ : & mut * const f64) -> i32;
     #[allow(dead_code)]
     fn MSK_deleteenv(env_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
+    fn MSK_dinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_dot(env_ : * const u8,n_ : i32,x_ : * const f64,y_ : * const f64,xty_ : & mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_echointro(env_ : * const u8,longver_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_enablegarcolenv(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_expirylicenses(env_ : * const u8,expiry_ : & mut i64) -> i32;
     #[allow(dead_code)]
     fn MSK_freeenv(env_ : * const u8,buffer_ : *mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_gemm(env_ : * const u8,transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,b_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_gemv(env_ : * const u8,transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : * const f64,x_ : * const f64,beta_ : f64,y_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getbuildinfo(buildstate : * mut u8,builddate : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getcodedesc(code_ : i32,symname : * mut u8,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_getresponseclass(r_ : i32,rc_ : &mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_getversion(major_ : & mut i32,minor_ : & mut i32,revision_ : & mut i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_iinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_isinfinity(value_ : f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_licensecleanup() -> i32;
+    #[allow(dead_code)]
+    fn MSK_liinfitemtostr(item_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_linkfiletoenvstream(env_ : * const u8,whichstream_ : i32,filename_ : * const libc::c_char,append_ : i32) -> i32;
     #[allow(dead_code)]
     fn MSK_makeemptytask(env_ : * const u8,task_ : & mut * const u8) -> i32;
@@ -527,18 +1030,34 @@ extern {
     fn MSK_makeenvdebug(env_ : & mut * const u8,maxnumalloc_ : i64,dbgfile_ : * const libc::c_char) -> i32;
     #[allow(dead_code)]
     fn MSK_maketask(env_ : * const u8,maxnumcon_ : i32,maxnumvar_ : i32,task_ : & mut * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_optimizebatch(env_ : * const u8,israce_ : bool,maxtime_ : f64,numthreads_ : i32,numtask_ : i64,task_ : * const * const u8,trmcode_ : * mut i32,rcode_ : * mut i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_potrf(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensecode(env_ : * const u8,code_ : * const i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensedebug(env_ : * const u8,licdebug_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensepath(env_ : * const u8,licensepath_ : * const libc::c_char) -> i32;
+    #[allow(dead_code)]
     fn MSK_putlicensewait(env_ : * const u8,licwait_ : i32) -> i32;
+    #[allow(dead_code)]
+    fn MSK_rescodetostr(res_ : i32,str : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_resetexpirylicenses(env_ : * const u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_sparsetriangularsolvedense(env_ : * const u8,transposed_ : i32,n_ : i32,lnzc_ : * const i32,lptrc_ : * const i64,lensubnval_ : i64,lsubc_ : * const i32,lvalc_ : * const f64,b_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_syeig(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * const f64,w_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_syevd(env_ : * const u8,uplo_ : i32,n_ : i32,a_ : * mut f64,w_ : * mut f64) -> i32;
+    #[allow(dead_code)]
     fn MSK_symnamtovalue(name_ : * const libc::c_char,value : * mut u8) -> i32;
+    #[allow(dead_code)]
     fn MSK_syrk(env_ : * const u8,uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : * const f64,beta_ : f64,c_ : * mut f64) -> i32;
+    #[allow(dead_code)]
+    fn MSK_unlinkfuncfromenvstream(env_ : * const u8,whichstream_ : i32) -> i32;
 
 }
 
@@ -1039,181 +1558,199 @@ impl Dinfitem {
   pub const INTPNT_PRIMAL_OBJ : i32 = 13;
   /// Time spent within the interior-point optimizer since its invocation.
   pub const INTPNT_TIME : i32 = 14;
+  /// Selection time for clique cuts.
+  pub const MIO_CLIQUE_SELECTION_TIME : i32 = 15;
   /// Separation time for clique cuts.
-  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 15;
+  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 16;
+  /// Selection time for CMIR cuts.
+  pub const MIO_CMIR_SELECTION_TIME : i32 = 17;
   /// Separation time for CMIR cuts.
-  pub const MIO_CMIR_SEPARATION_TIME : i32 = 16;
+  pub const MIO_CMIR_SEPARATION_TIME : i32 = 18;
   /// Optimal objective value corresponding to the feasible solution.
-  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 17;
+  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 19;
   /// Value of the dual bound after presolve but before cut generation.
-  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 18;
+  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 20;
+  /// Selection time for GMI cuts.
+  pub const MIO_GMI_SELECTION_TIME : i32 = 21;
   /// Separation time for GMI cuts.
-  pub const MIO_GMI_SEPARATION_TIME : i32 = 19;
+  pub const MIO_GMI_SEPARATION_TIME : i32 = 22;
+  /// Selection time for implied bound cuts.
+  pub const MIO_IMPLIED_BOUND_SELECTION_TIME : i32 = 23;
   /// Separation time for implied bound cuts.
-  pub const MIO_IMPLIED_BOUND_TIME : i32 = 20;
+  pub const MIO_IMPLIED_BOUND_SEPARATION_TIME : i32 = 24;
   /// Optimal objective value corresponding to the user provided initial solution.
-  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 21;
+  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 25;
+  /// Selection time for knapsack cover.
+  pub const MIO_KNAPSACK_COVER_SELECTION_TIME : i32 = 26;
   /// Separation time for knapsack cover.
-  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 22;
+  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 27;
+  /// Selection time for lift-and-project cuts.
+  pub const MIO_LIPRO_SELECTION_TIME : i32 = 28;
   /// Separation time for lift-and-project cuts.
-  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 23;
+  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 29;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
-  pub const MIO_OBJ_ABS_GAP : i32 = 24;
+  pub const MIO_OBJ_ABS_GAP : i32 = 30;
   /// The best bound on the objective value known.
-  pub const MIO_OBJ_BOUND : i32 = 25;
+  pub const MIO_OBJ_BOUND : i32 = 31;
   /// The primal objective value corresponding to the best integer feasible solution.
-  pub const MIO_OBJ_INT : i32 = 26;
+  pub const MIO_OBJ_INT : i32 = 32;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap.
-  pub const MIO_OBJ_REL_GAP : i32 = 27;
+  pub const MIO_OBJ_REL_GAP : i32 = 33;
   /// Total time for probing.
-  pub const MIO_PROBING_TIME : i32 = 28;
-  /// Total time for cut generation.
-  pub const MIO_ROOT_CUTGEN_TIME : i32 = 29;
+  pub const MIO_PROBING_TIME : i32 = 34;
+  /// Total time for cut selection.
+  pub const MIO_ROOT_CUT_SELECTION_TIME : i32 = 35;
+  /// Total time for cut separation.
+  pub const MIO_ROOT_CUT_SEPARATION_TIME : i32 = 36;
   /// Time spent in the contiuous optimizer while processing the root node relaxation.
-  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 30;
+  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 37;
   /// Time spent presolving the problem at the root node.
-  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 31;
+  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 38;
   /// Time spent processing the root node.
-  pub const MIO_ROOT_TIME : i32 = 32;
+  pub const MIO_ROOT_TIME : i32 = 39;
+  /// Total time for symmetry detection.
+  pub const MIO_SYMMETRY_DETECTION_TIME : i32 = 40;
+  /// Degree to which the problem is affected by detected symmetry.
+  pub const MIO_SYMMETRY_FACTOR : i32 = 41;
   /// Time spent in the mixed-integer optimizer.
-  pub const MIO_TIME : i32 = 33;
+  pub const MIO_TIME : i32 = 42;
   /// If the objective cut is used, then this information item has the value of the cut.
-  pub const MIO_USER_OBJ_CUT : i32 = 34;
+  pub const MIO_USER_OBJ_CUT : i32 = 43;
   /// Total number of ticks spent in the optimizer since it was invoked. It is strictly negative if it is not available.
-  pub const OPTIMIZER_TICKS : i32 = 35;
+  pub const OPTIMIZER_TICKS : i32 = 44;
   /// Total time spent in the optimizer since it was invoked.
-  pub const OPTIMIZER_TIME : i32 = 36;
+  pub const OPTIMIZER_TIME : i32 = 45;
   /// Total time spent in the eliminator since the presolve was invoked.
-  pub const PRESOLVE_ELI_TIME : i32 = 37;
+  pub const PRESOLVE_ELI_TIME : i32 = 46;
   /// Total time spent  in the linear dependency checker since the presolve was invoked.
-  pub const PRESOLVE_LINDEP_TIME : i32 = 38;
+  pub const PRESOLVE_LINDEP_TIME : i32 = 47;
   /// Total time (in seconds) spent in the presolve since it was invoked.
-  pub const PRESOLVE_TIME : i32 = 39;
+  pub const PRESOLVE_TIME : i32 = 48;
   /// Total perturbation of the bounds of the primal problem.
-  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 40;
+  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 49;
   /// The optimal objective value of the penalty function.
-  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 41;
+  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 50;
   /// Maximum absolute diagonal perturbation occurring during the QCQO reformulation.
-  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 42;
+  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 51;
   /// Time spent with conic quadratic reformulation.
-  pub const QCQO_REFORMULATE_TIME : i32 = 43;
+  pub const QCQO_REFORMULATE_TIME : i32 = 52;
   /// Worst Cholesky column scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 44;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 53;
   /// Worst Cholesky diagonal scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 45;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 54;
   /// Time spent reading the data file.
-  pub const READ_DATA_TIME : i32 = 46;
+  pub const READ_DATA_TIME : i32 = 55;
   /// The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server
-  pub const REMOTE_TIME : i32 = 47;
+  pub const REMOTE_TIME : i32 = 56;
   /// Time spent in the dual simplex optimizer since invoking it.
-  pub const SIM_DUAL_TIME : i32 = 48;
+  pub const SIM_DUAL_TIME : i32 = 57;
   /// Feasibility measure reported by the simplex optimizer.
-  pub const SIM_FEAS : i32 = 49;
+  pub const SIM_FEAS : i32 = 58;
   /// Objective value reported by the simplex optimizer.
-  pub const SIM_OBJ : i32 = 50;
+  pub const SIM_OBJ : i32 = 59;
   /// Time spent in the primal simplex optimizer since invoking it.
-  pub const SIM_PRIMAL_TIME : i32 = 51;
+  pub const SIM_PRIMAL_TIME : i32 = 60;
   /// Time spent in the simplex optimizer since invoking it.
-  pub const SIM_TIME : i32 = 52;
+  pub const SIM_TIME : i32 = 61;
   /// Dual objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DUAL_OBJ : i32 = 53;
+  pub const SOL_BAS_DUAL_OBJ : i32 = 62;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLCON : i32 = 54;
+  pub const SOL_BAS_DVIOLCON : i32 = 63;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLVAR : i32 = 55;
+  pub const SOL_BAS_DVIOLVAR : i32 = 64;
   /// Infinity norm of barx in the basic solution.
-  pub const SOL_BAS_NRM_BARX : i32 = 56;
+  pub const SOL_BAS_NRM_BARX : i32 = 65;
   /// Infinity norm of slc in the basic solution.
-  pub const SOL_BAS_NRM_SLC : i32 = 57;
+  pub const SOL_BAS_NRM_SLC : i32 = 66;
   /// Infinity norm of slx in the basic solution.
-  pub const SOL_BAS_NRM_SLX : i32 = 58;
+  pub const SOL_BAS_NRM_SLX : i32 = 67;
   /// Infinity norm of suc in the basic solution.
-  pub const SOL_BAS_NRM_SUC : i32 = 59;
+  pub const SOL_BAS_NRM_SUC : i32 = 68;
   /// Infinity norm of sux in the basic solution.
-  pub const SOL_BAS_NRM_SUX : i32 = 60;
+  pub const SOL_BAS_NRM_SUX : i32 = 69;
   /// Infinity norm of xc in the basic solution.
-  pub const SOL_BAS_NRM_XC : i32 = 61;
+  pub const SOL_BAS_NRM_XC : i32 = 70;
   /// Infinity norm of xx in the basic solution.
-  pub const SOL_BAS_NRM_XX : i32 = 62;
+  pub const SOL_BAS_NRM_XX : i32 = 71;
   /// Infinity norm of Y in the basic solution.
-  pub const SOL_BAS_NRM_Y : i32 = 63;
+  pub const SOL_BAS_NRM_Y : i32 = 72;
   /// Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PRIMAL_OBJ : i32 = 64;
+  pub const SOL_BAS_PRIMAL_OBJ : i32 = 73;
   /// Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLCON : i32 = 65;
+  pub const SOL_BAS_PVIOLCON : i32 = 74;
   /// Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLVAR : i32 = 66;
+  pub const SOL_BAS_PVIOLVAR : i32 = 75;
   /// Infinity norm of barx in the integer solution.
-  pub const SOL_ITG_NRM_BARX : i32 = 67;
+  pub const SOL_ITG_NRM_BARX : i32 = 76;
   /// Infinity norm of xc in the integer solution.
-  pub const SOL_ITG_NRM_XC : i32 = 68;
+  pub const SOL_ITG_NRM_XC : i32 = 77;
   /// Infinity norm of xx in the integer solution.
-  pub const SOL_ITG_NRM_XX : i32 = 69;
+  pub const SOL_ITG_NRM_XX : i32 = 78;
   /// Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PRIMAL_OBJ : i32 = 70;
+  pub const SOL_ITG_PRIMAL_OBJ : i32 = 79;
   /// Maximal primal violation for affine conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLACC : i32 = 71;
+  pub const SOL_ITG_PVIOLACC : i32 = 80;
   /// Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLBARVAR : i32 = 72;
+  pub const SOL_ITG_PVIOLBARVAR : i32 = 81;
   /// Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCON : i32 = 73;
+  pub const SOL_ITG_PVIOLCON : i32 = 82;
   /// Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCONES : i32 = 74;
+  pub const SOL_ITG_PVIOLCONES : i32 = 83;
   /// Maximal primal violation for disjunctive constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLDJC : i32 = 75;
+  pub const SOL_ITG_PVIOLDJC : i32 = 84;
   /// Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLITG : i32 = 76;
+  pub const SOL_ITG_PVIOLITG : i32 = 85;
   /// Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLVAR : i32 = 77;
+  pub const SOL_ITG_PVIOLVAR : i32 = 86;
   /// Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DUAL_OBJ : i32 = 78;
+  pub const SOL_ITR_DUAL_OBJ : i32 = 87;
   /// Maximal dual violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLACC : i32 = 79;
+  pub const SOL_ITR_DVIOLACC : i32 = 88;
   /// Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLBARVAR : i32 = 80;
+  pub const SOL_ITR_DVIOLBARVAR : i32 = 89;
   /// Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCON : i32 = 81;
+  pub const SOL_ITR_DVIOLCON : i32 = 90;
   /// Maximal dual violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCONES : i32 = 82;
+  pub const SOL_ITR_DVIOLCONES : i32 = 91;
   /// Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLVAR : i32 = 83;
+  pub const SOL_ITR_DVIOLVAR : i32 = 92;
   /// Infinity norm of bars in the interior-point solution.
-  pub const SOL_ITR_NRM_BARS : i32 = 84;
+  pub const SOL_ITR_NRM_BARS : i32 = 93;
   /// Infinity norm of barx in the interior-point solution.
-  pub const SOL_ITR_NRM_BARX : i32 = 85;
+  pub const SOL_ITR_NRM_BARX : i32 = 94;
   /// Infinity norm of slc in the interior-point solution.
-  pub const SOL_ITR_NRM_SLC : i32 = 86;
+  pub const SOL_ITR_NRM_SLC : i32 = 95;
   /// Infinity norm of slx in the interior-point solution.
-  pub const SOL_ITR_NRM_SLX : i32 = 87;
+  pub const SOL_ITR_NRM_SLX : i32 = 96;
   /// Infinity norm of snx in the interior-point solution.
-  pub const SOL_ITR_NRM_SNX : i32 = 88;
+  pub const SOL_ITR_NRM_SNX : i32 = 97;
   /// Infinity norm of suc in the interior-point solution.
-  pub const SOL_ITR_NRM_SUC : i32 = 89;
+  pub const SOL_ITR_NRM_SUC : i32 = 98;
   /// Infinity norm of sux in the interior-point solution.
-  pub const SOL_ITR_NRM_SUX : i32 = 90;
+  pub const SOL_ITR_NRM_SUX : i32 = 99;
   /// Infinity norm of xc in the interior-point solution.
-  pub const SOL_ITR_NRM_XC : i32 = 91;
+  pub const SOL_ITR_NRM_XC : i32 = 100;
   /// Infinity norm of xx in the interior-point solution.
-  pub const SOL_ITR_NRM_XX : i32 = 92;
+  pub const SOL_ITR_NRM_XX : i32 = 101;
   /// Infinity norm of Y in the interior-point solution.
-  pub const SOL_ITR_NRM_Y : i32 = 93;
+  pub const SOL_ITR_NRM_Y : i32 = 102;
   /// Primal objective value of the interior-point solution.
-  pub const SOL_ITR_PRIMAL_OBJ : i32 = 94;
+  pub const SOL_ITR_PRIMAL_OBJ : i32 = 103;
   /// Maximal primal violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLACC : i32 = 95;
+  pub const SOL_ITR_PVIOLACC : i32 = 104;
   /// Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLBARVAR : i32 = 96;
+  pub const SOL_ITR_PVIOLBARVAR : i32 = 105;
   /// Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCON : i32 = 97;
+  pub const SOL_ITR_PVIOLCON : i32 = 106;
   /// Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCONES : i32 = 98;
+  pub const SOL_ITR_PVIOLCONES : i32 = 107;
   /// Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLVAR : i32 = 99;
+  pub const SOL_ITR_PVIOLVAR : i32 = 108;
   /// Time spent in the last to conic reformulation.
-  pub const TO_CONIC_TIME : i32 = 100;
+  pub const TO_CONIC_TIME : i32 = 109;
   /// Time spent writing the data file.
-  pub const WRITE_DATA_TIME : i32 = 101;
-  pub const END : i32 = 101;
+  pub const WRITE_DATA_TIME : i32 = 110;
+  pub const END : i32 = 110;
 } // impl Dinfitem
 
 /// License feature
@@ -1459,169 +1996,189 @@ impl Iinfitem {
   pub const MIO_NODE_DEPTH : i32 = 23;
   /// Number of active branch and bound nodes.
   pub const MIO_NUM_ACTIVE_NODES : i32 = 24;
+  /// Number of active cuts in the final relaxation after the mixed-integer optimizer's root cut generation.
+  pub const MIO_NUM_ACTIVE_ROOT_CUTS : i32 = 25;
   /// Number of branches performed during the optimization.
-  pub const MIO_NUM_BRANCH : i32 = 25;
-  /// Number of clique cuts.
-  pub const MIO_NUM_CLIQUE_CUTS : i32 = 26;
-  /// Number of Complemented Mixed Integer Rounding (CMIR) cuts.
-  pub const MIO_NUM_CMIR_CUTS : i32 = 27;
-  /// Number of Gomory cuts.
-  pub const MIO_NUM_GOMORY_CUTS : i32 = 28;
-  /// Number of implied bound cuts.
-  pub const MIO_NUM_IMPLIED_BOUND_CUTS : i32 = 29;
+  pub const MIO_NUM_BRANCH : i32 = 26;
   /// Number of integer feasible solutions that have been found.
-  pub const MIO_NUM_INT_SOLUTIONS : i32 = 30;
-  /// Number of clique cuts.
-  pub const MIO_NUM_KNAPSACK_COVER_CUTS : i32 = 31;
-  /// Number of lift-and-project cuts.
-  pub const MIO_NUM_LIPRO_CUTS : i32 = 32;
+  pub const MIO_NUM_INT_SOLUTIONS : i32 = 27;
   /// Number of relaxations solved during the optimization.
-  pub const MIO_NUM_RELAX : i32 = 33;
+  pub const MIO_NUM_RELAX : i32 = 28;
   /// Number of times presolve was repeated at root.
-  pub const MIO_NUM_REPEATED_PRESOLVE : i32 = 34;
+  pub const MIO_NUM_REPEATED_PRESOLVE : i32 = 29;
+  /// Number of cut separation rounds at the root node of the mixed-integer optimizer.
+  pub const MIO_NUM_ROOT_CUT_ROUNDS : i32 = 30;
+  /// Number of clique cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_CLIQUE_CUTS : i32 = 31;
+  /// Number of Complemented Mixed Integer Rounding (CMIR) cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_CMIR_CUTS : i32 = 32;
+  /// Number of Gomory cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_GOMORY_CUTS : i32 = 33;
+  /// Number of implied bound cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_IMPLIED_BOUND_CUTS : i32 = 34;
+  /// Number of clique cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_KNAPSACK_COVER_CUTS : i32 = 35;
+  /// Number of lift-and-project cuts selected to be included in the relaxation.
+  pub const MIO_NUM_SELECTED_LIPRO_CUTS : i32 = 36;
+  /// Number of separated clique cuts.
+  pub const MIO_NUM_SEPARATED_CLIQUE_CUTS : i32 = 37;
+  /// Number of separated Complemented Mixed Integer Rounding (CMIR) cuts.
+  pub const MIO_NUM_SEPARATED_CMIR_CUTS : i32 = 38;
+  /// Number of separated Gomory cuts.
+  pub const MIO_NUM_SEPARATED_GOMORY_CUTS : i32 = 39;
+  /// Number of separated implied bound cuts.
+  pub const MIO_NUM_SEPARATED_IMPLIED_BOUND_CUTS : i32 = 40;
+  /// Number of separated clique cuts.
+  pub const MIO_NUM_SEPARATED_KNAPSACK_COVER_CUTS : i32 = 41;
+  /// Number of separated lift-and-project cuts.
+  pub const MIO_NUM_SEPARATED_LIPRO_CUTS : i32 = 42;
+  /// Number of branch and bounds nodes solved in the main branch and bound tree.
+  pub const MIO_NUM_SOLVED_NODES : i32 = 43;
   /// Number of binary variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMBIN : i32 = 35;
+  pub const MIO_NUMBIN : i32 = 44;
   /// Number of binary cone variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMBINCONEVAR : i32 = 36;
+  pub const MIO_NUMBINCONEVAR : i32 = 45;
   /// Number of constraints in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMCON : i32 = 37;
+  pub const MIO_NUMCON : i32 = 46;
   /// Number of cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMCONE : i32 = 38;
+  pub const MIO_NUMCONE : i32 = 47;
   /// Number of cone variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMCONEVAR : i32 = 39;
+  pub const MIO_NUMCONEVAR : i32 = 48;
   /// Number of continuous variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMCONT : i32 = 40;
+  pub const MIO_NUMCONT : i32 = 49;
   /// Number of continuous cone variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMCONTCONEVAR : i32 = 41;
+  pub const MIO_NUMCONTCONEVAR : i32 = 50;
   /// Number of dual exponential cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMDEXPCONES : i32 = 42;
+  pub const MIO_NUMDEXPCONES : i32 = 51;
   /// Number of disjunctive constraints in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMDJC : i32 = 43;
+  pub const MIO_NUMDJC : i32 = 52;
   /// Number of dual power cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMDPOWCONES : i32 = 44;
+  pub const MIO_NUMDPOWCONES : i32 = 53;
   /// Number of integer variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMINT : i32 = 45;
+  pub const MIO_NUMINT : i32 = 54;
   /// Number of integer cone variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMINTCONEVAR : i32 = 46;
+  pub const MIO_NUMINTCONEVAR : i32 = 55;
   /// Number of primal exponential cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMPEXPCONES : i32 = 47;
+  pub const MIO_NUMPEXPCONES : i32 = 56;
   /// Number of primal power cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMPPOWCONES : i32 = 48;
+  pub const MIO_NUMPPOWCONES : i32 = 57;
   /// Number of quadratic cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMQCONES : i32 = 49;
+  pub const MIO_NUMQCONES : i32 = 58;
   /// Number of rotated quadratic cones in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMRQCONES : i32 = 50;
+  pub const MIO_NUMRQCONES : i32 = 59;
   /// Number of variables in the problem to be solved by the mixed-integer optimizer.
-  pub const MIO_NUMVAR : i32 = 51;
+  pub const MIO_NUMVAR : i32 = 60;
   /// Non-zero if a valid objective bound has been found, otherwise zero.
-  pub const MIO_OBJ_BOUND_DEFINED : i32 = 52;
+  pub const MIO_OBJ_BOUND_DEFINED : i32 = 61;
   /// Number of binary variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMBIN : i32 = 53;
+  pub const MIO_PRESOLVED_NUMBIN : i32 = 62;
   /// Number of binary cone variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMBINCONEVAR : i32 = 54;
+  pub const MIO_PRESOLVED_NUMBINCONEVAR : i32 = 63;
   /// Number of constraints in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMCON : i32 = 55;
+  pub const MIO_PRESOLVED_NUMCON : i32 = 64;
   /// Number of cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMCONE : i32 = 56;
+  pub const MIO_PRESOLVED_NUMCONE : i32 = 65;
   /// Number of cone variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMCONEVAR : i32 = 57;
+  pub const MIO_PRESOLVED_NUMCONEVAR : i32 = 66;
   /// Number of continuous variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMCONT : i32 = 58;
+  pub const MIO_PRESOLVED_NUMCONT : i32 = 67;
   /// Number of continuous cone variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 59;
+  pub const MIO_PRESOLVED_NUMCONTCONEVAR : i32 = 68;
   /// Number of dual exponential cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMDEXPCONES : i32 = 60;
+  pub const MIO_PRESOLVED_NUMDEXPCONES : i32 = 69;
   /// Number of disjunctive constraints in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMDJC : i32 = 61;
+  pub const MIO_PRESOLVED_NUMDJC : i32 = 70;
   /// Number of dual power cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMDPOWCONES : i32 = 62;
+  pub const MIO_PRESOLVED_NUMDPOWCONES : i32 = 71;
   /// Number of integer variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMINT : i32 = 63;
+  pub const MIO_PRESOLVED_NUMINT : i32 = 72;
   /// Number of integer cone variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMINTCONEVAR : i32 = 64;
+  pub const MIO_PRESOLVED_NUMINTCONEVAR : i32 = 73;
   /// Number of primal exponential cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMPEXPCONES : i32 = 65;
+  pub const MIO_PRESOLVED_NUMPEXPCONES : i32 = 74;
   /// Number of primal power cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMPPOWCONES : i32 = 66;
+  pub const MIO_PRESOLVED_NUMPPOWCONES : i32 = 75;
   /// Number of quadratic cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMQCONES : i32 = 67;
+  pub const MIO_PRESOLVED_NUMQCONES : i32 = 76;
   /// Number of rotated quadratic cones in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMRQCONES : i32 = 68;
+  pub const MIO_PRESOLVED_NUMRQCONES : i32 = 77;
   /// Number of variables in the problem after the mixed-integer optimizer's presolve.
-  pub const MIO_PRESOLVED_NUMVAR : i32 = 69;
+  pub const MIO_PRESOLVED_NUMVAR : i32 = 78;
   /// Non-zero if relative gap is within tolerances.
-  pub const MIO_RELGAP_SATISFIED : i32 = 70;
-  /// Total number of cuts generated by the mixed-integer optimizer.
-  pub const MIO_TOTAL_NUM_CUTS : i32 = 71;
+  pub const MIO_RELGAP_SATISFIED : i32 = 79;
+  /// Total number of cuts selected to be included in the relaxation by the mixed-integer optimizer.
+  pub const MIO_TOTAL_NUM_SELECTED_CUTS : i32 = 80;
+  /// Total number of cuts separated by the mixed-integer optimizer.
+  pub const MIO_TOTAL_NUM_SEPARATED_CUTS : i32 = 81;
   /// If it is non-zero, then the objective cut is used.
-  pub const MIO_USER_OBJ_CUT : i32 = 72;
+  pub const MIO_USER_OBJ_CUT : i32 = 82;
   /// Number of constraints in the problem solved when the optimizer is called.
-  pub const OPT_NUMCON : i32 = 73;
+  pub const OPT_NUMCON : i32 = 83;
   /// Number of variables in the problem solved when the optimizer is called
-  pub const OPT_NUMVAR : i32 = 74;
+  pub const OPT_NUMVAR : i32 = 84;
   /// The response code returned by optimize.
-  pub const OPTIMIZE_RESPONSE : i32 = 75;
+  pub const OPTIMIZE_RESPONSE : i32 = 85;
   /// Number perturbations to thhe bounds of the primal problem.
-  pub const PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 76;
+  pub const PRESOLVE_NUM_PRIMAL_PERTURBATIONS : i32 = 86;
   /// Is nonzero if the dual solution is purified.
-  pub const PURIFY_DUAL_SUCCESS : i32 = 77;
+  pub const PURIFY_DUAL_SUCCESS : i32 = 87;
   /// Is nonzero if the primal solution is purified.
-  pub const PURIFY_PRIMAL_SUCCESS : i32 = 78;
+  pub const PURIFY_PRIMAL_SUCCESS : i32 = 88;
   /// Number of symmetric variables read.
-  pub const RD_NUMBARVAR : i32 = 79;
+  pub const RD_NUMBARVAR : i32 = 89;
   /// Number of constraints read.
-  pub const RD_NUMCON : i32 = 80;
+  pub const RD_NUMCON : i32 = 90;
   /// Number of conic constraints read.
-  pub const RD_NUMCONE : i32 = 81;
+  pub const RD_NUMCONE : i32 = 91;
   /// Number of integer-constrained variables read.
-  pub const RD_NUMINTVAR : i32 = 82;
+  pub const RD_NUMINTVAR : i32 = 92;
   /// Number of nonempty Q matrices read.
-  pub const RD_NUMQ : i32 = 83;
+  pub const RD_NUMQ : i32 = 93;
   /// Number of variables read.
-  pub const RD_NUMVAR : i32 = 84;
+  pub const RD_NUMVAR : i32 = 94;
   /// Problem type.
-  pub const RD_PROTYPE : i32 = 85;
+  pub const RD_PROTYPE : i32 = 95;
   /// The number of dual degenerate iterations.
-  pub const SIM_DUAL_DEG_ITER : i32 = 86;
+  pub const SIM_DUAL_DEG_ITER : i32 = 96;
   /// If 1 then the dual simplex algorithm is solving from an advanced basis.
-  pub const SIM_DUAL_HOTSTART : i32 = 87;
+  pub const SIM_DUAL_HOTSTART : i32 = 97;
   /// If 1 then a valid basis factorization of full rank was located and used by the dual simplex algorithm.
-  pub const SIM_DUAL_HOTSTART_LU : i32 = 88;
+  pub const SIM_DUAL_HOTSTART_LU : i32 = 98;
   /// The number of iterations taken with dual infeasibility.
-  pub const SIM_DUAL_INF_ITER : i32 = 89;
+  pub const SIM_DUAL_INF_ITER : i32 = 99;
   /// Number of dual simplex iterations during the last optimization.
-  pub const SIM_DUAL_ITER : i32 = 90;
+  pub const SIM_DUAL_ITER : i32 = 100;
   /// Number of constraints in the problem solved by the simplex optimizer.
-  pub const SIM_NUMCON : i32 = 91;
+  pub const SIM_NUMCON : i32 = 101;
   /// Number of variables in the problem solved by the simplex optimizer.
-  pub const SIM_NUMVAR : i32 = 92;
+  pub const SIM_NUMVAR : i32 = 102;
   /// The number of primal degenerate iterations.
-  pub const SIM_PRIMAL_DEG_ITER : i32 = 93;
+  pub const SIM_PRIMAL_DEG_ITER : i32 = 103;
   /// If 1 then the primal simplex algorithm is solving from an advanced basis.
-  pub const SIM_PRIMAL_HOTSTART : i32 = 94;
+  pub const SIM_PRIMAL_HOTSTART : i32 = 104;
   /// If 1 then a valid basis factorization of full rank was located and used by the primal simplex algorithm.
-  pub const SIM_PRIMAL_HOTSTART_LU : i32 = 95;
+  pub const SIM_PRIMAL_HOTSTART_LU : i32 = 105;
   /// The number of iterations taken with primal infeasibility.
-  pub const SIM_PRIMAL_INF_ITER : i32 = 96;
+  pub const SIM_PRIMAL_INF_ITER : i32 = 106;
   /// Number of primal simplex iterations during the last optimization.
-  pub const SIM_PRIMAL_ITER : i32 = 97;
+  pub const SIM_PRIMAL_ITER : i32 = 107;
   /// Is non-zero if dual problem is solved.
-  pub const SIM_SOLVE_DUAL : i32 = 98;
+  pub const SIM_SOLVE_DUAL : i32 = 108;
   /// Problem status of the basic solution. Updated after each optimization.
-  pub const SOL_BAS_PROSTA : i32 = 99;
+  pub const SOL_BAS_PROSTA : i32 = 109;
   /// Solution status of the basic solution. Updated after each optimization.
-  pub const SOL_BAS_SOLSTA : i32 = 100;
+  pub const SOL_BAS_SOLSTA : i32 = 110;
   /// Problem status of the integer solution. Updated after each optimization.
-  pub const SOL_ITG_PROSTA : i32 = 101;
+  pub const SOL_ITG_PROSTA : i32 = 111;
   /// Solution status of the integer solution. Updated after each optimization.
-  pub const SOL_ITG_SOLSTA : i32 = 102;
+  pub const SOL_ITG_SOLSTA : i32 = 112;
   /// Problem status of the interior-point solution. Updated after each optimization.
-  pub const SOL_ITR_PROSTA : i32 = 103;
+  pub const SOL_ITR_PROSTA : i32 = 113;
   /// Solution status of the interior-point solution. Updated after each optimization.
-  pub const SOL_ITR_SOLSTA : i32 = 104;
+  pub const SOL_ITR_SOLSTA : i32 = 114;
   /// Number of times the storage for storing the linear coefficient matrix has been changed.
-  pub const STO_NUM_A_REALLOC : i32 = 105;
-  pub const END : i32 = 105;
+  pub const STO_NUM_A_REALLOC : i32 = 115;
+  pub const END : i32 = 115;
 } // impl Iinfitem
 
 /// Information item types
@@ -1790,238 +2347,246 @@ impl Iparam {
   pub const MIO_CUT_SELECTION_LEVEL : i32 = 67;
   /// Controls what problem data permutation method is appplied to mixed-integer problems.
   pub const MIO_DATA_PERMUTATION_METHOD : i32 = 68;
+  /// Controls the amount of dual ray analysis employed by the mixed-integer optimizer in presolve.
+  pub const MIO_DUAL_RAY_ANALYSIS_LEVEL : i32 = 69;
   /// Controls the way the Feasibility Pump heuristic is employed by the mixed-integer optimizer.
-  pub const MIO_FEASPUMP_LEVEL : i32 = 69;
+  pub const MIO_FEASPUMP_LEVEL : i32 = 70;
   /// Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution.
-  pub const MIO_HEURISTIC_LEVEL : i32 = 70;
+  pub const MIO_HEURISTIC_LEVEL : i32 = 71;
   /// Maximum number of branches allowed during the branch and bound search.
-  pub const MIO_MAX_NUM_BRANCHES : i32 = 71;
+  pub const MIO_MAX_NUM_BRANCHES : i32 = 72;
   /// Maximum number of relaxations in branch and bound search.
-  pub const MIO_MAX_NUM_RELAXS : i32 = 72;
+  pub const MIO_MAX_NUM_RELAXS : i32 = 73;
   /// Maximum number of cut separation rounds at the root node.
-  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 73;
+  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 74;
   /// Controls how many feasible solutions the mixed-integer optimizer investigates.
-  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 74;
+  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 75;
   /// Controls how much emphasis is put on reducing memory usage.
-  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 75;
+  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 76;
+  /// Number of times a variable must have been branched on for its pseudocost to be cosidered reliable.
+  pub const MIO_MIN_REL : i32 = 77;
   /// Turns on/off the mixed-integer mode.
-  pub const MIO_MODE : i32 = 76;
+  pub const MIO_MODE : i32 = 78;
   /// Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
-  pub const MIO_NODE_OPTIMIZER : i32 = 77;
+  pub const MIO_NODE_OPTIMIZER : i32 = 79;
   /// Controls the node selection strategy employed by the mixed-integer optimizer.
-  pub const MIO_NODE_SELECTION : i32 = 78;
+  pub const MIO_NODE_SELECTION : i32 = 80;
   /// Controls how much emphasis is put on reducing numerical problems
-  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 79;
+  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 81;
   /// Enables or disables perspective reformulation in presolve.
-  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 80;
+  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 82;
   /// Controls if the aggregator should be used.
-  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 81;
+  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 83;
   /// Controls the amount of probing employed by the mixed-integer optimizer in presolve.
-  pub const MIO_PROBING_LEVEL : i32 = 82;
+  pub const MIO_PROBING_LEVEL : i32 = 84;
   /// Use objective domain propagation.
-  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 83;
+  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 85;
   /// Controls what reformulation method is applied to mixed-integer quadratic problems.
-  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 84;
+  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 86;
   /// Maximum number of nodes in each call to RINS.
-  pub const MIO_RINS_MAX_NODES : i32 = 85;
+  pub const MIO_RINS_MAX_NODES : i32 = 87;
   /// Controls which optimizer is employed at the root node in the mixed-integer optimizer.
-  pub const MIO_ROOT_OPTIMIZER : i32 = 86;
+  pub const MIO_ROOT_OPTIMIZER : i32 = 88;
   /// Controls whether presolve can be repeated at root node.
-  pub const MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 87;
+  pub const MIO_ROOT_REPEAT_PRESOLVE_LEVEL : i32 = 89;
   /// Sets the random seed used for randomization in the mixed integer optimizer.
-  pub const MIO_SEED : i32 = 88;
+  pub const MIO_SEED : i32 = 90;
   /// Controls the amount of symmetry detection and handling employed by the mixed-integer optimizer in presolve.
-  pub const MIO_SYMMETRY_LEVEL : i32 = 89;
+  pub const MIO_SYMMETRY_LEVEL : i32 = 91;
+  /// Controls the variable selection strategy employed by the mixed-integer optimizer.
+  pub const MIO_VAR_SELECTION : i32 = 92;
   /// Controls how much effort is put into detecting variable bounds.
-  pub const MIO_VB_DETECTION_LEVEL : i32 = 90;
+  pub const MIO_VB_DETECTION_LEVEL : i32 = 93;
   /// Set the number of iterations to spin before sleeping.
-  pub const MT_SPINCOUNT : i32 = 91;
+  pub const MT_SPINCOUNT : i32 = 94;
   /// Not in use
-  pub const NG : i32 = 92;
+  pub const NG : i32 = 95;
   /// The number of threads employed by the optimizer.
-  pub const NUM_THREADS : i32 = 93;
+  pub const NUM_THREADS : i32 = 96;
   /// Write a text header with date and MOSEK version in an OPF file.
-  pub const OPF_WRITE_HEADER : i32 = 94;
+  pub const OPF_WRITE_HEADER : i32 = 97;
   /// Write a hint section with problem dimensions in the beginning of an OPF file.
-  pub const OPF_WRITE_HINTS : i32 = 95;
+  pub const OPF_WRITE_HINTS : i32 = 98;
   /// Aim to keep lines in OPF files not much longer than this.
-  pub const OPF_WRITE_LINE_LENGTH : i32 = 96;
+  pub const OPF_WRITE_LINE_LENGTH : i32 = 99;
   /// Write a parameter section in an OPF file.
-  pub const OPF_WRITE_PARAMETERS : i32 = 97;
+  pub const OPF_WRITE_PARAMETERS : i32 = 100;
   /// Write objective, constraints, bounds etc. to an OPF file.
-  pub const OPF_WRITE_PROBLEM : i32 = 98;
+  pub const OPF_WRITE_PROBLEM : i32 = 101;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_BAS : i32 = 99;
+  pub const OPF_WRITE_SOL_BAS : i32 = 102;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITG : i32 = 100;
+  pub const OPF_WRITE_SOL_ITG : i32 = 103;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITR : i32 = 101;
+  pub const OPF_WRITE_SOL_ITR : i32 = 104;
   /// Enable inclusion of solutions in the OPF files.
-  pub const OPF_WRITE_SOLUTIONS : i32 = 102;
+  pub const OPF_WRITE_SOLUTIONS : i32 = 105;
   /// Controls which optimizer is used to optimize the task.
-  pub const OPTIMIZER : i32 = 103;
+  pub const OPTIMIZER : i32 = 106;
   /// If turned on, then names in the parameter file are case sensitive.
-  pub const PARAM_READ_CASE_NAME : i32 = 104;
+  pub const PARAM_READ_CASE_NAME : i32 = 107;
   /// If turned on, then errors in parameter settings is ignored.
-  pub const PARAM_READ_IGN_ERROR : i32 = 105;
+  pub const PARAM_READ_IGN_ERROR : i32 = 108;
   /// Maximum amount of fill-in created in one pivot during the elimination phase.
-  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 106;
+  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 109;
   /// Control the maximum number of times the eliminator is tried.
-  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 107;
+  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 110;
   /// Currently not used.
-  pub const PRESOLVE_LEVEL : i32 = 108;
+  pub const PRESOLVE_LEVEL : i32 = 111;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 109;
+  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 112;
+  /// Controls whether whether a new experimental linear depdency checker is employed.
+  pub const PRESOLVE_LINDEP_NEW : i32 = 113;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 110;
+  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 114;
   /// Controls whether the linear constraints are checked for linear dependencies.
-  pub const PRESOLVE_LINDEP_USE : i32 = 111;
+  pub const PRESOLVE_LINDEP_USE : i32 = 115;
   /// Control the maximum number of times presolve passes over the problem.
-  pub const PRESOLVE_MAX_NUM_PASS : i32 = 112;
+  pub const PRESOLVE_MAX_NUM_PASS : i32 = 116;
   /// Controls the maximum number of reductions performed by the presolve.
-  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 113;
+  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 117;
   /// Controls whether the presolve is applied to a problem before it is optimized.
-  pub const PRESOLVE_USE : i32 = 114;
+  pub const PRESOLVE_USE : i32 = 118;
   /// Controls which optimizer that is used to find the optimal repair.
-  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 115;
+  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 119;
   /// Controls whether parameters section is written in PTF files.
-  pub const PTF_WRITE_PARAMETERS : i32 = 116;
+  pub const PTF_WRITE_PARAMETERS : i32 = 120;
   /// Controls whether solution section is written in PTF files.
-  pub const PTF_WRITE_SOLUTIONS : i32 = 117;
+  pub const PTF_WRITE_SOLUTIONS : i32 = 121;
   /// Controls if simple transformation are done when writing PTF files.
-  pub const PTF_WRITE_TRANSFORM : i32 = 118;
+  pub const PTF_WRITE_TRANSFORM : i32 = 122;
   /// Turns on additional debugging information when reading files.
-  pub const READ_DEBUG : i32 = 119;
+  pub const READ_DEBUG : i32 = 123;
   /// Controls whether the free constraints are included in the problem.
-  pub const READ_KEEP_FREE_CON : i32 = 120;
+  pub const READ_KEEP_FREE_CON : i32 = 124;
   /// Controls how strictly the MPS file reader interprets the MPS format.
-  pub const READ_MPS_FORMAT : i32 = 121;
+  pub const READ_MPS_FORMAT : i32 = 125;
   /// Controls the maximal number of characters allowed in one line of the MPS file.
-  pub const READ_MPS_WIDTH : i32 = 122;
+  pub const READ_MPS_WIDTH : i32 = 126;
   /// Controls what information is used from the task files.
-  pub const READ_TASK_IGNORE_PARAM : i32 = 123;
+  pub const READ_TASK_IGNORE_PARAM : i32 = 127;
   /// Use compression when sending data to an optimization server
-  pub const REMOTE_USE_COMPRESSION : i32 = 124;
+  pub const REMOTE_USE_COMPRESSION : i32 = 128;
   /// Removes unused solutions before the optimization is performed.
-  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 125;
+  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 129;
   /// Controls sensitivity report behavior.
-  pub const SENSITIVITY_ALL : i32 = 126;
+  pub const SENSITIVITY_ALL : i32 = 130;
   /// Controls which optimizer is used for optimal partition sensitivity analysis.
-  pub const SENSITIVITY_OPTIMIZER : i32 = 127;
+  pub const SENSITIVITY_OPTIMIZER : i32 = 131;
   /// Controls which type of sensitivity analysis is to be performed.
-  pub const SENSITIVITY_TYPE : i32 = 128;
+  pub const SENSITIVITY_TYPE : i32 = 132;
   /// Controls whether an LU factorization of the basis is used in a hot-start.
-  pub const SIM_BASIS_FACTOR_USE : i32 = 129;
+  pub const SIM_BASIS_FACTOR_USE : i32 = 133;
   /// Controls how aggressively degeneration is handled.
-  pub const SIM_DEGEN : i32 = 130;
+  pub const SIM_DEGEN : i32 = 134;
   /// Not in use.
-  pub const SIM_DETECT_PWL : i32 = 131;
+  pub const SIM_DETECT_PWL : i32 = 135;
   /// Controls whether crashing is performed in the dual simplex optimizer.
-  pub const SIM_DUAL_CRASH : i32 = 132;
+  pub const SIM_DUAL_CRASH : i32 = 136;
   /// An experimental feature.
-  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 133;
+  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 137;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 134;
+  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 138;
   /// Controls the dual simplex strategy.
-  pub const SIM_DUAL_SELECTION : i32 = 135;
+  pub const SIM_DUAL_SELECTION : i32 = 139;
   /// Controls if the simplex optimizers are allowed to exploit duplicated columns.
-  pub const SIM_EXPLOIT_DUPVEC : i32 = 136;
+  pub const SIM_EXPLOIT_DUPVEC : i32 = 140;
   /// Controls the type of hot-start that the simplex optimizer perform.
-  pub const SIM_HOTSTART : i32 = 137;
+  pub const SIM_HOTSTART : i32 = 141;
   /// Determines if the simplex optimizer should exploit the initial factorization.
-  pub const SIM_HOTSTART_LU : i32 = 138;
+  pub const SIM_HOTSTART_LU : i32 = 142;
   /// Maximum number of iterations that can be used by a simplex optimizer.
-  pub const SIM_MAX_ITERATIONS : i32 = 139;
+  pub const SIM_MAX_ITERATIONS : i32 = 143;
   /// Controls how many set-backs that are allowed within a simplex optimizer.
-  pub const SIM_MAX_NUM_SETBACKS : i32 = 140;
+  pub const SIM_MAX_NUM_SETBACKS : i32 = 144;
   /// Controls if the simplex optimizer ensures a non-singular basis, if possible.
-  pub const SIM_NON_SINGULAR : i32 = 141;
+  pub const SIM_NON_SINGULAR : i32 = 145;
   /// Controls the simplex crash.
-  pub const SIM_PRIMAL_CRASH : i32 = 142;
+  pub const SIM_PRIMAL_CRASH : i32 = 146;
   /// An experimental feature.
-  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 143;
+  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 147;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 144;
+  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 148;
   /// Controls the primal simplex strategy.
-  pub const SIM_PRIMAL_SELECTION : i32 = 145;
+  pub const SIM_PRIMAL_SELECTION : i32 = 149;
   /// Controls the basis refactoring frequency.
-  pub const SIM_REFACTOR_FREQ : i32 = 146;
+  pub const SIM_REFACTOR_FREQ : i32 = 150;
   /// Controls if the simplex optimizers are allowed to reformulate the problem.
-  pub const SIM_REFORMULATION : i32 = 147;
+  pub const SIM_REFORMULATION : i32 = 151;
   /// Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
-  pub const SIM_SAVE_LU : i32 = 148;
+  pub const SIM_SAVE_LU : i32 = 152;
   /// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
-  pub const SIM_SCALING : i32 = 149;
+  pub const SIM_SCALING : i32 = 153;
   /// Controls how the problem is scaled before a simplex optimizer is used.
-  pub const SIM_SCALING_METHOD : i32 = 150;
+  pub const SIM_SCALING_METHOD : i32 = 154;
   /// Sets the random seed used for randomization in the simplex optimizers.
-  pub const SIM_SEED : i32 = 151;
+  pub const SIM_SEED : i32 = 155;
   /// Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
-  pub const SIM_SOLVE_FORM : i32 = 152;
+  pub const SIM_SOLVE_FORM : i32 = 156;
   /// Controls how high priority the numerical stability should be given.
-  pub const SIM_STABILITY_PRIORITY : i32 = 153;
+  pub const SIM_STABILITY_PRIORITY : i32 = 157;
   /// Controls the simplex behavior.
-  pub const SIM_SWITCH_OPTIMIZER : i32 = 154;
+  pub const SIM_SWITCH_OPTIMIZER : i32 = 158;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_BASIC : i32 = 155;
+  pub const SOL_FILTER_KEEP_BASIC : i32 = 159;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_RANGED : i32 = 156;
+  pub const SOL_FILTER_KEEP_RANGED : i32 = 160;
   /// Controls the input solution file format.
-  pub const SOL_READ_NAME_WIDTH : i32 = 157;
+  pub const SOL_READ_NAME_WIDTH : i32 = 161;
   /// Controls the input solution file format.
-  pub const SOL_READ_WIDTH : i32 = 158;
+  pub const SOL_READ_WIDTH : i32 = 162;
   /// Indicates whether solution callbacks will be performed during the optimization.
-  pub const SOLUTION_CALLBACK : i32 = 159;
+  pub const SOLUTION_CALLBACK : i32 = 163;
   /// Controls the amount of timing performed inside MOSEK.
-  pub const TIMING_LEVEL : i32 = 160;
+  pub const TIMING_LEVEL : i32 = 164;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_CONSTRAINTS : i32 = 161;
+  pub const WRITE_BAS_CONSTRAINTS : i32 = 165;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_HEAD : i32 = 162;
+  pub const WRITE_BAS_HEAD : i32 = 166;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_VARIABLES : i32 = 163;
+  pub const WRITE_BAS_VARIABLES : i32 = 167;
   /// Controls output file compression.
-  pub const WRITE_COMPRESSION : i32 = 164;
+  pub const WRITE_COMPRESSION : i32 = 168;
   /// Controls output file data.
-  pub const WRITE_DATA_PARAM : i32 = 165;
+  pub const WRITE_DATA_PARAM : i32 = 169;
   /// Controls the output file data.
-  pub const WRITE_FREE_CON : i32 = 166;
+  pub const WRITE_FREE_CON : i32 = 170;
   /// Controls the output file data.
-  pub const WRITE_GENERIC_NAMES : i32 = 167;
+  pub const WRITE_GENERIC_NAMES : i32 = 171;
   /// Index origin used in  generic names.
-  pub const WRITE_GENERIC_NAMES_IO : i32 = 168;
+  pub const WRITE_GENERIC_NAMES_IO : i32 = 172;
   /// Controls if the writer ignores incompatible problem items when writing files.
-  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 169;
+  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 173;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_CONSTRAINTS : i32 = 170;
+  pub const WRITE_INT_CONSTRAINTS : i32 = 174;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_HEAD : i32 = 171;
+  pub const WRITE_INT_HEAD : i32 = 175;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_VARIABLES : i32 = 172;
+  pub const WRITE_INT_VARIABLES : i32 = 176;
   /// When set, the JSON task and solution files are written with indentation for better readability.
-  pub const WRITE_JSON_INDENTATION : i32 = 173;
+  pub const WRITE_JSON_INDENTATION : i32 = 177;
   /// Write full linear objective
-  pub const WRITE_LP_FULL_OBJ : i32 = 174;
+  pub const WRITE_LP_FULL_OBJ : i32 = 178;
   /// Controls the LP output file format.
-  pub const WRITE_LP_LINE_WIDTH : i32 = 175;
+  pub const WRITE_LP_LINE_WIDTH : i32 = 179;
   /// Controls in which format the MPS is written.
-  pub const WRITE_MPS_FORMAT : i32 = 176;
+  pub const WRITE_MPS_FORMAT : i32 = 180;
   /// Controls the output file data.
-  pub const WRITE_MPS_INT : i32 = 177;
+  pub const WRITE_MPS_INT : i32 = 181;
   /// Controls the solution file format.
-  pub const WRITE_SOL_BARVARIABLES : i32 = 178;
+  pub const WRITE_SOL_BARVARIABLES : i32 = 182;
   /// Controls the solution file format.
-  pub const WRITE_SOL_CONSTRAINTS : i32 = 179;
+  pub const WRITE_SOL_CONSTRAINTS : i32 = 183;
   /// Controls solution file format.
-  pub const WRITE_SOL_HEAD : i32 = 180;
+  pub const WRITE_SOL_HEAD : i32 = 184;
   /// Controls whether the user specified names are employed even if they are invalid names.
-  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 181;
+  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 185;
   /// Controls the solution file format.
-  pub const WRITE_SOL_VARIABLES : i32 = 182;
+  pub const WRITE_SOL_VARIABLES : i32 = 186;
   /// Controls whether the solutions are stored in the task file too.
-  pub const WRITE_TASK_INC_SOL : i32 = 183;
+  pub const WRITE_TASK_INC_SOL : i32 = 187;
   /// Controls if linear coefficients should be written by row or column when writing in the XML file format.
-  pub const WRITE_XML_MODE : i32 = 184;
+  pub const WRITE_XML_MODE : i32 = 188;
 } // impl Iparam
 
 /// Specifies the branching direction.
@@ -2113,6 +2678,18 @@ impl Mionodeseltype {
   /// The optimizer employs selects the node based on a pseudo cost estimate.
   pub const PSEUDO : i32 = 3;
 } // impl Mionodeseltype
+
+/// Mixed-integer variable selection types
+#[non_exhaustive]
+pub struct Miovarseltype;
+impl Miovarseltype {
+  /// The optimizer decides the variable selection strategy.
+  pub const FREE : i32 = 0;
+  /// The optimizer employs pseudocost variable selection.
+  pub const PSEUDOCOST : i32 = 1;
+  /// The optimizer employs strong branching varfiable selection
+  pub const STRONG : i32 = 2;
+} // impl Miovarseltype
 
 /// MPS file format type
 #[non_exhaustive]
@@ -2504,6 +3081,10 @@ impl Rescode {
   pub const ERR_NULL_POINTER : i32 = 1065;
   /// Not all tasks associated with the environment have been deleted.
   pub const ERR_LIVING_TASKS : i32 = 1066;
+  /// Error encountered in GZIP stream.
+  pub const ERR_READ_GZIP : i32 = 1067;
+  /// Error encountered in ZSTD stream.
+  pub const ERR_READ_ZSTD : i32 = 1068;
   /// An all blank name has been specified.
   pub const ERR_BLANK_NAME : i32 = 1070;
   /// Duplicate names specified.
@@ -2644,6 +3225,8 @@ impl Rescode {
   pub const ERR_LP_AMBIGUOUS_CONSTRAINT_BOUND : i32 = 1163;
   /// Duplicate section
   pub const ERR_LP_DUPLICATE_SECTION : i32 = 1164;
+  /// Duplicate section
+  pub const ERR_READ_LP_DELAYED_ROWS_NOT_SUPPORTED : i32 = 1165;
   /// An error occurred while writing file
   pub const ERR_WRITING_FILE : i32 = 1166;
   /// An invalid name occurred in a solution file.
@@ -3623,7 +4206,7 @@ impl Variabletype {
 #[allow(unused_parens)]
 fn handle_res_static(r : i32, funname : &str) -> Result<(),String> {
     return
-        ( if r != 0 { Err(format!("Error in call to {}: {}",r,funname)) }
+        ( if r != 0 { Err(format!("Error in call to {}: {}",funname,r)) }
           else {
               Ok(())
           })
@@ -3715,7 +4298,7 @@ impl Env {
       if y_.len() != (n_).try_into().unwrap() {
         return Result::Err("axpy: Argument 'y' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_axpy(self.ptr,n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
+      self.handle_res(unsafe { MSK_axpy(self.ptr,n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
       return Result::Ok(());
     } // axpy
     /// Check in all unused license features to the license token server.
@@ -3765,7 +4348,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
     #[allow(unused_parens)]
     pub fn check_version(&self,major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> {
-      handle_res_static(unsafe { MSK_checkversion(self.ptr,major_,minor_,revision_) },"check_version")?;
+      self.handle_res(unsafe { MSK_checkversion(self.ptr,major_,minor_,revision_) },"check_version")?;
       return Result::Ok(());
     } // checkversion
     /// Computes a Cholesky factorization of sparse matrix.
@@ -3790,14 +4373,14 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
     #[allow(unused_parens)]
     pub fn compute_sparse_cholesky(&self,numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
       let mut __tmp_0 : * const i32 = std::ptr::null();
       let mut __tmp_1 : * const f64 = std::ptr::null();
       let mut __tmp_2 : * const i32 = std::ptr::null();
       let mut __tmp_3 : * const i64 = std::ptr::null();
       let mut __tmp_5 : * const i32 = std::ptr::null();
       let mut __tmp_6 : * const f64 = std::ptr::null();
-      handle_res_static(unsafe { MSK_computesparsecholesky(self.ptr,numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
+      self.handle_res(unsafe { MSK_computesparsecholesky(self.ptr,numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
       let len_perm_ : usize = n_.try_into().unwrap_or(0);
       perm_.resize(len_perm_,Default::default());
       perm_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_0,len_perm_) } );
@@ -3842,7 +4425,7 @@ impl Env {
       if y_.len() != (n_).try_into().unwrap() {
         return Result::Err("dot: Argument 'y' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_dot(self.ptr,n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
+      self.handle_res(unsafe { MSK_dot(self.ptr,n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
       return Result::Ok(());
     } // dot
     /// Prints an intro to message stream.
@@ -3854,7 +4437,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
     #[allow(unused_parens)]
     pub fn echo_intro(&self,longver_ : i32) -> Result<(),String> {
-      handle_res_static(unsafe { MSK_echointro(self.ptr,longver_) },"echo_intro")?;
+      self.handle_res(unsafe { MSK_echointro(self.ptr,longver_) },"echo_intro")?;
       return Result::Ok(());
     } // echointro
     /// Enable reference counting for environments.
@@ -3908,7 +4491,7 @@ impl Env {
       if c_.len() != ((m_*n_)).try_into().unwrap() {
         return Result::Err("gemm: Argument 'c' has the wrong length, expected (m_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_gemm(self.ptr,transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
+      self.handle_res(unsafe { MSK_gemm(self.ptr,transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
       return Result::Ok(());
     } // gemm
     /// Computes dense matrix times a dense vector product.
@@ -3950,7 +4533,7 @@ impl Env {
       if y_.len() != (__tmp_1).try_into().unwrap() {
         return Result::Err("gemv: Argument 'y' has the wrong length, expected __tmp_1".to_string());
       }
-      handle_res_static(unsafe { MSK_gemv(self.ptr,transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
+      self.handle_res(unsafe { MSK_gemv(self.ptr,transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
       return Result::Ok(());
     } // gemv
     /// Directs all output from a stream to a file.
@@ -3995,7 +4578,7 @@ impl Env {
       if rcode_.len() != (numtask_).try_into().unwrap() {
         return Result::Err("optimize_batch: Argument 'rcode' has the wrong length, expected numtask_".to_string());
       }
-      handle_res_static(unsafe { MSK_optimizebatch(self.ptr,israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
+      self.handle_res(unsafe { MSK_optimizebatch(self.ptr,israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
       return Result::Ok(());
     } // optimizebatch
     /// Computes a Cholesky factorization of a dense matrix.
@@ -4014,7 +4597,7 @@ impl Env {
       if a_.len() != ((n_*n_)).try_into().unwrap() {
         return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+      self.handle_res(unsafe { MSK_potrf(self.ptr,uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
       return Result::Ok(());
     } // potrf
     /// Input a runtime license code.
@@ -4093,7 +4676,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lnzc_.len()),lptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lptrc_.len()),lnzc_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
@@ -4110,7 +4693,7 @@ impl Env {
       if b_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'b' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_sparsetriangularsolvedense(self.ptr,transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
+      self.handle_res(unsafe { MSK_sparsetriangularsolvedense(self.ptr,transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
       return Result::Ok(());
     } // sparsetriangularsolvedense
     /// Computes all eigenvalues of a symmetric dense matrix.
@@ -4133,7 +4716,7 @@ impl Env {
       if w_.len() != (n_).try_into().unwrap() {
         return Result::Err("syeig: Argument 'w' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_syeig(self.ptr,uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
+      self.handle_res(unsafe { MSK_syeig(self.ptr,uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
       return Result::Ok(());
     } // syeig
     /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
@@ -4156,7 +4739,7 @@ impl Env {
       if w_.len() != (n_).try_into().unwrap() {
         return Result::Err("syevd: Argument 'w' has the wrong length, expected n_".to_string());
       }
-      handle_res_static(unsafe { MSK_syevd(self.ptr,uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
+      self.handle_res(unsafe { MSK_syevd(self.ptr,uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
       return Result::Ok(());
     } // syevd
     /// Performs a rank-k update of a symmetric matrix.
@@ -4185,13 +4768,13 @@ impl Env {
       if c_.len() != ((n_*n_)).try_into().unwrap() {
         return Result::Err("syrk: Argument 'c' has the wrong length, expected (n_*n_)".to_string());
       }
-      handle_res_static(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
+      self.handle_res(unsafe { MSK_syrk(self.ptr,uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
       return Result::Ok(());
     } // syrk
 
 }
 
-const MSK_GLOBAL_ENV : Env = Env{ ptr : std::ptr::null() };
+//const MSK_GLOBAL_ENV : Env = Env{ ptr : std::ptr::null() };
 
 extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
     let h = handle as * const Box<dyn Fn(&str)>;
@@ -4322,6 +4905,16 @@ impl TaskCB {
                 }
             },
             None => Ok(())
+        }
+    }
+
+    pub fn clear_callback(& mut self) -> Result<(),String> {
+        self.valuecb = None;
+        if 0 != unsafe { MSK_putcallbackfunc_ptr(self.task.ptr, std::ptr::null(), std::ptr::null()) } {
+            Err("put_callback: Failed to attach callback".to_string())
+        }
+        else {
+            Ok(())
         }
     }
 
@@ -4984,10 +5577,13 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `accidx_` The index of the affine conic constraint.
-    /// - `domidx_` The index of domain in the affine conic constraint.
+    ///
+    /// # Returns
+    ///
+    ///   - `domidx` The index of domain in the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdomain>
-    pub fn get_acc_domain(&mut self,accidx_ : i64,domidx_ : &mut i64) -> Result<(),String> { self.task.get_acc_domain(accidx_,domidx_) }
+    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> { self.task.get_acc_domain(accidx_) }
     /// Obtains the doty vector for an affine conic constraint.
     ///
     /// # Arguments
@@ -9036,6 +9632,17 @@ impl TaskCB {
     pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.write_task_solver_result_file(filename_,compress_) }
 
 }
+
+
+extern fn wrap_data_write_handle(handle : * const libc::c_void,
+                                 src    : * const u8,
+                                 count  : usize) -> usize {
+    let h = handle as * mut Box<dyn FnMut(&[u8]) -> usize>;
+    unsafe {
+        (*h)(std::slice::from_raw_parts(src,count))
+    }
+}
+
 impl Task {
     /// Create a new task in the given environment or with the default environment with a given capacity
     pub fn with_capacity(env : Option<&Env>, numcon : i32, numvar : i32) -> Option<Task> {
@@ -9098,7 +9705,12 @@ impl Task {
         );
     }
 
-
+    pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+    where F : FnMut(&[u8]) -> usize {
+        let boxfunc : Box<dyn FnMut(&[u8]) -> usize> = Box::new(func);
+        let hnd =  (&boxfunc) as * const _ as * mut libc::c_void;
+        self.handle_res(unsafe { MSK_writedatahandle(self.ptr, wrap_data_write_handle, hnd, format,compress ) }, "write_data_stream")
+    }
 
     /// Analyze the names and issue an error for the first invalid name.
     ///
@@ -9297,7 +9909,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),nummem_.len()),conepar_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(conepar_.len(),nummem_.len()),ct_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -10187,13 +10799,17 @@ impl Task {
     /// # Arguments
     ///
     /// - `accidx_` The index of the affine conic constraint.
-    /// - `domidx_` The index of domain in the affine conic constraint.
+    ///
+    /// # Returns
+    ///
+    ///   - `domidx` The index of domain in the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdomain>
     #[allow(unused_parens)]
-    pub fn get_acc_domain(&mut self,accidx_ : i64,domidx_ : &mut i64) -> Result<(),String> {
-      self.handle_res(unsafe { MSK_getaccdomain(self.ptr,accidx_,domidx_) },"get_acc_domain")?;
-      return Result::Ok(());
+    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      self.handle_res(unsafe { MSK_getaccdomain(self.ptr,accidx_,&mut __tmp_0) },"get_acc_domain")?;
+      return Result::Ok(__tmp_0);
     } // getaccdomain
     /// Obtains the doty vector for an affine conic constraint.
     ///
@@ -14129,8 +14745,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),bkx_.len()),c_.len()),blx_.len()),aptrb_.len()),aptre_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),bkc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),blx_.len()),aptre_.len()),c_.len()),bux_.len()),aptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -14325,7 +14941,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
       let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
@@ -14492,7 +15108,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptre_.len()),ptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -14536,7 +15152,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),afeidx_.len()),valkl_.len()),subl_.len()),barvaridx_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),subk_.len()),barvaridx_.len()),valkl_.len()),subl_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -14585,7 +15201,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()),afeidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(ptrterm_.len(),numterm_.len()),afeidx_.len()),barvaridx_.len()) as i64;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
@@ -14604,7 +15220,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),barvaridx_.len()),ptrterm_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(ptrterm_.len(),numterm_.len()),barvaridx_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -14620,7 +15236,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefcol>
     #[allow(unused_parens)]
     pub fn put_afe_f_col(&mut self,varidx_ : i32,afeidx_ : &[i64],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i64 = std::cmp::min(val_.len(),afeidx_.len()) as i64;
+      let numnz_ : i64 = std::cmp::min(afeidx_.len(),val_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefcol(self.ptr,varidx_,numnz_,afeidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_col")?;
       return Result::Ok(());
     } // putafefcol
@@ -14649,7 +15265,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),val_.len()),afeidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),afeidx_.len()),val_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -14713,7 +15329,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafeglist>
     #[allow(unused_parens)]
     pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(g_.len(),afeidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(afeidx_.len(),g_.len()) as i64;
       self.handle_res(unsafe { MSK_putafeglist(self.ptr,numafeidx_,afeidx_.as_ptr(),g_.as_ptr()) },"put_afe_g_list")?;
       return Result::Ok(());
     } // putafeglist
@@ -14774,7 +15390,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(subi_.len(),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
@@ -14791,7 +15407,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),sub_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptre_.len()),ptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -14853,7 +15469,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subk_.len()),subl_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subk_.len()),subj_.len()),subl_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -14902,7 +15518,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),alphaptre_.len()),subi_.len()),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),alphaptrb_.len()),alphaptre_.len()),subj_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -14926,7 +15542,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),subi_.len()),ptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),subi_.len()),ptrb_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -14960,7 +15576,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subk_.len()),subl_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subk_.len()),subj_.len()),subl_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -15082,7 +15698,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putclist>
     #[allow(unused_parens)]
     pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(val_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putclist(self.ptr,num_,subj_.as_ptr(),val_.as_ptr()) },"put_c_list")?;
       return Result::Ok(());
     } // putclist
@@ -15117,7 +15733,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blc_.len(),buc_.len()),bkc_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),buc_.len()),blc_.len()),bkc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -15605,7 +16221,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubj_.len()),qcsubi_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcsubj_.len()),qcval_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -15621,7 +16237,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubj_.len()),qcsubi_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcsubj_.len()),qcval_.len()) as i32;
       if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
@@ -15637,7 +16253,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qosubj_.len()),qoval_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qoval_.len()),qosubj_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -16083,7 +16699,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),bux_.len()),sub_.len()),bkx_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),bkx_.len()),bux_.len()),blx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -16915,7 +17531,53 @@ impl Drop for Task
 /// - `y_` The y vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.axpy>
-pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.axpy(n_,alpha_,x_,y_) }
+#[allow(unused_parens)]
+pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),String> {
+  if x_.len() != (n_).try_into().unwrap() {
+    return Result::Err("axpy: Argument 'x' has the wrong length, expected n_".to_string());
+  }
+  if y_.len() != (n_).try_into().unwrap() {
+    return Result::Err("axpy: Argument 'y' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_axpy(std::ptr::null(),n_,alpha_,x_.as_ptr(),y_.as_mut_ptr()) },"axpy")?;
+  return Result::Ok(());
+} // axpy
+/// Check in all unused license features to the license token server.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinall>
+#[allow(unused_parens)]
+pub fn check_in_all() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkinall(std::ptr::null()) },"check_in_all")?;
+  return Result::Ok(());
+} // checkinall
+/// Check in a license feature back to the license server ahead of time.
+///
+/// # Arguments
+///
+/// - `feature_` Feature to check in to the license system.
+///   
+///   See [Feature]
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
+#[allow(unused_parens)]
+pub fn check_in_license(feature_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkinlicense(std::ptr::null(),feature_) },"check_in_license")?;
+  return Result::Ok(());
+} // checkinlicense
+/// Check out a license feature from the license server ahead of time.
+///
+/// # Arguments
+///
+/// - `feature_` Feature to check out from the license system.
+///   
+///   See [Feature]
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
+#[allow(unused_parens)]
+pub fn check_out_license(feature_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkoutlicense(std::ptr::null(),feature_) },"check_out_license")?;
+  return Result::Ok(());
+} // checkoutlicense
 /// Compares a version of the MOSEK DLL with a specified version.
 ///
 /// # Arguments
@@ -16925,7 +17587,11 @@ pub fn axpy(n_ : i32,alpha_ : f64,x_ : &[f64],y_ : &mut[f64]) -> Result<(),Strin
 /// - `revision_` Revision number.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkversion>
-pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.check_version(major_,minor_,revision_) }
+#[allow(unused_parens)]
+pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_checkversion(std::ptr::null(),major_,minor_,revision_) },"check_version")?;
+  return Result::Ok(());
+} // checkversion
 /// Computes a Cholesky factorization of sparse matrix.
 ///
 /// # Arguments
@@ -16946,7 +17612,42 @@ pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),Str
 /// - `lvalc_` The values corresponding to row indexed stored in lsubc.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
-pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> { MSK_GLOBAL_ENV.compute_sparse_cholesky(numthreads_,ordermethod_,tolsingular_,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_) }
+#[allow(unused_parens)]
+pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
+  let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
+  let mut __tmp_0 : * const i32 = std::ptr::null();
+  let mut __tmp_1 : * const f64 = std::ptr::null();
+  let mut __tmp_2 : * const i32 = std::ptr::null();
+  let mut __tmp_3 : * const i64 = std::ptr::null();
+  let mut __tmp_5 : * const i32 = std::ptr::null();
+  let mut __tmp_6 : * const f64 = std::ptr::null();
+  handle_res_static(unsafe { MSK_computesparsecholesky(std::ptr::null(),numthreads_,ordermethod_,tolsingular_,n_,anzc_.as_ptr(),aptrc_.as_ptr(),asubc_.as_ptr(),avalc_.as_ptr(),& mut __tmp_0,& mut __tmp_1,& mut __tmp_2,& mut __tmp_3,lensubnval_,& mut __tmp_5,& mut __tmp_6) },"compute_sparse_cholesky")?;
+  let len_perm_ : usize = n_.try_into().unwrap_or(0);
+  perm_.resize(len_perm_,Default::default());
+  perm_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_0,len_perm_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_0 as * mut u8); };
+  let len_diag_ : usize = n_.try_into().unwrap_or(0);
+  diag_.resize(len_diag_,Default::default());
+  diag_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_1,len_diag_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_1 as * mut u8); };
+  let len_lnzc_ : usize = n_.try_into().unwrap_or(0);
+  lnzc_.resize(len_lnzc_,Default::default());
+  lnzc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_2,len_lnzc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_2 as * mut u8); };
+  let len_lptrc_ : usize = n_.try_into().unwrap_or(0);
+  lptrc_.resize(len_lptrc_,Default::default());
+  lptrc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_3,len_lptrc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_3 as * mut u8); };
+  let len_lsubc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
+  lsubc_.resize(len_lsubc_,Default::default());
+  lsubc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_5,len_lsubc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_5 as * mut u8); };
+  let len_lvalc_ : usize = (*lensubnval_).try_into().unwrap_or(0);
+  lvalc_.resize(len_lvalc_,Default::default());
+  lvalc_.clone_from_slice(unsafe { std::slice::from_raw_parts(__tmp_6,len_lvalc_) } );
+  let _ = unsafe { MSK_freeenv(std::ptr::null(),__tmp_6 as * mut u8); };
+  return Result::Ok(());
+} // computesparsecholesky
 /// Computes the inner product of two vectors.
 ///
 /// # Arguments
@@ -16957,7 +17658,17 @@ pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_
 /// - `xty_` The result of the inner product.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.dot>
-pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> { MSK_GLOBAL_ENV.dot(n_,x_,y_,xty_) }
+#[allow(unused_parens)]
+pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String> {
+  if x_.len() != (n_).try_into().unwrap() {
+    return Result::Err("dot: Argument 'x' has the wrong length, expected n_".to_string());
+  }
+  if y_.len() != (n_).try_into().unwrap() {
+    return Result::Err("dot: Argument 'y' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_dot(std::ptr::null(),n_,x_.as_ptr(),y_.as_ptr(),xty_) },"dot")?;
+  return Result::Ok(());
+} // dot
 /// Prints an intro to message stream.
 ///
 /// # Arguments
@@ -16965,7 +17676,31 @@ pub fn dot(n_ : i32,x_ : &[f64],y_ : &[f64],xty_ : &mut f64) -> Result<(),String
 /// - `longver_` If non-zero, then the intro is slightly longer.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.echointro>
-pub fn echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_intro(longver_) }
+#[allow(unused_parens)]
+pub fn echo_intro(longver_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_echointro(std::ptr::null(),longver_) },"echo_intro")?;
+  return Result::Ok(());
+} // echointro
+/// Enable reference counting for environments.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.enablegarcolenv>
+#[allow(unused_parens)]
+pub fn enable_gar_col_env() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_enablegarcolenv(std::ptr::null()) },"enable_gar_col_env")?;
+  return Result::Ok(());
+} // enablegarcolenv
+/// Reports when the first license feature expires.
+///
+/// # Arguments
+///
+/// - `expiry_` If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.expirylicenses>
+#[allow(unused_parens)]
+pub fn expirylicenses(expiry_ : &mut i64) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_expirylicenses(std::ptr::null(),expiry_) },"expirylicenses")?;
+  return Result::Ok(());
+} // expirylicenses
 /// Performs a dense matrix multiplication.
 ///
 /// # Arguments
@@ -16986,7 +17721,20 @@ pub fn echo_intro(longver_ : i32) -> Result<(),String> { MSK_GLOBAL_ENV.echo_int
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemm>
-pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemm(transa_,transb_,m_,n_,k_,alpha_,a_,b_,beta_,c_) }
+#[allow(unused_parens)]
+pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],b_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((m_*k_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'a' has the wrong length, expected (m_*k_)".to_string());
+  }
+  if b_.len() != ((k_*n_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'b' has the wrong length, expected (k_*n_)".to_string());
+  }
+  if c_.len() != ((m_*n_)).try_into().unwrap() {
+    return Result::Err("gemm: Argument 'c' has the wrong length, expected (m_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_gemm(std::ptr::null(),transa_,transb_,m_,n_,k_,alpha_,a_.as_ptr(),b_.as_ptr(),beta_,c_.as_mut_ptr()) },"gemm")?;
+  return Result::Ok(());
+} // gemm
 /// Computes dense matrix times a dense vector product.
 ///
 /// # Arguments
@@ -17003,7 +17751,32 @@ pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,
 /// - `y_` A pointer to the array storing the vector y.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gemv>
-pub fn gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.gemv(transa_,m_,n_,alpha_,a_,x_,beta_,y_) }
+#[allow(unused_parens)]
+pub fn gemv(transa_ : i32,m_ : i32,n_ : i32,alpha_ : f64,a_ : &[f64],x_ : &[f64],beta_ : f64,y_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*m_)).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'a' has the wrong length, expected (n_*m_)".to_string());
+  }
+  let __tmp_0 = if ((transa_==Transpose::NO)) {
+    n_
+  }
+  else {
+    m_
+  };
+  if x_.len() != (__tmp_0).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'x' has the wrong length, expected __tmp_0".to_string());
+  }
+  let __tmp_1 = if ((transa_==Transpose::NO)) {
+    m_
+  }
+  else {
+    n_
+  };
+  if y_.len() != (__tmp_1).try_into().unwrap() {
+    return Result::Err("gemv: Argument 'y' has the wrong length, expected __tmp_1".to_string());
+  }
+  handle_res_static(unsafe { MSK_gemv(std::ptr::null(),transa_,m_,n_,alpha_,a_.as_ptr(),x_.as_ptr(),beta_,y_.as_mut_ptr()) },"gemv")?;
+  return Result::Ok(());
+} // gemv
 /// Obtains build information.
 ///
 /// # Returns
@@ -17091,6 +17864,23 @@ pub fn license_cleanup() -> Result<(),String> {
   handle_res_static(unsafe { MSK_licensecleanup() },"license_cleanup")?;
   return Result::Ok(());
 } // licensecleanup
+/// Directs all output from a stream to a file.
+///
+/// # Arguments
+///
+/// - `whichstream_` Index of the stream.
+///   
+///   See [Streamtype]
+/// - `filename_` A valid file name.
+/// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
+#[allow(unused_parens)]
+pub fn linkfiletostream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+  let __tmp_1 = CString::new(filename_).unwrap();
+  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletostream")?;
+  return Result::Ok(());
+} // linkfiletoenvstream
 /// Optimize a number of tasks in parallel using a specified number of threads.
 ///
 /// # Arguments
@@ -17106,7 +17896,19 @@ pub fn license_cleanup() -> Result<(),String> {
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
-pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> { MSK_GLOBAL_ENV.optimize_batch(israce_,maxtime_,numthreads_,task_,trmcode_,rcode_) }
+#[allow(unused_parens)]
+pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[ & mut Task ],trmcode_ : &mut[i32],rcode_ : &mut[i32]) -> Result<(),String> {
+  let numtask_ : i64 = task_.len() as i64;
+  let arrptrs_task : Vec<* const u8> = task_.iter().map(|t| t.ptr).collect();
+  if trmcode_.len() != (numtask_).try_into().unwrap() {
+    return Result::Err("optimize_batch: Argument 'trmcode' has the wrong length, expected numtask_".to_string());
+  }
+  if rcode_.len() != (numtask_).try_into().unwrap() {
+    return Result::Err("optimize_batch: Argument 'rcode' has the wrong length, expected numtask_".to_string());
+  }
+  handle_res_static(unsafe { MSK_optimizebatch(std::ptr::null(),israce_,maxtime_,numthreads_,numtask_,arrptrs_task.as_ptr(),trmcode_.as_mut_ptr(),rcode_.as_mut_ptr()) },"optimize_batch")?;
+  return Result::Ok(());
+} // optimizebatch
 /// Computes a Cholesky factorization of a dense matrix.
 ///
 /// # Arguments
@@ -17118,7 +17920,74 @@ pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[
 /// - `a_` A symmetric matrix stored in column-major order.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.potrf>
-pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.potrf(uplo_,n_,a_) }
+#[allow(unused_parens)]
+pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("potrf: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_potrf(std::ptr::null(),uplo_,n_,a_.as_mut_ptr()) },"potrf")?;
+  return Result::Ok(());
+} // potrf
+/// Input a runtime license code.
+///
+/// # Arguments
+///
+/// - `code_` A license key string.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensecode>
+#[allow(unused_parens)]
+pub fn put_license_code(code_ : &[i32]) -> Result<(),String> {
+  if code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
+    return Result::Err("put_license_code: Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
+  }
+  handle_res_static(unsafe { MSK_putlicensecode(std::ptr::null(),code_.as_ptr()) },"put_license_code")?;
+  return Result::Ok(());
+} // putlicensecode
+/// Enables debug information for the license system.
+///
+/// # Arguments
+///
+/// - `licdebug_` Enable output of license check-out debug information.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensedebug>
+#[allow(unused_parens)]
+pub fn put_license_debug(licdebug_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_putlicensedebug(std::ptr::null(),licdebug_) },"put_license_debug")?;
+  return Result::Ok(());
+} // putlicensedebug
+/// Set the path to the license file.
+///
+/// # Arguments
+///
+/// - `licensepath_` A path specifying where to search for the license.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensepath>
+#[allow(unused_parens)]
+pub fn put_license_path(licensepath_ : &str) -> Result<(),String> {
+  let __tmp_1 = CString::new(licensepath_).unwrap();
+  handle_res_static(unsafe { MSK_putlicensepath(std::ptr::null(),__tmp_1.as_ptr()) },"put_license_path")?;
+  return Result::Ok(());
+} // putlicensepath
+/// Control whether mosek should wait for an available license if no license is available.
+///
+/// # Arguments
+///
+/// - `licwait_` Enable waiting for a license.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensewait>
+#[allow(unused_parens)]
+pub fn put_license_wait(licwait_ : i32) -> Result<(),String> {
+  handle_res_static(unsafe { MSK_putlicensewait(std::ptr::null(),licwait_) },"put_license_wait")?;
+  return Result::Ok(());
+} // putlicensewait
+/// Reset the license expiry reporting startpoint.
+///
+/// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetexpirylicenses>
+#[allow(unused_parens)]
+pub fn reset_expiry_licenses() -> Result<(),String> {
+  handle_res_static(unsafe { MSK_resetexpirylicenses(std::ptr::null()) },"reset_expiry_licenses")?;
+  return Result::Ok(());
+} // resetexpirylicenses
 /// Solves a sparse triangular system of linear equations.
 ///
 /// # Arguments
@@ -17133,7 +18002,28 @@ pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> { MSK_GLO
 /// - `b_` The right-hand side of linear equation system to be solved as a dense vector.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
-pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.sparse_triangular_solve_dense(transposed_,lnzc_,lptrc_,lsubc_,lvalc_,b_) }
+#[allow(unused_parens)]
+pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
+  let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lptrc_.len()),lnzc_.len()) as i32;
+  if lnzc_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
+  }
+  if lptrc_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
+  }
+  let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
+  if lsubc_.len() != (lensubnval_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
+  }
+  if lvalc_.len() != (lensubnval_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'lvalc' has the wrong length, expected lensubnval_".to_string());
+  }
+  if b_.len() != (n_).try_into().unwrap() {
+    return Result::Err("sparse_triangular_solve_dense: Argument 'b' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_sparsetriangularsolvedense(std::ptr::null(),transposed_,n_,lnzc_.as_ptr(),lptrc_.as_ptr(),lensubnval_,lsubc_.as_ptr(),lvalc_.as_ptr(),b_.as_mut_ptr()) },"sparse_triangular_solve_dense")?;
+  return Result::Ok(());
+} // sparsetriangularsolvedense
 /// Computes all eigenvalues of a symmetric dense matrix.
 ///
 /// # Arguments
@@ -17146,7 +18036,17 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syeig>
-pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syeig(uplo_,n_,a_,w_) }
+#[allow(unused_parens)]
+pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syeig: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  if w_.len() != (n_).try_into().unwrap() {
+    return Result::Err("syeig: Argument 'w' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_syeig(std::ptr::null(),uplo_,n_,a_.as_ptr(),w_.as_mut_ptr()) },"syeig")?;
+  return Result::Ok(());
+} // syeig
 /// Computes all the eigenvalues and eigenvectors of a symmetric dense matrix, and thus its eigenvalue decomposition.
 ///
 /// # Arguments
@@ -17159,7 +18059,17 @@ pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),Strin
 /// - `w_` Array of length at least n containing the eigenvalues of A.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syevd>
-pub fn syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syevd(uplo_,n_,a_,w_) }
+#[allow(unused_parens)]
+pub fn syevd(uplo_ : i32,n_ : i32,a_ : &mut[f64],w_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syevd: Argument 'a' has the wrong length, expected (n_*n_)".to_string());
+  }
+  if w_.len() != (n_).try_into().unwrap() {
+    return Result::Err("syevd: Argument 'w' has the wrong length, expected n_".to_string());
+  }
+  handle_res_static(unsafe { MSK_syevd(std::ptr::null(),uplo_,n_,a_.as_mut_ptr(),w_.as_mut_ptr()) },"syevd")?;
+  return Result::Ok(());
+} // syevd
 /// Obtains the value corresponding to a symbolic name defined by MOSEK.
 ///
 /// # Arguments
@@ -17196,5 +18106,15 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// - `c_` The pointer to the array storing matrix C in a column-major format.
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.syrk>
-pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> { MSK_GLOBAL_ENV.syrk(uplo_,trans_,n_,k_,alpha_,a_,beta_,c_) }
+#[allow(unused_parens)]
+pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],beta_ : f64,c_ : &mut[f64]) -> Result<(),String> {
+  if a_.len() != ((n_*k_)).try_into().unwrap() {
+    return Result::Err("syrk: Argument 'a' has the wrong length, expected (n_*k_)".to_string());
+  }
+  if c_.len() != ((n_*n_)).try_into().unwrap() {
+    return Result::Err("syrk: Argument 'c' has the wrong length, expected (n_*n_)".to_string());
+  }
+  handle_res_static(unsafe { MSK_syrk(std::ptr::null(),uplo_,trans_,n_,k_,alpha_,a_.as_ptr(),beta_,c_.as_mut_ptr()) },"syrk")?;
+  return Result::Ok(());
+} // syrk
 
