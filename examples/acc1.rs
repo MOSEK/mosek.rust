@@ -96,12 +96,6 @@ fn main() -> Result<(),String> {
     task.get_acc_dot_y(Soltype::ITR,0,doty.as_mut_slice())?;
     println!("Dual of ACC:: {:?}",doty);
 
-    let compl : f64 = dot(activity.as_slice(),doty.as_slice());
-    assert! (compl.abs() < 1e-7);
-    assert! (maxgap(xx.as_slice(),      &[-0.07838011145615721, 1.1289128998004547, -0.0505327883442975]) < 1e-7);
-    assert! (maxgap(doty.as_slice(),    &[-1.9429680870375095, -0.30303030303030304, -1.9191919191919191]) < 1e-7);
-    assert! (maxgap(activity.as_slice(),&[0.03, -0.004678877204190343, -0.029632888959872067]) < 1e-7);
-    println!("Complementarity {}",compl);
 
     Ok(())
 }

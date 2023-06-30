@@ -60,7 +60,6 @@ fn main() -> Result<(),String> {
 
     /* Directs the log task stream to the 'printstr' function. */
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
     /* Append 'numcon' empty constraints.
      * The constraints will initially have no bounds. */
