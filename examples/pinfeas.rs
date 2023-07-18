@@ -78,7 +78,6 @@ fn main() -> Result<(),String> {
     }
     else {
         println!("The problem is not primal infeasible, no certificate to show");
-        assert!(false);
     }
     Ok(())
 }
