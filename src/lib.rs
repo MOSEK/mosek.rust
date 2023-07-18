@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[10, 1, 3]
+// Generted for MOSEK v[11, 0, 0]
 
 extern crate libc;
 use std::ffi::CString;
@@ -2441,7 +2441,7 @@ impl Iparam {
   pub const PRESOLVE_LEVEL : i32 = 112;
   /// Controls linear dependency check in presolve.
   pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 113;
-  /// Controls whether whether a new experimental linear depdency checker is employed.
+  /// Controls whether a new experimental linear dependency checker is employed.
   pub const PRESOLVE_LINDEP_NEW : i32 = 114;
   /// Controls linear dependency check in presolve.
   pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 115;
@@ -2991,6 +2991,8 @@ impl Rescode {
   pub const WRN_MODIFIED_DOUBLE_PARAMETER : i32 = 970;
   /// A numerically large value is specified for an element in F.
   pub const WRN_LARGE_FIJ : i32 = 980;
+  /// Unexpected section in PTF file
+  pub const WRN_PTF_UNKNOWN_SECTION : i32 = 981;
   /// Invalid license.
   pub const ERR_LICENSE : i32 = 1000;
   /// The license has expired.
@@ -4171,8 +4173,6 @@ impl Startpointtype {
   pub const GUESS : i32 = 1;
   /// The optimizer constructs a starting point by assigning a constant value to all primal and dual variables. This starting point is normally robust.
   pub const CONSTANT : i32 = 2;
-  /// The starting point satisfies all the simple bounds on nonlinear variables.
-  pub const SATISFY_BOUNDS : i32 = 3;
 } // impl Startpointtype
 
 /// Stream types
@@ -4379,7 +4379,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
     #[allow(unused_parens)]
     pub fn compute_sparse_cholesky(&self,numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
       let mut __tmp_0 : * const i32 = std::ptr::null();
       let mut __tmp_1 : * const f64 = std::ptr::null();
       let mut __tmp_2 : * const i32 = std::ptr::null();
@@ -4689,7 +4689,7 @@ impl Env {
       if lptrc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
@@ -9924,7 +9924,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),ct_.len()),conepar_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(conepar_.len(),nummem_.len()),ct_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -14775,7 +14775,7 @@ impl Task {
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
       let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),bkc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),c_.len()),aptrb_.len()),bux_.len()),blx_.len()),aptre_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),c_.len()),aptrb_.len()),blx_.len()),bkx_.len()),aptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -14970,7 +14970,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
       let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
       if leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
@@ -15137,7 +15137,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15181,7 +15181,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),afeidx_.len()),subl_.len()),valkl_.len()),barvaridx_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),valkl_.len()),afeidx_.len()),subk_.len()),subl_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -15212,7 +15212,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentry>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
+      let numterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentry(self.ptr,afeidx_,barvaridx_,numterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry")?;
       return Result::Ok(());
     } // putafebarfentry
@@ -15230,7 +15230,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),numterm_.len()),ptrterm_.len()),barvaridx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()),afeidx_.len()) as i64;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
@@ -15249,7 +15249,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(numterm_.len(),ptrterm_.len()),barvaridx_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(ptrterm_.len(),barvaridx_.len()),numterm_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -15294,7 +15294,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),varidx_.len()),val_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),varidx_.len()),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -15326,8 +15326,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(numnzrow_.len(),ptrrow_.len()),afeidx_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
@@ -15419,7 +15419,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(subi_.len(),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
@@ -15436,7 +15436,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15529,7 +15529,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
@@ -15547,7 +15547,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptre_.len(),subi_.len()),alphaptrb_.len()),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),alphaptrb_.len()),alphaptre_.len()),subj_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -15571,7 +15571,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),subi_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(subi_.len(),ptre_.len()),ptrb_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -15632,7 +15632,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -15762,7 +15762,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),sub_.len()),bkc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blc_.len(),sub_.len()),buc_.len()),bkc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -16282,7 +16282,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qoval_.len(),qosubi_.len()),qosubj_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qoval_.len()),qosubj_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -16728,7 +16728,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),bkx_.len()),blx_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),sub_.len()),bux_.len()),bkx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -17643,7 +17643,7 @@ pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),Str
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
 #[allow(unused_parens)]
 pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
-  let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
+  let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
   let mut __tmp_0 : * const i32 = std::ptr::null();
   let mut __tmp_1 : * const f64 = std::ptr::null();
   let mut __tmp_2 : * const i32 = std::ptr::null();
@@ -18040,7 +18040,7 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
   if lptrc_.len() != (n_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
   }
-  let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
+  let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
   if lsubc_.len() != (lensubnval_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
   }
