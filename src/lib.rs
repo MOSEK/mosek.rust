@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[10, 1, 8]
+// Generted for MOSEK v[10, 1, 10]
 
 extern crate libc;
 use std::ffi::CString;
@@ -2369,7 +2369,7 @@ impl Iparam {
   pub const MIO_MAX_NUM_SOLUTIONS : i32 = 76;
   /// Controls how much emphasis is put on reducing memory usage.
   pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 77;
-  /// Number of times a variable must have been branched on for its pseudocost to be cosidered reliable.
+  /// Number of times a variable must have been branched on for its pseudocost to be considered reliable.
   pub const MIO_MIN_REL : i32 = 78;
   /// Turns on/off the mixed-integer mode.
   pub const MIO_MODE : i32 = 79;
@@ -4554,9 +4554,9 @@ impl Env {
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
     #[allow(unused_parens)]
-    pub fn linkfiletostream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+    pub fn linkfiletosenvtream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
-      self.handle_res(unsafe { MSK_linkfiletoenvstream(self.ptr,whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletostream")?;
+      self.handle_res(unsafe { MSK_linkfiletoenvstream(self.ptr,whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletosenvtream")?;
       return Result::Ok(());
     } // linkfiletoenvstream
     /// Optimize a number of tasks in parallel using a specified number of threads.
@@ -4615,10 +4615,10 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensecode>
     #[allow(unused_parens)]
     pub fn put_license_code(&mut self,code_ : &[i32]) -> Result<(),String> {
-      if code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
+      if code_.len() > 0 && code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
         return Result::Err("put_license_code: Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
       }
-      self.handle_res(unsafe { MSK_putlicensecode(self.ptr,code_.as_ptr()) },"put_license_code")?;
+      self.handle_res(unsafe { MSK_putlicensecode(self.ptr,if code_.len() == 0 { std::ptr::null() } else { code_.as_ptr() }) },"put_license_code")?;
       return Result::Ok(());
     } // putlicensecode
     /// Enables debug information for the license system.
@@ -4682,14 +4682,14 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),b_.len()),lptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),lptrc_.len()),b_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
       if lptrc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
@@ -4966,7 +4966,7 @@ impl TaskCB {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendacc>
     pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.append_acc(domidx_,afeidxlist_,b_) }
@@ -4976,7 +4976,7 @@ impl TaskCB {
     ///
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccs>
     pub fn append_accs(&mut self,domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.append_accs(domidxs_,afeidxlist_,b_) }
@@ -4986,7 +4986,7 @@ impl TaskCB {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccseq>
     pub fn append_acc_seq(&mut self,domidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.append_acc_seq(domidx_,afeidxfirst_,b_) }
@@ -4997,7 +4997,7 @@ impl TaskCB {
     /// - `domidxs_` Domain indices.
     /// - `numafeidx_` Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccsseq>
     pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.append_accs_seq(domidxs_,numafeidx_,afeidxfirst_,b_) }
@@ -5262,7 +5262,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `addr_` Address of the solver server
-    /// - `accesstoken_` Access token string or NULL
+    /// - `accesstoken_` Access token string.
     /// - `token_` Job token
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncgetlog>
@@ -8054,7 +8054,7 @@ impl TaskCB {
     /// - `accidx_` Affine conic constraint index.
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacc>
     pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.put_acc(accidx_,domidx_,afeidxlist_,b_) }
@@ -8063,7 +8063,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `accidx_` Affine conic constraint index.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccb>
     pub fn put_acc_b(&mut self,accidx_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.put_acc_b(accidx_,b_) }
@@ -8096,7 +8096,7 @@ impl TaskCB {
     /// - `accidxs_` Affine conic constraint indices.
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.put_acc_list(accidxs_,domidxs_,afeidxlist_,b_) }
@@ -8620,7 +8620,7 @@ impl TaskCB {
     /// - `idxlast_` Index of the last disjunctive constraint in the slice plus 1.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, may be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     /// - `termsizelist_` List of term sizes.
     /// - `termsindjc_` Number of terms in each of the disjunctive constraints in the slice.
     ///
@@ -9781,16 +9781,16 @@ impl Task {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendacc>
     #[allow(unused_parens)]
     pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("append_acc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_appendacc(self.ptr,domidx_,numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"append_acc")?;
+      self.handle_res(unsafe { MSK_appendacc(self.ptr,domidx_,numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"append_acc")?;
       return Result::Ok(());
     } // appendacc
     /// Appends a number of affine conic constraint to the task.
@@ -9799,17 +9799,17 @@ impl Task {
     ///
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccs>
     #[allow(unused_parens)]
     pub fn append_accs(&mut self,domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numaccs_ : i64 = domidxs_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("append_accs: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_appendaccs(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"append_accs")?;
+      self.handle_res(unsafe { MSK_appendaccs(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"append_accs")?;
       return Result::Ok(());
     } // appendaccs
     /// Appends an affine conic constraint to the task.
@@ -9818,7 +9818,7 @@ impl Task {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccseq>
     #[allow(unused_parens)]
@@ -9826,10 +9826,10 @@ impl Task {
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getdomainn(self.ptr,domidx_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getdomainn")?;
       let numafeidx_ : i64 = __tmp_0;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("append_acc_seq: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_appendaccseq(self.ptr,domidx_,numafeidx_,afeidxfirst_,b_.as_ptr()) },"append_acc_seq")?;
+      self.handle_res(unsafe { MSK_appendaccseq(self.ptr,domidx_,numafeidx_,afeidxfirst_,if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"append_acc_seq")?;
       return Result::Ok(());
     } // appendaccseq
     /// Appends a number of affine conic constraint to the task.
@@ -9839,16 +9839,16 @@ impl Task {
     /// - `domidxs_` Domain indices.
     /// - `numafeidx_` Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccsseq>
     #[allow(unused_parens)]
     pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> {
       let numaccs_ : i64 = domidxs_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("append_accs_seq: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_appendaccsseq(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxfirst_,b_.as_ptr()) },"append_accs_seq")?;
+      self.handle_res(unsafe { MSK_appendaccsseq(self.ptr,numaccs_,domidxs_.as_ptr(),numafeidx_,afeidxfirst_,if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"append_accs_seq")?;
       return Result::Ok(());
     } // appendaccsseq
     /// Appends a number of empty affine expressions to the optimization task.
@@ -9924,7 +9924,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(conepar_.len(),ct_.len()),nummem_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),conepar_.len()),ct_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -10168,7 +10168,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
@@ -10244,7 +10244,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `addr_` Address of the solver server
-    /// - `accesstoken_` Access token string or NULL
+    /// - `accesstoken_` Access token string.
     /// - `token_` Job token
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncgetlog>
@@ -10442,19 +10442,19 @@ impl Task {
     #[allow(unused_parens)]
     pub fn dual_sensitivity(&self,subj_ : &[i32],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
       let numj_ : i32 = subj_.len() as i32;
-      if leftpricej_.len() != (numj_).try_into().unwrap() {
+      if leftpricej_.len() > 0 && leftpricej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("dual_sensitivity: Argument 'leftpricej' has the wrong length, expected numj_".to_string());
       }
-      if rightpricej_.len() != (numj_).try_into().unwrap() {
+      if rightpricej_.len() > 0 && rightpricej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("dual_sensitivity: Argument 'rightpricej' has the wrong length, expected numj_".to_string());
       }
-      if leftrangej_.len() != (numj_).try_into().unwrap() {
+      if leftrangej_.len() > 0 && leftrangej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("dual_sensitivity: Argument 'leftrangej' has the wrong length, expected numj_".to_string());
       }
-      if rightrangej_.len() != (numj_).try_into().unwrap() {
+      if rightrangej_.len() > 0 && rightrangej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("dual_sensitivity: Argument 'rightrangej' has the wrong length, expected numj_".to_string());
       }
-      self.handle_res(unsafe { MSK_dualsensitivity(self.ptr,numj_,subj_.as_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr()) },"dual_sensitivity")?;
+      self.handle_res(unsafe { MSK_dualsensitivity(self.ptr,numj_,subj_.as_ptr(),if leftpricej_.len() == 0 { std::ptr::null_mut() } else { leftpricej_.as_mut_ptr() },if rightpricej_.len() == 0 { std::ptr::null_mut() } else { rightpricej_.as_mut_ptr() },if leftrangej_.len() == 0 { std::ptr::null_mut() } else { leftrangej_.as_mut_ptr() },if rightrangej_.len() == 0 { std::ptr::null_mut() } else { rightrangej_.as_mut_ptr() }) },"dual_sensitivity")?;
       return Result::Ok(());
     } // dualsensitivity
     /// Clears a row in barF
@@ -10590,14 +10590,14 @@ impl Task {
       let num_ : i64 = sub_.len() as i64;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_acc_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateaccnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_acc_names")?;
+      self.handle_res(unsafe { MSK_generateaccnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_acc_names")?;
       return Result::Ok(());
     } // generateaccnames
     /// Generates systematic names for variables.
@@ -10617,14 +10617,14 @@ impl Task {
       let num_ : i32 = subj_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_barvar_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatebarvarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_barvar_names")?;
+      self.handle_res(unsafe { MSK_generatebarvarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_barvar_names")?;
       return Result::Ok(());
     } // generatebarvarnames
     /// Generates systematic names for cone.
@@ -10644,14 +10644,14 @@ impl Task {
       let num_ : i32 = subk_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_cone_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateconenames(self.ptr,num_,subk_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_cone_names")?;
+      self.handle_res(unsafe { MSK_generateconenames(self.ptr,num_,subk_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_cone_names")?;
       return Result::Ok(());
     } // generateconenames
     /// Generates systematic names for constraints.
@@ -10671,14 +10671,14 @@ impl Task {
       let num_ : i32 = subi_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_con_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generateconnames(self.ptr,num_,subi_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_con_names")?;
+      self.handle_res(unsafe { MSK_generateconnames(self.ptr,num_,subi_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_con_names")?;
       return Result::Ok(());
     } // generateconnames
     /// Generates systematic names for affine conic constraints.
@@ -10698,14 +10698,14 @@ impl Task {
       let num_ : i64 = sub_.len() as i64;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_djc_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatedjcnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_djc_names")?;
+      self.handle_res(unsafe { MSK_generatedjcnames(self.ptr,num_,sub_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_djc_names")?;
       return Result::Ok(());
     } // generatedjcnames
     /// Generates systematic names for variables.
@@ -10725,14 +10725,14 @@ impl Task {
       let num_ : i32 = subj_.len() as i32;
       let __tmp_1 = CString::new(fmt_).unwrap();
       let ndims_ : i32 = dims_.len() as i32;
-      if sp_.len() != (num_).try_into().unwrap() {
+      if sp_.len() > 0 && sp_.len() != (num_).try_into().unwrap() {
         return Result::Err("generate_var_names: Argument 'sp' has the wrong length, expected num_".to_string());
       }
       let numnamedaxis_ : i32 = namedaxisidxs_.len() as i32;
       let numnames_ : i64 = names_.len() as i64;
       let cstr_names : Vec<CString> = names_.iter().map(|s| CString::new(s.as_str()).unwrap()).collect();
       let cptr_names : Vec<* const libc::c_char> = cstr_names.iter().map(|s| s.as_ptr()).collect();
-      self.handle_res(unsafe { MSK_generatevarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),sp_.as_ptr(),numnamedaxis_,namedaxisidxs_.as_ptr(),numnames_,cptr_names.as_ptr()) },"generate_var_names")?;
+      self.handle_res(unsafe { MSK_generatevarnames(self.ptr,num_,subj_.as_ptr(),__tmp_1.as_ptr(),ndims_,dims_.as_ptr(),if sp_.len() == 0 { std::ptr::null() } else { sp_.as_ptr() },numnamedaxis_,if namedaxisidxs_.len() == 0 { std::ptr::null() } else { namedaxisidxs_.as_ptr() },numnames_,cptr_names.as_ptr()) },"generate_var_names")?;
       return Result::Ok(());
     } // generatevarnames
     /// Obtains the list of affine expressions appearing in the affine conic constraint.
@@ -10934,10 +10934,10 @@ impl Task {
     pub fn get_acc_g_vector(&self,g_ : &mut[f64]) -> Result<(),String> {
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getaccntot")?;
-      if g_.len() != (__tmp_0).try_into().unwrap() {
+      if g_.len() > 0 && g_.len() != (__tmp_0).try_into().unwrap() {
         return Result::Err("get_acc_g_vector: Argument 'g' has the wrong length, expected __tmp_0".to_string());
       }
-      self.handle_res(unsafe { MSK_getaccgvector(self.ptr,g_.as_mut_ptr()) },"get_acc_g_vector")?;
+      self.handle_res(unsafe { MSK_getaccgvector(self.ptr,if g_.len() == 0 { std::ptr::null_mut() } else { g_.as_mut_ptr() }) },"get_acc_g_vector")?;
       return Result::Ok(());
     } // getaccgvector
     /// Obtains the dimension of the affine conic constraint.
@@ -11144,16 +11144,16 @@ impl Task {
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getacolslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getacolslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
-      if subi_.len() != (maxnumnz_).try_into().unwrap() {
+      if subi_.len() > 0 && subi_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_col_slice_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
-      if subj_.len() != (maxnumnz_).try_into().unwrap() {
+      if subj_.len() > 0 && subj_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_col_slice_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
-      if val_.len() != (maxnumnz_).try_into().unwrap() {
+      if val_.len() > 0 && val_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_col_slice_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
-      self.handle_res(unsafe { MSK_getacolslicetrip(self.ptr,first_,last_,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_col_slice_trip")?;
+      self.handle_res(unsafe { MSK_getacolslicetrip(self.ptr,first_,last_,maxnumnz_,if subi_.len() == 0 { std::ptr::null_mut() } else { subi_.as_mut_ptr() },if subj_.len() == 0 { std::ptr::null_mut() } else { subj_.as_mut_ptr() },if val_.len() == 0 { std::ptr::null_mut() } else { val_.as_mut_ptr() }) },"get_a_col_slice_trip")?;
       return Result::Ok(());
     } // getacolslicetrip
     /// Obtains barF in block triplet form.
@@ -11313,15 +11313,15 @@ impl Task {
     pub fn get_afe_f_row(&mut self,afeidx_ : i64,numnz_ : &mut i32,varidx_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> {
       let mut __tmp_1 : i32 = i32::default();
       let __tmp_2 = unsafe { MSK_getafefrownumnz(self.ptr,afeidx_,&mut __tmp_1) };let _ = self.handle_res(__tmp_2,"getafefrownumnz")?;
-      if varidx_.len() != (__tmp_1).try_into().unwrap() {
+      if varidx_.len() > 0 && varidx_.len() != (__tmp_1).try_into().unwrap() {
         return Result::Err("get_afe_f_row: Argument 'varidx' has the wrong length, expected __tmp_1".to_string());
       }
       let mut __tmp_3 : i32 = i32::default();
       let __tmp_4 = unsafe { MSK_getafefrownumnz(self.ptr,afeidx_,&mut __tmp_3) };let _ = self.handle_res(__tmp_4,"getafefrownumnz")?;
-      if val_.len() != (__tmp_3).try_into().unwrap() {
+      if val_.len() > 0 && val_.len() != (__tmp_3).try_into().unwrap() {
         return Result::Err("get_afe_f_row: Argument 'val' has the wrong length, expected __tmp_3".to_string());
       }
-      self.handle_res(unsafe { MSK_getafefrow(self.ptr,afeidx_,numnz_,varidx_.as_mut_ptr(),val_.as_mut_ptr()) },"get_afe_f_row")?;
+      self.handle_res(unsafe { MSK_getafefrow(self.ptr,afeidx_,numnz_,if varidx_.len() == 0 { std::ptr::null_mut() } else { varidx_.as_mut_ptr() },if val_.len() == 0 { std::ptr::null_mut() } else { val_.as_mut_ptr() }) },"get_afe_f_row")?;
       return Result::Ok(());
     } // getafefrow
     /// Obtains the number of nonzeros in a row of F.
@@ -11398,10 +11398,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafegslice>
     #[allow(unused_parens)]
     pub fn get_afe_g_slice(&self,first_ : i64,last_ : i64,g_ : &mut[f64]) -> Result<(),String> {
-      if g_.len() != ((last_-first_)).try_into().unwrap() {
+      if g_.len() > 0 && g_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_afe_g_slice: Argument 'g' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getafegslice(self.ptr,first_,last_,g_.as_mut_ptr()) },"get_afe_g_slice")?;
+      self.handle_res(unsafe { MSK_getafegslice(self.ptr,first_,last_,if g_.len() == 0 { std::ptr::null_mut() } else { g_.as_mut_ptr() }) },"get_afe_g_slice")?;
       return Result::Ok(());
     } // getafegslice
     /// Obtains a single coefficient in linear constraint matrix.
@@ -11550,16 +11550,16 @@ impl Task {
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getarowslicenumnz64(self.ptr,first_,last_,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getarowslicenumnz64")?;
       let maxnumnz_ : i64 = __tmp_0;
-      if subi_.len() != (maxnumnz_).try_into().unwrap() {
+      if subi_.len() > 0 && subi_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_row_slice_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
-      if subj_.len() != (maxnumnz_).try_into().unwrap() {
+      if subj_.len() > 0 && subj_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_row_slice_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
-      if val_.len() != (maxnumnz_).try_into().unwrap() {
+      if val_.len() > 0 && val_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_row_slice_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
-      self.handle_res(unsafe { MSK_getarowslicetrip(self.ptr,first_,last_,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_row_slice_trip")?;
+      self.handle_res(unsafe { MSK_getarowslicetrip(self.ptr,first_,last_,maxnumnz_,if subi_.len() == 0 { std::ptr::null_mut() } else { subi_.as_mut_ptr() },if subj_.len() == 0 { std::ptr::null_mut() } else { subj_.as_mut_ptr() },if val_.len() == 0 { std::ptr::null_mut() } else { val_.as_mut_ptr() }) },"get_a_row_slice_trip")?;
       return Result::Ok(());
     } // getarowslicetrip
     /// Obtains the A matrix in sparse triplet format.
@@ -11576,16 +11576,16 @@ impl Task {
       let mut __tmp_0 : i64 = i64::default();
       let __tmp_1 = unsafe { MSK_getnumanz64(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumanz64")?;
       let maxnumnz_ : i64 = __tmp_0;
-      if subi_.len() != (maxnumnz_).try_into().unwrap() {
+      if subi_.len() > 0 && subi_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_trip: Argument 'subi' has the wrong length, expected maxnumnz_".to_string());
       }
-      if subj_.len() != (maxnumnz_).try_into().unwrap() {
+      if subj_.len() > 0 && subj_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_trip: Argument 'subj' has the wrong length, expected maxnumnz_".to_string());
       }
-      if val_.len() != (maxnumnz_).try_into().unwrap() {
+      if val_.len() > 0 && val_.len() != (maxnumnz_).try_into().unwrap() {
         return Result::Err("get_a_trip: Argument 'val' has the wrong length, expected maxnumnz_".to_string());
       }
-      self.handle_res(unsafe { MSK_getatrip(self.ptr,maxnumnz_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),val_.as_mut_ptr()) },"get_a_trip")?;
+      self.handle_res(unsafe { MSK_getatrip(self.ptr,maxnumnz_,if subi_.len() == 0 { std::ptr::null_mut() } else { subi_.as_mut_ptr() },if subj_.len() == 0 { std::ptr::null_mut() } else { subj_.as_mut_ptr() },if val_.len() == 0 { std::ptr::null_mut() } else { val_.as_mut_ptr() }) },"get_a_trip")?;
       return Result::Ok(());
     } // getatrip
     /// Gets the current A matrix truncation threshold.
@@ -11982,10 +11982,10 @@ impl Task {
     pub fn get_c(&self,c_ : &mut[f64]) -> Result<(),String> {
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumvar")?;
-      if c_.len() != (__tmp_0).try_into().unwrap() {
+      if c_.len() > 0 && c_.len() != (__tmp_0).try_into().unwrap() {
         return Result::Err("get_c: Argument 'c' has the wrong length, expected __tmp_0".to_string());
       }
-      self.handle_res(unsafe { MSK_getc(self.ptr,c_.as_mut_ptr()) },"get_c")?;
+      self.handle_res(unsafe { MSK_getc(self.ptr,if c_.len() == 0 { std::ptr::null_mut() } else { c_.as_mut_ptr() }) },"get_c")?;
       return Result::Ok(());
     } // getc
     /// Obtains the fixed term in the objective.
@@ -12066,13 +12066,13 @@ impl Task {
       if bk_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_con_bound_slice: Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
       }
-      if bl_.len() != ((last_-first_)).try_into().unwrap() {
+      if bl_.len() > 0 && bl_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_con_bound_slice: Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
       }
-      if bu_.len() != ((last_-first_)).try_into().unwrap() {
+      if bu_.len() > 0 && bu_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_con_bound_slice: Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getconboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr()) },"get_con_bound_slice")?;
+      self.handle_res(unsafe { MSK_getconboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),if bl_.len() == 0 { std::ptr::null_mut() } else { bl_.as_mut_ptr() },if bu_.len() == 0 { std::ptr::null_mut() } else { bu_.as_mut_ptr() }) },"get_con_bound_slice")?;
       return Result::Ok(());
     } // getconboundslice
     /// Obtains a cone.
@@ -12094,10 +12094,10 @@ impl Task {
       let mut __tmp_4 : f64 = f64::default();
       let mut __tmp_5 : i32 = i32::default();
       let __tmp_6 = unsafe { MSK_getconeinfo(self.ptr,k_,&mut __tmp_3,&mut __tmp_4,&mut __tmp_5) };let _ = self.handle_res(__tmp_6,"getconeinfo")?;
-      if submem_.len() != (__tmp_5).try_into().unwrap() {
+      if submem_.len() > 0 && submem_.len() != (__tmp_5).try_into().unwrap() {
         return Result::Err("get_cone: Argument 'submem' has the wrong length, expected __tmp_5".to_string());
       }
-      self.handle_res(unsafe { MSK_getcone(self.ptr,k_,ct_,conepar_,nummem_,submem_.as_mut_ptr()) },"get_cone")?;
+      self.handle_res(unsafe { MSK_getcone(self.ptr,k_,ct_,conepar_,nummem_,if submem_.len() == 0 { std::ptr::null_mut() } else { submem_.as_mut_ptr() }) },"get_cone")?;
       return Result::Ok(());
     } // getcone
     /// Obtains information about a cone.
@@ -12240,10 +12240,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getcslice>
     #[allow(unused_parens)]
     pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : &mut[f64]) -> Result<(),String> {
-      if c_.len() != ((last_-first_)).try_into().unwrap() {
+      if c_.len() > 0 && c_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_c_slice: Argument 'c' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getcslice(self.ptr,first_,last_,c_.as_mut_ptr()) },"get_c_slice")?;
+      self.handle_res(unsafe { MSK_getcslice(self.ptr,first_,last_,if c_.len() == 0 { std::ptr::null_mut() } else { c_.as_mut_ptr() }) },"get_c_slice")?;
       return Result::Ok(());
     } // getcslice
     /// Obtains the dimension of a symmetric matrix variable.
@@ -12777,10 +12777,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getinfmax>
     #[allow(unused_parens)]
     pub fn get_inf_max(&self,inftype_ : i32,infmax_ : &mut[i32]) -> Result<(),String> {
-      if infmax_.len() != (Value::MAX_STR_LEN).try_into().unwrap() {
+      if infmax_.len() > 0 && infmax_.len() != (Value::MAX_STR_LEN).try_into().unwrap() {
         return Result::Err("get_inf_max: Argument 'infmax' has the wrong length, expected Value::MAX_STR_LEN".to_string());
       }
-      self.handle_res(unsafe { MSK_getinfmax(self.ptr,inftype_,infmax_.as_mut_ptr()) },"get_inf_max")?;
+      self.handle_res(unsafe { MSK_getinfmax(self.ptr,inftype_,if infmax_.len() == 0 { std::ptr::null_mut() } else { infmax_.as_mut_ptr() }) },"get_inf_max")?;
       return Result::Ok(());
     } // getinfmax
     /// Obtains the name of an information item.
@@ -13721,10 +13721,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getreducedcosts>
     #[allow(unused_parens)]
     pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : &mut[f64]) -> Result<(),String> {
-      if redcosts_.len() != ((last_-first_)).try_into().unwrap() {
+      if redcosts_.len() > 0 && redcosts_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_reduced_costs: Argument 'redcosts' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getreducedcosts(self.ptr,whichsol_,first_,last_,redcosts_.as_mut_ptr()) },"get_reduced_costs")?;
+      self.handle_res(unsafe { MSK_getreducedcosts(self.ptr,whichsol_,first_,last_,if redcosts_.len() == 0 { std::ptr::null_mut() } else { redcosts_.as_mut_ptr() }) },"get_reduced_costs")?;
       return Result::Ok(());
     } // getreducedcosts
     /// Obtains the status keys for the constraints.
@@ -13871,10 +13871,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslcslice>
     #[allow(unused_parens)]
     pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &mut[f64]) -> Result<(),String> {
-      if slc_.len() != ((last_-first_)).try_into().unwrap() {
+      if slc_.len() > 0 && slc_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_slc_slice: Argument 'slc' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getslcslice(self.ptr,whichsol_,first_,last_,slc_.as_mut_ptr()) },"get_slc_slice")?;
+      self.handle_res(unsafe { MSK_getslcslice(self.ptr,whichsol_,first_,last_,if slc_.len() == 0 { std::ptr::null_mut() } else { slc_.as_mut_ptr() }) },"get_slc_slice")?;
       return Result::Ok(());
     } // getslcslice
     /// Obtains the slx vector for a solution.
@@ -13911,10 +13911,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslxslice>
     #[allow(unused_parens)]
     pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &mut[f64]) -> Result<(),String> {
-      if slx_.len() != ((last_-first_)).try_into().unwrap() {
+      if slx_.len() > 0 && slx_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_slx_slice: Argument 'slx' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getslxslice(self.ptr,whichsol_,first_,last_,slx_.as_mut_ptr()) },"get_slx_slice")?;
+      self.handle_res(unsafe { MSK_getslxslice(self.ptr,whichsol_,first_,last_,if slx_.len() == 0 { std::ptr::null_mut() } else { slx_.as_mut_ptr() }) },"get_slx_slice")?;
       return Result::Ok(());
     } // getslxslice
     /// Obtains the snx vector for a solution.
@@ -13951,10 +13951,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsnxslice>
     #[allow(unused_parens)]
     pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &mut[f64]) -> Result<(),String> {
-      if snx_.len() != ((last_-first_)).try_into().unwrap() {
+      if snx_.len() > 0 && snx_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_snx_slice: Argument 'snx' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getsnxslice(self.ptr,whichsol_,first_,last_,snx_.as_mut_ptr()) },"get_snx_slice")?;
+      self.handle_res(unsafe { MSK_getsnxslice(self.ptr,whichsol_,first_,last_,if snx_.len() == 0 { std::ptr::null_mut() } else { snx_.as_mut_ptr() }) },"get_snx_slice")?;
       return Result::Ok(());
     } // getsnxslice
     /// Obtains the solution status.
@@ -14027,45 +14027,45 @@ impl Task {
       }
       let mut __tmp_8 : i32 = i32::default();
       let __tmp_9 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_8) };let _ = self.handle_res(__tmp_9,"getnumcon")?;
-      if xc_.len() != (__tmp_8).try_into().unwrap() {
+      if xc_.len() > 0 && xc_.len() != (__tmp_8).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'xc' has the wrong length, expected __tmp_8".to_string());
       }
       let mut __tmp_10 : i32 = i32::default();
       let __tmp_11 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_10) };let _ = self.handle_res(__tmp_11,"getnumvar")?;
-      if xx_.len() != (__tmp_10).try_into().unwrap() {
+      if xx_.len() > 0 && xx_.len() != (__tmp_10).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'xx' has the wrong length, expected __tmp_10".to_string());
       }
       let mut __tmp_12 : i32 = i32::default();
       let __tmp_13 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_12) };let _ = self.handle_res(__tmp_13,"getnumcon")?;
-      if y_.len() != (__tmp_12).try_into().unwrap() {
+      if y_.len() > 0 && y_.len() != (__tmp_12).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'y' has the wrong length, expected __tmp_12".to_string());
       }
       let mut __tmp_14 : i32 = i32::default();
       let __tmp_15 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_14) };let _ = self.handle_res(__tmp_15,"getnumcon")?;
-      if slc_.len() != (__tmp_14).try_into().unwrap() {
+      if slc_.len() > 0 && slc_.len() != (__tmp_14).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'slc' has the wrong length, expected __tmp_14".to_string());
       }
       let mut __tmp_16 : i32 = i32::default();
       let __tmp_17 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_16) };let _ = self.handle_res(__tmp_17,"getnumcon")?;
-      if suc_.len() != (__tmp_16).try_into().unwrap() {
+      if suc_.len() > 0 && suc_.len() != (__tmp_16).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'suc' has the wrong length, expected __tmp_16".to_string());
       }
       let mut __tmp_18 : i32 = i32::default();
       let __tmp_19 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_18) };let _ = self.handle_res(__tmp_19,"getnumvar")?;
-      if slx_.len() != (__tmp_18).try_into().unwrap() {
+      if slx_.len() > 0 && slx_.len() != (__tmp_18).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'slx' has the wrong length, expected __tmp_18".to_string());
       }
       let mut __tmp_20 : i32 = i32::default();
       let __tmp_21 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_20) };let _ = self.handle_res(__tmp_21,"getnumvar")?;
-      if sux_.len() != (__tmp_20).try_into().unwrap() {
+      if sux_.len() > 0 && sux_.len() != (__tmp_20).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'sux' has the wrong length, expected __tmp_20".to_string());
       }
       let mut __tmp_22 : i32 = i32::default();
       let __tmp_23 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_22) };let _ = self.handle_res(__tmp_23,"getnumvar")?;
-      if snx_.len() != (__tmp_22).try_into().unwrap() {
+      if snx_.len() > 0 && snx_.len() != (__tmp_22).try_into().unwrap() {
         return Result::Err("get_solution: Argument 'snx' has the wrong length, expected __tmp_22".to_string());
       }
-      self.handle_res(unsafe { MSK_getsolution(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr()) },"get_solution")?;
+      self.handle_res(unsafe { MSK_getsolution(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),if xc_.len() == 0 { std::ptr::null_mut() } else { xc_.as_mut_ptr() },if xx_.len() == 0 { std::ptr::null_mut() } else { xx_.as_mut_ptr() },if y_.len() == 0 { std::ptr::null_mut() } else { y_.as_mut_ptr() },if slc_.len() == 0 { std::ptr::null_mut() } else { slc_.as_mut_ptr() },if suc_.len() == 0 { std::ptr::null_mut() } else { suc_.as_mut_ptr() },if slx_.len() == 0 { std::ptr::null_mut() } else { slx_.as_mut_ptr() },if sux_.len() == 0 { std::ptr::null_mut() } else { sux_.as_mut_ptr() },if snx_.len() == 0 { std::ptr::null_mut() } else { snx_.as_mut_ptr() }) },"get_solution")?;
       return Result::Ok(());
     } // getsolution
     /// Obtains information about of a solution.
@@ -14173,50 +14173,50 @@ impl Task {
       }
       let mut __tmp_8 : i32 = i32::default();
       let __tmp_9 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_8) };let _ = self.handle_res(__tmp_9,"getnumcon")?;
-      if xc_.len() != (__tmp_8).try_into().unwrap() {
+      if xc_.len() > 0 && xc_.len() != (__tmp_8).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'xc' has the wrong length, expected __tmp_8".to_string());
       }
       let mut __tmp_10 : i32 = i32::default();
       let __tmp_11 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_10) };let _ = self.handle_res(__tmp_11,"getnumvar")?;
-      if xx_.len() != (__tmp_10).try_into().unwrap() {
+      if xx_.len() > 0 && xx_.len() != (__tmp_10).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'xx' has the wrong length, expected __tmp_10".to_string());
       }
       let mut __tmp_12 : i32 = i32::default();
       let __tmp_13 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_12) };let _ = self.handle_res(__tmp_13,"getnumcon")?;
-      if y_.len() != (__tmp_12).try_into().unwrap() {
+      if y_.len() > 0 && y_.len() != (__tmp_12).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'y' has the wrong length, expected __tmp_12".to_string());
       }
       let mut __tmp_14 : i32 = i32::default();
       let __tmp_15 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_14) };let _ = self.handle_res(__tmp_15,"getnumcon")?;
-      if slc_.len() != (__tmp_14).try_into().unwrap() {
+      if slc_.len() > 0 && slc_.len() != (__tmp_14).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'slc' has the wrong length, expected __tmp_14".to_string());
       }
       let mut __tmp_16 : i32 = i32::default();
       let __tmp_17 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_16) };let _ = self.handle_res(__tmp_17,"getnumcon")?;
-      if suc_.len() != (__tmp_16).try_into().unwrap() {
+      if suc_.len() > 0 && suc_.len() != (__tmp_16).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'suc' has the wrong length, expected __tmp_16".to_string());
       }
       let mut __tmp_18 : i32 = i32::default();
       let __tmp_19 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_18) };let _ = self.handle_res(__tmp_19,"getnumvar")?;
-      if slx_.len() != (__tmp_18).try_into().unwrap() {
+      if slx_.len() > 0 && slx_.len() != (__tmp_18).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'slx' has the wrong length, expected __tmp_18".to_string());
       }
       let mut __tmp_20 : i32 = i32::default();
       let __tmp_21 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_20) };let _ = self.handle_res(__tmp_21,"getnumvar")?;
-      if sux_.len() != (__tmp_20).try_into().unwrap() {
+      if sux_.len() > 0 && sux_.len() != (__tmp_20).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'sux' has the wrong length, expected __tmp_20".to_string());
       }
       let mut __tmp_22 : i32 = i32::default();
       let __tmp_23 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_22) };let _ = self.handle_res(__tmp_23,"getnumvar")?;
-      if snx_.len() != (__tmp_22).try_into().unwrap() {
+      if snx_.len() > 0 && snx_.len() != (__tmp_22).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'snx' has the wrong length, expected __tmp_22".to_string());
       }
       let mut __tmp_24 : i64 = i64::default();
       let __tmp_25 = unsafe { MSK_getaccntot(self.ptr,&mut __tmp_24) };let _ = self.handle_res(__tmp_25,"getaccntot")?;
-      if doty_.len() != (__tmp_24).try_into().unwrap() {
+      if doty_.len() > 0 && doty_.len() != (__tmp_24).try_into().unwrap() {
         return Result::Err("get_solution_new: Argument 'doty' has the wrong length, expected __tmp_24".to_string());
       }
-      self.handle_res(unsafe { MSK_getsolutionnew(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),xc_.as_mut_ptr(),xx_.as_mut_ptr(),y_.as_mut_ptr(),slc_.as_mut_ptr(),suc_.as_mut_ptr(),slx_.as_mut_ptr(),sux_.as_mut_ptr(),snx_.as_mut_ptr(),doty_.as_mut_ptr()) },"get_solution_new")?;
+      self.handle_res(unsafe { MSK_getsolutionnew(self.ptr,whichsol_,problemsta_,solutionsta_,skc_.as_mut_ptr(),skx_.as_mut_ptr(),skn_.as_mut_ptr(),if xc_.len() == 0 { std::ptr::null_mut() } else { xc_.as_mut_ptr() },if xx_.len() == 0 { std::ptr::null_mut() } else { xx_.as_mut_ptr() },if y_.len() == 0 { std::ptr::null_mut() } else { y_.as_mut_ptr() },if slc_.len() == 0 { std::ptr::null_mut() } else { slc_.as_mut_ptr() },if suc_.len() == 0 { std::ptr::null_mut() } else { suc_.as_mut_ptr() },if slx_.len() == 0 { std::ptr::null_mut() } else { slx_.as_mut_ptr() },if sux_.len() == 0 { std::ptr::null_mut() } else { sux_.as_mut_ptr() },if snx_.len() == 0 { std::ptr::null_mut() } else { snx_.as_mut_ptr() },if doty_.len() == 0 { std::ptr::null_mut() } else { doty_.as_mut_ptr() }) },"get_solution_new")?;
       return Result::Ok(());
     } // getsolutionnew
     /// Obtains a slice of the solution.
@@ -14236,10 +14236,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolutionslice>
     #[allow(unused_parens)]
     pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : &mut[f64]) -> Result<(),String> {
-      if values_.len() != ((last_-first_)).try_into().unwrap() {
+      if values_.len() > 0 && values_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_solution_slice: Argument 'values' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getsolutionslice(self.ptr,whichsol_,solitem_,first_,last_,values_.as_mut_ptr()) },"get_solution_slice")?;
+      self.handle_res(unsafe { MSK_getsolutionslice(self.ptr,whichsol_,solitem_,first_,last_,if values_.len() == 0 { std::ptr::null_mut() } else { values_.as_mut_ptr() }) },"get_solution_slice")?;
       return Result::Ok(());
     } // getsolutionslice
     /// Gets a single symmetric matrix from the matrix store.
@@ -14259,16 +14259,16 @@ impl Task {
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getsymmatinfo(self.ptr,idx_,&mut __tmp_0,&mut __tmp_1,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getsymmatinfo")?;
       let maxlen_ : i64 = __tmp_1;
-      if subi_.len() != (maxlen_).try_into().unwrap() {
+      if subi_.len() > 0 && subi_.len() != (maxlen_).try_into().unwrap() {
         return Result::Err("get_sparse_sym_mat: Argument 'subi' has the wrong length, expected maxlen_".to_string());
       }
-      if subj_.len() != (maxlen_).try_into().unwrap() {
+      if subj_.len() > 0 && subj_.len() != (maxlen_).try_into().unwrap() {
         return Result::Err("get_sparse_sym_mat: Argument 'subj' has the wrong length, expected maxlen_".to_string());
       }
-      if valij_.len() != (maxlen_).try_into().unwrap() {
+      if valij_.len() > 0 && valij_.len() != (maxlen_).try_into().unwrap() {
         return Result::Err("get_sparse_sym_mat: Argument 'valij' has the wrong length, expected maxlen_".to_string());
       }
-      self.handle_res(unsafe { MSK_getsparsesymmat(self.ptr,idx_,maxlen_,subi_.as_mut_ptr(),subj_.as_mut_ptr(),valij_.as_mut_ptr()) },"get_sparse_sym_mat")?;
+      self.handle_res(unsafe { MSK_getsparsesymmat(self.ptr,idx_,maxlen_,if subi_.len() == 0 { std::ptr::null_mut() } else { subi_.as_mut_ptr() },if subj_.len() == 0 { std::ptr::null_mut() } else { subj_.as_mut_ptr() },if valij_.len() == 0 { std::ptr::null_mut() } else { valij_.as_mut_ptr() }) },"get_sparse_sym_mat")?;
       return Result::Ok(());
     } // getsparsesymmat
     /// Obtains the value of a string parameter.
@@ -14347,10 +14347,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsucslice>
     #[allow(unused_parens)]
     pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &mut[f64]) -> Result<(),String> {
-      if suc_.len() != ((last_-first_)).try_into().unwrap() {
+      if suc_.len() > 0 && suc_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_suc_slice: Argument 'suc' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getsucslice(self.ptr,whichsol_,first_,last_,suc_.as_mut_ptr()) },"get_suc_slice")?;
+      self.handle_res(unsafe { MSK_getsucslice(self.ptr,whichsol_,first_,last_,if suc_.len() == 0 { std::ptr::null_mut() } else { suc_.as_mut_ptr() }) },"get_suc_slice")?;
       return Result::Ok(());
     } // getsucslice
     /// Obtains the sux vector for a solution.
@@ -14387,10 +14387,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsuxslice>
     #[allow(unused_parens)]
     pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &mut[f64]) -> Result<(),String> {
-      if sux_.len() != ((last_-first_)).try_into().unwrap() {
+      if sux_.len() > 0 && sux_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_sux_slice: Argument 'sux' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getsuxslice(self.ptr,whichsol_,first_,last_,sux_.as_mut_ptr()) },"get_sux_slice")?;
+      self.handle_res(unsafe { MSK_getsuxslice(self.ptr,whichsol_,first_,last_,if sux_.len() == 0 { std::ptr::null_mut() } else { sux_.as_mut_ptr() }) },"get_sux_slice")?;
       return Result::Ok(());
     } // getsuxslice
     /// Obtains a cone type string identifier.
@@ -14493,13 +14493,13 @@ impl Task {
       if bk_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_var_bound_slice: Argument 'bk' has the wrong length, expected (last_-first_)".to_string());
       }
-      if bl_.len() != ((last_-first_)).try_into().unwrap() {
+      if bl_.len() > 0 && bl_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_var_bound_slice: Argument 'bl' has the wrong length, expected (last_-first_)".to_string());
       }
-      if bu_.len() != ((last_-first_)).try_into().unwrap() {
+      if bu_.len() > 0 && bu_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_var_bound_slice: Argument 'bu' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getvarboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),bl_.as_mut_ptr(),bu_.as_mut_ptr()) },"get_var_bound_slice")?;
+      self.handle_res(unsafe { MSK_getvarboundslice(self.ptr,first_,last_,bk_.as_mut_ptr(),if bl_.len() == 0 { std::ptr::null_mut() } else { bl_.as_mut_ptr() },if bu_.len() == 0 { std::ptr::null_mut() } else { bu_.as_mut_ptr() }) },"get_var_bound_slice")?;
       return Result::Ok(());
     } // getvarboundslice
     /// Obtains the name of a variable.
@@ -14628,10 +14628,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxcslice>
     #[allow(unused_parens)]
     pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &mut[f64]) -> Result<(),String> {
-      if xc_.len() != ((last_-first_)).try_into().unwrap() {
+      if xc_.len() > 0 && xc_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_xc_slice: Argument 'xc' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getxcslice(self.ptr,whichsol_,first_,last_,xc_.as_mut_ptr()) },"get_xc_slice")?;
+      self.handle_res(unsafe { MSK_getxcslice(self.ptr,whichsol_,first_,last_,if xc_.len() == 0 { std::ptr::null_mut() } else { xc_.as_mut_ptr() }) },"get_xc_slice")?;
       return Result::Ok(());
     } // getxcslice
     /// Obtains the xx vector for a solution.
@@ -14668,10 +14668,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxxslice>
     #[allow(unused_parens)]
     pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &mut[f64]) -> Result<(),String> {
-      if xx_.len() != ((last_-first_)).try_into().unwrap() {
+      if xx_.len() > 0 && xx_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_xx_slice: Argument 'xx' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getxxslice(self.ptr,whichsol_,first_,last_,xx_.as_mut_ptr()) },"get_xx_slice")?;
+      self.handle_res(unsafe { MSK_getxxslice(self.ptr,whichsol_,first_,last_,if xx_.len() == 0 { std::ptr::null_mut() } else { xx_.as_mut_ptr() }) },"get_xx_slice")?;
       return Result::Ok(());
     } // getxxslice
     /// Obtains the y vector for a solution.
@@ -14708,10 +14708,10 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getyslice>
     #[allow(unused_parens)]
     pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &mut[f64]) -> Result<(),String> {
-      if y_.len() != ((last_-first_)).try_into().unwrap() {
+      if y_.len() > 0 && y_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("get_y_slice: Argument 'y' has the wrong length, expected (last_-first_)".to_string());
       }
-      self.handle_res(unsafe { MSK_getyslice(self.ptr,whichsol_,first_,last_,y_.as_mut_ptr()) },"get_y_slice")?;
+      self.handle_res(unsafe { MSK_getyslice(self.ptr,whichsol_,first_,last_,if y_.len() == 0 { std::ptr::null_mut() } else { y_.as_mut_ptr() }) },"get_y_slice")?;
       return Result::Ok(());
     } // getyslice
     /// Prints the infeasibility report to an output stream.
@@ -14742,10 +14742,10 @@ impl Task {
     pub fn init_basis_solve(&mut self,basis_ : &mut[i32]) -> Result<(),String> {
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
-      if basis_.len() != (__tmp_0).try_into().unwrap() {
+      if basis_.len() > 0 && basis_.len() != (__tmp_0).try_into().unwrap() {
         return Result::Err("init_basis_solve: Argument 'basis' has the wrong length, expected __tmp_0".to_string());
       }
-      self.handle_res(unsafe { MSK_initbasissolve(self.ptr,basis_.as_mut_ptr()) },"init_basis_solve")?;
+      self.handle_res(unsafe { MSK_initbasissolve(self.ptr,if basis_.len() == 0 { std::ptr::null_mut() } else { basis_.as_mut_ptr() }) },"init_basis_solve")?;
       return Result::Ok(());
     } // initbasissolve
     /// Input the linear part of an optimization task in one function call.
@@ -14774,14 +14774,14 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),bkc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptrb_.len(),blx_.len()),bux_.len()),bkx_.len()),aptre_.len()),c_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),blc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),c_.len()),blx_.len()),aptre_.len()),aptrb_.len()),bux_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
       if let Some(v) = aptrb_.iter().min() { if *v < 0 { return Err("input_data: Invalid aptrb construction".to_string()); } }
       if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } } 
-      self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,c_.as_ptr(),cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
+      self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,if c_.len() == 0 { std::ptr::null() } else { c_.as_ptr() },cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
     /// Checks a double parameter name.
@@ -14925,25 +14925,25 @@ impl Task {
     pub fn primal_repair(&mut self,wlc_ : &[f64],wuc_ : &[f64],wlx_ : &[f64],wux_ : &[f64]) -> Result<(),String> {
       let mut __tmp_0 : i32 = i32::default();
       let __tmp_1 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_0) };let _ = self.handle_res(__tmp_1,"getnumcon")?;
-      if wlc_.len() != (__tmp_0).try_into().unwrap() {
+      if wlc_.len() > 0 && wlc_.len() != (__tmp_0).try_into().unwrap() {
         return Result::Err("primal_repair: Argument 'wlc' has the wrong length, expected __tmp_0".to_string());
       }
       let mut __tmp_2 : i32 = i32::default();
       let __tmp_3 = unsafe { MSK_getnumcon(self.ptr,&mut __tmp_2) };let _ = self.handle_res(__tmp_3,"getnumcon")?;
-      if wuc_.len() != (__tmp_2).try_into().unwrap() {
+      if wuc_.len() > 0 && wuc_.len() != (__tmp_2).try_into().unwrap() {
         return Result::Err("primal_repair: Argument 'wuc' has the wrong length, expected __tmp_2".to_string());
       }
       let mut __tmp_4 : i32 = i32::default();
       let __tmp_5 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_4) };let _ = self.handle_res(__tmp_5,"getnumvar")?;
-      if wlx_.len() != (__tmp_4).try_into().unwrap() {
+      if wlx_.len() > 0 && wlx_.len() != (__tmp_4).try_into().unwrap() {
         return Result::Err("primal_repair: Argument 'wlx' has the wrong length, expected __tmp_4".to_string());
       }
       let mut __tmp_6 : i32 = i32::default();
       let __tmp_7 = unsafe { MSK_getnumvar(self.ptr,&mut __tmp_6) };let _ = self.handle_res(__tmp_7,"getnumvar")?;
-      if wux_.len() != (__tmp_6).try_into().unwrap() {
+      if wux_.len() > 0 && wux_.len() != (__tmp_6).try_into().unwrap() {
         return Result::Err("primal_repair: Argument 'wux' has the wrong length, expected __tmp_6".to_string());
       }
-      self.handle_res(unsafe { MSK_primalrepair(self.ptr,wlc_.as_ptr(),wuc_.as_ptr(),wlx_.as_ptr(),wux_.as_ptr()) },"primal_repair")?;
+      self.handle_res(unsafe { MSK_primalrepair(self.ptr,if wlc_.len() == 0 { std::ptr::null() } else { wlc_.as_ptr() },if wuc_.len() == 0 { std::ptr::null() } else { wuc_.as_ptr() },if wlx_.len() == 0 { std::ptr::null() } else { wlx_.as_ptr() },if wux_.len() == 0 { std::ptr::null() } else { wux_.as_ptr() }) },"primal_repair")?;
       return Result::Ok(());
     } // primalrepair
     /// Perform sensitivity analysis on bounds.
@@ -14971,32 +14971,32 @@ impl Task {
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
       let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
-      if leftpricei_.len() != (numi_).try_into().unwrap() {
+      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
+      if leftpricei_.len() > 0 && leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
-      if rightpricei_.len() != (numi_).try_into().unwrap() {
+      if rightpricei_.len() > 0 && rightpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'rightpricei' has the wrong length, expected numi_".to_string());
       }
-      if leftrangei_.len() != (numi_).try_into().unwrap() {
+      if leftrangei_.len() > 0 && leftrangei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftrangei' has the wrong length, expected numi_".to_string());
       }
-      if rightrangei_.len() != (numi_).try_into().unwrap() {
+      if rightrangei_.len() > 0 && rightrangei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'rightrangei' has the wrong length, expected numi_".to_string());
       }
-      if leftpricej_.len() != (numj_).try_into().unwrap() {
+      if leftpricej_.len() > 0 && leftpricej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricej' has the wrong length, expected numj_".to_string());
       }
-      if rightpricej_.len() != (numj_).try_into().unwrap() {
+      if rightpricej_.len() > 0 && rightpricej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'rightpricej' has the wrong length, expected numj_".to_string());
       }
-      if leftrangej_.len() != (numj_).try_into().unwrap() {
+      if leftrangej_.len() > 0 && leftrangej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftrangej' has the wrong length, expected numj_".to_string());
       }
-      if rightrangej_.len() != (numj_).try_into().unwrap() {
+      if rightrangej_.len() > 0 && rightrangej_.len() != (numj_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'rightrangej' has the wrong length, expected numj_".to_string());
       }
-      self.handle_res(unsafe { MSK_primalsensitivity(self.ptr,numi_,subi_.as_ptr(),marki_.as_ptr(),numj_,subj_.as_ptr(),markj_.as_ptr(),leftpricei_.as_mut_ptr(),rightpricei_.as_mut_ptr(),leftrangei_.as_mut_ptr(),rightrangei_.as_mut_ptr(),leftpricej_.as_mut_ptr(),rightpricej_.as_mut_ptr(),leftrangej_.as_mut_ptr(),rightrangej_.as_mut_ptr()) },"primal_sensitivity")?;
+      self.handle_res(unsafe { MSK_primalsensitivity(self.ptr,numi_,subi_.as_ptr(),marki_.as_ptr(),numj_,subj_.as_ptr(),markj_.as_ptr(),if leftpricei_.len() == 0 { std::ptr::null_mut() } else { leftpricei_.as_mut_ptr() },if rightpricei_.len() == 0 { std::ptr::null_mut() } else { rightpricei_.as_mut_ptr() },if leftrangei_.len() == 0 { std::ptr::null_mut() } else { leftrangei_.as_mut_ptr() },if rightrangei_.len() == 0 { std::ptr::null_mut() } else { rightrangei_.as_mut_ptr() },if leftpricej_.len() == 0 { std::ptr::null_mut() } else { leftpricej_.as_mut_ptr() },if rightpricej_.len() == 0 { std::ptr::null_mut() } else { rightpricej_.as_mut_ptr() },if leftrangej_.len() == 0 { std::ptr::null_mut() } else { leftrangej_.as_mut_ptr() },if rightrangej_.len() == 0 { std::ptr::null_mut() } else { rightrangej_.as_mut_ptr() }) },"primal_sensitivity")?;
       return Result::Ok(());
     } // primalsensitivity
     /// Prints the current parameter settings.
@@ -15014,16 +15014,16 @@ impl Task {
     /// - `accidx_` Affine conic constraint index.
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacc>
     #[allow(unused_parens)]
     pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_acc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_putacc(self.ptr,accidx_,domidx_,numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"put_acc")?;
+      self.handle_res(unsafe { MSK_putacc(self.ptr,accidx_,domidx_,numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"put_acc")?;
       return Result::Ok(());
     } // putacc
     /// Puts the constant vector b in an affine conic constraint.
@@ -15031,13 +15031,13 @@ impl Task {
     /// # Arguments
     ///
     /// - `accidx_` Affine conic constraint index.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccb>
     #[allow(unused_parens)]
     pub fn put_acc_b(&mut self,accidx_ : i64,b_ : &[f64]) -> Result<(),String> {
       let lengthb_ : i64 = b_.len() as i64;
-      self.handle_res(unsafe { MSK_putaccb(self.ptr,accidx_,lengthb_,b_.as_ptr()) },"put_acc_b")?;
+      self.handle_res(unsafe { MSK_putaccb(self.ptr,accidx_,lengthb_,if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"put_acc_b")?;
       return Result::Ok(());
     } // putaccb
     /// Sets one element in the b vector of an affine conic constraint.
@@ -15082,17 +15082,17 @@ impl Task {
     /// - `accidxs_` Affine conic constraint indices.
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, can be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
     #[allow(unused_parens)]
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(accidxs_.len(),domidxs_.len()) as i64;
+      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),accidxs_.len()) as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_acc_list: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
-      self.handle_res(unsafe { MSK_putacclist(self.ptr,numaccs_,accidxs_.as_ptr(),domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr()) },"put_acc_list")?;
+      self.handle_res(unsafe { MSK_putacclist(self.ptr,numaccs_,accidxs_.as_ptr(),domidxs_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() }) },"put_acc_list")?;
       return Result::Ok(());
     } // putacclist
     /// Sets the name of an affine conic constraint.
@@ -15137,7 +15137,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15181,7 +15181,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),subk_.len()),barvaridx_.len()),valkl_.len()),afeidx_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(valkl_.len(),afeidx_.len()),barvaridx_.len()),subk_.len()),subl_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -15212,7 +15212,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentry>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
+      let numterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentry(self.ptr,afeidx_,barvaridx_,numterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry")?;
       return Result::Ok(());
     } // putafebarfentry
@@ -15230,8 +15230,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),ptrterm_.len()),numterm_.len()),afeidx_.len()) as i64;
-      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),afeidx_.len()),ptrterm_.len()) as i64;
+      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
     } // putafebarfentrylist
@@ -15249,8 +15249,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(barvaridx_.len(),ptrterm_.len()),numterm_.len()) as i32;
-      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),ptrterm_.len()) as i32;
+      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
     } // putafebarfrow
@@ -15294,7 +15294,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),varidx_.len()),afeidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),afeidx_.len()),varidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -15309,7 +15309,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrow>
     #[allow(unused_parens)]
     pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i32 = std::cmp::min(varidx_.len(),val_.len()) as i32;
+      let numnz_ : i32 = std::cmp::min(val_.len(),varidx_.len()) as i32;
       self.handle_res(unsafe { MSK_putafefrow(self.ptr,afeidx_,numnz_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row")?;
       return Result::Ok(());
     } // putafefrow
@@ -15326,8 +15326,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),numnzrow_.len()),afeidx_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),afeidx_.len()),numnzrow_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
@@ -15404,7 +15404,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),valij_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -15436,7 +15436,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15498,7 +15498,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),valijkl_.len()),subk_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subj_.len()),subk_.len()),subl_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -15547,7 +15547,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),subi_.len()),alphaptre_.len()),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),subj_.len()),subi_.len()),alphaptre_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -15571,7 +15571,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),subi_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),subi_.len()),ptrb_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -15605,7 +15605,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subl_.len()),subk_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subj_.len()),subk_.len()),subl_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -15727,7 +15727,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putclist>
     #[allow(unused_parens)]
     pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(val_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putclist(self.ptr,num_,subj_.as_ptr(),val_.as_ptr()) },"put_c_list")?;
       return Result::Ok(());
     } // putclist
@@ -15762,7 +15762,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),blc_.len()),buc_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),blc_.len()),sub_.len()),buc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -15928,11 +15928,11 @@ impl Task {
     pub fn put_djc(&mut self,djcidx_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64]) -> Result<(),String> {
       let numdomidx_ : i64 = domidxlist_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_djc: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       let numterms_ : i64 = termsizelist_.len() as i64;
-      self.handle_res(unsafe { MSK_putdjc(self.ptr,djcidx_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_,termsizelist_.as_ptr()) },"put_djc")?;
+      self.handle_res(unsafe { MSK_putdjc(self.ptr,djcidx_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() },numterms_,termsizelist_.as_ptr()) },"put_djc")?;
       return Result::Ok(());
     } // putdjc
     /// Sets the name of a disjunctive constraint.
@@ -15957,7 +15957,7 @@ impl Task {
     /// - `idxlast_` Index of the last disjunctive constraint in the slice plus 1.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional, may be NULL.
+    /// - `b_` The vector of constant terms added to affine expressions. Optional.
     /// - `termsizelist_` List of term sizes.
     /// - `termsindjc_` Number of terms in each of the disjunctive constraints in the slice.
     ///
@@ -15966,14 +15966,14 @@ impl Task {
     pub fn put_djc_slice(&mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64],termsindjc_ : &[i64]) -> Result<(),String> {
       let numdomidx_ : i64 = domidxlist_.len() as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
-      if b_.len() != (numafeidx_).try_into().unwrap() {
+      if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_djc_slice: Argument 'b' has the wrong length, expected numafeidx_".to_string());
       }
       let numterms_ : i64 = termsizelist_.len() as i64;
       if termsindjc_.len() != ((idxlast_-idxfirst_)).try_into().unwrap() {
         return Result::Err("put_djc_slice: Argument 'termsindjc' has the wrong length, expected (idxlast_-idxfirst_)".to_string());
       }
-      self.handle_res(unsafe { MSK_putdjcslice(self.ptr,idxfirst_,idxlast_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),b_.as_ptr(),numterms_,termsizelist_.as_ptr(),termsindjc_.as_ptr()) },"put_djc_slice")?;
+      self.handle_res(unsafe { MSK_putdjcslice(self.ptr,idxfirst_,idxlast_,numdomidx_,domidxlist_.as_ptr(),numafeidx_,afeidxlist_.as_ptr(),if b_.len() == 0 { std::ptr::null() } else { b_.as_ptr() },numterms_,termsizelist_.as_ptr(),termsindjc_.as_ptr()) },"put_djc_slice")?;
       return Result::Ok(());
     } // putdjcslice
     /// Sets the name of a domain.
@@ -16282,7 +16282,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubi_.len(),qoval_.len()),qosubj_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubj_.len(),qosubi_.len()),qoval_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -16537,7 +16537,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsolution>
     #[allow(unused_parens)]
     pub fn put_solution(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64]) -> Result<(),String> {
-      self.handle_res(unsafe { MSK_putsolution(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr()) },"put_solution")?;
+      self.handle_res(unsafe { MSK_putsolution(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),if xc_.len() == 0 { std::ptr::null() } else { xc_.as_ptr() },if xx_.len() == 0 { std::ptr::null() } else { xx_.as_ptr() },if y_.len() == 0 { std::ptr::null() } else { y_.as_ptr() },if slc_.len() == 0 { std::ptr::null() } else { slc_.as_ptr() },if suc_.len() == 0 { std::ptr::null() } else { suc_.as_ptr() },if slx_.len() == 0 { std::ptr::null() } else { slx_.as_ptr() },if sux_.len() == 0 { std::ptr::null() } else { sux_.as_ptr() },if snx_.len() == 0 { std::ptr::null() } else { snx_.as_ptr() }) },"put_solution")?;
       return Result::Ok(());
     } // putsolution
     /// Inserts a solution.
@@ -16569,7 +16569,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsolutionnew>
     #[allow(unused_parens)]
     pub fn put_solution_new(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64],doty_ : &[f64]) -> Result<(),String> {
-      self.handle_res(unsafe { MSK_putsolutionnew(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),xc_.as_ptr(),xx_.as_ptr(),y_.as_ptr(),slc_.as_ptr(),suc_.as_ptr(),slx_.as_ptr(),sux_.as_ptr(),snx_.as_ptr(),doty_.as_ptr()) },"put_solution_new")?;
+      self.handle_res(unsafe { MSK_putsolutionnew(self.ptr,whichsol_,skc_.as_ptr(),skx_.as_ptr(),skn_.as_ptr(),if xc_.len() == 0 { std::ptr::null() } else { xc_.as_ptr() },if xx_.len() == 0 { std::ptr::null() } else { xx_.as_ptr() },if y_.len() == 0 { std::ptr::null() } else { y_.as_ptr() },if slc_.len() == 0 { std::ptr::null() } else { slc_.as_ptr() },if suc_.len() == 0 { std::ptr::null() } else { suc_.as_ptr() },if slx_.len() == 0 { std::ptr::null() } else { slx_.as_ptr() },if sux_.len() == 0 { std::ptr::null() } else { sux_.as_ptr() },if snx_.len() == 0 { std::ptr::null() } else { snx_.as_ptr() },if doty_.len() == 0 { std::ptr::null() } else { doty_.as_ptr() }) },"put_solution_new")?;
       return Result::Ok(());
     } // putsolutionnew
     /// Inputs the dual variable of a solution.
@@ -16728,7 +16728,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),blx_.len()),bux_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),blx_.len()),bkx_.len()),sub_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -16858,7 +16858,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
     #[allow(unused_parens)]
     pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(vartype_.len(),subj_.len()) as i32;
+      let num_ : i32 = std::cmp::min(subj_.len(),vartype_.len()) as i32;
       self.handle_res(unsafe { MSK_putvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_ptr()) },"put_var_type_list")?;
       return Result::Ok(());
     } // putvartypelist
@@ -17905,9 +17905,9 @@ pub fn license_cleanup() -> Result<(),String> {
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
 #[allow(unused_parens)]
-pub fn linkfiletostream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+pub fn linkfiletosenvtream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
   let __tmp_1 = CString::new(filename_).unwrap();
-  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletostream")?;
+  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletosenvtream")?;
   return Result::Ok(());
 } // linkfiletoenvstream
 /// Optimize a number of tasks in parallel using a specified number of threads.
@@ -17966,10 +17966,10 @@ pub fn potrf(uplo_ : i32,n_ : i32,a_ : &mut[f64]) -> Result<(),String> {
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlicensecode>
 #[allow(unused_parens)]
 pub fn put_license_code(code_ : &[i32]) -> Result<(),String> {
-  if code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
+  if code_.len() > 0 && code_.len() != (Value::LICENSE_BUFFER_LENGTH).try_into().unwrap() {
     return Result::Err("put_license_code: Argument 'code' has the wrong length, expected Value::LICENSE_BUFFER_LENGTH".to_string());
   }
-  handle_res_static(unsafe { MSK_putlicensecode(std::ptr::null(),code_.as_ptr()) },"put_license_code")?;
+  handle_res_static(unsafe { MSK_putlicensecode(std::ptr::null(),if code_.len() == 0 { std::ptr::null() } else { code_.as_ptr() }) },"put_license_code")?;
   return Result::Ok(());
 } // putlicensecode
 /// Enables debug information for the license system.
@@ -18033,14 +18033,14 @@ pub fn reset_expiry_licenses() -> Result<(),String> {
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
 #[allow(unused_parens)]
 pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-  let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),b_.len()),lptrc_.len()) as i32;
+  let n_ : i32 = std::cmp::min(std::cmp::min(lnzc_.len(),lptrc_.len()),b_.len()) as i32;
   if lnzc_.len() != (n_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
   }
   if lptrc_.len() != (n_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
   }
-  let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
+  let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
   if lsubc_.len() != (lensubnval_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
   }
