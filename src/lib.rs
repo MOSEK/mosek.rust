@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[10, 1, 10]
+// Generted for MOSEK v[10, 1, 27]
 
 extern crate libc;
 use std::ffi::CString;
@@ -1777,7 +1777,7 @@ impl Dparam {
   pub const BASIS_TOL_S : i32 = 2;
   /// Maximum absolute primal bound violation allowed in an optimal basic solution.
   pub const BASIS_TOL_X : i32 = 3;
-  /// Convexity check tolerance.
+  /// Not in use.
   pub const CHECK_CONVEXITY_REL_TOL : i32 = 4;
   /// Zero tolerance threshold for symmetric matrices.
   pub const DATA_SYM_MAT_TOL : i32 = 5;
@@ -4246,10 +4246,17 @@ unsafe impl Send for Task {}
 ///
 /// A `TaskCB` can be converted back into a `Task` by the member
 /// function `without_callbacks()`.
-pub struct TaskCB {
-    task : Task,
+
+
+struct TaskCBData {
+    task      : Task,
     streamcb  : [ Option<Box<Box<dyn Fn(&str)>>>; 4 ],
-    valuecb   : Option<Box<Box<dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool>>>,
+    valuecb   : Option<Box<dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool>>,
+    codecb    : Option<Box<dyn FnMut(i32) -> bool>>,
+    intsolcb  : Option<Box<dyn FnMut(&[f64])>>,
+}
+pub struct TaskCB {
+    data : Box<TaskCBData>
 }
 
 
@@ -4554,9 +4561,9 @@ impl Env {
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
     #[allow(unused_parens)]
-    pub fn linkfiletosenvtream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+    pub fn link_file_to_stream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
       let __tmp_1 = CString::new(filename_).unwrap();
-      self.handle_res(unsafe { MSK_linkfiletoenvstream(self.ptr,whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletosenvtream")?;
+      self.handle_res(unsafe { MSK_linkfiletoenvstream(self.ptr,whichstream_,__tmp_1.as_ptr(),append_) },"link_file_to_stream")?;
       return Result::Ok(());
     } // linkfiletoenvstream
     /// Optimize a number of tasks in parallel using a specified number of threads.
@@ -4689,7 +4696,7 @@ impl Env {
       if lptrc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
       }
-      let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
+      let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
       if lsubc_.len() != (lensubnval_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
       }
@@ -4794,47 +4801,68 @@ extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const lib
 }
 
 
-extern fn callback_proxy(_       : * const c_void,
-                         handle  : * const libc::c_void,
-                         caller  : i32,
-                         douinf  : * const f64,
-                         intinf  : * const i32,
-                         lintinf : * const i64 ) -> i32
+extern fn callback_proxy(_ : * const c_void,
+                          handle : * const c_void,
+                          caller  : i32,
+                          douinf  : * const f64,
+                          intinf  : * const i32,
+                          lintinf : * const i64 ) -> i32 
 {
-    let h = handle as * mut Box<dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool>;
-    unsafe
-    {
-        let r = (*h)(caller,
-                     & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
-                     & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
-                     & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize));
-        return if r { 0 } else { 1 }
+    unsafe {
+        let task : & mut TaskCBData = &mut (*(handle as * mut TaskCBData));
+        let mut stop = false;
+        if let Some(ref mut cb) = task.codecb {
+            stop = stop && (*cb)(caller);
+        }
+        if let Some(ref mut cb) = task.valuecb {
+            stop = stop && (*cb)(caller,
+                                 & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
+                                 & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
+                                 & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize));
+        }
+        if caller == Callbackcode::NEW_INT_MIO && task.intsolcb.is_some() {
+            if let Ok(numvar) = task.task.get_num_var() {
+                let mut xx = vec![0.0;numvar as usize];
+                if let Ok(_) = task.task.get_xx(Soltype::ITG,xx.as_mut_slice()) {
+
+                    if let Some(ref mut cb) = task.intsolcb {
+                       (*cb)(xx.as_slice());
+                    }
+                }
+            }
+        }
+        if stop { 1 } else { 0 }
     }
 }
 
 impl TaskCB {
     /// Create a new `TaskCB` object from a given `Task`.
     pub fn new(task : Task) -> TaskCB {
-        TaskCB { task     : task,
-                 streamcb : [None,None,None,None],
-                 valuecb  : None,}
+        TaskCB { 
+            data : Box::new(TaskCBData {
+                task     : task,
+                streamcb : [None,None,None,None],
+                valuecb  : None,
+                intsolcb : None,
+                codecb   : None 
+            })
+        }
     }
 
     /// Convert a `TaskCB` object into a `Task` object.
     pub fn without_callbacks(self) -> Task {
-        for (whichstream,obj) in self.streamcb.iter().enumerate() {
+        for (whichstream,obj) in self.data.streamcb.iter().enumerate() {
             if let Some(ref _f) = *obj {
-                let _ = unsafe { MSK_unlinkfuncfromtaskstream(self.task.ptr, whichstream as i32) };
+                let _ = unsafe { MSK_unlinkfuncfromtaskstream(self.data.task.ptr, whichstream as i32) };
             }
         }
-        let _ = unsafe { MSK_putcallbackfunc_ptr(self.task.ptr, std::ptr::null(), std::ptr::null()) };
-
-        self.task
+        let _ = unsafe { MSK_putcallbackfunc_ptr(self.data.task.ptr, std::ptr::null(), std::ptr::null()) };
+        self.data.task
     }
 
     /// Clone a `TaskCB`. Since callbacks are not shaerd between
     /// cloned objects, this returns a plain `Task` object.
-    pub fn clone(&self) -> Option<Task> { self.task.clone() }
+    pub fn clone(&self) -> Option<Task> { self.data.task.clone() }
 
     // NOTE on callback with handles:
     //   http://aatch.github.io/blog/2015/01/17/unboxed-closures-and-ffi-callbacks/
@@ -4847,12 +4875,12 @@ impl TaskCB {
     pub fn put_stream_callback<F>(& mut self,whichstream : i32, func : F) -> Result<(),String>
     where F : 'static+Fn(&str) {
         if whichstream >= 0 && whichstream < 4 {
-            self.streamcb[whichstream as usize] = Some(Box::new(Box::new(func)));
+            self.data.streamcb[whichstream as usize] = Some(Box::new(Box::new(func)));
 
-            match self.streamcb[whichstream as usize] {
+            match self.data.streamcb[whichstream as usize] {
                 Some(ref bf) => {
                     let hnd =  &(**bf) as * const _ as * mut libc::c_void;
-                    if 0 != unsafe { MSK_linkfunctotaskstream(self.task.ptr,whichstream, hnd, stream_callback_proxy) } {
+                    if 0 != unsafe { MSK_linkfunctotaskstream(self.data.task.ptr,whichstream, hnd, stream_callback_proxy) } {
                         Err("put_stream_callback: Failed to attach stream callback".to_string())
                     }
                     else {
@@ -4872,18 +4900,40 @@ impl TaskCB {
 
     /// Clear stream callback handler at a given stream.
     pub fn clear_stream_callback(&mut self,whichstream : i32) -> Result<(),String> {
-        match self.streamcb[whichstream as usize] {
+        match self.data.streamcb[whichstream as usize] {
             Some(ref _f) => {
-                if 0 != unsafe { MSK_unlinkfuncfromtaskstream(self.task.ptr, whichstream) } {
+                if 0 != unsafe { MSK_unlinkfuncfromtaskstream(self.data.task.ptr, whichstream) } {
                     Err("clear_stream_callback: Failed to clear stream callback".to_string())
                 }
                 else {
-                    self.streamcb[whichstream as usize] = None;
+                    self.data.streamcb[whichstream as usize] = None;
                     Ok(())
                 }
             },
             None => Ok(())
         }
+    }
+
+    fn update_callback(& mut self) -> Result<(),String> {
+        if self.data.valuecb.is_some() || self.data.codecb.is_some() || self.data.intsolcb.is_some() {
+            let hnd = &(*self.data) as * const _ as * mut c_void;
+            if 0 != unsafe { MSK_putcallbackfunc(self.data.task.ptr, callback_proxy, hnd) } {
+                Err("put_callback: Failed to attach callback".to_string())
+            } else {
+                Ok(())
+            }
+        }
+        else if 0 != unsafe { MSK_putcallbackfunc_ptr(self.data.task.ptr, std::ptr::null(), std::ptr::null()) } {
+            Err("put_callback: Failed to attach callback".to_string())
+        } else {
+            Ok(())
+        }
+    }
+    pub fn clear_callback(& mut self) -> Result<(),String> {
+        self.data.valuecb = None;
+        self.data.codecb = None;
+        self.data.intsolcb = None;
+        self.update_callback()
     }
 
     /// Sets an information callback handler in the task
@@ -4897,31 +4947,25 @@ impl TaskCB {
     ///   - `dinf` is a list of f64 information items (indexed with `MSK_DINF_...`)
     ///   - `iinf` is a list of i32 information items (indexed with `MSK_IINF_...`)
     ///   - `liinf` is a list of i64 information items (indexed with `MSK_LIINF_...`)
+    ///
     pub fn put_callback<F>(& mut self,func : F) -> Result<(),String>
-    where F : 'static +FnMut(i32,&[f64],&[i32],&[i64]) -> bool {
-        self.valuecb = Some(Box::new(Box::new(func)));
-        match self.valuecb {
-            Some(ref f) => {
-                let hnd =  &(**f) as * const _ as * mut libc::c_void;
-                if 0 != unsafe { MSK_putcallbackfunc(self.task.ptr, callback_proxy, hnd) } {
-                    Err("put_callback: Failed to attach callback".to_string())
-                }
-                else {
-                    Ok(())
-                }
-            },
-            None => Ok(())
-        }
+        where F : 'static +FnMut(i32,&[f64],&[i32],&[i64]) -> bool 
+    {
+        self.data.valuecb = Some(Box::new(func));
+        self.update_callback()
+    }
+    pub fn put_codecallback<F>(& mut self,func : F) -> Result<(),String>
+        where F : 'static +FnMut(i32) -> bool 
+    {
+        self.data.codecb = Some(Box::new(func));
+        self.update_callback()
     }
 
-    pub fn clear_callback(& mut self) -> Result<(),String> {
-        self.valuecb = None;
-        if 0 != unsafe { MSK_putcallbackfunc_ptr(self.task.ptr, std::ptr::null(), std::ptr::null()) } {
-            Err("put_callback: Failed to attach callback".to_string())
-        }
-        else {
-            Ok(())
-        }
+    pub fn put_intsolcallback<F>(& mut self,func : F) -> Result<(),String>
+        where F : 'static +FnMut(&[f64])
+    {
+        self.data.intsolcb = Some(Box::new(func));
+        self.update_callback()
     }
 
     /// Analyze the names and issue an error for the first invalid name.
@@ -4936,7 +4980,7 @@ impl TaskCB {
     ///   See [Nametype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzenames>
-    pub fn analyze_names(&self,whichstream_ : i32,nametype_ : i32) -> Result<(),String> { self.task.analyze_names(whichstream_,nametype_) }
+    pub fn analyze_names(&self,whichstream_ : i32,nametype_ : i32) -> Result<(),String> { self.data.task.analyze_names(whichstream_,nametype_) }
     /// Analyze the data of a task.
     ///
     /// # Arguments
@@ -4946,7 +4990,7 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzeproblem>
-    pub fn analyze_problem(&self,whichstream_ : i32) -> Result<(),String> { self.task.analyze_problem(whichstream_) }
+    pub fn analyze_problem(&self,whichstream_ : i32) -> Result<(),String> { self.data.task.analyze_problem(whichstream_) }
     /// Print information related to the quality of the solution.
     ///
     /// # Arguments
@@ -4959,37 +5003,37 @@ impl TaskCB {
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzesolution>
-    pub fn analyze_solution(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.task.analyze_solution(whichstream_,whichsol_) }
+    pub fn analyze_solution(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.data.task.analyze_solution(whichstream_,whichsol_) }
     /// Appends an affine conic constraint to the task.
     ///
     /// # Arguments
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendacc>
-    pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.append_acc(domidx_,afeidxlist_,b_) }
+    pub fn append_acc(&mut self,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.data.task.append_acc(domidx_,afeidxlist_,b_) }
     /// Appends a number of affine conic constraint to the task.
     ///
     /// # Arguments
     ///
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccs>
-    pub fn append_accs(&mut self,domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.append_accs(domidxs_,afeidxlist_,b_) }
+    pub fn append_accs(&mut self,domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.data.task.append_accs(domidxs_,afeidxlist_,b_) }
     /// Appends an affine conic constraint to the task.
     ///
     /// # Arguments
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccseq>
-    pub fn append_acc_seq(&mut self,domidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.append_acc_seq(domidx_,afeidxfirst_,b_) }
+    pub fn append_acc_seq(&mut self,domidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.data.task.append_acc_seq(domidx_,afeidxfirst_,b_) }
     /// Appends a number of affine conic constraint to the task.
     ///
     /// # Arguments
@@ -4997,10 +5041,10 @@ impl TaskCB {
     /// - `domidxs_` Domain indices.
     /// - `numafeidx_` Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccsseq>
-    pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.append_accs_seq(domidxs_,numafeidx_,afeidxfirst_,b_) }
+    pub fn append_accs_seq(&mut self,domidxs_ : &[i64],numafeidx_ : i64,afeidxfirst_ : i64,b_ : &[f64]) -> Result<(),String> { self.data.task.append_accs_seq(domidxs_,numafeidx_,afeidxfirst_,b_) }
     /// Appends a number of empty affine expressions to the optimization task.
     ///
     /// # Arguments
@@ -5008,7 +5052,7 @@ impl TaskCB {
     /// - `num_` Number of empty affine expressions which should be appended.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendafes>
-    pub fn append_afes(&mut self,num_ : i64) -> Result<(),String> { self.task.append_afes(num_) }
+    pub fn append_afes(&mut self,num_ : i64) -> Result<(),String> { self.data.task.append_afes(num_) }
     /// Appends semidefinite variables to the problem.
     ///
     /// # Arguments
@@ -5016,7 +5060,7 @@ impl TaskCB {
     /// - `dim_` Dimensions of symmetric matrix variables to be added.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendbarvars>
-    pub fn append_barvars(&mut self,dim_ : &[i32]) -> Result<(),String> { self.task.append_barvars(dim_) }
+    pub fn append_barvars(&mut self,dim_ : &[i32]) -> Result<(),String> { self.data.task.append_barvars(dim_) }
     /// Appends a new conic constraint to the problem.
     ///
     /// # Arguments
@@ -5028,7 +5072,7 @@ impl TaskCB {
     /// - `submem_` Variable subscripts of the members in the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendcone>
-    pub fn append_cone(&mut self,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> { self.task.append_cone(ct_,conepar_,submem_) }
+    pub fn append_cone(&mut self,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> { self.data.task.append_cone(ct_,conepar_,submem_) }
     /// Appends a new conic constraint to the problem.
     ///
     /// # Arguments
@@ -5041,7 +5085,7 @@ impl TaskCB {
     /// - `j_` Index of the first variable in the conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconeseq>
-    pub fn append_cone_seq(&mut self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> Result<(),String> { self.task.append_cone_seq(ct_,conepar_,nummem_,j_) }
+    pub fn append_cone_seq(&mut self,ct_ : i32,conepar_ : f64,nummem_ : i32,j_ : i32) -> Result<(),String> { self.data.task.append_cone_seq(ct_,conepar_,nummem_,j_) }
     /// Appends multiple conic constraints to the problem.
     ///
     /// # Arguments
@@ -5054,7 +5098,7 @@ impl TaskCB {
     /// - `j_` Index of the first variable in the first cone to be appended.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
-    pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> { self.task.append_cones_seq(ct_,conepar_,nummem_,j_) }
+    pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> { self.data.task.append_cones_seq(ct_,conepar_,nummem_,j_) }
     /// Appends a number of constraints to the optimization task.
     ///
     /// # Arguments
@@ -5062,7 +5106,7 @@ impl TaskCB {
     /// - `num_` Number of constraints which should be appended.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendcons>
-    pub fn append_cons(&mut self,num_ : i32) -> Result<(),String> { self.task.append_cons(num_) }
+    pub fn append_cons(&mut self,num_ : i32) -> Result<(),String> { self.data.task.append_cons(num_) }
     /// Appends a number of empty disjunctive constraints to the task.
     ///
     /// # Arguments
@@ -5070,7 +5114,7 @@ impl TaskCB {
     /// - `num_` Number of empty disjunctive constraints which should be appended.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appenddjcs>
-    pub fn append_djcs(&mut self,num_ : i64) -> Result<(),String> { self.task.append_djcs(num_) }
+    pub fn append_djcs(&mut self,num_ : i64) -> Result<(),String> { self.data.task.append_djcs(num_) }
     /// Appends the dual exponential cone domain.
     ///
     /// # Returns
@@ -5078,7 +5122,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appenddualexpconedomain>
-    pub fn append_dual_exp_cone_domain(&mut self) -> Result<i64,String> { self.task.append_dual_exp_cone_domain() }
+    pub fn append_dual_exp_cone_domain(&mut self) -> Result<i64,String> { self.data.task.append_dual_exp_cone_domain() }
     /// Appends the dual geometric mean cone domain.
     ///
     /// # Arguments
@@ -5090,7 +5134,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appenddualgeomeanconedomain>
-    pub fn append_dual_geo_mean_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_dual_geo_mean_cone_domain(n_) }
+    pub fn append_dual_geo_mean_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_dual_geo_mean_cone_domain(n_) }
     /// Appends the dual power cone domain.
     ///
     /// # Arguments
@@ -5103,7 +5147,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appenddualpowerconedomain>
-    pub fn append_dual_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> { self.task.append_dual_power_cone_domain(n_,alpha_) }
+    pub fn append_dual_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> { self.data.task.append_dual_power_cone_domain(n_,alpha_) }
     /// Appends the primal exponential cone domain.
     ///
     /// # Returns
@@ -5111,7 +5155,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendprimalexpconedomain>
-    pub fn append_primal_exp_cone_domain(&mut self) -> Result<i64,String> { self.task.append_primal_exp_cone_domain() }
+    pub fn append_primal_exp_cone_domain(&mut self) -> Result<i64,String> { self.data.task.append_primal_exp_cone_domain() }
     /// Appends the primal geometric mean cone domain.
     ///
     /// # Arguments
@@ -5123,7 +5167,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendprimalgeomeanconedomain>
-    pub fn append_primal_geo_mean_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_primal_geo_mean_cone_domain(n_) }
+    pub fn append_primal_geo_mean_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_primal_geo_mean_cone_domain(n_) }
     /// Appends the primal power cone domain.
     ///
     /// # Arguments
@@ -5136,7 +5180,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendprimalpowerconedomain>
-    pub fn append_primal_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> { self.task.append_primal_power_cone_domain(n_,alpha_) }
+    pub fn append_primal_power_cone_domain(&mut self,n_ : i64,alpha_ : &[f64]) -> Result<i64,String> { self.data.task.append_primal_power_cone_domain(n_,alpha_) }
     /// Appends the n dimensional quadratic cone domain.
     ///
     /// # Arguments
@@ -5148,7 +5192,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendquadraticconedomain>
-    pub fn append_quadratic_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_quadratic_cone_domain(n_) }
+    pub fn append_quadratic_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_quadratic_cone_domain(n_) }
     /// Appends the n dimensional real number domain.
     ///
     /// # Arguments
@@ -5160,7 +5204,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendrdomain>
-    pub fn append_r_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_r_domain(n_) }
+    pub fn append_r_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_r_domain(n_) }
     /// Appends the n dimensional negative orthant to the list of domains.
     ///
     /// # Arguments
@@ -5172,7 +5216,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendrminusdomain>
-    pub fn append_rminus_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_rminus_domain(n_) }
+    pub fn append_rminus_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_rminus_domain(n_) }
     /// Appends the n dimensional positive orthant to the list of domains.
     ///
     /// # Arguments
@@ -5184,7 +5228,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendrplusdomain>
-    pub fn append_rplus_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_rplus_domain(n_) }
+    pub fn append_rplus_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_rplus_domain(n_) }
     /// Appends the n dimensional rotated quadratic cone domain.
     ///
     /// # Arguments
@@ -5196,7 +5240,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendrquadraticconedomain>
-    pub fn append_r_quadratic_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_r_quadratic_cone_domain(n_) }
+    pub fn append_r_quadratic_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_r_quadratic_cone_domain(n_) }
     /// Appends the n dimensional 0 domain.
     ///
     /// # Arguments
@@ -5208,7 +5252,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendrzerodomain>
-    pub fn append_rzero_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_rzero_domain(n_) }
+    pub fn append_rzero_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_rzero_domain(n_) }
     /// Appends a general sparse symmetric matrix to the storage of symmetric matrices.
     ///
     /// # Arguments
@@ -5223,7 +5267,7 @@ impl TaskCB {
     ///   - `idx` Unique index assigned to the inputted matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
-    pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> { self.task.append_sparse_sym_mat(dim_,subi_,subj_,valij_) }
+    pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> { self.data.task.append_sparse_sym_mat(dim_,subi_,subj_,valij_) }
     /// Appends a general sparse symmetric matrix to the storage of symmetric matrices.
     ///
     /// # Arguments
@@ -5236,7 +5280,7 @@ impl TaskCB {
     /// - `idx_` Unique index assigned to the inputted matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmatlist>
-    pub fn append_sparse_sym_mat_list(&mut self,dims_ : &[i32],nz_ : &[i64],subi_ : &[i32],subj_ : &[i32],valij_ : &[f64],idx_ : &mut[i64]) -> Result<(),String> { self.task.append_sparse_sym_mat_list(dims_,nz_,subi_,subj_,valij_,idx_) }
+    pub fn append_sparse_sym_mat_list(&mut self,dims_ : &[i32],nz_ : &[i64],subi_ : &[i32],subj_ : &[i32],valij_ : &[f64],idx_ : &mut[i64]) -> Result<(),String> { self.data.task.append_sparse_sym_mat_list(dims_,nz_,subi_,subj_,valij_,idx_) }
     /// Appends the vectorized SVEC PSD cone domain.
     ///
     /// # Arguments
@@ -5248,7 +5292,7 @@ impl TaskCB {
     ///   - `domidx` Index of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsvecpsdconedomain>
-    pub fn append_svec_psd_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.task.append_svec_psd_cone_domain(n_) }
+    pub fn append_svec_psd_cone_domain(&mut self,n_ : i64) -> Result<i64,String> { self.data.task.append_svec_psd_cone_domain(n_) }
     /// Appends a number of variables to the optimization task.
     ///
     /// # Arguments
@@ -5256,7 +5300,7 @@ impl TaskCB {
     /// - `num_` Number of variables which should be appended.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendvars>
-    pub fn append_vars(&mut self,num_ : i32) -> Result<(),String> { self.task.append_vars(num_) }
+    pub fn append_vars(&mut self,num_ : i32) -> Result<(),String> { self.data.task.append_vars(num_) }
     /// Get the optimizer log from a remote job.
     ///
     /// # Arguments
@@ -5266,7 +5310,7 @@ impl TaskCB {
     /// - `token_` Job token
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncgetlog>
-    pub fn async_get_log(&mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String> { self.task.async_get_log(addr_,accesstoken_,token_) }
+    pub fn async_get_log(&mut self,addr_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String> { self.data.task.async_get_log(addr_,accesstoken_,token_) }
     /// Request a solution from a remote job.
     ///
     /// # Arguments
@@ -5286,7 +5330,7 @@ impl TaskCB {
     ///   - `respavailable` Indicates if a remote response is available.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncgetresult>
-    pub fn async_get_result(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str,resp_ : & mut i32,trm_ : & mut i32) -> Result<bool,String> { self.task.async_get_result(address_,accesstoken_,token_,resp_,trm_) }
+    pub fn async_get_result(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str,resp_ : & mut i32,trm_ : & mut i32) -> Result<bool,String> { self.data.task.async_get_result(address_,accesstoken_,token_,resp_,trm_) }
     /// Offload the optimization task to a solver server in asynchronous mode.
     ///
     /// # Arguments
@@ -5299,7 +5343,7 @@ impl TaskCB {
     ///   - `token` Returns the task token.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncoptimize>
-    pub fn async_optimize(&mut self,address_ : &str,accesstoken_ : &str) -> Result<String,String> { self.task.async_optimize(address_,accesstoken_) }
+    pub fn async_optimize(&mut self,address_ : &str,accesstoken_ : &str) -> Result<String,String> { self.data.task.async_optimize(address_,accesstoken_) }
     /// Requests information about the status of the remote job.
     ///
     /// # Arguments
@@ -5319,7 +5363,7 @@ impl TaskCB {
     ///   - `respavailable` Indicates if a remote response is available.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncpoll>
-    pub fn async_poll(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str,resp_ : & mut i32,trm_ : & mut i32) -> Result<bool,String> { self.task.async_poll(address_,accesstoken_,token_,resp_,trm_) }
+    pub fn async_poll(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str,resp_ : & mut i32,trm_ : & mut i32) -> Result<bool,String> { self.data.task.async_poll(address_,accesstoken_,token_,resp_,trm_) }
     /// Request that the job identified by the token is terminated.
     ///
     /// # Arguments
@@ -5329,7 +5373,7 @@ impl TaskCB {
     /// - `token_` The task token.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.asyncstop>
-    pub fn async_stop(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String> { self.task.async_stop(address_,accesstoken_,token_) }
+    pub fn async_stop(&mut self,address_ : &str,accesstoken_ : &str,token_ : &str) -> Result<(),String> { self.data.task.async_stop(address_,accesstoken_,token_) }
     /// Computes conditioning information for the basis matrix.
     ///
     /// # Arguments
@@ -5338,7 +5382,7 @@ impl TaskCB {
     /// - `nrminvbasis_` An estimate for the 1-norm of the inverse of the basis.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.basiscond>
-    pub fn basis_cond(&mut self,nrmbasis_ : &mut f64,nrminvbasis_ : &mut f64) -> Result<(),String> { self.task.basis_cond(nrmbasis_,nrminvbasis_) }
+    pub fn basis_cond(&mut self,nrmbasis_ : &mut f64,nrminvbasis_ : &mut f64) -> Result<(),String> { self.data.task.basis_cond(nrmbasis_,nrminvbasis_) }
     /// Checks the memory allocated by the task.
     ///
     /// # Arguments
@@ -5347,7 +5391,7 @@ impl TaskCB {
     /// - `line_` Line in the file from which the function is called.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkmemtask>
-    pub fn check_mem(&mut self,file_ : &str,line_ : i32) -> Result<(),String> { self.task.check_mem(file_,line_) }
+    pub fn check_mem(&mut self,file_ : &str,line_ : i32) -> Result<(),String> { self.data.task.check_mem(file_,line_) }
     /// Changes the bounds for one constraint.
     ///
     /// # Arguments
@@ -5358,7 +5402,7 @@ impl TaskCB {
     /// - `value_` New value for the bound.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.chgconbound>
-    pub fn chg_con_bound(&mut self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String> { self.task.chg_con_bound(i_,lower_,finite_,value_) }
+    pub fn chg_con_bound(&mut self,i_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String> { self.data.task.chg_con_bound(i_,lower_,finite_,value_) }
     /// Changes the bounds for one variable.
     ///
     /// # Arguments
@@ -5369,11 +5413,11 @@ impl TaskCB {
     /// - `value_` New value for the bound.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.chgvarbound>
-    pub fn chg_var_bound(&mut self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String> { self.task.chg_var_bound(j_,lower_,finite_,value_) }
+    pub fn chg_var_bound(&mut self,j_ : i32,lower_ : i32,finite_ : i32,value_ : f64) -> Result<(),String> { self.data.task.chg_var_bound(j_,lower_,finite_,value_) }
     /// Commits all cached problem changes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.commitchanges>
-    pub fn commit_changes(&mut self) -> Result<(),String> { self.task.commit_changes() }
+    pub fn commit_changes(&mut self) -> Result<(),String> { self.data.task.commit_changes() }
     /// Undefine a solution and free the memory it uses.
     ///
     /// # Arguments
@@ -5383,7 +5427,7 @@ impl TaskCB {
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.deletesolution>
-    pub fn delete_solution(&mut self,whichsol_ : i32) -> Result<(),String> { self.task.delete_solution(whichsol_) }
+    pub fn delete_solution(&mut self,whichsol_ : i32) -> Result<(),String> { self.data.task.delete_solution(whichsol_) }
     /// Performs sensitivity analysis on objective coefficients.
     ///
     /// # Arguments
@@ -5395,7 +5439,7 @@ impl TaskCB {
     /// - `rightrangej_` Right range for requested coefficients.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.dualsensitivity>
-    pub fn dual_sensitivity(&self,subj_ : &[i32],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> { self.task.dual_sensitivity(subj_,leftpricej_,rightpricej_,leftrangej_,rightrangej_) }
+    pub fn dual_sensitivity(&self,subj_ : &[i32],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> { self.data.task.dual_sensitivity(subj_,leftpricej_,rightpricej_,leftrangej_,rightrangej_) }
     /// Clears a row in barF
     ///
     /// # Arguments
@@ -5403,7 +5447,7 @@ impl TaskCB {
     /// - `afeidx_` Row index of barF.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafebarfrow>
-    pub fn empty_afe_barf_row(&mut self,afeidx_ : i64) -> Result<(),String> { self.task.empty_afe_barf_row(afeidx_) }
+    pub fn empty_afe_barf_row(&mut self,afeidx_ : i64) -> Result<(),String> { self.data.task.empty_afe_barf_row(afeidx_) }
     /// Clears rows in barF.
     ///
     /// # Arguments
@@ -5411,7 +5455,7 @@ impl TaskCB {
     /// - `afeidxlist_` Indices of rows in barF to clear.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafebarfrowlist>
-    pub fn empty_afe_barf_row_list(&mut self,afeidxlist_ : &[i64]) -> Result<(),String> { self.task.empty_afe_barf_row_list(afeidxlist_) }
+    pub fn empty_afe_barf_row_list(&mut self,afeidxlist_ : &[i64]) -> Result<(),String> { self.data.task.empty_afe_barf_row_list(afeidxlist_) }
     /// Clears a column in F.
     ///
     /// # Arguments
@@ -5419,7 +5463,7 @@ impl TaskCB {
     /// - `varidx_` Variable index.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafefcol>
-    pub fn empty_afe_f_col(&mut self,varidx_ : i32) -> Result<(),String> { self.task.empty_afe_f_col(varidx_) }
+    pub fn empty_afe_f_col(&mut self,varidx_ : i32) -> Result<(),String> { self.data.task.empty_afe_f_col(varidx_) }
     /// Clears columns in F.
     ///
     /// # Arguments
@@ -5427,7 +5471,7 @@ impl TaskCB {
     /// - `varidx_` Indices of variables in F to clear.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafefcollist>
-    pub fn empty_afe_f_col_list(&mut self,varidx_ : &[i32]) -> Result<(),String> { self.task.empty_afe_f_col_list(varidx_) }
+    pub fn empty_afe_f_col_list(&mut self,varidx_ : &[i32]) -> Result<(),String> { self.data.task.empty_afe_f_col_list(varidx_) }
     /// Clears a row in F.
     ///
     /// # Arguments
@@ -5435,7 +5479,7 @@ impl TaskCB {
     /// - `afeidx_` Row index.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafefrow>
-    pub fn empty_afe_f_row(&mut self,afeidx_ : i64) -> Result<(),String> { self.task.empty_afe_f_row(afeidx_) }
+    pub fn empty_afe_f_row(&mut self,afeidx_ : i64) -> Result<(),String> { self.data.task.empty_afe_f_row(afeidx_) }
     /// Clears rows in F.
     ///
     /// # Arguments
@@ -5443,7 +5487,7 @@ impl TaskCB {
     /// - `afeidx_` Indices of rows in F to clear.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.emptyafefrowlist>
-    pub fn empty_afe_f_row_list(&mut self,afeidx_ : &[i64]) -> Result<(),String> { self.task.empty_afe_f_row_list(afeidx_) }
+    pub fn empty_afe_f_row_list(&mut self,afeidx_ : &[i64]) -> Result<(),String> { self.data.task.empty_afe_f_row_list(afeidx_) }
     /// Evaluates the activity of an affine conic constraint.
     ///
     /// # Arguments
@@ -5455,7 +5499,7 @@ impl TaskCB {
     /// - `activity_` The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.evaluateacc>
-    pub fn evaluate_acc(&self,whichsol_ : i32,accidx_ : i64,activity_ : &mut[f64]) -> Result<(),String> { self.task.evaluate_acc(whichsol_,accidx_,activity_) }
+    pub fn evaluate_acc(&self,whichsol_ : i32,accidx_ : i64,activity_ : &mut[f64]) -> Result<(),String> { self.data.task.evaluate_acc(whichsol_,accidx_,activity_) }
     /// Evaluates the activities of all affine conic constraints.
     ///
     /// # Arguments
@@ -5466,7 +5510,7 @@ impl TaskCB {
     /// - `activity_` The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.evaluateaccs>
-    pub fn evaluate_accs(&self,whichsol_ : i32,activity_ : &mut[f64]) -> Result<(),String> { self.task.evaluate_accs(whichsol_,activity_) }
+    pub fn evaluate_accs(&self,whichsol_ : i32,activity_ : &mut[f64]) -> Result<(),String> { self.data.task.evaluate_accs(whichsol_,activity_) }
     /// Generates systematic names for affine conic constraints.
     ///
     /// # Arguments
@@ -5479,7 +5523,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generateaccnames>
-    pub fn generate_acc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_acc_names(sub_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_acc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_acc_names(sub_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Generates systematic names for variables.
     ///
     /// # Arguments
@@ -5492,7 +5536,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generatebarvarnames>
-    pub fn generate_barvar_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_barvar_names(subj_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_barvar_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_barvar_names(subj_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Generates systematic names for cone.
     ///
     /// # Arguments
@@ -5505,7 +5549,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generateconenames>
-    pub fn generate_cone_names(&mut self,subk_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_cone_names(subk_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_cone_names(&mut self,subk_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_cone_names(subk_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Generates systematic names for constraints.
     ///
     /// # Arguments
@@ -5518,7 +5562,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generateconnames>
-    pub fn generate_con_names(&mut self,subi_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_con_names(subi_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_con_names(&mut self,subi_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_con_names(subi_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Generates systematic names for affine conic constraints.
     ///
     /// # Arguments
@@ -5531,7 +5575,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generatedjcnames>
-    pub fn generate_djc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_djc_names(sub_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_djc_names(&mut self,sub_ : &[i64],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_djc_names(sub_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Generates systematic names for variables.
     ///
     /// # Arguments
@@ -5544,7 +5588,7 @@ impl TaskCB {
     /// - `names_` All axis names.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.generatevarnames>
-    pub fn generate_var_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.task.generate_var_names(subj_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
+    pub fn generate_var_names(&mut self,subj_ : &[i32],fmt_ : &str,dims_ : &[i32],sp_ : &[i64],namedaxisidxs_ : &[i32],names_ : &[String]) -> Result<(),String> { self.data.task.generate_var_names(subj_,fmt_,dims_,sp_,namedaxisidxs_,names_) }
     /// Obtains the list of affine expressions appearing in the affine conic constraint.
     ///
     /// # Arguments
@@ -5553,7 +5597,7 @@ impl TaskCB {
     /// - `afeidxlist_` List of indexes of affine expressions appearing in the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccafeidxlist>
-    pub fn get_acc_afe_idx_list(&self,accidx_ : i64,afeidxlist_ : &mut[i64]) -> Result<(),String> { self.task.get_acc_afe_idx_list(accidx_,afeidxlist_) }
+    pub fn get_acc_afe_idx_list(&self,accidx_ : i64,afeidxlist_ : &mut[i64]) -> Result<(),String> { self.data.task.get_acc_afe_idx_list(accidx_,afeidxlist_) }
     /// Obtains the additional constant term vector appearing in the affine conic constraint.
     ///
     /// # Arguments
@@ -5562,7 +5606,7 @@ impl TaskCB {
     /// - `b_` The vector b appearing in the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccb>
-    pub fn get_acc_b(&self,accidx_ : i64,b_ : &mut[f64]) -> Result<(),String> { self.task.get_acc_b(accidx_,b_) }
+    pub fn get_acc_b(&self,accidx_ : i64,b_ : &mut[f64]) -> Result<(),String> { self.data.task.get_acc_b(accidx_,b_) }
     /// Obtains barF, implied by the ACCs, in block triplet form.
     ///
     /// # Arguments
@@ -5578,7 +5622,7 @@ impl TaskCB {
     ///   - `numtrip` Number of elements in the block triplet form.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccbarfblocktriplet>
-    pub fn get_acc_barf_block_triplet(&self,acc_afe_ : &mut[i64],bar_var_ : &mut[i32],blk_row_ : &mut[i32],blk_col_ : &mut[i32],blk_val_ : &mut[f64]) -> Result<i64,String> { self.task.get_acc_barf_block_triplet(acc_afe_,bar_var_,blk_row_,blk_col_,blk_val_) }
+    pub fn get_acc_barf_block_triplet(&self,acc_afe_ : &mut[i64],bar_var_ : &mut[i32],blk_row_ : &mut[i32],blk_col_ : &mut[i32],blk_val_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_acc_barf_block_triplet(acc_afe_,bar_var_,blk_row_,blk_col_,blk_val_) }
     /// Obtains an upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
     ///
     /// # Returns
@@ -5586,7 +5630,7 @@ impl TaskCB {
     ///   - `numtrip` An upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccbarfnumblocktriplets>
-    pub fn get_acc_barf_num_block_triplets(&self) -> Result<i64,String> { self.task.get_acc_barf_num_block_triplets() }
+    pub fn get_acc_barf_num_block_triplets(&self) -> Result<i64,String> { self.data.task.get_acc_barf_num_block_triplets() }
     /// Obtains the domain appearing in the affine conic constraint.
     ///
     /// # Arguments
@@ -5598,7 +5642,7 @@ impl TaskCB {
     ///   - `domidx` The index of domain in the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdomain>
-    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> { self.task.get_acc_domain(accidx_) }
+    pub fn get_acc_domain(&mut self,accidx_ : i64) -> Result<i64,String> { self.data.task.get_acc_domain(accidx_) }
     /// Obtains the doty vector for an affine conic constraint.
     ///
     /// # Arguments
@@ -5610,7 +5654,7 @@ impl TaskCB {
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdoty>
-    pub fn get_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : &mut[f64]) -> Result<(),String> { self.task.get_acc_dot_y(whichsol_,accidx_,doty_) }
+    pub fn get_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : &mut[f64]) -> Result<(),String> { self.data.task.get_acc_dot_y(whichsol_,accidx_,doty_) }
     /// Obtains the doty vector for a solution.
     ///
     /// # Arguments
@@ -5621,7 +5665,7 @@ impl TaskCB {
     /// - `doty_` The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccdotys>
-    pub fn get_acc_dot_y_s(&self,whichsol_ : i32,doty_ : &mut[f64]) -> Result<(),String> { self.task.get_acc_dot_y_s(whichsol_,doty_) }
+    pub fn get_acc_dot_y_s(&self,whichsol_ : i32,doty_ : &mut[f64]) -> Result<(),String> { self.data.task.get_acc_dot_y_s(whichsol_,doty_) }
     /// Obtains the total number of nonzeros in the ACC implied F matrix.
     ///
     /// # Returns
@@ -5629,7 +5673,7 @@ impl TaskCB {
     ///   - `accfnnz` Number of nonzeros in the F matrix implied by ACCs.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccfnumnz>
-    pub fn get_acc_f_numnz(&mut self) -> Result<i64,String> { self.task.get_acc_f_numnz() }
+    pub fn get_acc_f_numnz(&mut self) -> Result<i64,String> { self.data.task.get_acc_f_numnz() }
     /// Obtains the F matrix (implied by the AFE ordering within the ACCs) in triplet format.
     ///
     /// # Arguments
@@ -5639,7 +5683,7 @@ impl TaskCB {
     /// - `fval_` Values of nonzero entries in the implied F matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccftrip>
-    pub fn get_acc_f_trip(&mut self,frow_ : &mut[i64],fcol_ : &mut[i32],fval_ : &mut[f64]) -> Result<(),String> { self.task.get_acc_f_trip(frow_,fcol_,fval_) }
+    pub fn get_acc_f_trip(&mut self,frow_ : &mut[i64],fcol_ : &mut[i32],fval_ : &mut[f64]) -> Result<(),String> { self.data.task.get_acc_f_trip(frow_,fcol_,fval_) }
     /// The g vector as used within the ACCs.
     ///
     /// # Arguments
@@ -5647,7 +5691,7 @@ impl TaskCB {
     /// - `g_` The g vector as used within the ACCs.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccgvector>
-    pub fn get_acc_g_vector(&self,g_ : &mut[f64]) -> Result<(),String> { self.task.get_acc_g_vector(g_) }
+    pub fn get_acc_g_vector(&self,g_ : &mut[f64]) -> Result<(),String> { self.data.task.get_acc_g_vector(g_) }
     /// Obtains the dimension of the affine conic constraint.
     ///
     /// # Arguments
@@ -5659,7 +5703,7 @@ impl TaskCB {
     ///   - `n` The dimension of the affine conic constraint (equal to the dimension of its domain).
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccn>
-    pub fn get_acc_n(&mut self,accidx_ : i64) -> Result<i64,String> { self.task.get_acc_n(accidx_) }
+    pub fn get_acc_n(&mut self,accidx_ : i64) -> Result<i64,String> { self.data.task.get_acc_n(accidx_) }
     /// Obtains the name of an affine conic constraint.
     ///
     /// # Arguments
@@ -5671,7 +5715,7 @@ impl TaskCB {
     ///   - `name` Returns the required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccname>
-    pub fn get_acc_name(&self,accidx_ : i64) -> Result<String,String> { self.task.get_acc_name(accidx_) }
+    pub fn get_acc_name(&self,accidx_ : i64) -> Result<String,String> { self.data.task.get_acc_name(accidx_) }
     /// Obtains the length of the name of an affine conic constraint.
     ///
     /// # Arguments
@@ -5683,7 +5727,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccnamelen>
-    pub fn get_acc_name_len(&self,accidx_ : i64) -> Result<i32,String> { self.task.get_acc_name_len(accidx_) }
+    pub fn get_acc_name_len(&self,accidx_ : i64) -> Result<i32,String> { self.data.task.get_acc_name_len(accidx_) }
     /// Obtains the total dimension of all affine conic constraints.
     ///
     /// # Returns
@@ -5691,7 +5735,7 @@ impl TaskCB {
     ///   - `n` The total dimension of all affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccntot>
-    pub fn get_acc_n_tot(&mut self) -> Result<i64,String> { self.task.get_acc_n_tot() }
+    pub fn get_acc_n_tot(&mut self) -> Result<i64,String> { self.data.task.get_acc_n_tot() }
     /// Obtains full data of all affine conic constraints.
     ///
     /// # Arguments
@@ -5701,7 +5745,7 @@ impl TaskCB {
     /// - `b_` The concatenation of vectors b appearing in all affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaccs>
-    pub fn get_accs(&self,domidxlist_ : &mut[i64],afeidxlist_ : &mut[i64],b_ : &mut[f64]) -> Result<(),String> { self.task.get_accs(domidxlist_,afeidxlist_,b_) }
+    pub fn get_accs(&self,domidxlist_ : &mut[i64],afeidxlist_ : &mut[i64],b_ : &mut[f64]) -> Result<(),String> { self.data.task.get_accs(domidxlist_,afeidxlist_,b_) }
     /// Obtains one column of the linear constraint matrix.
     ///
     /// # Arguments
@@ -5712,7 +5756,7 @@ impl TaskCB {
     /// - `valj_` Numerical values in the column obtained.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getacol>
-    pub fn get_a_col(&self,j_ : i32,nzj_ : &mut i32,subj_ : &mut[i32],valj_ : &mut[f64]) -> Result<(),String> { self.task.get_a_col(j_,nzj_,subj_,valj_) }
+    pub fn get_a_col(&self,j_ : i32,nzj_ : &mut i32,subj_ : &mut[i32],valj_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_col(j_,nzj_,subj_,valj_) }
     /// Obtains the number of non-zero elements in one column of the linear constraint matrix
     ///
     /// # Arguments
@@ -5724,7 +5768,7 @@ impl TaskCB {
     ///   - `nzj` Number of non-zeros in the j'th column of (A).
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getacolnumnz>
-    pub fn get_a_col_num_nz(&self,i_ : i32) -> Result<i32,String> { self.task.get_a_col_num_nz(i_) }
+    pub fn get_a_col_num_nz(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_a_col_num_nz(i_) }
     /// Obtains a sequence of columns from the coefficient matrix.
     ///
     /// # Arguments
@@ -5737,7 +5781,7 @@ impl TaskCB {
     /// - `val_` Contains the coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getacolslice64>
-    pub fn get_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : &mut[i64],ptre_ : &mut[i64],sub_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_a_col_slice(first_,last_,ptrb_,ptre_,sub_,val_) }
+    pub fn get_a_col_slice(&self,first_ : i32,last_ : i32,ptrb_ : &mut[i64],ptre_ : &mut[i64],sub_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_col_slice(first_,last_,ptrb_,ptre_,sub_,val_) }
     /// Obtains the number of non-zeros in a slice of columns of the coefficient matrix.
     ///
     /// # Arguments
@@ -5750,7 +5794,7 @@ impl TaskCB {
     ///   - `numnz` Number of non-zeros in the slice.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getacolslicenumnz64>
-    pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String> { self.task.get_a_col_slice_num_nz(first_,last_) }
+    pub fn get_a_col_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String> { self.data.task.get_a_col_slice_num_nz(first_,last_) }
     /// Obtains a sequence of columns from the coefficient matrix in triplet format.
     ///
     /// # Arguments
@@ -5762,7 +5806,7 @@ impl TaskCB {
     /// - `val_` Values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getacolslicetrip>
-    pub fn get_a_col_slice_trip(&self,first_ : i32,last_ : i32,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_a_col_slice_trip(first_,last_,subi_,subj_,val_) }
+    pub fn get_a_col_slice_trip(&self,first_ : i32,last_ : i32,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_col_slice_trip(first_,last_,subi_,subj_,val_) }
     /// Obtains barF in block triplet form.
     ///
     /// # Arguments
@@ -5778,7 +5822,7 @@ impl TaskCB {
     ///   - `numtrip` Number of elements in the block triplet form.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafebarfblocktriplet>
-    pub fn get_afe_barf_block_triplet(&self,afeidx_ : &mut[i64],barvaridx_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valkl_ : &mut[f64]) -> Result<i64,String> { self.task.get_afe_barf_block_triplet(afeidx_,barvaridx_,subk_,subl_,valkl_) }
+    pub fn get_afe_barf_block_triplet(&self,afeidx_ : &mut[i64],barvaridx_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valkl_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_afe_barf_block_triplet(afeidx_,barvaridx_,subk_,subl_,valkl_) }
     /// Obtains an upper bound on the number of elements in the block triplet form of barf.
     ///
     /// # Returns
@@ -5786,7 +5830,7 @@ impl TaskCB {
     ///   - `numtrip` An upper bound on the number of elements in the block triplet form of barf.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafebarfnumblocktriplets>
-    pub fn get_afe_barf_num_block_triplets(&self) -> Result<i64,String> { self.task.get_afe_barf_num_block_triplets() }
+    pub fn get_afe_barf_num_block_triplets(&self) -> Result<i64,String> { self.data.task.get_afe_barf_num_block_triplets() }
     /// Obtains the number of nonzero entries in a row of barF.
     ///
     /// # Arguments
@@ -5798,7 +5842,7 @@ impl TaskCB {
     ///   - `numentr` Number of nonzero entries in a row of barF.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafebarfnumrowentries>
-    pub fn get_afe_barf_num_row_entries(&mut self,afeidx_ : i64) -> Result<i32,String> { self.task.get_afe_barf_num_row_entries(afeidx_) }
+    pub fn get_afe_barf_num_row_entries(&mut self,afeidx_ : i64) -> Result<i32,String> { self.data.task.get_afe_barf_num_row_entries(afeidx_) }
     /// Obtains nonzero entries in one row of barF.
     ///
     /// # Arguments
@@ -5811,7 +5855,7 @@ impl TaskCB {
     /// - `termweight_` Weights appearing in the weighted sum representation.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafebarfrow>
-    pub fn get_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &mut[i32],ptrterm_ : &mut[i64],numterm_ : &mut[i64],termidx_ : &mut[i64],termweight_ : &mut[f64]) -> Result<(),String> { self.task.get_afe_barf_row(afeidx_,barvaridx_,ptrterm_,numterm_,termidx_,termweight_) }
+    pub fn get_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &mut[i32],ptrterm_ : &mut[i64],numterm_ : &mut[i64],termidx_ : &mut[i64],termweight_ : &mut[f64]) -> Result<(),String> { self.data.task.get_afe_barf_row(afeidx_,barvaridx_,ptrterm_,numterm_,termidx_,termweight_) }
     /// Obtains information about one row of barF.
     ///
     /// # Arguments
@@ -5821,7 +5865,7 @@ impl TaskCB {
     /// - `numterm_` Number of terms in the weighted sums representation of the row of barF.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafebarfrowinfo>
-    pub fn get_afe_barf_row_info(&mut self,afeidx_ : i64,numentr_ : &mut i32,numterm_ : &mut i64) -> Result<(),String> { self.task.get_afe_barf_row_info(afeidx_,numentr_,numterm_) }
+    pub fn get_afe_barf_row_info(&mut self,afeidx_ : i64,numentr_ : &mut i32,numterm_ : &mut i64) -> Result<(),String> { self.data.task.get_afe_barf_row_info(afeidx_,numentr_,numterm_) }
     /// Obtains the total number of nonzeros in F.
     ///
     /// # Returns
@@ -5829,7 +5873,7 @@ impl TaskCB {
     ///   - `numnz` Number of nonzeros in F.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafefnumnz>
-    pub fn get_afe_f_num_nz(&mut self) -> Result<i64,String> { self.task.get_afe_f_num_nz() }
+    pub fn get_afe_f_num_nz(&mut self) -> Result<i64,String> { self.data.task.get_afe_f_num_nz() }
     /// Obtains one row of F in sparse format.
     ///
     /// # Arguments
@@ -5840,7 +5884,7 @@ impl TaskCB {
     /// - `val_` Values of the non-zeros in the row obtained.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafefrow>
-    pub fn get_afe_f_row(&mut self,afeidx_ : i64,numnz_ : &mut i32,varidx_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_afe_f_row(afeidx_,numnz_,varidx_,val_) }
+    pub fn get_afe_f_row(&mut self,afeidx_ : i64,numnz_ : &mut i32,varidx_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_afe_f_row(afeidx_,numnz_,varidx_,val_) }
     /// Obtains the number of nonzeros in a row of F.
     ///
     /// # Arguments
@@ -5852,7 +5896,7 @@ impl TaskCB {
     ///   - `numnz` Number of non-zeros in the row.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafefrownumnz>
-    pub fn get_afe_f_row_num_nz(&mut self,afeidx_ : i64) -> Result<i32,String> { self.task.get_afe_f_row_num_nz(afeidx_) }
+    pub fn get_afe_f_row_num_nz(&mut self,afeidx_ : i64) -> Result<i32,String> { self.data.task.get_afe_f_row_num_nz(afeidx_) }
     /// Obtains the F matrix in triplet format.
     ///
     /// # Arguments
@@ -5862,7 +5906,7 @@ impl TaskCB {
     /// - `val_` Values of nonzero entries.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafeftrip>
-    pub fn get_afe_f_trip(&mut self,afeidx_ : &mut[i64],varidx_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_afe_f_trip(afeidx_,varidx_,val_) }
+    pub fn get_afe_f_trip(&mut self,afeidx_ : &mut[i64],varidx_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_afe_f_trip(afeidx_,varidx_,val_) }
     /// Obtains a single coefficient in g.
     ///
     /// # Arguments
@@ -5874,7 +5918,7 @@ impl TaskCB {
     ///   - `g` The entry in g.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafeg>
-    pub fn get_afe_g(&mut self,afeidx_ : i64) -> Result<f64,String> { self.task.get_afe_g(afeidx_) }
+    pub fn get_afe_g(&mut self,afeidx_ : i64) -> Result<f64,String> { self.data.task.get_afe_g(afeidx_) }
     /// Obtains a sequence of coefficients from the vector g.
     ///
     /// # Arguments
@@ -5884,7 +5928,7 @@ impl TaskCB {
     /// - `g_` The slice of g as a dense vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getafegslice>
-    pub fn get_afe_g_slice(&self,first_ : i64,last_ : i64,g_ : &mut[f64]) -> Result<(),String> { self.task.get_afe_g_slice(first_,last_,g_) }
+    pub fn get_afe_g_slice(&self,first_ : i64,last_ : i64,g_ : &mut[f64]) -> Result<(),String> { self.data.task.get_afe_g_slice(first_,last_,g_) }
     /// Obtains a single coefficient in linear constraint matrix.
     ///
     /// # Arguments
@@ -5897,7 +5941,7 @@ impl TaskCB {
     ///   - `aij` Returns the requested coefficient.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getaij>
-    pub fn get_aij(&self,i_ : i32,j_ : i32) -> Result<f64,String> { self.task.get_aij(i_,j_) }
+    pub fn get_aij(&self,i_ : i32,j_ : i32) -> Result<f64,String> { self.data.task.get_aij(i_,j_) }
     /// Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
     ///
     /// # Arguments
@@ -5912,7 +5956,7 @@ impl TaskCB {
     ///   - `numnz` Number of non-zero elements in the rectangular piece of the linear constraint matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getapiecenumnz>
-    pub fn get_a_piece_num_nz(&self,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32) -> Result<i32,String> { self.task.get_a_piece_num_nz(firsti_,lasti_,firstj_,lastj_) }
+    pub fn get_a_piece_num_nz(&self,firsti_ : i32,lasti_ : i32,firstj_ : i32,lastj_ : i32) -> Result<i32,String> { self.data.task.get_a_piece_num_nz(firsti_,lasti_,firstj_,lastj_) }
     /// Obtains one row of the linear constraint matrix.
     ///
     /// # Arguments
@@ -5923,7 +5967,7 @@ impl TaskCB {
     /// - `vali_` Numerical values of the row obtained.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getarow>
-    pub fn get_a_row(&self,i_ : i32,nzi_ : &mut i32,subi_ : &mut[i32],vali_ : &mut[f64]) -> Result<(),String> { self.task.get_a_row(i_,nzi_,subi_,vali_) }
+    pub fn get_a_row(&self,i_ : i32,nzi_ : &mut i32,subi_ : &mut[i32],vali_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_row(i_,nzi_,subi_,vali_) }
     /// Obtains the number of non-zero elements in one row of the linear constraint matrix
     ///
     /// # Arguments
@@ -5935,7 +5979,7 @@ impl TaskCB {
     ///   - `nzi` Number of non-zeros in the i'th row of `A`.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getarownumnz>
-    pub fn get_a_row_num_nz(&self,i_ : i32) -> Result<i32,String> { self.task.get_a_row_num_nz(i_) }
+    pub fn get_a_row_num_nz(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_a_row_num_nz(i_) }
     /// Obtains a sequence of rows from the coefficient matrix.
     ///
     /// # Arguments
@@ -5948,7 +5992,7 @@ impl TaskCB {
     /// - `val_` Contains the coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getarowslice64>
-    pub fn get_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : &mut[i64],ptre_ : &mut[i64],sub_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_a_row_slice(first_,last_,ptrb_,ptre_,sub_,val_) }
+    pub fn get_a_row_slice(&self,first_ : i32,last_ : i32,ptrb_ : &mut[i64],ptre_ : &mut[i64],sub_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_row_slice(first_,last_,ptrb_,ptre_,sub_,val_) }
     /// Obtains the number of non-zeros in a slice of rows of the coefficient matrix.
     ///
     /// # Arguments
@@ -5961,7 +6005,7 @@ impl TaskCB {
     ///   - `numnz` Number of non-zeros in the slice.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getarowslicenumnz64>
-    pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String> { self.task.get_a_row_slice_num_nz(first_,last_) }
+    pub fn get_a_row_slice_num_nz(&self,first_ : i32,last_ : i32) -> Result<i64,String> { self.data.task.get_a_row_slice_num_nz(first_,last_) }
     /// Obtains a sequence of rows from the coefficient matrix in sparse triplet format.
     ///
     /// # Arguments
@@ -5973,7 +6017,7 @@ impl TaskCB {
     /// - `val_` Values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getarowslicetrip>
-    pub fn get_a_row_slice_trip(&self,first_ : i32,last_ : i32,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_a_row_slice_trip(first_,last_,subi_,subj_,val_) }
+    pub fn get_a_row_slice_trip(&self,first_ : i32,last_ : i32,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_row_slice_trip(first_,last_,subi_,subj_,val_) }
     /// Obtains the A matrix in sparse triplet format.
     ///
     /// # Arguments
@@ -5983,7 +6027,7 @@ impl TaskCB {
     /// - `val_` Values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getatrip>
-    pub fn get_a_trip(&self,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.task.get_a_trip(subi_,subj_,val_) }
+    pub fn get_a_trip(&self,subi_ : &mut[i32],subj_ : &mut[i32],val_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_trip(subi_,subj_,val_) }
     /// Gets the current A matrix truncation threshold.
     ///
     /// # Arguments
@@ -5991,7 +6035,7 @@ impl TaskCB {
     /// - `tolzero_` Truncation tolerance.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getatruncatetol>
-    pub fn get_a_truncate_tol(&self,tolzero_ : &mut[f64]) -> Result<(),String> { self.task.get_a_truncate_tol(tolzero_) }
+    pub fn get_a_truncate_tol(&self,tolzero_ : &mut[f64]) -> Result<(),String> { self.data.task.get_a_truncate_tol(tolzero_) }
     /// Obtains barA in block triplet form.
     ///
     /// # Arguments
@@ -6007,7 +6051,7 @@ impl TaskCB {
     ///   - `num` Number of elements in the block triplet form.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarablocktriplet>
-    pub fn get_bara_block_triplet(&self,subi_ : &mut[i32],subj_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valijkl_ : &mut[f64]) -> Result<i64,String> { self.task.get_bara_block_triplet(subi_,subj_,subk_,subl_,valijkl_) }
+    pub fn get_bara_block_triplet(&self,subi_ : &mut[i32],subj_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valijkl_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_bara_block_triplet(subi_,subj_,subk_,subl_,valijkl_) }
     /// Obtains information about an element in barA.
     ///
     /// # Arguments
@@ -6023,7 +6067,7 @@ impl TaskCB {
     ///   - `num` Number of terms in weighted sum that forms the element.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbaraidx>
-    pub fn get_bara_idx(&self,idx_ : i64,i_ : &mut i32,j_ : &mut i32,sub_ : &mut[i64],weights_ : &mut[f64]) -> Result<i64,String> { self.task.get_bara_idx(idx_,i_,j_,sub_,weights_) }
+    pub fn get_bara_idx(&self,idx_ : i64,i_ : &mut i32,j_ : &mut i32,sub_ : &mut[i64],weights_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_bara_idx(idx_,i_,j_,sub_,weights_) }
     /// Obtains information about an element in barA.
     ///
     /// # Arguments
@@ -6033,7 +6077,7 @@ impl TaskCB {
     /// - `j_` Column index of the element at position idx.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbaraidxij>
-    pub fn get_bara_idx_i_j(&self,idx_ : i64,i_ : &mut i32,j_ : &mut i32) -> Result<(),String> { self.task.get_bara_idx_i_j(idx_,i_,j_) }
+    pub fn get_bara_idx_i_j(&self,idx_ : i64,i_ : &mut i32,j_ : &mut i32) -> Result<(),String> { self.data.task.get_bara_idx_i_j(idx_,i_,j_) }
     /// Obtains the number of terms in the weighted sum that form a particular element in barA.
     ///
     /// # Arguments
@@ -6045,7 +6089,7 @@ impl TaskCB {
     ///   - `num` Number of terms in the weighted sum that form the specified element in barA.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbaraidxinfo>
-    pub fn get_bara_idx_info(&self,idx_ : i64) -> Result<i64,String> { self.task.get_bara_idx_info(idx_) }
+    pub fn get_bara_idx_info(&self,idx_ : i64) -> Result<i64,String> { self.data.task.get_bara_idx_info(idx_) }
     /// Obtains the sparsity pattern of the barA matrix.
     ///
     /// # Arguments
@@ -6054,7 +6098,7 @@ impl TaskCB {
     /// - `idxij_` Position of each nonzero element in the vector representation of barA.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarasparsity>
-    pub fn get_bara_sparsity(&self,numnz_ : &mut i64,idxij_ : &mut[i64]) -> Result<(),String> { self.task.get_bara_sparsity(numnz_,idxij_) }
+    pub fn get_bara_sparsity(&self,numnz_ : &mut i64,idxij_ : &mut[i64]) -> Result<(),String> { self.data.task.get_bara_sparsity(numnz_,idxij_) }
     /// Obtains barC in block triplet form.
     ///
     /// # Arguments
@@ -6069,7 +6113,7 @@ impl TaskCB {
     ///   - `num` Number of elements in the block triplet form.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarcblocktriplet>
-    pub fn get_barc_block_triplet(&self,subj_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valjkl_ : &mut[f64]) -> Result<i64,String> { self.task.get_barc_block_triplet(subj_,subk_,subl_,valjkl_) }
+    pub fn get_barc_block_triplet(&self,subj_ : &mut[i32],subk_ : &mut[i32],subl_ : &mut[i32],valjkl_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_barc_block_triplet(subj_,subk_,subl_,valjkl_) }
     /// Obtains information about an element in barc.
     ///
     /// # Arguments
@@ -6081,7 +6125,7 @@ impl TaskCB {
     /// - `weights_` Weights of terms in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarcidx>
-    pub fn get_barc_idx(&self,idx_ : i64,j_ : &mut i32,num_ : &mut i64,sub_ : &mut[i64],weights_ : &mut[f64]) -> Result<(),String> { self.task.get_barc_idx(idx_,j_,num_,sub_,weights_) }
+    pub fn get_barc_idx(&self,idx_ : i64,j_ : &mut i32,num_ : &mut i64,sub_ : &mut[i64],weights_ : &mut[f64]) -> Result<(),String> { self.data.task.get_barc_idx(idx_,j_,num_,sub_,weights_) }
     /// Obtains information about an element in barc.
     ///
     /// # Arguments
@@ -6093,7 +6137,7 @@ impl TaskCB {
     ///   - `num` Number of terms that appear in the weighted sum that forms the requested element.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarcidxinfo>
-    pub fn get_barc_idx_info(&self,idx_ : i64) -> Result<i64,String> { self.task.get_barc_idx_info(idx_) }
+    pub fn get_barc_idx_info(&self,idx_ : i64) -> Result<i64,String> { self.data.task.get_barc_idx_info(idx_) }
     /// Obtains the row index of an element in barc.
     ///
     /// # Arguments
@@ -6102,7 +6146,7 @@ impl TaskCB {
     /// - `j_` Row index in barc.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarcidxj>
-    pub fn get_barc_idx_j(&self,idx_ : i64,j_ : &mut i32) -> Result<(),String> { self.task.get_barc_idx_j(idx_,j_) }
+    pub fn get_barc_idx_j(&self,idx_ : i64,j_ : &mut i32) -> Result<(),String> { self.data.task.get_barc_idx_j(idx_,j_) }
     /// Get the positions of the nonzero elements in barc.
     ///
     /// # Arguments
@@ -6111,7 +6155,7 @@ impl TaskCB {
     /// - `idxj_` Internal positions of the nonzeros elements in barc.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarcsparsity>
-    pub fn get_barc_sparsity(&self,numnz_ : &mut i64,idxj_ : &mut[i64]) -> Result<(),String> { self.task.get_barc_sparsity(numnz_,idxj_) }
+    pub fn get_barc_sparsity(&self,numnz_ : &mut i64,idxj_ : &mut[i64]) -> Result<(),String> { self.data.task.get_barc_sparsity(numnz_,idxj_) }
     /// Obtains the dual solution for a semidefinite variable.
     ///
     /// # Arguments
@@ -6123,7 +6167,7 @@ impl TaskCB {
     /// - `barsj_` Value of the j'th dual variable of barx.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarsj>
-    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : &mut[f64]) -> Result<(),String> { self.task.get_bars_j(whichsol_,j_,barsj_) }
+    pub fn get_bars_j(&self,whichsol_ : i32,j_ : i32,barsj_ : &mut[f64]) -> Result<(),String> { self.data.task.get_bars_j(whichsol_,j_,barsj_) }
     /// Obtains the dual solution for a sequence of semidefinite variables.
     ///
     /// # Arguments
@@ -6137,7 +6181,7 @@ impl TaskCB {
     /// - `barsslice_` Dual solution values of symmetric matrix variables in the slice, stored sequentially.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarsslice>
-    pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : &mut[f64]) -> Result<(),String> { self.task.get_bars_slice(whichsol_,first_,last_,slicesize_,barsslice_) }
+    pub fn get_bars_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barsslice_ : &mut[f64]) -> Result<(),String> { self.data.task.get_bars_slice(whichsol_,first_,last_,slicesize_,barsslice_) }
     /// Obtains the name of a semidefinite variable.
     ///
     /// # Arguments
@@ -6149,7 +6193,7 @@ impl TaskCB {
     ///   - `name` The requested name is copied to this buffer.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarvarname>
-    pub fn get_barvar_name(&self,i_ : i32) -> Result<String,String> { self.task.get_barvar_name(i_) }
+    pub fn get_barvar_name(&self,i_ : i32) -> Result<String,String> { self.data.task.get_barvar_name(i_) }
     /// Obtains the index of semidefinite variable from its name.
     ///
     /// # Arguments
@@ -6162,7 +6206,7 @@ impl TaskCB {
     ///   - `index` The index of a semidefinite variable with the name somename (if one exists).
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarvarnameindex>
-    pub fn get_barvar_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.task.get_barvar_name_index(somename_,asgn_) }
+    pub fn get_barvar_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.data.task.get_barvar_name_index(somename_,asgn_) }
     /// Obtains the length of the name of a semidefinite variable.
     ///
     /// # Arguments
@@ -6174,7 +6218,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarvarnamelen>
-    pub fn get_barvar_name_len(&self,i_ : i32) -> Result<i32,String> { self.task.get_barvar_name_len(i_) }
+    pub fn get_barvar_name_len(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_barvar_name_len(i_) }
     /// Obtains the primal solution for a semidefinite variable.
     ///
     /// # Arguments
@@ -6186,7 +6230,7 @@ impl TaskCB {
     /// - `barxj_` Value of the j'th variable of barx.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarxj>
-    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : &mut[f64]) -> Result<(),String> { self.task.get_barx_j(whichsol_,j_,barxj_) }
+    pub fn get_barx_j(&self,whichsol_ : i32,j_ : i32,barxj_ : &mut[f64]) -> Result<(),String> { self.data.task.get_barx_j(whichsol_,j_,barxj_) }
     /// Obtains the primal solution for a sequence of semidefinite variables.
     ///
     /// # Arguments
@@ -6200,7 +6244,7 @@ impl TaskCB {
     /// - `barxslice_` Solution values of symmetric matrix variables in the slice, stored sequentially.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getbarxslice>
-    pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : &mut[f64]) -> Result<(),String> { self.task.get_barx_slice(whichsol_,first_,last_,slicesize_,barxslice_) }
+    pub fn get_barx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slicesize_ : i64,barxslice_ : &mut[f64]) -> Result<(),String> { self.data.task.get_barx_slice(whichsol_,first_,last_,slicesize_,barxslice_) }
     /// Obtains all objective coefficients.
     ///
     /// # Arguments
@@ -6208,7 +6252,7 @@ impl TaskCB {
     /// - `c_` Linear terms of the objective as a dense vector. The length is the number of variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getc>
-    pub fn get_c(&self,c_ : &mut[f64]) -> Result<(),String> { self.task.get_c(c_) }
+    pub fn get_c(&self,c_ : &mut[f64]) -> Result<(),String> { self.data.task.get_c(c_) }
     /// Obtains the fixed term in the objective.
     ///
     /// # Returns
@@ -6216,7 +6260,7 @@ impl TaskCB {
     ///   - `cfix` Fixed term in the objective.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getcfix>
-    pub fn get_cfix(&self) -> Result<f64,String> { self.task.get_cfix() }
+    pub fn get_cfix(&self) -> Result<f64,String> { self.data.task.get_cfix() }
     /// Obtains one objective coefficient.
     ///
     /// # Arguments
@@ -6225,7 +6269,7 @@ impl TaskCB {
     /// - `cj_` The c coefficient value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getcj>
-    pub fn get_c_j(&self,j_ : i32,cj_ : &mut f64) -> Result<(),String> { self.task.get_c_j(j_,cj_) }
+    pub fn get_c_j(&self,j_ : i32,cj_ : &mut f64) -> Result<(),String> { self.data.task.get_c_j(j_,cj_) }
     /// Obtains a sequence of coefficients from the objective.
     ///
     /// # Arguments
@@ -6234,7 +6278,7 @@ impl TaskCB {
     /// - `c_` Linear terms of the requested list of the objective as a dense vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getclist>
-    pub fn get_c_list(&self,subj_ : &[i32],c_ : &mut[f64]) -> Result<(),String> { self.task.get_c_list(subj_,c_) }
+    pub fn get_c_list(&self,subj_ : &[i32],c_ : &mut[f64]) -> Result<(),String> { self.data.task.get_c_list(subj_,c_) }
     /// Obtains bound information for one constraint.
     ///
     /// # Arguments
@@ -6247,7 +6291,7 @@ impl TaskCB {
     /// - `bu_` Values for upper bounds.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconbound>
-    pub fn get_con_bound(&self,i_ : i32,bk_ : & mut i32,bl_ : &mut f64,bu_ : &mut f64) -> Result<(),String> { self.task.get_con_bound(i_,bk_,bl_,bu_) }
+    pub fn get_con_bound(&self,i_ : i32,bk_ : & mut i32,bl_ : &mut f64,bu_ : &mut f64) -> Result<(),String> { self.data.task.get_con_bound(i_,bk_,bl_,bu_) }
     /// Obtains bounds information for a slice of the constraints.
     ///
     /// # Arguments
@@ -6261,7 +6305,7 @@ impl TaskCB {
     /// - `bu_` Values for upper bounds.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconboundslice>
-    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> { self.task.get_con_bound_slice(first_,last_,bk_,bl_,bu_) }
+    pub fn get_con_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> { self.data.task.get_con_bound_slice(first_,last_,bk_,bl_,bu_) }
     /// Obtains a cone.
     ///
     /// # Arguments
@@ -6275,7 +6319,7 @@ impl TaskCB {
     /// - `submem_` Variable subscripts of the members in the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getcone>
-    pub fn get_cone(&mut self,k_ : i32,ct_ : & mut i32,conepar_ : &mut f64,nummem_ : &mut i32,submem_ : &mut[i32]) -> Result<(),String> { self.task.get_cone(k_,ct_,conepar_,nummem_,submem_) }
+    pub fn get_cone(&mut self,k_ : i32,ct_ : & mut i32,conepar_ : &mut f64,nummem_ : &mut i32,submem_ : &mut[i32]) -> Result<(),String> { self.data.task.get_cone(k_,ct_,conepar_,nummem_,submem_) }
     /// Obtains information about a cone.
     ///
     /// # Arguments
@@ -6288,7 +6332,7 @@ impl TaskCB {
     /// - `nummem_` Number of member variables in the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconeinfo>
-    pub fn get_cone_info(&self,k_ : i32,ct_ : & mut i32,conepar_ : &mut f64,nummem_ : &mut i32) -> Result<(),String> { self.task.get_cone_info(k_,ct_,conepar_,nummem_) }
+    pub fn get_cone_info(&self,k_ : i32,ct_ : & mut i32,conepar_ : &mut f64,nummem_ : &mut i32) -> Result<(),String> { self.data.task.get_cone_info(k_,ct_,conepar_,nummem_) }
     /// Obtains the name of a cone.
     ///
     /// # Arguments
@@ -6300,7 +6344,7 @@ impl TaskCB {
     ///   - `name` The required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconename>
-    pub fn get_cone_name(&self,i_ : i32) -> Result<String,String> { self.task.get_cone_name(i_) }
+    pub fn get_cone_name(&self,i_ : i32) -> Result<String,String> { self.data.task.get_cone_name(i_) }
     /// Checks whether the name has been assigned to any cone.
     ///
     /// # Arguments
@@ -6313,7 +6357,7 @@ impl TaskCB {
     ///   - `index` If the name somename is assigned to some cone, this is the index of the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconenameindex>
-    pub fn get_cone_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.task.get_cone_name_index(somename_,asgn_) }
+    pub fn get_cone_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.data.task.get_cone_name_index(somename_,asgn_) }
     /// Obtains the length of the name of a cone.
     ///
     /// # Arguments
@@ -6325,7 +6369,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconenamelen>
-    pub fn get_cone_name_len(&self,i_ : i32) -> Result<i32,String> { self.task.get_cone_name_len(i_) }
+    pub fn get_cone_name_len(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_cone_name_len(i_) }
     /// Obtains the name of a constraint.
     ///
     /// # Arguments
@@ -6337,7 +6381,7 @@ impl TaskCB {
     ///   - `name` The required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconname>
-    pub fn get_con_name(&self,i_ : i32) -> Result<String,String> { self.task.get_con_name(i_) }
+    pub fn get_con_name(&self,i_ : i32) -> Result<String,String> { self.data.task.get_con_name(i_) }
     /// Checks whether the name has been assigned to any constraint.
     ///
     /// # Arguments
@@ -6350,7 +6394,7 @@ impl TaskCB {
     ///   - `index` If the name somename is assigned to a constraint, then return the index of the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconnameindex>
-    pub fn get_con_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.task.get_con_name_index(somename_,asgn_) }
+    pub fn get_con_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.data.task.get_con_name_index(somename_,asgn_) }
     /// Obtains the length of the name of a constraint.
     ///
     /// # Arguments
@@ -6362,7 +6406,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getconnamelen>
-    pub fn get_con_name_len(&self,i_ : i32) -> Result<i32,String> { self.task.get_con_name_len(i_) }
+    pub fn get_con_name_len(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_con_name_len(i_) }
     /// Obtains a sequence of coefficients from the objective.
     ///
     /// # Arguments
@@ -6372,7 +6416,7 @@ impl TaskCB {
     /// - `c_` Linear terms of the requested slice of the objective as a dense vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getcslice>
-    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : &mut[f64]) -> Result<(),String> { self.task.get_c_slice(first_,last_,c_) }
+    pub fn get_c_slice(&self,first_ : i32,last_ : i32,c_ : &mut[f64]) -> Result<(),String> { self.data.task.get_c_slice(first_,last_,c_) }
     /// Obtains the dimension of a symmetric matrix variable.
     ///
     /// # Arguments
@@ -6384,7 +6428,7 @@ impl TaskCB {
     ///   - `dimbarvarj` The dimension of the j'th semidefinite variable.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdimbarvarj>
-    pub fn get_dim_barvar_j(&self,j_ : i32) -> Result<i32,String> { self.task.get_dim_barvar_j(j_) }
+    pub fn get_dim_barvar_j(&self,j_ : i32) -> Result<i32,String> { self.data.task.get_dim_barvar_j(j_) }
     /// Obtains the list of affine expression indexes in a disjunctive constraint.
     ///
     /// # Arguments
@@ -6393,7 +6437,7 @@ impl TaskCB {
     /// - `afeidxlist_` List of affine expression indexes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcafeidxlist>
-    pub fn get_djc_afe_idx_list(&self,djcidx_ : i64,afeidxlist_ : &mut[i64]) -> Result<(),String> { self.task.get_djc_afe_idx_list(djcidx_,afeidxlist_) }
+    pub fn get_djc_afe_idx_list(&self,djcidx_ : i64,afeidxlist_ : &mut[i64]) -> Result<(),String> { self.data.task.get_djc_afe_idx_list(djcidx_,afeidxlist_) }
     /// Obtains the optional constant term vector of a disjunctive constraint.
     ///
     /// # Arguments
@@ -6402,7 +6446,7 @@ impl TaskCB {
     /// - `b_` The vector b.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcb>
-    pub fn get_djc_b(&self,djcidx_ : i64,b_ : &mut[f64]) -> Result<(),String> { self.task.get_djc_b(djcidx_,b_) }
+    pub fn get_djc_b(&self,djcidx_ : i64,b_ : &mut[f64]) -> Result<(),String> { self.data.task.get_djc_b(djcidx_,b_) }
     /// Obtains the list of domain indexes in a disjunctive constraint.
     ///
     /// # Arguments
@@ -6411,7 +6455,7 @@ impl TaskCB {
     /// - `domidxlist_` List of term sizes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcdomainidxlist>
-    pub fn get_djc_domain_idx_list(&self,djcidx_ : i64,domidxlist_ : &mut[i64]) -> Result<(),String> { self.task.get_djc_domain_idx_list(djcidx_,domidxlist_) }
+    pub fn get_djc_domain_idx_list(&self,djcidx_ : i64,domidxlist_ : &mut[i64]) -> Result<(),String> { self.data.task.get_djc_domain_idx_list(djcidx_,domidxlist_) }
     /// Obtains the name of a disjunctive constraint.
     ///
     /// # Arguments
@@ -6423,7 +6467,7 @@ impl TaskCB {
     ///   - `name` Returns the required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcname>
-    pub fn get_djc_name(&self,djcidx_ : i64) -> Result<String,String> { self.task.get_djc_name(djcidx_) }
+    pub fn get_djc_name(&self,djcidx_ : i64) -> Result<String,String> { self.data.task.get_djc_name(djcidx_) }
     /// Obtains the length of the name of a disjunctive constraint.
     ///
     /// # Arguments
@@ -6435,7 +6479,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnamelen>
-    pub fn get_djc_name_len(&self,djcidx_ : i64) -> Result<i32,String> { self.task.get_djc_name_len(djcidx_) }
+    pub fn get_djc_name_len(&self,djcidx_ : i64) -> Result<i32,String> { self.data.task.get_djc_name_len(djcidx_) }
     /// Obtains the number of affine expressions in the disjunctive constraint.
     ///
     /// # Arguments
@@ -6447,7 +6491,7 @@ impl TaskCB {
     ///   - `numafe` Number of affine expressions in the disjunctive constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumafe>
-    pub fn get_djc_num_afe(&mut self,djcidx_ : i64) -> Result<i64,String> { self.task.get_djc_num_afe(djcidx_) }
+    pub fn get_djc_num_afe(&mut self,djcidx_ : i64) -> Result<i64,String> { self.data.task.get_djc_num_afe(djcidx_) }
     /// Obtains the number of affine expressions in all disjunctive constraints.
     ///
     /// # Returns
@@ -6455,7 +6499,7 @@ impl TaskCB {
     ///   - `numafetot` Number of affine expressions in all disjunctive constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumafetot>
-    pub fn get_djc_num_afe_tot(&mut self) -> Result<i64,String> { self.task.get_djc_num_afe_tot() }
+    pub fn get_djc_num_afe_tot(&mut self) -> Result<i64,String> { self.data.task.get_djc_num_afe_tot() }
     /// Obtains the number of domains in the disjunctive constraint.
     ///
     /// # Arguments
@@ -6467,7 +6511,7 @@ impl TaskCB {
     ///   - `numdomain` Number of domains in the disjunctive constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumdomain>
-    pub fn get_djc_num_domain(&mut self,djcidx_ : i64) -> Result<i64,String> { self.task.get_djc_num_domain(djcidx_) }
+    pub fn get_djc_num_domain(&mut self,djcidx_ : i64) -> Result<i64,String> { self.data.task.get_djc_num_domain(djcidx_) }
     /// Obtains the number of domains in all disjunctive constraints.
     ///
     /// # Returns
@@ -6475,7 +6519,7 @@ impl TaskCB {
     ///   - `numdomaintot` Number of domains in all disjunctive constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumdomaintot>
-    pub fn get_djc_num_domain_tot(&mut self) -> Result<i64,String> { self.task.get_djc_num_domain_tot() }
+    pub fn get_djc_num_domain_tot(&mut self) -> Result<i64,String> { self.data.task.get_djc_num_domain_tot() }
     /// Obtains the number terms in the disjunctive constraint.
     ///
     /// # Arguments
@@ -6487,7 +6531,7 @@ impl TaskCB {
     ///   - `numterm` Number of terms in the disjunctive constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumterm>
-    pub fn get_djc_num_term(&mut self,djcidx_ : i64) -> Result<i64,String> { self.task.get_djc_num_term(djcidx_) }
+    pub fn get_djc_num_term(&mut self,djcidx_ : i64) -> Result<i64,String> { self.data.task.get_djc_num_term(djcidx_) }
     /// Obtains the number of terms in all disjunctive constraints.
     ///
     /// # Returns
@@ -6495,7 +6539,7 @@ impl TaskCB {
     ///   - `numtermtot` Total number of terms in all disjunctive constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcnumtermtot>
-    pub fn get_djc_num_term_tot(&mut self) -> Result<i64,String> { self.task.get_djc_num_term_tot() }
+    pub fn get_djc_num_term_tot(&mut self) -> Result<i64,String> { self.data.task.get_djc_num_term_tot() }
     /// Obtains full data of all disjunctive constraints.
     ///
     /// # Arguments
@@ -6507,7 +6551,7 @@ impl TaskCB {
     /// - `numterms_` The number of terms in each of the disjunctive constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjcs>
-    pub fn get_djcs(&self,domidxlist_ : &mut[i64],afeidxlist_ : &mut[i64],b_ : &mut[f64],termsizelist_ : &mut[i64],numterms_ : &mut[i64]) -> Result<(),String> { self.task.get_djcs(domidxlist_,afeidxlist_,b_,termsizelist_,numterms_) }
+    pub fn get_djcs(&self,domidxlist_ : &mut[i64],afeidxlist_ : &mut[i64],b_ : &mut[f64],termsizelist_ : &mut[i64],numterms_ : &mut[i64]) -> Result<(),String> { self.data.task.get_djcs(domidxlist_,afeidxlist_,b_,termsizelist_,numterms_) }
     /// Obtains the list of term sizes in a disjunctive constraint.
     ///
     /// # Arguments
@@ -6516,7 +6560,7 @@ impl TaskCB {
     /// - `termsizelist_` List of term sizes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdjctermsizelist>
-    pub fn get_djc_term_size_list(&self,djcidx_ : i64,termsizelist_ : &mut[i64]) -> Result<(),String> { self.task.get_djc_term_size_list(djcidx_,termsizelist_) }
+    pub fn get_djc_term_size_list(&self,djcidx_ : i64,termsizelist_ : &mut[i64]) -> Result<(),String> { self.data.task.get_djc_term_size_list(djcidx_,termsizelist_) }
     /// Obtains the dimension of the domain.
     ///
     /// # Arguments
@@ -6528,7 +6572,7 @@ impl TaskCB {
     ///   - `n` Dimension of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdomainn>
-    pub fn get_domain_n(&self,domidx_ : i64) -> Result<i64,String> { self.task.get_domain_n(domidx_) }
+    pub fn get_domain_n(&self,domidx_ : i64) -> Result<i64,String> { self.data.task.get_domain_n(domidx_) }
     /// Obtains the name of a domain.
     ///
     /// # Arguments
@@ -6540,7 +6584,7 @@ impl TaskCB {
     ///   - `name` Returns the required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdomainname>
-    pub fn get_domain_name(&self,domidx_ : i64) -> Result<String,String> { self.task.get_domain_name(domidx_) }
+    pub fn get_domain_name(&self,domidx_ : i64) -> Result<String,String> { self.data.task.get_domain_name(domidx_) }
     /// Obtains the length of the name of a domain.
     ///
     /// # Arguments
@@ -6552,7 +6596,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdomainnamelen>
-    pub fn get_domain_name_len(&self,domidx_ : i64) -> Result<i32,String> { self.task.get_domain_name_len(domidx_) }
+    pub fn get_domain_name_len(&self,domidx_ : i64) -> Result<i32,String> { self.data.task.get_domain_name_len(domidx_) }
     /// Returns the type of the domain.
     ///
     /// # Arguments
@@ -6564,7 +6608,7 @@ impl TaskCB {
     ///   - `domtype` The type of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdomaintype>
-    pub fn get_domain_type(&self,domidx_ : i64) -> Result<i32,String> { self.task.get_domain_type(domidx_) }
+    pub fn get_domain_type(&self,domidx_ : i64) -> Result<i32,String> { self.data.task.get_domain_type(domidx_) }
     /// Obtains a double information item.
     ///
     /// # Arguments
@@ -6578,7 +6622,7 @@ impl TaskCB {
     ///   - `dvalue` The value of the required double information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdouinf>
-    pub fn get_dou_inf(&self,whichdinf_ : i32) -> Result<f64,String> { self.task.get_dou_inf(whichdinf_) }
+    pub fn get_dou_inf(&self,whichdinf_ : i32) -> Result<f64,String> { self.data.task.get_dou_inf(whichdinf_) }
     /// Obtains a double parameter.
     ///
     /// # Arguments
@@ -6592,7 +6636,7 @@ impl TaskCB {
     ///   - `parvalue` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdouparam>
-    pub fn get_dou_param(&self,param_ : i32) -> Result<f64,String> { self.task.get_dou_param(param_) }
+    pub fn get_dou_param(&self,param_ : i32) -> Result<f64,String> { self.data.task.get_dou_param(param_) }
     /// Computes the dual objective value associated with the solution.
     ///
     /// # Arguments
@@ -6603,7 +6647,7 @@ impl TaskCB {
     /// - `dualobj_` Objective value corresponding to the dual solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdualobj>
-    pub fn get_dual_obj(&self,whichsol_ : i32,dualobj_ : &mut f64) -> Result<(),String> { self.task.get_dual_obj(whichsol_,dualobj_) }
+    pub fn get_dual_obj(&self,whichsol_ : i32,dualobj_ : &mut f64) -> Result<(),String> { self.data.task.get_dual_obj(whichsol_,dualobj_) }
     /// Compute norms of the dual solution.
     ///
     /// # Arguments
@@ -6620,7 +6664,7 @@ impl TaskCB {
     /// - `nrmbars_` The norm of the bars vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdualsolutionnorms>
-    pub fn get_dual_solution_norms(&self,whichsol_ : i32,nrmy_ : &mut f64,nrmslc_ : &mut f64,nrmsuc_ : &mut f64,nrmslx_ : &mut f64,nrmsux_ : &mut f64,nrmsnx_ : &mut f64,nrmbars_ : &mut f64) -> Result<(),String> { self.task.get_dual_solution_norms(whichsol_,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_) }
+    pub fn get_dual_solution_norms(&self,whichsol_ : i32,nrmy_ : &mut f64,nrmslc_ : &mut f64,nrmsuc_ : &mut f64,nrmslx_ : &mut f64,nrmsux_ : &mut f64,nrmsnx_ : &mut f64,nrmbars_ : &mut f64) -> Result<(),String> { self.data.task.get_dual_solution_norms(whichsol_,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_) }
     /// Computes the violation of the dual solution for set of affine conic constraints.
     ///
     /// # Arguments
@@ -6632,7 +6676,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdviolacc>
-    pub fn get_dviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_dviol_acc(whichsol_,accidxlist_,viol_) }
+    pub fn get_dviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_dviol_acc(whichsol_,accidxlist_,viol_) }
     /// Computes the violation of dual solution for a set of semidefinite variables.
     ///
     /// # Arguments
@@ -6644,7 +6688,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdviolbarvar>
-    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_dviol_barvar(whichsol_,sub_,viol_) }
+    pub fn get_dviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_dviol_barvar(whichsol_,sub_,viol_) }
     /// Computes the violation of a dual solution associated with a set of constraints.
     ///
     /// # Arguments
@@ -6656,7 +6700,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdviolcon>
-    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_dviol_con(whichsol_,sub_,viol_) }
+    pub fn get_dviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_dviol_con(whichsol_,sub_,viol_) }
     /// Computes the violation of a solution for set of dual conic constraints.
     ///
     /// # Arguments
@@ -6668,7 +6712,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdviolcones>
-    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_dviol_cones(whichsol_,sub_,viol_) }
+    pub fn get_dviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_dviol_cones(whichsol_,sub_,viol_) }
     /// Computes the violation of a dual solution associated with a set of scalar variables.
     ///
     /// # Arguments
@@ -6680,7 +6724,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getdviolvar>
-    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_dviol_var(whichsol_,sub_,viol_) }
+    pub fn get_dviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_dviol_var(whichsol_,sub_,viol_) }
     /// Obtains the index of a named information item.
     ///
     /// # Arguments
@@ -6692,7 +6736,7 @@ impl TaskCB {
     /// - `infindex_` The item index.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getinfindex>
-    pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str,infindex_ : &mut i32) -> Result<(),String> { self.task.get_inf_index(inftype_,infname_,infindex_) }
+    pub fn get_inf_index(&self,inftype_ : i32,infname_ : &str,infindex_ : &mut i32) -> Result<(),String> { self.data.task.get_inf_index(inftype_,infname_,infindex_) }
     /// Obtains the maximum index of an information item of a given type.
     ///
     /// # Arguments
@@ -6703,7 +6747,7 @@ impl TaskCB {
     /// - `infmax_` The maximum index (plus 1) requested.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getinfmax>
-    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : &mut[i32]) -> Result<(),String> { self.task.get_inf_max(inftype_,infmax_) }
+    pub fn get_inf_max(&self,inftype_ : i32,infmax_ : &mut[i32]) -> Result<(),String> { self.data.task.get_inf_max(inftype_,infmax_) }
     /// Obtains the name of an information item.
     ///
     /// # Arguments
@@ -6718,7 +6762,7 @@ impl TaskCB {
     ///   - `infname` Name of the information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getinfname>
-    pub fn get_inf_name(&self,inftype_ : i32,whichinf_ : i32) -> Result<String,String> { self.task.get_inf_name(inftype_,whichinf_) }
+    pub fn get_inf_name(&self,inftype_ : i32,whichinf_ : i32) -> Result<String,String> { self.data.task.get_inf_name(inftype_,whichinf_) }
     /// Obtains an integer information item.
     ///
     /// # Arguments
@@ -6732,7 +6776,7 @@ impl TaskCB {
     ///   - `ivalue` The value of the required integer information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getintinf>
-    pub fn get_int_inf(&self,whichiinf_ : i32) -> Result<i32,String> { self.task.get_int_inf(whichiinf_) }
+    pub fn get_int_inf(&self,whichiinf_ : i32) -> Result<i32,String> { self.data.task.get_int_inf(whichiinf_) }
     /// Obtains an integer parameter.
     ///
     /// # Arguments
@@ -6746,7 +6790,7 @@ impl TaskCB {
     ///   - `parvalue` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getintparam>
-    pub fn get_int_param(&self,param_ : i32) -> Result<i32,String> { self.task.get_int_param(param_) }
+    pub fn get_int_param(&self,param_ : i32) -> Result<i32,String> { self.data.task.get_int_param(param_) }
     /// Obtains the length of one semidefinite variable.
     ///
     /// # Arguments
@@ -6758,7 +6802,7 @@ impl TaskCB {
     ///   - `lenbarvarj` Number of scalar elements in the lower triangular part of the semidefinite variable.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getlenbarvarj>
-    pub fn get_len_barvar_j(&self,j_ : i32) -> Result<i64,String> { self.task.get_len_barvar_j(j_) }
+    pub fn get_len_barvar_j(&self,j_ : i32) -> Result<i64,String> { self.data.task.get_len_barvar_j(j_) }
     /// Obtains a long integer information item.
     ///
     /// # Arguments
@@ -6772,7 +6816,7 @@ impl TaskCB {
     ///   - `ivalue` The value of the required long integer information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getlintinf>
-    pub fn get_lint_inf(&self,whichliinf_ : i32) -> Result<i64,String> { self.task.get_lint_inf(whichliinf_) }
+    pub fn get_lint_inf(&self,whichliinf_ : i32) -> Result<i64,String> { self.data.task.get_lint_inf(whichliinf_) }
     /// Obtains the maximum length (not including terminating zero character) of any objective, constraint, variable, domain or cone name.
     ///
     /// # Arguments
@@ -6780,7 +6824,7 @@ impl TaskCB {
     /// - `maxlen_` The maximum length of any name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnamelen>
-    pub fn get_max_name_len(&self,maxlen_ : &mut i32) -> Result<(),String> { self.task.get_max_name_len(maxlen_) }
+    pub fn get_max_name_len(&self,maxlen_ : &mut i32) -> Result<(),String> { self.data.task.get_max_name_len(maxlen_) }
     /// Obtains number of preallocated non-zeros in the linear constraint matrix.
     ///
     /// # Returns
@@ -6788,7 +6832,7 @@ impl TaskCB {
     ///   - `maxnumanz` Number of preallocated non-zero linear matrix elements.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumanz64>
-    pub fn get_max_num_a_nz(&self) -> Result<i64,String> { self.task.get_max_num_a_nz() }
+    pub fn get_max_num_a_nz(&self) -> Result<i64,String> { self.data.task.get_max_num_a_nz() }
     /// Obtains maximum number of symmetric matrix variables for which space is currently preallocated.
     ///
     /// # Returns
@@ -6796,7 +6840,7 @@ impl TaskCB {
     ///   - `maxnumbarvar` Maximum number of symmetric matrix variables for which space is currently preallocated.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumbarvar>
-    pub fn get_max_num_barvar(&self) -> Result<i32,String> { self.task.get_max_num_barvar() }
+    pub fn get_max_num_barvar(&self) -> Result<i32,String> { self.data.task.get_max_num_barvar() }
     /// Obtains the number of preallocated constraints in the optimization task.
     ///
     /// # Arguments
@@ -6804,7 +6848,7 @@ impl TaskCB {
     /// - `maxnumcon_` Number of preallocated constraints in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumcon>
-    pub fn get_max_num_con(&self,maxnumcon_ : &mut i32) -> Result<(),String> { self.task.get_max_num_con(maxnumcon_) }
+    pub fn get_max_num_con(&self,maxnumcon_ : &mut i32) -> Result<(),String> { self.data.task.get_max_num_con(maxnumcon_) }
     /// Obtains the number of preallocated cones in the optimization task.
     ///
     /// # Arguments
@@ -6812,7 +6856,7 @@ impl TaskCB {
     /// - `maxnumcone_` Number of preallocated conic constraints in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumcone>
-    pub fn get_max_num_cone(&self,maxnumcone_ : &mut i32) -> Result<(),String> { self.task.get_max_num_cone(maxnumcone_) }
+    pub fn get_max_num_cone(&self,maxnumcone_ : &mut i32) -> Result<(),String> { self.data.task.get_max_num_cone(maxnumcone_) }
     /// Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
     ///
     /// # Arguments
@@ -6820,7 +6864,7 @@ impl TaskCB {
     /// - `maxnumqnz_` Number of non-zero elements preallocated in quadratic coefficient matrices.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumqnz64>
-    pub fn get_max_num_q_nz(&self,maxnumqnz_ : &mut i64) -> Result<(),String> { self.task.get_max_num_q_nz(maxnumqnz_) }
+    pub fn get_max_num_q_nz(&self,maxnumqnz_ : &mut i64) -> Result<(),String> { self.data.task.get_max_num_q_nz(maxnumqnz_) }
     /// Obtains the maximum number variables allowed.
     ///
     /// # Arguments
@@ -6828,7 +6872,7 @@ impl TaskCB {
     /// - `maxnumvar_` Number of preallocated variables in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmaxnumvar>
-    pub fn get_max_num_var(&self,maxnumvar_ : &mut i32) -> Result<(),String> { self.task.get_max_num_var(maxnumvar_) }
+    pub fn get_max_num_var(&self,maxnumvar_ : &mut i32) -> Result<(),String> { self.data.task.get_max_num_var(maxnumvar_) }
     /// Obtains information about the amount of memory used by a task.
     ///
     /// # Arguments
@@ -6837,7 +6881,7 @@ impl TaskCB {
     /// - `maxmemuse_` Maximum amount of memory used by the task until now.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmemusagetask>
-    pub fn get_mem_usage(&self,meminuse_ : &mut i64,maxmemuse_ : &mut i64) -> Result<(),String> { self.task.get_mem_usage(meminuse_,maxmemuse_) }
+    pub fn get_mem_usage(&self,meminuse_ : &mut i64,maxmemuse_ : &mut i64) -> Result<(),String> { self.data.task.get_mem_usage(meminuse_,maxmemuse_) }
     /// Obtains the number of threads used by the mixed integer optimizer.
     ///
     /// # Returns
@@ -6845,7 +6889,7 @@ impl TaskCB {
     ///   - `numthreads` The number of threads.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getmionumthreads>
-    pub fn get_mio_num_threads(&self) -> Result<i32,String> { self.task.get_mio_num_threads() }
+    pub fn get_mio_num_threads(&self) -> Result<i32,String> { self.data.task.get_mio_num_threads() }
     /// Obtains a named double information item.
     ///
     /// # Arguments
@@ -6854,7 +6898,7 @@ impl TaskCB {
     /// - `dvalue_` The value of the required double information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnadouinf>
-    pub fn get_na_dou_inf(&self,infitemname_ : &str,dvalue_ : &mut f64) -> Result<(),String> { self.task.get_na_dou_inf(infitemname_,dvalue_) }
+    pub fn get_na_dou_inf(&self,infitemname_ : &str,dvalue_ : &mut f64) -> Result<(),String> { self.data.task.get_na_dou_inf(infitemname_,dvalue_) }
     /// Obtains a double parameter.
     ///
     /// # Arguments
@@ -6863,7 +6907,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnadouparam>
-    pub fn get_na_dou_param(&self,paramname_ : &str,parvalue_ : &mut f64) -> Result<(),String> { self.task.get_na_dou_param(paramname_,parvalue_) }
+    pub fn get_na_dou_param(&self,paramname_ : &str,parvalue_ : &mut f64) -> Result<(),String> { self.data.task.get_na_dou_param(paramname_,parvalue_) }
     /// Obtains a named integer information item.
     ///
     /// # Arguments
@@ -6872,7 +6916,7 @@ impl TaskCB {
     /// - `ivalue_` The value of the required integer information item.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnaintinf>
-    pub fn get_na_int_inf(&self,infitemname_ : &str,ivalue_ : &mut i32) -> Result<(),String> { self.task.get_na_int_inf(infitemname_,ivalue_) }
+    pub fn get_na_int_inf(&self,infitemname_ : &str,ivalue_ : &mut i32) -> Result<(),String> { self.data.task.get_na_int_inf(infitemname_,ivalue_) }
     /// Obtains an integer parameter.
     ///
     /// # Arguments
@@ -6881,7 +6925,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnaintparam>
-    pub fn get_na_int_param(&self,paramname_ : &str,parvalue_ : &mut i32) -> Result<(),String> { self.task.get_na_int_param(paramname_,parvalue_) }
+    pub fn get_na_int_param(&self,paramname_ : &str,parvalue_ : &mut i32) -> Result<(),String> { self.data.task.get_na_int_param(paramname_,parvalue_) }
     /// Obtains a string parameter.
     ///
     /// # Arguments
@@ -6895,7 +6939,7 @@ impl TaskCB {
     ///   - `parvalue` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnastrparam>
-    pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32,len_ : &mut i32) -> Result<String,String> { self.task.get_na_str_param(paramname_,sizeparamname_,len_) }
+    pub fn get_na_str_param(&self,paramname_ : &str,sizeparamname_ : i32,len_ : &mut i32) -> Result<String,String> { self.data.task.get_na_str_param(paramname_,sizeparamname_,len_) }
     /// Obtains the number of affine conic constraints.
     ///
     /// # Returns
@@ -6903,7 +6947,7 @@ impl TaskCB {
     ///   - `num` The number of affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumacc>
-    pub fn get_num_acc(&mut self) -> Result<i64,String> { self.task.get_num_acc() }
+    pub fn get_num_acc(&mut self) -> Result<i64,String> { self.data.task.get_num_acc() }
     /// Obtains the number of affine expressions.
     ///
     /// # Returns
@@ -6911,7 +6955,7 @@ impl TaskCB {
     ///   - `numafe` Number of affine expressions.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumafe>
-    pub fn get_num_afe(&mut self) -> Result<i64,String> { self.task.get_num_afe() }
+    pub fn get_num_afe(&mut self) -> Result<i64,String> { self.data.task.get_num_afe() }
     /// Obtains the number of non-zeros in the coefficient matrix.
     ///
     /// # Returns
@@ -6919,7 +6963,7 @@ impl TaskCB {
     ///   - `numanz` Number of non-zero elements in the linear constraint matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumanz>
-    pub fn get_num_a_nz(&self) -> Result<i32,String> { self.task.get_num_a_nz() }
+    pub fn get_num_a_nz(&self) -> Result<i32,String> { self.data.task.get_num_a_nz() }
     /// Obtains the number of non-zeros in the coefficient matrix.
     ///
     /// # Returns
@@ -6927,7 +6971,7 @@ impl TaskCB {
     ///   - `numanz` Number of non-zero elements in the linear constraint matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumanz64>
-    pub fn get_num_a_nz_64(&self) -> Result<i64,String> { self.task.get_num_a_nz_64() }
+    pub fn get_num_a_nz_64(&self) -> Result<i64,String> { self.data.task.get_num_a_nz_64() }
     /// Obtains an upper bound on the number of scalar elements in the block triplet form of bara.
     ///
     /// # Returns
@@ -6935,7 +6979,7 @@ impl TaskCB {
     ///   - `num` An upper bound on the number of elements in the block triplet form of bara.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumbarablocktriplets>
-    pub fn get_num_bara_block_triplets(&self) -> Result<i64,String> { self.task.get_num_bara_block_triplets() }
+    pub fn get_num_bara_block_triplets(&self) -> Result<i64,String> { self.data.task.get_num_bara_block_triplets() }
     /// Get the number of nonzero elements in barA.
     ///
     /// # Returns
@@ -6943,7 +6987,7 @@ impl TaskCB {
     ///   - `nz` The number of nonzero block elements in barA.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumbaranz>
-    pub fn get_num_bara_nz(&self) -> Result<i64,String> { self.task.get_num_bara_nz() }
+    pub fn get_num_bara_nz(&self) -> Result<i64,String> { self.data.task.get_num_bara_nz() }
     /// Obtains an upper bound on the number of elements in the block triplet form of barc.
     ///
     /// # Returns
@@ -6951,7 +6995,7 @@ impl TaskCB {
     ///   - `num` An upper bound on the number of elements in the block triplet form of barc.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumbarcblocktriplets>
-    pub fn get_num_barc_block_triplets(&self) -> Result<i64,String> { self.task.get_num_barc_block_triplets() }
+    pub fn get_num_barc_block_triplets(&self) -> Result<i64,String> { self.data.task.get_num_barc_block_triplets() }
     /// Obtains the number of nonzero elements in barc.
     ///
     /// # Returns
@@ -6959,7 +7003,7 @@ impl TaskCB {
     ///   - `nz` The number of nonzero elements in barc.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumbarcnz>
-    pub fn get_num_barc_nz(&self) -> Result<i64,String> { self.task.get_num_barc_nz() }
+    pub fn get_num_barc_nz(&self) -> Result<i64,String> { self.data.task.get_num_barc_nz() }
     /// Obtains the number of semidefinite variables.
     ///
     /// # Returns
@@ -6967,7 +7011,7 @@ impl TaskCB {
     ///   - `numbarvar` Number of semidefinite variables in the problem.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumbarvar>
-    pub fn get_num_barvar(&self) -> Result<i32,String> { self.task.get_num_barvar() }
+    pub fn get_num_barvar(&self) -> Result<i32,String> { self.data.task.get_num_barvar() }
     /// Obtains the number of constraints.
     ///
     /// # Returns
@@ -6975,7 +7019,7 @@ impl TaskCB {
     ///   - `numcon` Number of constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumcon>
-    pub fn get_num_con(&self) -> Result<i32,String> { self.task.get_num_con() }
+    pub fn get_num_con(&self) -> Result<i32,String> { self.data.task.get_num_con() }
     /// Obtains the number of cones.
     ///
     /// # Returns
@@ -6983,7 +7027,7 @@ impl TaskCB {
     ///   - `numcone` Number of conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumcone>
-    pub fn get_num_cone(&self) -> Result<i32,String> { self.task.get_num_cone() }
+    pub fn get_num_cone(&self) -> Result<i32,String> { self.data.task.get_num_cone() }
     /// Obtains the number of members in a cone.
     ///
     /// # Arguments
@@ -6992,7 +7036,7 @@ impl TaskCB {
     /// - `nummem_` Number of member variables in the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumconemem>
-    pub fn get_num_cone_mem(&self,k_ : i32,nummem_ : &mut i32) -> Result<(),String> { self.task.get_num_cone_mem(k_,nummem_) }
+    pub fn get_num_cone_mem(&self,k_ : i32,nummem_ : &mut i32) -> Result<(),String> { self.data.task.get_num_cone_mem(k_,nummem_) }
     /// Obtains the number of disjunctive constraints.
     ///
     /// # Returns
@@ -7000,7 +7044,7 @@ impl TaskCB {
     ///   - `num` The number of disjunctive constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumdjc>
-    pub fn get_num_djc(&mut self) -> Result<i64,String> { self.task.get_num_djc() }
+    pub fn get_num_djc(&mut self) -> Result<i64,String> { self.data.task.get_num_djc() }
     /// Obtain the number of domains defined.
     ///
     /// # Returns
@@ -7008,7 +7052,7 @@ impl TaskCB {
     ///   - `numdomain` Number of domains in the task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumdomain>
-    pub fn get_num_domain(&mut self) -> Result<i64,String> { self.task.get_num_domain() }
+    pub fn get_num_domain(&mut self) -> Result<i64,String> { self.data.task.get_num_domain() }
     /// Obtains the number of integer-constrained variables.
     ///
     /// # Returns
@@ -7016,7 +7060,7 @@ impl TaskCB {
     ///   - `numintvar` Number of integer variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumintvar>
-    pub fn get_num_int_var(&self) -> Result<i32,String> { self.task.get_num_int_var() }
+    pub fn get_num_int_var(&self) -> Result<i32,String> { self.data.task.get_num_int_var() }
     /// Obtains the number of parameters of a given type.
     ///
     /// # Arguments
@@ -7027,7 +7071,7 @@ impl TaskCB {
     /// - `numparam_` Returns the number of parameters of the requested type.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumparam>
-    pub fn get_num_param(&self,partype_ : i32,numparam_ : &mut i32) -> Result<(),String> { self.task.get_num_param(partype_,numparam_) }
+    pub fn get_num_param(&self,partype_ : i32,numparam_ : &mut i32) -> Result<(),String> { self.data.task.get_num_param(partype_,numparam_) }
     /// Obtains the number of non-zero quadratic terms in a constraint.
     ///
     /// # Arguments
@@ -7039,7 +7083,7 @@ impl TaskCB {
     ///   - `numqcnz` Number of quadratic terms.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumqconknz64>
-    pub fn get_num_q_con_k_nz(&self,k_ : i32) -> Result<i64,String> { self.task.get_num_q_con_k_nz(k_) }
+    pub fn get_num_q_con_k_nz(&self,k_ : i32) -> Result<i64,String> { self.data.task.get_num_q_con_k_nz(k_) }
     /// Obtains the number of non-zero quadratic terms in the objective.
     ///
     /// # Returns
@@ -7047,7 +7091,7 @@ impl TaskCB {
     ///   - `numqonz` Number of non-zero elements in the quadratic objective terms.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumqobjnz64>
-    pub fn get_num_q_obj_nz(&self) -> Result<i64,String> { self.task.get_num_q_obj_nz() }
+    pub fn get_num_q_obj_nz(&self) -> Result<i64,String> { self.data.task.get_num_q_obj_nz() }
     /// Obtains the number of symmetric matrices stored.
     ///
     /// # Arguments
@@ -7055,7 +7099,7 @@ impl TaskCB {
     /// - `num_` The number of symmetric sparse matrices.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumsymmat>
-    pub fn get_num_sym_mat(&self,num_ : &mut i64) -> Result<(),String> { self.task.get_num_sym_mat(num_) }
+    pub fn get_num_sym_mat(&self,num_ : &mut i64) -> Result<(),String> { self.data.task.get_num_sym_mat(num_) }
     /// Obtains the number of variables.
     ///
     /// # Returns
@@ -7063,7 +7107,7 @@ impl TaskCB {
     ///   - `numvar` Number of variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getnumvar>
-    pub fn get_num_var(&self) -> Result<i32,String> { self.task.get_num_var() }
+    pub fn get_num_var(&self) -> Result<i32,String> { self.data.task.get_num_var() }
     /// Obtains the name assigned to the objective function.
     ///
     /// # Returns
@@ -7071,7 +7115,7 @@ impl TaskCB {
     ///   - `objname` Assigned the objective name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getobjname>
-    pub fn get_obj_name(&self) -> Result<String,String> { self.task.get_obj_name() }
+    pub fn get_obj_name(&self) -> Result<String,String> { self.data.task.get_obj_name() }
     /// Obtains the length of the name assigned to the objective function.
     ///
     /// # Returns
@@ -7079,7 +7123,7 @@ impl TaskCB {
     ///   - `len` Assigned the length of the objective name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getobjnamelen>
-    pub fn get_obj_name_len(&self) -> Result<i32,String> { self.task.get_obj_name_len() }
+    pub fn get_obj_name_len(&self) -> Result<i32,String> { self.data.task.get_obj_name_len() }
     /// Gets the objective sense.
     ///
     /// # Returns
@@ -7087,7 +7131,7 @@ impl TaskCB {
     ///   - `sense` The returned objective sense.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getobjsense>
-    pub fn get_obj_sense(&self) -> Result<i32,String> { self.task.get_obj_sense() }
+    pub fn get_obj_sense(&self) -> Result<i32,String> { self.data.task.get_obj_sense() }
     /// Obtains the maximum index of a parameter of a given type.
     ///
     /// # Arguments
@@ -7098,7 +7142,7 @@ impl TaskCB {
     /// - `parammax_` The maximum index (plus 1) of the given parameter type.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getparammax>
-    pub fn get_param_max(&self,partype_ : i32,parammax_ : &mut i32) -> Result<(),String> { self.task.get_param_max(partype_,parammax_) }
+    pub fn get_param_max(&self,partype_ : i32,parammax_ : &mut i32) -> Result<(),String> { self.data.task.get_param_max(partype_,parammax_) }
     /// Obtains the name of a parameter.
     ///
     /// # Arguments
@@ -7113,7 +7157,7 @@ impl TaskCB {
     ///   - `parname` Parameter name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getparamname>
-    pub fn get_param_name(&self,partype_ : i32,param_ : i32) -> Result<String,String> { self.task.get_param_name(partype_,param_) }
+    pub fn get_param_name(&self,partype_ : i32,param_ : i32) -> Result<String,String> { self.data.task.get_param_name(partype_,param_) }
     /// Obtains the exponent vector of a power domain.
     ///
     /// # Arguments
@@ -7122,7 +7166,7 @@ impl TaskCB {
     /// - `alpha_` The exponent vector of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpowerdomainalpha>
-    pub fn get_power_domain_alpha(&mut self,domidx_ : i64,alpha_ : &mut[f64]) -> Result<(),String> { self.task.get_power_domain_alpha(domidx_,alpha_) }
+    pub fn get_power_domain_alpha(&mut self,domidx_ : i64,alpha_ : &mut[f64]) -> Result<(),String> { self.data.task.get_power_domain_alpha(domidx_,alpha_) }
     /// Obtains structural information about a power domain.
     ///
     /// # Arguments
@@ -7132,7 +7176,7 @@ impl TaskCB {
     /// - `nleft_` Number of variables on the left hand side.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpowerdomaininfo>
-    pub fn get_power_domain_info(&mut self,domidx_ : i64,n_ : &mut i64,nleft_ : &mut i64) -> Result<(),String> { self.task.get_power_domain_info(domidx_,n_,nleft_) }
+    pub fn get_power_domain_info(&mut self,domidx_ : i64,n_ : &mut i64,nleft_ : &mut i64) -> Result<(),String> { self.data.task.get_power_domain_info(domidx_,n_,nleft_) }
     /// Computes the primal objective value for the desired solution.
     ///
     /// # Arguments
@@ -7146,7 +7190,7 @@ impl TaskCB {
     ///   - `primalobj` Objective value corresponding to the primal solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getprimalobj>
-    pub fn get_primal_obj(&self,whichsol_ : i32) -> Result<f64,String> { self.task.get_primal_obj(whichsol_) }
+    pub fn get_primal_obj(&self,whichsol_ : i32) -> Result<f64,String> { self.data.task.get_primal_obj(whichsol_) }
     /// Compute norms of the primal solution.
     ///
     /// # Arguments
@@ -7159,7 +7203,7 @@ impl TaskCB {
     /// - `nrmbarx_` The norm of the barX vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getprimalsolutionnorms>
-    pub fn get_primal_solution_norms(&self,whichsol_ : i32,nrmxc_ : &mut f64,nrmxx_ : &mut f64,nrmbarx_ : &mut f64) -> Result<(),String> { self.task.get_primal_solution_norms(whichsol_,nrmxc_,nrmxx_,nrmbarx_) }
+    pub fn get_primal_solution_norms(&self,whichsol_ : i32,nrmxc_ : &mut f64,nrmxx_ : &mut f64,nrmbarx_ : &mut f64) -> Result<(),String> { self.data.task.get_primal_solution_norms(whichsol_,nrmxc_,nrmxx_,nrmbarx_) }
     /// Obtains the problem type.
     ///
     /// # Returns
@@ -7167,7 +7211,7 @@ impl TaskCB {
     ///   - `probtype` The problem type.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getprobtype>
-    pub fn get_prob_type(&self) -> Result<i32,String> { self.task.get_prob_type() }
+    pub fn get_prob_type(&self) -> Result<i32,String> { self.data.task.get_prob_type() }
     /// Obtains the problem status.
     ///
     /// # Arguments
@@ -7181,7 +7225,7 @@ impl TaskCB {
     ///   - `problemsta` Problem status.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getprosta>
-    pub fn get_pro_sta(&self,whichsol_ : i32) -> Result<i32,String> { self.task.get_pro_sta(whichsol_) }
+    pub fn get_pro_sta(&self,whichsol_ : i32) -> Result<i32,String> { self.data.task.get_pro_sta(whichsol_) }
     /// Computes the violation of a solution for set of affine conic constraints.
     ///
     /// # Arguments
@@ -7193,7 +7237,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpviolacc>
-    pub fn get_pviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_acc(whichsol_,accidxlist_,viol_) }
+    pub fn get_pviol_acc(&self,whichsol_ : i32,accidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_acc(whichsol_,accidxlist_,viol_) }
     /// Computes the violation of a primal solution for a list of semidefinite variables.
     ///
     /// # Arguments
@@ -7205,7 +7249,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpviolbarvar>
-    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_barvar(whichsol_,sub_,viol_) }
+    pub fn get_pviol_barvar(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_barvar(whichsol_,sub_,viol_) }
     /// Computes the violation of a primal solution associated to a constraint.
     ///
     /// # Arguments
@@ -7217,7 +7261,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpviolcon>
-    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_con(whichsol_,sub_,viol_) }
+    pub fn get_pviol_con(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_con(whichsol_,sub_,viol_) }
     /// Computes the violation of a solution for set of conic constraints.
     ///
     /// # Arguments
@@ -7229,7 +7273,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpviolcones>
-    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_cones(whichsol_,sub_,viol_) }
+    pub fn get_pviol_cones(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_cones(whichsol_,sub_,viol_) }
     /// Computes the violation of a solution for set of disjunctive constraints.
     ///
     /// # Arguments
@@ -7241,7 +7285,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpvioldjc>
-    pub fn get_pviol_djc(&self,whichsol_ : i32,djcidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_djc(whichsol_,djcidxlist_,viol_) }
+    pub fn get_pviol_djc(&self,whichsol_ : i32,djcidxlist_ : &[i64],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_djc(whichsol_,djcidxlist_,viol_) }
     /// Computes the violation of a primal solution for a list of scalar variables.
     ///
     /// # Arguments
@@ -7253,7 +7297,7 @@ impl TaskCB {
     /// - `viol_` List of violations corresponding to sub.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getpviolvar>
-    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.task.get_pviol_var(whichsol_,sub_,viol_) }
+    pub fn get_pviol_var(&self,whichsol_ : i32,sub_ : &[i32],viol_ : &mut[f64]) -> Result<(),String> { self.data.task.get_pviol_var(whichsol_,sub_,viol_) }
     /// Obtains all the quadratic terms in a constraint.
     ///
     /// # Arguments
@@ -7268,7 +7312,7 @@ impl TaskCB {
     ///   - `numqcnz` Number of quadratic terms.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getqconk64>
-    pub fn get_q_con_k(&self,k_ : i32,qcsubi_ : &mut[i32],qcsubj_ : &mut[i32],qcval_ : &mut[f64]) -> Result<i64,String> { self.task.get_q_con_k(k_,qcsubi_,qcsubj_,qcval_) }
+    pub fn get_q_con_k(&self,k_ : i32,qcsubi_ : &mut[i32],qcsubj_ : &mut[i32],qcval_ : &mut[f64]) -> Result<i64,String> { self.data.task.get_q_con_k(k_,qcsubi_,qcsubj_,qcval_) }
     /// Obtains all the quadratic terms in the objective.
     ///
     /// # Arguments
@@ -7279,7 +7323,7 @@ impl TaskCB {
     /// - `qoval_` Quadratic objective coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getqobj64>
-    pub fn get_q_obj(&self,numqonz_ : &mut i64,qosubi_ : &mut[i32],qosubj_ : &mut[i32],qoval_ : &mut[f64]) -> Result<(),String> { self.task.get_q_obj(numqonz_,qosubi_,qosubj_,qoval_) }
+    pub fn get_q_obj(&self,numqonz_ : &mut i64,qosubi_ : &mut[i32],qosubj_ : &mut[i32],qoval_ : &mut[f64]) -> Result<(),String> { self.data.task.get_q_obj(numqonz_,qosubi_,qosubj_,qoval_) }
     /// Obtains one coefficient from the quadratic term of the objective
     ///
     /// # Arguments
@@ -7289,7 +7333,7 @@ impl TaskCB {
     /// - `qoij_` The required coefficient.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getqobjij>
-    pub fn get_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : &mut f64) -> Result<(),String> { self.task.get_q_obj_i_j(i_,j_,qoij_) }
+    pub fn get_q_obj_i_j(&self,i_ : i32,j_ : i32,qoij_ : &mut f64) -> Result<(),String> { self.data.task.get_q_obj_i_j(i_,j_,qoij_) }
     /// Obtains the reduced costs for a sequence of variables.
     ///
     /// # Arguments
@@ -7302,7 +7346,7 @@ impl TaskCB {
     /// - `redcosts_` Returns the requested reduced costs.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getreducedcosts>
-    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : &mut[f64]) -> Result<(),String> { self.task.get_reduced_costs(whichsol_,first_,last_,redcosts_) }
+    pub fn get_reduced_costs(&self,whichsol_ : i32,first_ : i32,last_ : i32,redcosts_ : &mut[f64]) -> Result<(),String> { self.data.task.get_reduced_costs(whichsol_,first_,last_,redcosts_) }
     /// Obtains the status keys for the constraints.
     ///
     /// # Arguments
@@ -7315,7 +7359,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskc>
-    pub fn get_skc(&self,whichsol_ : i32,skc_ : &mut[i32]) -> Result<(),String> { self.task.get_skc(whichsol_,skc_) }
+    pub fn get_skc(&self,whichsol_ : i32,skc_ : &mut[i32]) -> Result<(),String> { self.data.task.get_skc(whichsol_,skc_) }
     /// Obtains the status keys for a slice of the constraints.
     ///
     /// # Arguments
@@ -7330,7 +7374,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskcslice>
-    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &mut[i32]) -> Result<(),String> { self.task.get_skc_slice(whichsol_,first_,last_,skc_) }
+    pub fn get_skc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &mut[i32]) -> Result<(),String> { self.data.task.get_skc_slice(whichsol_,first_,last_,skc_) }
     /// Obtains the status keys for the conic constraints.
     ///
     /// # Arguments
@@ -7343,7 +7387,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskn>
-    pub fn get_skn(&self,whichsol_ : i32,skn_ : &mut[i32]) -> Result<(),String> { self.task.get_skn(whichsol_,skn_) }
+    pub fn get_skn(&self,whichsol_ : i32,skn_ : &mut[i32]) -> Result<(),String> { self.data.task.get_skn(whichsol_,skn_) }
     /// Obtains the status keys for the scalar variables.
     ///
     /// # Arguments
@@ -7356,7 +7400,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskx>
-    pub fn get_skx(&self,whichsol_ : i32,skx_ : &mut[i32]) -> Result<(),String> { self.task.get_skx(whichsol_,skx_) }
+    pub fn get_skx(&self,whichsol_ : i32,skx_ : &mut[i32]) -> Result<(),String> { self.data.task.get_skx(whichsol_,skx_) }
     /// Obtains the status keys for a slice of the scalar variables.
     ///
     /// # Arguments
@@ -7371,7 +7415,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskxslice>
-    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &mut[i32]) -> Result<(),String> { self.task.get_skx_slice(whichsol_,first_,last_,skx_) }
+    pub fn get_skx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &mut[i32]) -> Result<(),String> { self.data.task.get_skx_slice(whichsol_,first_,last_,skx_) }
     /// Obtains the slc vector for a solution.
     ///
     /// # Arguments
@@ -7382,7 +7426,7 @@ impl TaskCB {
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslc>
-    pub fn get_slc(&self,whichsol_ : i32,slc_ : &mut[f64]) -> Result<(),String> { self.task.get_slc(whichsol_,slc_) }
+    pub fn get_slc(&self,whichsol_ : i32,slc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_slc(whichsol_,slc_) }
     /// Obtains a slice of the slc vector for a solution.
     ///
     /// # Arguments
@@ -7395,7 +7439,7 @@ impl TaskCB {
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslcslice>
-    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &mut[f64]) -> Result<(),String> { self.task.get_slc_slice(whichsol_,first_,last_,slc_) }
+    pub fn get_slc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_slc_slice(whichsol_,first_,last_,slc_) }
     /// Obtains the slx vector for a solution.
     ///
     /// # Arguments
@@ -7406,7 +7450,7 @@ impl TaskCB {
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslx>
-    pub fn get_slx(&self,whichsol_ : i32,slx_ : &mut[f64]) -> Result<(),String> { self.task.get_slx(whichsol_,slx_) }
+    pub fn get_slx(&self,whichsol_ : i32,slx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_slx(whichsol_,slx_) }
     /// Obtains a slice of the slx vector for a solution.
     ///
     /// # Arguments
@@ -7419,7 +7463,7 @@ impl TaskCB {
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getslxslice>
-    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &mut[f64]) -> Result<(),String> { self.task.get_slx_slice(whichsol_,first_,last_,slx_) }
+    pub fn get_slx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_slx_slice(whichsol_,first_,last_,slx_) }
     /// Obtains the snx vector for a solution.
     ///
     /// # Arguments
@@ -7430,7 +7474,7 @@ impl TaskCB {
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsnx>
-    pub fn get_snx(&self,whichsol_ : i32,snx_ : &mut[f64]) -> Result<(),String> { self.task.get_snx(whichsol_,snx_) }
+    pub fn get_snx(&self,whichsol_ : i32,snx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_snx(whichsol_,snx_) }
     /// Obtains a slice of the snx vector for a solution.
     ///
     /// # Arguments
@@ -7443,7 +7487,7 @@ impl TaskCB {
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsnxslice>
-    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &mut[f64]) -> Result<(),String> { self.task.get_snx_slice(whichsol_,first_,last_,snx_) }
+    pub fn get_snx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_snx_slice(whichsol_,first_,last_,snx_) }
     /// Obtains the solution status.
     ///
     /// # Arguments
@@ -7457,7 +7501,7 @@ impl TaskCB {
     ///   - `solutionsta` Solution status.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolsta>
-    pub fn get_sol_sta(&self,whichsol_ : i32) -> Result<i32,String> { self.task.get_sol_sta(whichsol_) }
+    pub fn get_sol_sta(&self,whichsol_ : i32) -> Result<i32,String> { self.data.task.get_sol_sta(whichsol_) }
     /// Obtains the complete solution.
     ///
     /// # Arguments
@@ -7490,7 +7534,7 @@ impl TaskCB {
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolution>
-    pub fn get_solution(&self,whichsol_ : i32,problemsta_ : & mut i32,solutionsta_ : & mut i32,skc_ : &mut[i32],skx_ : &mut[i32],skn_ : &mut[i32],xc_ : &mut[f64],xx_ : &mut[f64],y_ : &mut[f64],slc_ : &mut[f64],suc_ : &mut[f64],slx_ : &mut[f64],sux_ : &mut[f64],snx_ : &mut[f64]) -> Result<(),String> { self.task.get_solution(whichsol_,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_) }
+    pub fn get_solution(&self,whichsol_ : i32,problemsta_ : & mut i32,solutionsta_ : & mut i32,skc_ : &mut[i32],skx_ : &mut[i32],skn_ : &mut[i32],xc_ : &mut[f64],xx_ : &mut[f64],y_ : &mut[f64],slc_ : &mut[f64],suc_ : &mut[f64],slx_ : &mut[f64],sux_ : &mut[f64],snx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_solution(whichsol_,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_) }
     /// Obtains information about of a solution.
     ///
     /// # Arguments
@@ -7511,7 +7555,7 @@ impl TaskCB {
     /// - `dviolcone_` Maximum violation of the dual solution in the dual conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolutioninfo>
-    pub fn get_solution_info(&self,whichsol_ : i32,pobj_ : &mut f64,pviolcon_ : &mut f64,pviolvar_ : &mut f64,pviolbarvar_ : &mut f64,pviolcone_ : &mut f64,pviolitg_ : &mut f64,dobj_ : &mut f64,dviolcon_ : &mut f64,dviolvar_ : &mut f64,dviolbarvar_ : &mut f64,dviolcone_ : &mut f64) -> Result<(),String> { self.task.get_solution_info(whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_) }
+    pub fn get_solution_info(&self,whichsol_ : i32,pobj_ : &mut f64,pviolcon_ : &mut f64,pviolvar_ : &mut f64,pviolbarvar_ : &mut f64,pviolcone_ : &mut f64,pviolitg_ : &mut f64,dobj_ : &mut f64,dviolcon_ : &mut f64,dviolvar_ : &mut f64,dviolbarvar_ : &mut f64,dviolcone_ : &mut f64) -> Result<(),String> { self.data.task.get_solution_info(whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_) }
     /// Obtains information about of a solution.
     ///
     /// # Arguments
@@ -7535,7 +7579,7 @@ impl TaskCB {
     /// - `dviolacc_` Maximum violation of the dual solution in the dual affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolutioninfonew>
-    pub fn get_solution_info_new(&self,whichsol_ : i32,pobj_ : &mut f64,pviolcon_ : &mut f64,pviolvar_ : &mut f64,pviolbarvar_ : &mut f64,pviolcone_ : &mut f64,pviolacc_ : &mut f64,pvioldjc_ : &mut f64,pviolitg_ : &mut f64,dobj_ : &mut f64,dviolcon_ : &mut f64,dviolvar_ : &mut f64,dviolbarvar_ : &mut f64,dviolcone_ : &mut f64,dviolacc_ : &mut f64) -> Result<(),String> { self.task.get_solution_info_new(whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolacc_,pvioldjc_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_,dviolacc_) }
+    pub fn get_solution_info_new(&self,whichsol_ : i32,pobj_ : &mut f64,pviolcon_ : &mut f64,pviolvar_ : &mut f64,pviolbarvar_ : &mut f64,pviolcone_ : &mut f64,pviolacc_ : &mut f64,pvioldjc_ : &mut f64,pviolitg_ : &mut f64,dobj_ : &mut f64,dviolcon_ : &mut f64,dviolvar_ : &mut f64,dviolbarvar_ : &mut f64,dviolcone_ : &mut f64,dviolacc_ : &mut f64) -> Result<(),String> { self.data.task.get_solution_info_new(whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolacc_,pvioldjc_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_,dviolacc_) }
     /// Obtains the complete solution.
     ///
     /// # Arguments
@@ -7569,7 +7613,7 @@ impl TaskCB {
     /// - `doty_` Dual variables corresponding to affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolutionnew>
-    pub fn get_solution_new(&self,whichsol_ : i32,problemsta_ : & mut i32,solutionsta_ : & mut i32,skc_ : &mut[i32],skx_ : &mut[i32],skn_ : &mut[i32],xc_ : &mut[f64],xx_ : &mut[f64],y_ : &mut[f64],slc_ : &mut[f64],suc_ : &mut[f64],slx_ : &mut[f64],sux_ : &mut[f64],snx_ : &mut[f64],doty_ : &mut[f64]) -> Result<(),String> { self.task.get_solution_new(whichsol_,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_) }
+    pub fn get_solution_new(&self,whichsol_ : i32,problemsta_ : & mut i32,solutionsta_ : & mut i32,skc_ : &mut[i32],skx_ : &mut[i32],skn_ : &mut[i32],xc_ : &mut[f64],xx_ : &mut[f64],y_ : &mut[f64],slc_ : &mut[f64],suc_ : &mut[f64],slx_ : &mut[f64],sux_ : &mut[f64],snx_ : &mut[f64],doty_ : &mut[f64]) -> Result<(),String> { self.data.task.get_solution_new(whichsol_,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_) }
     /// Obtains a slice of the solution.
     ///
     /// # Arguments
@@ -7585,7 +7629,7 @@ impl TaskCB {
     /// - `values_` The values of the requested solution elements.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsolutionslice>
-    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : &mut[f64]) -> Result<(),String> { self.task.get_solution_slice(whichsol_,solitem_,first_,last_,values_) }
+    pub fn get_solution_slice(&self,whichsol_ : i32,solitem_ : i32,first_ : i32,last_ : i32,values_ : &mut[f64]) -> Result<(),String> { self.data.task.get_solution_slice(whichsol_,solitem_,first_,last_,values_) }
     /// Gets a single symmetric matrix from the matrix store.
     ///
     /// # Arguments
@@ -7596,7 +7640,7 @@ impl TaskCB {
     /// - `valij_` Coefficients of the matrix non-zero elements.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsparsesymmat>
-    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : &mut[i32],subj_ : &mut[i32],valij_ : &mut[f64]) -> Result<(),String> { self.task.get_sparse_sym_mat(idx_,subi_,subj_,valij_) }
+    pub fn get_sparse_sym_mat(&self,idx_ : i64,subi_ : &mut[i32],subj_ : &mut[i32],valij_ : &mut[f64]) -> Result<(),String> { self.data.task.get_sparse_sym_mat(idx_,subi_,subj_,valij_) }
     /// Obtains the value of a string parameter.
     ///
     /// # Arguments
@@ -7611,7 +7655,7 @@ impl TaskCB {
     ///   - `parvalue` If this is not a null pointer, the parameter value is stored here.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getstrparam>
-    pub fn get_str_param(&self,param_ : i32,len_ : &mut i32) -> Result<String,String> { self.task.get_str_param(param_,len_) }
+    pub fn get_str_param(&self,param_ : i32,len_ : &mut i32) -> Result<String,String> { self.data.task.get_str_param(param_,len_) }
     /// Obtains the length of a string parameter.
     ///
     /// # Arguments
@@ -7625,7 +7669,7 @@ impl TaskCB {
     ///   - `len` The length of the parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getstrparamlen>
-    pub fn get_str_param_len(&self,param_ : i32) -> Result<i32,String> { self.task.get_str_param_len(param_) }
+    pub fn get_str_param_len(&self,param_ : i32) -> Result<i32,String> { self.data.task.get_str_param_len(param_) }
     /// Obtains the suc vector for a solution.
     ///
     /// # Arguments
@@ -7636,7 +7680,7 @@ impl TaskCB {
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsuc>
-    pub fn get_suc(&self,whichsol_ : i32,suc_ : &mut[f64]) -> Result<(),String> { self.task.get_suc(whichsol_,suc_) }
+    pub fn get_suc(&self,whichsol_ : i32,suc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_suc(whichsol_,suc_) }
     /// Obtains a slice of the suc vector for a solution.
     ///
     /// # Arguments
@@ -7649,7 +7693,7 @@ impl TaskCB {
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsucslice>
-    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &mut[f64]) -> Result<(),String> { self.task.get_suc_slice(whichsol_,first_,last_,suc_) }
+    pub fn get_suc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_suc_slice(whichsol_,first_,last_,suc_) }
     /// Obtains the sux vector for a solution.
     ///
     /// # Arguments
@@ -7660,7 +7704,7 @@ impl TaskCB {
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsux>
-    pub fn get_sux(&self,whichsol_ : i32,sux_ : &mut[f64]) -> Result<(),String> { self.task.get_sux(whichsol_,sux_) }
+    pub fn get_sux(&self,whichsol_ : i32,sux_ : &mut[f64]) -> Result<(),String> { self.data.task.get_sux(whichsol_,sux_) }
     /// Obtains a slice of the sux vector for a solution.
     ///
     /// # Arguments
@@ -7673,7 +7717,7 @@ impl TaskCB {
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsuxslice>
-    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &mut[f64]) -> Result<(),String> { self.task.get_sux_slice(whichsol_,first_,last_,sux_) }
+    pub fn get_sux_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &mut[f64]) -> Result<(),String> { self.data.task.get_sux_slice(whichsol_,first_,last_,sux_) }
     /// Obtains a cone type string identifier.
     ///
     /// # Arguments
@@ -7686,7 +7730,7 @@ impl TaskCB {
     ///   - `name` Name of the i'th symbolic constant.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymbcon>
-    pub fn get_symb_con(&self,i_ : i32,value_ : &mut i32) -> Result<String,String> { self.task.get_symb_con(i_,value_) }
+    pub fn get_symb_con(&self,i_ : i32,value_ : &mut i32) -> Result<String,String> { self.data.task.get_symb_con(i_,value_) }
     /// Obtains information about a matrix from the symmetric matrix storage.
     ///
     /// # Arguments
@@ -7699,7 +7743,7 @@ impl TaskCB {
     ///   See [Symmattype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymmatinfo>
-    pub fn get_sym_mat_info(&self,idx_ : i64,dim_ : &mut i32,nz_ : &mut i64,mattype_ : & mut i32) -> Result<(),String> { self.task.get_sym_mat_info(idx_,dim_,nz_,mattype_) }
+    pub fn get_sym_mat_info(&self,idx_ : i64,dim_ : &mut i32,nz_ : &mut i64,mattype_ : & mut i32) -> Result<(),String> { self.data.task.get_sym_mat_info(idx_,dim_,nz_,mattype_) }
     /// Obtains the task name.
     ///
     /// # Returns
@@ -7707,7 +7751,7 @@ impl TaskCB {
     ///   - `taskname` Returns the task name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gettaskname>
-    pub fn get_task_name(&self) -> Result<String,String> { self.task.get_task_name() }
+    pub fn get_task_name(&self) -> Result<String,String> { self.data.task.get_task_name() }
     /// Obtains the length the task name.
     ///
     /// # Returns
@@ -7715,7 +7759,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the task name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gettasknamelen>
-    pub fn get_task_name_len(&self) -> Result<i32,String> { self.task.get_task_name_len() }
+    pub fn get_task_name_len(&self) -> Result<i32,String> { self.data.task.get_task_name_len() }
     /// Obtains bound information for one variable.
     ///
     /// # Arguments
@@ -7728,7 +7772,7 @@ impl TaskCB {
     /// - `bu_` Values for upper bounds.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvarbound>
-    pub fn get_var_bound(&self,i_ : i32,bk_ : & mut i32,bl_ : &mut f64,bu_ : &mut f64) -> Result<(),String> { self.task.get_var_bound(i_,bk_,bl_,bu_) }
+    pub fn get_var_bound(&self,i_ : i32,bk_ : & mut i32,bl_ : &mut f64,bu_ : &mut f64) -> Result<(),String> { self.data.task.get_var_bound(i_,bk_,bl_,bu_) }
     /// Obtains bounds information for a slice of the variables.
     ///
     /// # Arguments
@@ -7742,7 +7786,7 @@ impl TaskCB {
     /// - `bu_` Values for upper bounds.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvarboundslice>
-    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> { self.task.get_var_bound_slice(first_,last_,bk_,bl_,bu_) }
+    pub fn get_var_bound_slice(&self,first_ : i32,last_ : i32,bk_ : &mut[i32],bl_ : &mut[f64],bu_ : &mut[f64]) -> Result<(),String> { self.data.task.get_var_bound_slice(first_,last_,bk_,bl_,bu_) }
     /// Obtains the name of a variable.
     ///
     /// # Arguments
@@ -7754,7 +7798,7 @@ impl TaskCB {
     ///   - `name` Returns the required name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvarname>
-    pub fn get_var_name(&self,j_ : i32) -> Result<String,String> { self.task.get_var_name(j_) }
+    pub fn get_var_name(&self,j_ : i32) -> Result<String,String> { self.data.task.get_var_name(j_) }
     /// Checks whether the name has been assigned to any variable.
     ///
     /// # Arguments
@@ -7767,7 +7811,7 @@ impl TaskCB {
     ///   - `index` If the name somename is assigned to a variable, then return the index of the variable.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvarnameindex>
-    pub fn get_var_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.task.get_var_name_index(somename_,asgn_) }
+    pub fn get_var_name_index(&self,somename_ : &str,asgn_ : &mut i32) -> Result<i32,String> { self.data.task.get_var_name_index(somename_,asgn_) }
     /// Obtains the length of the name of a variable.
     ///
     /// # Arguments
@@ -7779,7 +7823,7 @@ impl TaskCB {
     ///   - `len` Returns the length of the indicated name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvarnamelen>
-    pub fn get_var_name_len(&self,i_ : i32) -> Result<i32,String> { self.task.get_var_name_len(i_) }
+    pub fn get_var_name_len(&self,i_ : i32) -> Result<i32,String> { self.data.task.get_var_name_len(i_) }
     /// Gets the variable type of one variable.
     ///
     /// # Arguments
@@ -7791,7 +7835,7 @@ impl TaskCB {
     ///   - `vartype` Variable type of variable index j.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartype>
-    pub fn get_var_type(&self,j_ : i32) -> Result<i32,String> { self.task.get_var_type(j_) }
+    pub fn get_var_type(&self,j_ : i32) -> Result<i32,String> { self.data.task.get_var_type(j_) }
     /// Obtains the variable type for one or more variables.
     ///
     /// # Arguments
@@ -7802,7 +7846,7 @@ impl TaskCB {
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartypelist>
-    pub fn get_var_type_list(&self,subj_ : &[i32],vartype_ : &mut[i32]) -> Result<(),String> { self.task.get_var_type_list(subj_,vartype_) }
+    pub fn get_var_type_list(&self,subj_ : &[i32],vartype_ : &mut[i32]) -> Result<(),String> { self.data.task.get_var_type_list(subj_,vartype_) }
     /// Obtains the xc vector for a solution.
     ///
     /// # Arguments
@@ -7813,7 +7857,7 @@ impl TaskCB {
     /// - `xc_` Primal constraint solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxc>
-    pub fn get_xc(&self,whichsol_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.task.get_xc(whichsol_,xc_) }
+    pub fn get_xc(&self,whichsol_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_xc(whichsol_,xc_) }
     /// Obtains a slice of the xc vector for a solution.
     ///
     /// # Arguments
@@ -7826,7 +7870,7 @@ impl TaskCB {
     /// - `xc_` Primal constraint solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxcslice>
-    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.task.get_xc_slice(whichsol_,first_,last_,xc_) }
+    pub fn get_xc_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.data.task.get_xc_slice(whichsol_,first_,last_,xc_) }
     /// Obtains the xx vector for a solution.
     ///
     /// # Arguments
@@ -7837,7 +7881,7 @@ impl TaskCB {
     /// - `xx_` Primal variable solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxx>
-    pub fn get_xx(&self,whichsol_ : i32,xx_ : &mut[f64]) -> Result<(),String> { self.task.get_xx(whichsol_,xx_) }
+    pub fn get_xx(&self,whichsol_ : i32,xx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_xx(whichsol_,xx_) }
     /// Obtains a slice of the xx vector for a solution.
     ///
     /// # Arguments
@@ -7850,7 +7894,7 @@ impl TaskCB {
     /// - `xx_` Primal variable solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getxxslice>
-    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &mut[f64]) -> Result<(),String> { self.task.get_xx_slice(whichsol_,first_,last_,xx_) }
+    pub fn get_xx_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &mut[f64]) -> Result<(),String> { self.data.task.get_xx_slice(whichsol_,first_,last_,xx_) }
     /// Obtains the y vector for a solution.
     ///
     /// # Arguments
@@ -7861,7 +7905,7 @@ impl TaskCB {
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.gety>
-    pub fn get_y(&self,whichsol_ : i32,y_ : &mut[f64]) -> Result<(),String> { self.task.get_y(whichsol_,y_) }
+    pub fn get_y(&self,whichsol_ : i32,y_ : &mut[f64]) -> Result<(),String> { self.data.task.get_y(whichsol_,y_) }
     /// Obtains a slice of the y vector for a solution.
     ///
     /// # Arguments
@@ -7874,7 +7918,7 @@ impl TaskCB {
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getyslice>
-    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &mut[f64]) -> Result<(),String> { self.task.get_y_slice(whichsol_,first_,last_,y_) }
+    pub fn get_y_slice(&self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &mut[f64]) -> Result<(),String> { self.data.task.get_y_slice(whichsol_,first_,last_,y_) }
     /// Prints the infeasibility report to an output stream.
     ///
     /// # Arguments
@@ -7887,7 +7931,7 @@ impl TaskCB {
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.infeasibilityreport>
-    pub fn infeasibility_report(&mut self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.task.infeasibility_report(whichstream_,whichsol_) }
+    pub fn infeasibility_report(&mut self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.data.task.infeasibility_report(whichstream_,whichsol_) }
     /// Prepare a task for basis solver.
     ///
     /// # Arguments
@@ -7895,7 +7939,7 @@ impl TaskCB {
     /// - `basis_` The array of basis indexes to use.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.initbasissolve>
-    pub fn init_basis_solve(&mut self,basis_ : &mut[i32]) -> Result<(),String> { self.task.init_basis_solve(basis_) }
+    pub fn init_basis_solve(&mut self,basis_ : &mut[i32]) -> Result<(),String> { self.data.task.init_basis_solve(basis_) }
     /// Input the linear part of an optimization task in one function call.
     ///
     /// # Arguments
@@ -7920,7 +7964,7 @@ impl TaskCB {
     /// - `bux_` Upper bounds for the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
-    pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.task.input_data(maxnumcon_,maxnumvar_,c_,cfix_,aptrb_,aptre_,asub_,aval_,bkc_,blc_,buc_,bkx_,blx_,bux_) }
+    pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.data.task.input_data(maxnumcon_,maxnumvar_,c_,cfix_,aptrb_,aptre_,asub_,aval_,bkc_,blc_,buc_,bkx_,blx_,bux_) }
     /// Checks a double parameter name.
     ///
     /// # Arguments
@@ -7931,7 +7975,7 @@ impl TaskCB {
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isdouparname>
-    pub fn is_dou_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.task.is_dou_par_name(parname_,param_) }
+    pub fn is_dou_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.data.task.is_dou_par_name(parname_,param_) }
     /// Checks an integer parameter name.
     ///
     /// # Arguments
@@ -7942,7 +7986,7 @@ impl TaskCB {
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isintparname>
-    pub fn is_int_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.task.is_int_par_name(parname_,param_) }
+    pub fn is_int_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.data.task.is_int_par_name(parname_,param_) }
     /// Checks a string parameter name.
     ///
     /// # Arguments
@@ -7953,7 +7997,7 @@ impl TaskCB {
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isstrparname>
-    pub fn is_str_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.task.is_str_par_name(parname_,param_) }
+    pub fn is_str_par_name(&self,parname_ : &str,param_ : & mut i32) -> Result<(),String> { self.data.task.is_str_par_name(parname_,param_) }
     /// Directs all output from a task stream to a file.
     ///
     /// # Arguments
@@ -7965,7 +8009,7 @@ impl TaskCB {
     /// - `append_` If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletotaskstream>
-    pub fn link_file_to_stream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> { self.task.link_file_to_stream(whichstream_,filename_,append_) }
+    pub fn link_file_to_stream(&mut self,whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> { self.data.task.link_file_to_stream(whichstream_,filename_,append_) }
     /// Prints a short summary of a specified solution.
     ///
     /// # Arguments
@@ -7978,7 +8022,7 @@ impl TaskCB {
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.onesolutionsummary>
-    pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.task.one_solution_summary(whichstream_,whichsol_) }
+    pub fn one_solution_summary(&self,whichstream_ : i32,whichsol_ : i32) -> Result<(),String> { self.data.task.one_solution_summary(whichstream_,whichsol_) }
     /// Offload the optimization task to a solver server and wait for the solution.
     ///
     /// # Arguments
@@ -7990,7 +8034,7 @@ impl TaskCB {
     ///   See [Rescode]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizermt>
-    pub fn optimize_rmt(&mut self,address_ : &str,accesstoken_ : &str,trmcode_ : & mut i32) -> Result<(),String> { self.task.optimize_rmt(address_,accesstoken_,trmcode_) }
+    pub fn optimize_rmt(&mut self,address_ : &str,accesstoken_ : &str,trmcode_ : & mut i32) -> Result<(),String> { self.data.task.optimize_rmt(address_,accesstoken_,trmcode_) }
     /// Prints a short summary with optimizer statistics from last optimization.
     ///
     /// # Arguments
@@ -8000,7 +8044,7 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizersummary>
-    pub fn optimizer_summary(&self,whichstream_ : i32) -> Result<(),String> { self.task.optimizer_summary(whichstream_) }
+    pub fn optimizer_summary(&self,whichstream_ : i32) -> Result<(),String> { self.data.task.optimizer_summary(whichstream_) }
     /// Optimizes the problem.
     ///
     /// # Returns
@@ -8008,7 +8052,7 @@ impl TaskCB {
     ///   - `trmcode` Is either OK or a termination response code.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizetrm>
-    pub fn optimize(&mut self) -> Result<i32,String> { self.task.optimize() }
+    pub fn optimize(&mut self) -> Result<i32,String> { self.data.task.optimize() }
     /// Repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
     ///
     /// # Arguments
@@ -8019,7 +8063,7 @@ impl TaskCB {
     /// - `wux_` Weights associated with relaxing the upper bounds of variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalrepair>
-    pub fn primal_repair(&mut self,wlc_ : &[f64],wuc_ : &[f64],wlx_ : &[f64],wux_ : &[f64]) -> Result<(),String> { self.task.primal_repair(wlc_,wuc_,wlx_,wux_) }
+    pub fn primal_repair(&mut self,wlc_ : &[f64],wuc_ : &[f64],wlx_ : &[f64],wux_ : &[f64]) -> Result<(),String> { self.data.task.primal_repair(wlc_,wuc_,wlx_,wux_) }
     /// Perform sensitivity analysis on bounds.
     ///
     /// # Arguments
@@ -8042,11 +8086,11 @@ impl TaskCB {
     /// - `rightrangej_` Right range for variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
-    pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> { self.task.primal_sensitivity(subi_,marki_,subj_,markj_,leftpricei_,rightpricei_,leftrangei_,rightrangei_,leftpricej_,rightpricej_,leftrangej_,rightrangej_) }
+    pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> { self.data.task.primal_sensitivity(subi_,marki_,subj_,markj_,leftpricei_,rightpricei_,leftrangei_,rightrangei_,leftpricej_,rightpricej_,leftrangej_,rightrangej_) }
     /// Prints the current parameter settings.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.printparam>
-    pub fn print_param(&self) -> Result<(),String> { self.task.print_param() }
+    pub fn print_param(&self) -> Result<(),String> { self.data.task.print_param() }
     /// Puts an affine conic constraint.
     ///
     /// # Arguments
@@ -8054,19 +8098,19 @@ impl TaskCB {
     /// - `accidx_` Affine conic constraint index.
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacc>
-    pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.put_acc(accidx_,domidx_,afeidxlist_,b_) }
+    pub fn put_acc(&mut self,accidx_ : i64,domidx_ : i64,afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.data.task.put_acc(accidx_,domidx_,afeidxlist_,b_) }
     /// Puts the constant vector b in an affine conic constraint.
     ///
     /// # Arguments
     ///
     /// - `accidx_` Affine conic constraint index.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccb>
-    pub fn put_acc_b(&mut self,accidx_ : i64,b_ : &[f64]) -> Result<(),String> { self.task.put_acc_b(accidx_,b_) }
+    pub fn put_acc_b(&mut self,accidx_ : i64,b_ : &[f64]) -> Result<(),String> { self.data.task.put_acc_b(accidx_,b_) }
     /// Sets one element in the b vector of an affine conic constraint.
     ///
     /// # Arguments
@@ -8076,7 +8120,7 @@ impl TaskCB {
     /// - `bj_` The new value of b\[j\].
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccbj>
-    pub fn put_acc_b_j(&mut self,accidx_ : i64,j_ : i64,bj_ : f64) -> Result<(),String> { self.task.put_acc_b_j(accidx_,j_,bj_) }
+    pub fn put_acc_b_j(&mut self,accidx_ : i64,j_ : i64,bj_ : f64) -> Result<(),String> { self.data.task.put_acc_b_j(accidx_,j_,bj_) }
     /// Puts the doty vector for a solution.
     ///
     /// # Arguments
@@ -8088,7 +8132,7 @@ impl TaskCB {
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccdoty>
-    pub fn put_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : &mut[f64]) -> Result<(),String> { self.task.put_acc_dot_y(whichsol_,accidx_,doty_) }
+    pub fn put_acc_dot_y(&self,whichsol_ : i32,accidx_ : i64,doty_ : &mut[f64]) -> Result<(),String> { self.data.task.put_acc_dot_y(whichsol_,accidx_,doty_) }
     /// Puts a number of affine conic constraints.
     ///
     /// # Arguments
@@ -8096,10 +8140,10 @@ impl TaskCB {
     /// - `accidxs_` Affine conic constraint indices.
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
-    pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.task.put_acc_list(accidxs_,domidxs_,afeidxlist_,b_) }
+    pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> { self.data.task.put_acc_list(accidxs_,domidxs_,afeidxlist_,b_) }
     /// Sets the name of an affine conic constraint.
     ///
     /// # Arguments
@@ -8108,7 +8152,7 @@ impl TaskCB {
     /// - `name_` The name of the affine conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccname>
-    pub fn put_acc_name(&mut self,accidx_ : i64,name_ : &str) -> Result<(),String> { self.task.put_acc_name(accidx_,name_) }
+    pub fn put_acc_name(&mut self,accidx_ : i64,name_ : &str) -> Result<(),String> { self.data.task.put_acc_name(accidx_,name_) }
     /// Replaces all elements in one column of the linear constraint matrix.
     ///
     /// # Arguments
@@ -8118,7 +8162,7 @@ impl TaskCB {
     /// - `valj_` New non-zero values of column.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacol>
-    pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> { self.task.put_a_col(j_,subj_,valj_) }
+    pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> { self.data.task.put_a_col(j_,subj_,valj_) }
     /// Replaces all elements in several columns the linear constraint matrix.
     ///
     /// # Arguments
@@ -8130,7 +8174,7 @@ impl TaskCB {
     /// - `aval_` Coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
-    pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.task.put_a_col_list(sub_,ptrb_,ptre_,asub_,aval_) }
+    pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.data.task.put_a_col_list(sub_,ptrb_,ptre_,asub_,aval_) }
     /// Replaces all elements in a sequence of columns the linear constraint matrix.
     ///
     /// # Arguments
@@ -8143,7 +8187,7 @@ impl TaskCB {
     /// - `aval_` Coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacolslice64>
-    pub fn put_a_col_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.task.put_a_col_slice(first_,last_,ptrb_,ptre_,asub_,aval_) }
+    pub fn put_a_col_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.data.task.put_a_col_slice(first_,last_,ptrb_,ptre_,asub_,aval_) }
     /// Inputs barF in block triplet form.
     ///
     /// # Arguments
@@ -8155,7 +8199,7 @@ impl TaskCB {
     /// - `valkl_` The numerical value associated with each block triplet.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
-    pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> { self.task.put_afe_barf_block_triplet(afeidx_,barvaridx_,subk_,subl_,valkl_) }
+    pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_barf_block_triplet(afeidx_,barvaridx_,subk_,subl_,valkl_) }
     /// Inputs one entry in barF.
     ///
     /// # Arguments
@@ -8166,7 +8210,7 @@ impl TaskCB {
     /// - `termweight_` Weights in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentry>
-    pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.task.put_afe_barf_entry(afeidx_,barvaridx_,termidx_,termweight_) }
+    pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_barf_entry(afeidx_,barvaridx_,termidx_,termweight_) }
     /// Inputs a list of entries in barF.
     ///
     /// # Arguments
@@ -8179,7 +8223,7 @@ impl TaskCB {
     /// - `termweight_` Concatenated weights in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
-    pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.task.put_afe_barf_entry_list(afeidx_,barvaridx_,numterm_,ptrterm_,termidx_,termweight_) }
+    pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_barf_entry_list(afeidx_,barvaridx_,numterm_,ptrterm_,termidx_,termweight_) }
     /// Inputs a row of barF.
     ///
     /// # Arguments
@@ -8192,7 +8236,7 @@ impl TaskCB {
     /// - `termweight_` Concatenated weights in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
-    pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.task.put_afe_barf_row(afeidx_,barvaridx_,numterm_,ptrterm_,termidx_,termweight_) }
+    pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_barf_row(afeidx_,barvaridx_,numterm_,ptrterm_,termidx_,termweight_) }
     /// Replaces all elements in one column of the F matrix in the affine expressions.
     ///
     /// # Arguments
@@ -8202,7 +8246,7 @@ impl TaskCB {
     /// - `val_` New non-zero values in the column.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefcol>
-    pub fn put_afe_f_col(&mut self,varidx_ : i32,afeidx_ : &[i64],val_ : &[f64]) -> Result<(),String> { self.task.put_afe_f_col(varidx_,afeidx_,val_) }
+    pub fn put_afe_f_col(&mut self,varidx_ : i32,afeidx_ : &[i64],val_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_f_col(varidx_,afeidx_,val_) }
     /// Replaces one entry in F.
     ///
     /// # Arguments
@@ -8212,7 +8256,7 @@ impl TaskCB {
     /// - `value_` Value of the entry.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentry>
-    pub fn put_afe_f_entry(&mut self,afeidx_ : i64,varidx_ : i32,value_ : f64) -> Result<(),String> { self.task.put_afe_f_entry(afeidx_,varidx_,value_) }
+    pub fn put_afe_f_entry(&mut self,afeidx_ : i64,varidx_ : i32,value_ : f64) -> Result<(),String> { self.data.task.put_afe_f_entry(afeidx_,varidx_,value_) }
     /// Replaces a list of entries in F.
     ///
     /// # Arguments
@@ -8222,7 +8266,7 @@ impl TaskCB {
     /// - `val_` Values of the entries in F.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
-    pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.task.put_afe_f_entry_list(afeidx_,varidx_,val_) }
+    pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_f_entry_list(afeidx_,varidx_,val_) }
     /// Replaces all elements in one row of the F matrix in the affine expressions.
     ///
     /// # Arguments
@@ -8232,7 +8276,7 @@ impl TaskCB {
     /// - `val_` New non-zero values in the row.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrow>
-    pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.task.put_afe_f_row(afeidx_,varidx_,val_) }
+    pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_f_row(afeidx_,varidx_,val_) }
     /// Replaces all elements in a number of rows of the F matrix in the affine expressions.
     ///
     /// # Arguments
@@ -8244,7 +8288,7 @@ impl TaskCB {
     /// - `val_` New non-zero values in the rows.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
-    pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.task.put_afe_f_row_list(afeidx_,numnzrow_,ptrrow_,varidx_,val_) }
+    pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_f_row_list(afeidx_,numnzrow_,ptrrow_,varidx_,val_) }
     /// Replaces one element in the g vector in the affine expressions.
     ///
     /// # Arguments
@@ -8253,7 +8297,7 @@ impl TaskCB {
     /// - `g_` New value for the element of g.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafeg>
-    pub fn put_afe_g(&mut self,afeidx_ : i64,g_ : f64) -> Result<(),String> { self.task.put_afe_g(afeidx_,g_) }
+    pub fn put_afe_g(&mut self,afeidx_ : i64,g_ : f64) -> Result<(),String> { self.data.task.put_afe_g(afeidx_,g_) }
     /// Replaces a list of elements in the g vector in the affine expressions.
     ///
     /// # Arguments
@@ -8262,7 +8306,7 @@ impl TaskCB {
     /// - `g_` New values for the elements of g.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafeglist>
-    pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> { self.task.put_afe_g_list(afeidx_,g_) }
+    pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_g_list(afeidx_,g_) }
     /// Modifies a slice of the vector g.
     ///
     /// # Arguments
@@ -8272,7 +8316,7 @@ impl TaskCB {
     /// - `slice_` The slice of g as a dense vector.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafegslice>
-    pub fn put_afe_g_slice(&mut self,first_ : i64,last_ : i64,slice_ : &[f64]) -> Result<(),String> { self.task.put_afe_g_slice(first_,last_,slice_) }
+    pub fn put_afe_g_slice(&mut self,first_ : i64,last_ : i64,slice_ : &[f64]) -> Result<(),String> { self.data.task.put_afe_g_slice(first_,last_,slice_) }
     /// Changes a single value in the linear coefficient matrix.
     ///
     /// # Arguments
@@ -8282,7 +8326,7 @@ impl TaskCB {
     /// - `aij_` New coefficient.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaij>
-    pub fn put_aij(&mut self,i_ : i32,j_ : i32,aij_ : f64) -> Result<(),String> { self.task.put_aij(i_,j_,aij_) }
+    pub fn put_aij(&mut self,i_ : i32,j_ : i32,aij_ : f64) -> Result<(),String> { self.data.task.put_aij(i_,j_,aij_) }
     /// Changes one or more coefficients in the linear constraint matrix.
     ///
     /// # Arguments
@@ -8292,7 +8336,7 @@ impl TaskCB {
     /// - `valij_` New coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
-    pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> { self.task.put_aij_list(subi_,subj_,valij_) }
+    pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> { self.data.task.put_aij_list(subi_,subj_,valij_) }
     /// Replaces all elements in one row of the linear constraint matrix.
     ///
     /// # Arguments
@@ -8302,7 +8346,7 @@ impl TaskCB {
     /// - `vali_` New non-zero values of row.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
-    pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> { self.task.put_a_row(i_,subi_,vali_) }
+    pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> { self.data.task.put_a_row(i_,subi_,vali_) }
     /// Replaces all elements in several rows of the linear constraint matrix.
     ///
     /// # Arguments
@@ -8314,7 +8358,7 @@ impl TaskCB {
     /// - `aval_` Coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
-    pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.task.put_a_row_list(sub_,ptrb_,ptre_,asub_,aval_) }
+    pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.data.task.put_a_row_list(sub_,ptrb_,ptre_,asub_,aval_) }
     /// Replaces all elements in several rows the linear constraint matrix.
     ///
     /// # Arguments
@@ -8327,7 +8371,7 @@ impl TaskCB {
     /// - `aval_` Coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowslice64>
-    pub fn put_a_row_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.task.put_a_row_slice(first_,last_,ptrb_,ptre_,asub_,aval_) }
+    pub fn put_a_row_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> { self.data.task.put_a_row_slice(first_,last_,ptrb_,ptre_,asub_,aval_) }
     /// Truncates all elements in A below a certain tolerance to zero.
     ///
     /// # Arguments
@@ -8335,7 +8379,7 @@ impl TaskCB {
     /// - `tolzero_` Truncation tolerance.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putatruncatetol>
-    pub fn put_a_truncate_tol(&mut self,tolzero_ : f64) -> Result<(),String> { self.task.put_a_truncate_tol(tolzero_) }
+    pub fn put_a_truncate_tol(&mut self,tolzero_ : f64) -> Result<(),String> { self.data.task.put_a_truncate_tol(tolzero_) }
     /// Inputs barA in block triplet form.
     ///
     /// # Arguments
@@ -8347,7 +8391,7 @@ impl TaskCB {
     /// - `valijkl_` The numerical value associated with each block triplet.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
-    pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> { self.task.put_bara_block_triplet(subi_,subj_,subk_,subl_,valijkl_) }
+    pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> { self.data.task.put_bara_block_triplet(subi_,subj_,subk_,subl_,valijkl_) }
     /// Inputs an element of barA.
     ///
     /// # Arguments
@@ -8358,7 +8402,7 @@ impl TaskCB {
     /// - `weights_` Weights in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
-    pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.task.put_bara_ij(i_,j_,sub_,weights_) }
+    pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.data.task.put_bara_ij(i_,j_,sub_,weights_) }
     /// Inputs list of elements of barA.
     ///
     /// # Arguments
@@ -8371,7 +8415,7 @@ impl TaskCB {
     /// - `weights_` Weights in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
-    pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.task.put_bara_ij_list(subi_,subj_,alphaptrb_,alphaptre_,matidx_,weights_) }
+    pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.data.task.put_bara_ij_list(subi_,subj_,alphaptrb_,alphaptre_,matidx_,weights_) }
     /// Replace a set of rows of barA
     ///
     /// # Arguments
@@ -8385,7 +8429,7 @@ impl TaskCB {
     /// - `weights_` Weights for weighted sum of matrixes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
-    pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.task.put_bara_row_list(subi_,ptrb_,ptre_,subj_,nummat_,matidx_,weights_) }
+    pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.data.task.put_bara_row_list(subi_,ptrb_,ptre_,subj_,nummat_,matidx_,weights_) }
     /// Inputs barC in block triplet form.
     ///
     /// # Arguments
@@ -8396,7 +8440,7 @@ impl TaskCB {
     /// - `valjkl_` The numerical value associated with each block triplet.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
-    pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> { self.task.put_barc_block_triplet(subj_,subk_,subl_,valjkl_) }
+    pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> { self.data.task.put_barc_block_triplet(subj_,subk_,subl_,valjkl_) }
     /// Changes one element in barc.
     ///
     /// # Arguments
@@ -8406,7 +8450,7 @@ impl TaskCB {
     /// - `weights_` The weights of the terms in the weighted sum.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
-    pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.task.put_barc_j(j_,sub_,weights_) }
+    pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> { self.data.task.put_barc_j(j_,sub_,weights_) }
     /// Sets the dual solution for a semidefinite variable.
     ///
     /// # Arguments
@@ -8418,7 +8462,7 @@ impl TaskCB {
     /// - `barsj_` Value of the j'th variable of barx.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarsj>
-    pub fn put_bars_j(&mut self,whichsol_ : i32,j_ : i32,barsj_ : &[f64]) -> Result<(),String> { self.task.put_bars_j(whichsol_,j_,barsj_) }
+    pub fn put_bars_j(&mut self,whichsol_ : i32,j_ : i32,barsj_ : &[f64]) -> Result<(),String> { self.data.task.put_bars_j(whichsol_,j_,barsj_) }
     /// Sets the name of a semidefinite variable.
     ///
     /// # Arguments
@@ -8427,7 +8471,7 @@ impl TaskCB {
     /// - `name_` The variable name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarvarname>
-    pub fn put_barvar_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.task.put_barvar_name(j_,name_) }
+    pub fn put_barvar_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.data.task.put_barvar_name(j_,name_) }
     /// Sets the primal solution for a semidefinite variable.
     ///
     /// # Arguments
@@ -8439,7 +8483,7 @@ impl TaskCB {
     /// - `barxj_` Value of the j'th variable of barx.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarxj>
-    pub fn put_barx_j(&mut self,whichsol_ : i32,j_ : i32,barxj_ : &[f64]) -> Result<(),String> { self.task.put_barx_j(whichsol_,j_,barxj_) }
+    pub fn put_barx_j(&mut self,whichsol_ : i32,j_ : i32,barxj_ : &[f64]) -> Result<(),String> { self.data.task.put_barx_j(whichsol_,j_,barxj_) }
     /// Replaces the fixed term in the objective.
     ///
     /// # Arguments
@@ -8447,7 +8491,7 @@ impl TaskCB {
     /// - `cfix_` Fixed term in the objective.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putcfix>
-    pub fn put_cfix(&mut self,cfix_ : f64) -> Result<(),String> { self.task.put_cfix(cfix_) }
+    pub fn put_cfix(&mut self,cfix_ : f64) -> Result<(),String> { self.data.task.put_cfix(cfix_) }
     /// Modifies one linear coefficient in the objective.
     ///
     /// # Arguments
@@ -8456,7 +8500,7 @@ impl TaskCB {
     /// - `cj_` New coefficient value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putcj>
-    pub fn put_c_j(&mut self,j_ : i32,cj_ : f64) -> Result<(),String> { self.task.put_c_j(j_,cj_) }
+    pub fn put_c_j(&mut self,j_ : i32,cj_ : f64) -> Result<(),String> { self.data.task.put_c_j(j_,cj_) }
     /// Modifies a part of the linear objective coefficients.
     ///
     /// # Arguments
@@ -8465,7 +8509,7 @@ impl TaskCB {
     /// - `val_` New numerical values for the objective coefficients that should be modified.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putclist>
-    pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.task.put_c_list(subj_,val_) }
+    pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> { self.data.task.put_c_list(subj_,val_) }
     /// Changes the bound for one constraint.
     ///
     /// # Arguments
@@ -8478,7 +8522,7 @@ impl TaskCB {
     /// - `buc_` New upper bound.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconbound>
-    pub fn put_con_bound(&mut self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.task.put_con_bound(i_,bkc_,blc_,buc_) }
+    pub fn put_con_bound(&mut self,i_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.data.task.put_con_bound(i_,bkc_,blc_,buc_) }
     /// Changes the bounds of a list of constraints.
     ///
     /// # Arguments
@@ -8491,7 +8535,7 @@ impl TaskCB {
     /// - `buc_` Upper bounds for the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
-    pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> { self.task.put_con_bound_list(sub_,bkc_,blc_,buc_) }
+    pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> { self.data.task.put_con_bound_list(sub_,bkc_,blc_,buc_) }
     /// Changes the bounds of a list of constraints.
     ///
     /// # Arguments
@@ -8504,7 +8548,7 @@ impl TaskCB {
     /// - `buc_` New upper bound for all constraints in the list.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlistconst>
-    pub fn put_con_bound_list_const(&mut self,sub_ : &[i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.task.put_con_bound_list_const(sub_,bkc_,blc_,buc_) }
+    pub fn put_con_bound_list_const(&mut self,sub_ : &[i32],bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.data.task.put_con_bound_list_const(sub_,bkc_,blc_,buc_) }
     /// Changes the bounds for a slice of the constraints.
     ///
     /// # Arguments
@@ -8518,7 +8562,7 @@ impl TaskCB {
     /// - `buc_` Upper bounds for the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundslice>
-    pub fn put_con_bound_slice(&mut self,first_ : i32,last_ : i32,bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> { self.task.put_con_bound_slice(first_,last_,bkc_,blc_,buc_) }
+    pub fn put_con_bound_slice(&mut self,first_ : i32,last_ : i32,bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> { self.data.task.put_con_bound_slice(first_,last_,bkc_,blc_,buc_) }
     /// Changes the bounds for a slice of the constraints.
     ///
     /// # Arguments
@@ -8532,7 +8576,7 @@ impl TaskCB {
     /// - `buc_` New upper bound for all constraints in the slice.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundsliceconst>
-    pub fn put_con_bound_slice_const(&mut self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.task.put_con_bound_slice_const(first_,last_,bkc_,blc_,buc_) }
+    pub fn put_con_bound_slice_const(&mut self,first_ : i32,last_ : i32,bkc_ : i32,blc_ : f64,buc_ : f64) -> Result<(),String> { self.data.task.put_con_bound_slice_const(first_,last_,bkc_,blc_,buc_) }
     /// Replaces a conic constraint.
     ///
     /// # Arguments
@@ -8545,7 +8589,7 @@ impl TaskCB {
     /// - `submem_` Variable subscripts of the members in the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putcone>
-    pub fn put_cone(&mut self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> { self.task.put_cone(k_,ct_,conepar_,submem_) }
+    pub fn put_cone(&mut self,k_ : i32,ct_ : i32,conepar_ : f64,submem_ : &[i32]) -> Result<(),String> { self.data.task.put_cone(k_,ct_,conepar_,submem_) }
     /// Sets the name of a cone.
     ///
     /// # Arguments
@@ -8554,7 +8598,7 @@ impl TaskCB {
     /// - `name_` The name of the cone.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconename>
-    pub fn put_cone_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.task.put_cone_name(j_,name_) }
+    pub fn put_cone_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.data.task.put_cone_name(j_,name_) }
     /// Sets the name of a constraint.
     ///
     /// # Arguments
@@ -8563,7 +8607,7 @@ impl TaskCB {
     /// - `name_` The name of the constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconname>
-    pub fn put_con_name(&mut self,i_ : i32,name_ : &str) -> Result<(),String> { self.task.put_con_name(i_,name_) }
+    pub fn put_con_name(&mut self,i_ : i32,name_ : &str) -> Result<(),String> { self.data.task.put_con_name(i_,name_) }
     /// Sets the primal and dual solution information for a single constraint.
     ///
     /// # Arguments
@@ -8580,7 +8624,7 @@ impl TaskCB {
     /// - `su_` Solution value of the dual variable associated with the upper bound.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconsolutioni>
-    pub fn put_con_solution_i(&mut self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> Result<(),String> { self.task.put_con_solution_i(i_,whichsol_,sk_,x_,sl_,su_) }
+    pub fn put_con_solution_i(&mut self,i_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64) -> Result<(),String> { self.data.task.put_con_solution_i(i_,whichsol_,sk_,x_,sl_,su_) }
     /// Modifies a slice of the linear objective coefficients.
     ///
     /// # Arguments
@@ -8590,7 +8634,7 @@ impl TaskCB {
     /// - `slice_` New numerical values for the objective coefficients that should be modified.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putcslice>
-    pub fn put_c_slice(&mut self,first_ : i32,last_ : i32,slice_ : &[f64]) -> Result<(),String> { self.task.put_c_slice(first_,last_,slice_) }
+    pub fn put_c_slice(&mut self,first_ : i32,last_ : i32,slice_ : &[f64]) -> Result<(),String> { self.data.task.put_c_slice(first_,last_,slice_) }
     /// Inputs a disjunctive constraint.
     ///
     /// # Arguments
@@ -8598,11 +8642,11 @@ impl TaskCB {
     /// - `djcidx_` Index of the disjunctive constraint.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions.
+    /// - `b_` The vector of constant terms modifying affine expressions.
     /// - `termsizelist_` List of term sizes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdjc>
-    pub fn put_djc(&mut self,djcidx_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64]) -> Result<(),String> { self.task.put_djc(djcidx_,domidxlist_,afeidxlist_,b_,termsizelist_) }
+    pub fn put_djc(&mut self,djcidx_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64]) -> Result<(),String> { self.data.task.put_djc(djcidx_,domidxlist_,afeidxlist_,b_,termsizelist_) }
     /// Sets the name of a disjunctive constraint.
     ///
     /// # Arguments
@@ -8611,7 +8655,7 @@ impl TaskCB {
     /// - `name_` The name of the disjunctive constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdjcname>
-    pub fn put_djc_name(&mut self,djcidx_ : i64,name_ : &str) -> Result<(),String> { self.task.put_djc_name(djcidx_,name_) }
+    pub fn put_djc_name(&mut self,djcidx_ : i64,name_ : &str) -> Result<(),String> { self.data.task.put_djc_name(djcidx_,name_) }
     /// Inputs a slice of disjunctive constraints.
     ///
     /// # Arguments
@@ -8620,12 +8664,12 @@ impl TaskCB {
     /// - `idxlast_` Index of the last disjunctive constraint in the slice plus 1.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     /// - `termsizelist_` List of term sizes.
     /// - `termsindjc_` Number of terms in each of the disjunctive constraints in the slice.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdjcslice>
-    pub fn put_djc_slice(&mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64],termsindjc_ : &[i64]) -> Result<(),String> { self.task.put_djc_slice(idxfirst_,idxlast_,domidxlist_,afeidxlist_,b_,termsizelist_,termsindjc_) }
+    pub fn put_djc_slice(&mut self,idxfirst_ : i64,idxlast_ : i64,domidxlist_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64],termsizelist_ : &[i64],termsindjc_ : &[i64]) -> Result<(),String> { self.data.task.put_djc_slice(idxfirst_,idxlast_,domidxlist_,afeidxlist_,b_,termsizelist_,termsindjc_) }
     /// Sets the name of a domain.
     ///
     /// # Arguments
@@ -8634,7 +8678,7 @@ impl TaskCB {
     /// - `name_` The name of the domain.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdomainname>
-    pub fn put_domain_name(&mut self,domidx_ : i64,name_ : &str) -> Result<(),String> { self.task.put_domain_name(domidx_,name_) }
+    pub fn put_domain_name(&mut self,domidx_ : i64,name_ : &str) -> Result<(),String> { self.data.task.put_domain_name(domidx_,name_) }
     /// Sets a double parameter.
     ///
     /// # Arguments
@@ -8645,7 +8689,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdouparam>
-    pub fn put_dou_param(&mut self,param_ : i32,parvalue_ : f64) -> Result<(),String> { self.task.put_dou_param(param_,parvalue_) }
+    pub fn put_dou_param(&mut self,param_ : i32,parvalue_ : f64) -> Result<(),String> { self.data.task.put_dou_param(param_,parvalue_) }
     /// Sets an integer parameter.
     ///
     /// # Arguments
@@ -8656,7 +8700,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putintparam>
-    pub fn put_int_param(&mut self,param_ : i32,parvalue_ : i32) -> Result<(),String> { self.task.put_int_param(param_,parvalue_) }
+    pub fn put_int_param(&mut self,param_ : i32,parvalue_ : i32) -> Result<(),String> { self.data.task.put_int_param(param_,parvalue_) }
     /// Sets the number of preallocated affine conic constraints.
     ///
     /// # Arguments
@@ -8664,7 +8708,7 @@ impl TaskCB {
     /// - `maxnumacc_` Number of preallocated affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumacc>
-    pub fn put_max_num_acc(&mut self,maxnumacc_ : i64) -> Result<(),String> { self.task.put_max_num_acc(maxnumacc_) }
+    pub fn put_max_num_acc(&mut self,maxnumacc_ : i64) -> Result<(),String> { self.data.task.put_max_num_acc(maxnumacc_) }
     /// Sets the number of preallocated affine expressions in the optimization task.
     ///
     /// # Arguments
@@ -8672,7 +8716,7 @@ impl TaskCB {
     /// - `maxnumafe_` Number of preallocated affine expressions.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumafe>
-    pub fn put_max_num_afe(&mut self,maxnumafe_ : i64) -> Result<(),String> { self.task.put_max_num_afe(maxnumafe_) }
+    pub fn put_max_num_afe(&mut self,maxnumafe_ : i64) -> Result<(),String> { self.data.task.put_max_num_afe(maxnumafe_) }
     /// Sets the number of preallocated non-zero entries in the linear coefficient matrix.
     ///
     /// # Arguments
@@ -8680,7 +8724,7 @@ impl TaskCB {
     /// - `maxnumanz_` New size of the storage reserved for storing the linear coefficient matrix.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumanz>
-    pub fn put_max_num_a_nz(&mut self,maxnumanz_ : i64) -> Result<(),String> { self.task.put_max_num_a_nz(maxnumanz_) }
+    pub fn put_max_num_a_nz(&mut self,maxnumanz_ : i64) -> Result<(),String> { self.data.task.put_max_num_a_nz(maxnumanz_) }
     /// Sets the number of preallocated symmetric matrix variables.
     ///
     /// # Arguments
@@ -8688,7 +8732,7 @@ impl TaskCB {
     /// - `maxnumbarvar_` Number of preallocated symmetric matrix variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumbarvar>
-    pub fn put_max_num_barvar(&mut self,maxnumbarvar_ : i32) -> Result<(),String> { self.task.put_max_num_barvar(maxnumbarvar_) }
+    pub fn put_max_num_barvar(&mut self,maxnumbarvar_ : i32) -> Result<(),String> { self.data.task.put_max_num_barvar(maxnumbarvar_) }
     /// Sets the number of preallocated constraints in the optimization task.
     ///
     /// # Arguments
@@ -8696,7 +8740,7 @@ impl TaskCB {
     /// - `maxnumcon_` Number of preallocated constraints in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumcon>
-    pub fn put_max_num_con(&mut self,maxnumcon_ : i32) -> Result<(),String> { self.task.put_max_num_con(maxnumcon_) }
+    pub fn put_max_num_con(&mut self,maxnumcon_ : i32) -> Result<(),String> { self.data.task.put_max_num_con(maxnumcon_) }
     /// Sets the number of preallocated conic constraints in the optimization task.
     ///
     /// # Arguments
@@ -8704,7 +8748,7 @@ impl TaskCB {
     /// - `maxnumcone_` Number of preallocated conic constraints in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumcone>
-    pub fn put_max_num_cone(&mut self,maxnumcone_ : i32) -> Result<(),String> { self.task.put_max_num_cone(maxnumcone_) }
+    pub fn put_max_num_cone(&mut self,maxnumcone_ : i32) -> Result<(),String> { self.data.task.put_max_num_cone(maxnumcone_) }
     /// Sets the number of preallocated disjunctive constraints.
     ///
     /// # Arguments
@@ -8712,7 +8756,7 @@ impl TaskCB {
     /// - `maxnumdjc_` Number of preallocated disjunctive constraints in the task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumdjc>
-    pub fn put_max_num_djc(&mut self,maxnumdjc_ : i64) -> Result<(),String> { self.task.put_max_num_djc(maxnumdjc_) }
+    pub fn put_max_num_djc(&mut self,maxnumdjc_ : i64) -> Result<(),String> { self.data.task.put_max_num_djc(maxnumdjc_) }
     /// Sets the number of preallocated domains in the optimization task.
     ///
     /// # Arguments
@@ -8720,7 +8764,7 @@ impl TaskCB {
     /// - `maxnumdomain_` Number of preallocated domains.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumdomain>
-    pub fn put_max_num_domain(&mut self,maxnumdomain_ : i64) -> Result<(),String> { self.task.put_max_num_domain(maxnumdomain_) }
+    pub fn put_max_num_domain(&mut self,maxnumdomain_ : i64) -> Result<(),String> { self.data.task.put_max_num_domain(maxnumdomain_) }
     /// Sets the number of preallocated non-zero entries in quadratic terms.
     ///
     /// # Arguments
@@ -8728,7 +8772,7 @@ impl TaskCB {
     /// - `maxnumqnz_` Number of non-zero elements preallocated in quadratic coefficient matrices.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumqnz>
-    pub fn put_max_num_q_nz(&mut self,maxnumqnz_ : i64) -> Result<(),String> { self.task.put_max_num_q_nz(maxnumqnz_) }
+    pub fn put_max_num_q_nz(&mut self,maxnumqnz_ : i64) -> Result<(),String> { self.data.task.put_max_num_q_nz(maxnumqnz_) }
     /// Sets the number of preallocated variables in the optimization task.
     ///
     /// # Arguments
@@ -8736,7 +8780,7 @@ impl TaskCB {
     /// - `maxnumvar_` Number of preallocated variables in the optimization task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putmaxnumvar>
-    pub fn put_max_num_var(&mut self,maxnumvar_ : i32) -> Result<(),String> { self.task.put_max_num_var(maxnumvar_) }
+    pub fn put_max_num_var(&mut self,maxnumvar_ : i32) -> Result<(),String> { self.data.task.put_max_num_var(maxnumvar_) }
     /// Sets a double parameter.
     ///
     /// # Arguments
@@ -8745,7 +8789,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putnadouparam>
-    pub fn put_na_dou_param(&mut self,paramname_ : &str,parvalue_ : f64) -> Result<(),String> { self.task.put_na_dou_param(paramname_,parvalue_) }
+    pub fn put_na_dou_param(&mut self,paramname_ : &str,parvalue_ : f64) -> Result<(),String> { self.data.task.put_na_dou_param(paramname_,parvalue_) }
     /// Sets an integer parameter.
     ///
     /// # Arguments
@@ -8754,7 +8798,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putnaintparam>
-    pub fn put_na_int_param(&mut self,paramname_ : &str,parvalue_ : i32) -> Result<(),String> { self.task.put_na_int_param(paramname_,parvalue_) }
+    pub fn put_na_int_param(&mut self,paramname_ : &str,parvalue_ : i32) -> Result<(),String> { self.data.task.put_na_int_param(paramname_,parvalue_) }
     /// Sets a string parameter.
     ///
     /// # Arguments
@@ -8763,7 +8807,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putnastrparam>
-    pub fn put_na_str_param(&mut self,paramname_ : &str,parvalue_ : &str) -> Result<(),String> { self.task.put_na_str_param(paramname_,parvalue_) }
+    pub fn put_na_str_param(&mut self,paramname_ : &str,parvalue_ : &str) -> Result<(),String> { self.data.task.put_na_str_param(paramname_,parvalue_) }
     /// Assigns a new name to the objective.
     ///
     /// # Arguments
@@ -8771,7 +8815,7 @@ impl TaskCB {
     /// - `objname_` Name of the objective.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjname>
-    pub fn put_obj_name(&mut self,objname_ : &str) -> Result<(),String> { self.task.put_obj_name(objname_) }
+    pub fn put_obj_name(&mut self,objname_ : &str) -> Result<(),String> { self.data.task.put_obj_name(objname_) }
     /// Sets the objective sense.
     ///
     /// # Arguments
@@ -8781,7 +8825,7 @@ impl TaskCB {
     ///   See [Objsense]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjsense>
-    pub fn put_obj_sense(&mut self,sense_ : i32) -> Result<(),String> { self.task.put_obj_sense(sense_) }
+    pub fn put_obj_sense(&mut self,sense_ : i32) -> Result<(),String> { self.data.task.put_obj_sense(sense_) }
     /// Specify an OptServer for remote calls.
     ///
     /// # Arguments
@@ -8789,7 +8833,7 @@ impl TaskCB {
     /// - `host_` A URL specifying the optimization server to be used.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putoptserverhost>
-    pub fn put_optserver_host(&mut self,host_ : &str) -> Result<(),String> { self.task.put_optserver_host(host_) }
+    pub fn put_optserver_host(&mut self,host_ : &str) -> Result<(),String> { self.data.task.put_optserver_host(host_) }
     /// Modifies the value of parameter.
     ///
     /// # Arguments
@@ -8798,7 +8842,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putparam>
-    pub fn put_param(&mut self,parname_ : &str,parvalue_ : &str) -> Result<(),String> { self.task.put_param(parname_,parvalue_) }
+    pub fn put_param(&mut self,parname_ : &str,parvalue_ : &str) -> Result<(),String> { self.data.task.put_param(parname_,parvalue_) }
     /// Replaces all quadratic terms in constraints.
     ///
     /// # Arguments
@@ -8809,7 +8853,7 @@ impl TaskCB {
     /// - `qcval_` Quadratic constraint coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
-    pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> { self.task.put_q_con(qcsubk_,qcsubi_,qcsubj_,qcval_) }
+    pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> { self.data.task.put_q_con(qcsubk_,qcsubi_,qcsubj_,qcval_) }
     /// Replaces all quadratic terms in a single constraint.
     ///
     /// # Arguments
@@ -8820,7 +8864,7 @@ impl TaskCB {
     /// - `qcval_` Quadratic constraint coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
-    pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> { self.task.put_q_con_k(k_,qcsubi_,qcsubj_,qcval_) }
+    pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> { self.data.task.put_q_con_k(k_,qcsubi_,qcsubj_,qcval_) }
     /// Replaces all quadratic terms in the objective.
     ///
     /// # Arguments
@@ -8830,7 +8874,7 @@ impl TaskCB {
     /// - `qoval_` Quadratic objective coefficient values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
-    pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> { self.task.put_q_obj(qosubi_,qosubj_,qoval_) }
+    pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> { self.data.task.put_q_obj(qosubi_,qosubj_,qoval_) }
     /// Replaces one coefficient in the quadratic term in the objective.
     ///
     /// # Arguments
@@ -8840,7 +8884,7 @@ impl TaskCB {
     /// - `qoij_` The new coefficient value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobjij>
-    pub fn put_q_obj_i_j(&mut self,i_ : i32,j_ : i32,qoij_ : f64) -> Result<(),String> { self.task.put_q_obj_i_j(i_,j_,qoij_) }
+    pub fn put_q_obj_i_j(&mut self,i_ : i32,j_ : i32,qoij_ : f64) -> Result<(),String> { self.data.task.put_q_obj_i_j(i_,j_,qoij_) }
     /// Sets the status keys for the constraints.
     ///
     /// # Arguments
@@ -8853,7 +8897,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskc>
-    pub fn put_skc(&mut self,whichsol_ : i32,skc_ : &[i32]) -> Result<(),String> { self.task.put_skc(whichsol_,skc_) }
+    pub fn put_skc(&mut self,whichsol_ : i32,skc_ : &[i32]) -> Result<(),String> { self.data.task.put_skc(whichsol_,skc_) }
     /// Sets the status keys for a slice of the constraints.
     ///
     /// # Arguments
@@ -8868,7 +8912,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskcslice>
-    pub fn put_skc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &[i32]) -> Result<(),String> { self.task.put_skc_slice(whichsol_,first_,last_,skc_) }
+    pub fn put_skc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skc_ : &[i32]) -> Result<(),String> { self.data.task.put_skc_slice(whichsol_,first_,last_,skc_) }
     /// Sets the status keys for the scalar variables.
     ///
     /// # Arguments
@@ -8881,7 +8925,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskx>
-    pub fn put_skx(&mut self,whichsol_ : i32,skx_ : &[i32]) -> Result<(),String> { self.task.put_skx(whichsol_,skx_) }
+    pub fn put_skx(&mut self,whichsol_ : i32,skx_ : &[i32]) -> Result<(),String> { self.data.task.put_skx(whichsol_,skx_) }
     /// Sets the status keys for a slice of the variables.
     ///
     /// # Arguments
@@ -8896,7 +8940,7 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskxslice>
-    pub fn put_skx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &[i32]) -> Result<(),String> { self.task.put_skx_slice(whichsol_,first_,last_,skx_) }
+    pub fn put_skx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,skx_ : &[i32]) -> Result<(),String> { self.data.task.put_skx_slice(whichsol_,first_,last_,skx_) }
     /// Sets the slc vector for a solution.
     ///
     /// # Arguments
@@ -8907,7 +8951,7 @@ impl TaskCB {
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putslc>
-    pub fn put_slc(&mut self,whichsol_ : i32,slc_ : &[f64]) -> Result<(),String> { self.task.put_slc(whichsol_,slc_) }
+    pub fn put_slc(&mut self,whichsol_ : i32,slc_ : &[f64]) -> Result<(),String> { self.data.task.put_slc(whichsol_,slc_) }
     /// Sets a slice of the slc vector for a solution.
     ///
     /// # Arguments
@@ -8920,7 +8964,7 @@ impl TaskCB {
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putslcslice>
-    pub fn put_slc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &[f64]) -> Result<(),String> { self.task.put_slc_slice(whichsol_,first_,last_,slc_) }
+    pub fn put_slc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slc_ : &[f64]) -> Result<(),String> { self.data.task.put_slc_slice(whichsol_,first_,last_,slc_) }
     /// Sets the slx vector for a solution.
     ///
     /// # Arguments
@@ -8931,7 +8975,7 @@ impl TaskCB {
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putslx>
-    pub fn put_slx(&mut self,whichsol_ : i32,slx_ : &[f64]) -> Result<(),String> { self.task.put_slx(whichsol_,slx_) }
+    pub fn put_slx(&mut self,whichsol_ : i32,slx_ : &[f64]) -> Result<(),String> { self.data.task.put_slx(whichsol_,slx_) }
     /// Sets a slice of the slx vector for a solution.
     ///
     /// # Arguments
@@ -8944,7 +8988,7 @@ impl TaskCB {
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putslxslice>
-    pub fn put_slx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &[f64]) -> Result<(),String> { self.task.put_slx_slice(whichsol_,first_,last_,slx_) }
+    pub fn put_slx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,slx_ : &[f64]) -> Result<(),String> { self.data.task.put_slx_slice(whichsol_,first_,last_,slx_) }
     /// Sets the snx vector for a solution.
     ///
     /// # Arguments
@@ -8955,7 +8999,7 @@ impl TaskCB {
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsnx>
-    pub fn put_snx(&mut self,whichsol_ : i32,sux_ : &[f64]) -> Result<(),String> { self.task.put_snx(whichsol_,sux_) }
+    pub fn put_snx(&mut self,whichsol_ : i32,sux_ : &[f64]) -> Result<(),String> { self.data.task.put_snx(whichsol_,sux_) }
     /// Sets a slice of the snx vector for a solution.
     ///
     /// # Arguments
@@ -8968,7 +9012,7 @@ impl TaskCB {
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsnxslice>
-    pub fn put_snx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &[f64]) -> Result<(),String> { self.task.put_snx_slice(whichsol_,first_,last_,snx_) }
+    pub fn put_snx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,snx_ : &[f64]) -> Result<(),String> { self.data.task.put_snx_slice(whichsol_,first_,last_,snx_) }
     /// Inserts a solution.
     ///
     /// # Arguments
@@ -8995,7 +9039,7 @@ impl TaskCB {
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsolution>
-    pub fn put_solution(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64]) -> Result<(),String> { self.task.put_solution(whichsol_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_) }
+    pub fn put_solution(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64]) -> Result<(),String> { self.data.task.put_solution(whichsol_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_) }
     /// Inserts a solution.
     ///
     /// # Arguments
@@ -9023,7 +9067,7 @@ impl TaskCB {
     /// - `doty_` Dual variables corresponding to affine conic constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsolutionnew>
-    pub fn put_solution_new(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64],doty_ : &[f64]) -> Result<(),String> { self.task.put_solution_new(whichsol_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_) }
+    pub fn put_solution_new(&mut self,whichsol_ : i32,skc_ : &[i32],skx_ : &[i32],skn_ : &[i32],xc_ : &[f64],xx_ : &[f64],y_ : &[f64],slc_ : &[f64],suc_ : &[f64],slx_ : &[f64],sux_ : &[f64],snx_ : &[f64],doty_ : &[f64]) -> Result<(),String> { self.data.task.put_solution_new(whichsol_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_) }
     /// Inputs the dual variable of a solution.
     ///
     /// # Arguments
@@ -9035,7 +9079,7 @@ impl TaskCB {
     /// - `y_` Solution value of the dual variable.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsolutionyi>
-    pub fn put_solution_y_i(&mut self,i_ : i32,whichsol_ : i32,y_ : f64) -> Result<(),String> { self.task.put_solution_y_i(i_,whichsol_,y_) }
+    pub fn put_solution_y_i(&mut self,i_ : i32,whichsol_ : i32,y_ : f64) -> Result<(),String> { self.data.task.put_solution_y_i(i_,whichsol_,y_) }
     /// Sets a string parameter.
     ///
     /// # Arguments
@@ -9046,7 +9090,7 @@ impl TaskCB {
     /// - `parvalue_` Parameter value.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putstrparam>
-    pub fn put_str_param(&mut self,param_ : i32,parvalue_ : &str) -> Result<(),String> { self.task.put_str_param(param_,parvalue_) }
+    pub fn put_str_param(&mut self,param_ : i32,parvalue_ : &str) -> Result<(),String> { self.data.task.put_str_param(param_,parvalue_) }
     /// Sets the suc vector for a solution.
     ///
     /// # Arguments
@@ -9057,7 +9101,7 @@ impl TaskCB {
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsuc>
-    pub fn put_suc(&mut self,whichsol_ : i32,suc_ : &[f64]) -> Result<(),String> { self.task.put_suc(whichsol_,suc_) }
+    pub fn put_suc(&mut self,whichsol_ : i32,suc_ : &[f64]) -> Result<(),String> { self.data.task.put_suc(whichsol_,suc_) }
     /// Sets a slice of the suc vector for a solution.
     ///
     /// # Arguments
@@ -9070,7 +9114,7 @@ impl TaskCB {
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsucslice>
-    pub fn put_suc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &[f64]) -> Result<(),String> { self.task.put_suc_slice(whichsol_,first_,last_,suc_) }
+    pub fn put_suc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,suc_ : &[f64]) -> Result<(),String> { self.data.task.put_suc_slice(whichsol_,first_,last_,suc_) }
     /// Sets the sux vector for a solution.
     ///
     /// # Arguments
@@ -9081,7 +9125,7 @@ impl TaskCB {
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsux>
-    pub fn put_sux(&mut self,whichsol_ : i32,sux_ : &[f64]) -> Result<(),String> { self.task.put_sux(whichsol_,sux_) }
+    pub fn put_sux(&mut self,whichsol_ : i32,sux_ : &[f64]) -> Result<(),String> { self.data.task.put_sux(whichsol_,sux_) }
     /// Sets a slice of the sux vector for a solution.
     ///
     /// # Arguments
@@ -9094,7 +9138,7 @@ impl TaskCB {
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putsuxslice>
-    pub fn put_sux_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &[f64]) -> Result<(),String> { self.task.put_sux_slice(whichsol_,first_,last_,sux_) }
+    pub fn put_sux_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,sux_ : &[f64]) -> Result<(),String> { self.data.task.put_sux_slice(whichsol_,first_,last_,sux_) }
     /// Assigns a new name to the task.
     ///
     /// # Arguments
@@ -9102,7 +9146,7 @@ impl TaskCB {
     /// - `taskname_` Name assigned to the task.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.puttaskname>
-    pub fn put_task_name(&mut self,taskname_ : &str) -> Result<(),String> { self.task.put_task_name(taskname_) }
+    pub fn put_task_name(&mut self,taskname_ : &str) -> Result<(),String> { self.data.task.put_task_name(taskname_) }
     /// Changes the bounds for one variable.
     ///
     /// # Arguments
@@ -9115,7 +9159,7 @@ impl TaskCB {
     /// - `bux_` New upper bound.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarbound>
-    pub fn put_var_bound(&mut self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.task.put_var_bound(j_,bkx_,blx_,bux_) }
+    pub fn put_var_bound(&mut self,j_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.data.task.put_var_bound(j_,bkx_,blx_,bux_) }
     /// Changes the bounds of a list of variables.
     ///
     /// # Arguments
@@ -9128,7 +9172,7 @@ impl TaskCB {
     /// - `bux_` Upper bounds for the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
-    pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.task.put_var_bound_list(sub_,bkx_,blx_,bux_) }
+    pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.data.task.put_var_bound_list(sub_,bkx_,blx_,bux_) }
     /// Changes the bounds of a list of variables.
     ///
     /// # Arguments
@@ -9141,7 +9185,7 @@ impl TaskCB {
     /// - `bux_` New upper bound for all variables in the list.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlistconst>
-    pub fn put_var_bound_list_const(&mut self,sub_ : &[i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.task.put_var_bound_list_const(sub_,bkx_,blx_,bux_) }
+    pub fn put_var_bound_list_const(&mut self,sub_ : &[i32],bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.data.task.put_var_bound_list_const(sub_,bkx_,blx_,bux_) }
     /// Changes the bounds for a slice of the variables.
     ///
     /// # Arguments
@@ -9155,7 +9199,7 @@ impl TaskCB {
     /// - `bux_` Upper bounds for the variables.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundslice>
-    pub fn put_var_bound_slice(&mut self,first_ : i32,last_ : i32,bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.task.put_var_bound_slice(first_,last_,bkx_,blx_,bux_) }
+    pub fn put_var_bound_slice(&mut self,first_ : i32,last_ : i32,bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> { self.data.task.put_var_bound_slice(first_,last_,bkx_,blx_,bux_) }
     /// Changes the bounds for a slice of the variables.
     ///
     /// # Arguments
@@ -9169,7 +9213,7 @@ impl TaskCB {
     /// - `bux_` New upper bound for all variables in the slice.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundsliceconst>
-    pub fn put_var_bound_slice_const(&mut self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.task.put_var_bound_slice_const(first_,last_,bkx_,blx_,bux_) }
+    pub fn put_var_bound_slice_const(&mut self,first_ : i32,last_ : i32,bkx_ : i32,blx_ : f64,bux_ : f64) -> Result<(),String> { self.data.task.put_var_bound_slice_const(first_,last_,bkx_,blx_,bux_) }
     /// Sets the name of a variable.
     ///
     /// # Arguments
@@ -9178,7 +9222,7 @@ impl TaskCB {
     /// - `name_` The variable name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarname>
-    pub fn put_var_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.task.put_var_name(j_,name_) }
+    pub fn put_var_name(&mut self,j_ : i32,name_ : &str) -> Result<(),String> { self.data.task.put_var_name(j_,name_) }
     /// Sets the primal and dual solution information for a single variable.
     ///
     /// # Arguments
@@ -9196,7 +9240,7 @@ impl TaskCB {
     /// - `sn_` Solution value of the dual variable associated with the conic constraint.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarsolutionj>
-    pub fn put_var_solution_j(&mut self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> Result<(),String> { self.task.put_var_solution_j(j_,whichsol_,sk_,x_,sl_,su_,sn_) }
+    pub fn put_var_solution_j(&mut self,j_ : i32,whichsol_ : i32,sk_ : i32,x_ : f64,sl_ : f64,su_ : f64,sn_ : f64) -> Result<(),String> { self.data.task.put_var_solution_j(j_,whichsol_,sk_,x_,sl_,su_,sn_) }
     /// Sets the variable type of one variable.
     ///
     /// # Arguments
@@ -9207,7 +9251,7 @@ impl TaskCB {
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartype>
-    pub fn put_var_type(&mut self,j_ : i32,vartype_ : i32) -> Result<(),String> { self.task.put_var_type(j_,vartype_) }
+    pub fn put_var_type(&mut self,j_ : i32,vartype_ : i32) -> Result<(),String> { self.data.task.put_var_type(j_,vartype_) }
     /// Sets the variable type for one or more variables.
     ///
     /// # Arguments
@@ -9218,7 +9262,7 @@ impl TaskCB {
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
-    pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> { self.task.put_var_type_list(subj_,vartype_) }
+    pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> { self.data.task.put_var_type_list(subj_,vartype_) }
     /// Sets the xc vector for a solution.
     ///
     /// # Arguments
@@ -9229,7 +9273,7 @@ impl TaskCB {
     /// - `xc_` Primal constraint solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putxc>
-    pub fn put_xc(&mut self,whichsol_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.task.put_xc(whichsol_,xc_) }
+    pub fn put_xc(&mut self,whichsol_ : i32,xc_ : &mut[f64]) -> Result<(),String> { self.data.task.put_xc(whichsol_,xc_) }
     /// Sets a slice of the xc vector for a solution.
     ///
     /// # Arguments
@@ -9242,7 +9286,7 @@ impl TaskCB {
     /// - `xc_` Primal constraint solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putxcslice>
-    pub fn put_xc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &[f64]) -> Result<(),String> { self.task.put_xc_slice(whichsol_,first_,last_,xc_) }
+    pub fn put_xc_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xc_ : &[f64]) -> Result<(),String> { self.data.task.put_xc_slice(whichsol_,first_,last_,xc_) }
     /// Sets the xx vector for a solution.
     ///
     /// # Arguments
@@ -9253,7 +9297,7 @@ impl TaskCB {
     /// - `xx_` Primal variable solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putxx>
-    pub fn put_xx(&mut self,whichsol_ : i32,xx_ : &[f64]) -> Result<(),String> { self.task.put_xx(whichsol_,xx_) }
+    pub fn put_xx(&mut self,whichsol_ : i32,xx_ : &[f64]) -> Result<(),String> { self.data.task.put_xx(whichsol_,xx_) }
     /// Sets a slice of the xx vector for a solution.
     ///
     /// # Arguments
@@ -9266,7 +9310,7 @@ impl TaskCB {
     /// - `xx_` Primal variable solution.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putxxslice>
-    pub fn put_xx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &[f64]) -> Result<(),String> { self.task.put_xx_slice(whichsol_,first_,last_,xx_) }
+    pub fn put_xx_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,xx_ : &[f64]) -> Result<(),String> { self.data.task.put_xx_slice(whichsol_,first_,last_,xx_) }
     /// Sets the y vector for a solution.
     ///
     /// # Arguments
@@ -9277,7 +9321,7 @@ impl TaskCB {
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.puty>
-    pub fn put_y(&mut self,whichsol_ : i32,y_ : &[f64]) -> Result<(),String> { self.task.put_y(whichsol_,y_) }
+    pub fn put_y(&mut self,whichsol_ : i32,y_ : &[f64]) -> Result<(),String> { self.data.task.put_y(whichsol_,y_) }
     /// Sets a slice of the y vector for a solution.
     ///
     /// # Arguments
@@ -9290,7 +9334,7 @@ impl TaskCB {
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putyslice>
-    pub fn put_y_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &[f64]) -> Result<(),String> { self.task.put_y_slice(whichsol_,first_,last_,y_) }
+    pub fn put_y_slice(&mut self,whichsol_ : i32,first_ : i32,last_ : i32,y_ : &[f64]) -> Result<(),String> { self.data.task.put_y_slice(whichsol_,first_,last_,y_) }
     /// Read a binary dump of the task solution and information items.
     ///
     /// # Arguments
@@ -9301,7 +9345,7 @@ impl TaskCB {
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbsolution>
-    pub fn read_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.read_b_solution(filename_,compress_) }
+    pub fn read_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.data.task.read_b_solution(filename_,compress_) }
     /// Reads problem data from a file.
     ///
     /// # Arguments
@@ -9309,7 +9353,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataautoformat>
-    pub fn read_data(&mut self,filename_ : &str) -> Result<(),String> { self.task.read_data(filename_) }
+    pub fn read_data(&mut self,filename_ : &str) -> Result<(),String> { self.data.task.read_data(filename_) }
     /// Reads problem data from a file.
     ///
     /// # Arguments
@@ -9323,7 +9367,7 @@ impl TaskCB {
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataformat>
-    pub fn read_data_format(&mut self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String> { self.task.read_data_format(filename_,format_,compress_) }
+    pub fn read_data_format(&mut self,filename_ : &str,format_ : i32,compress_ : i32) -> Result<(),String> { self.data.task.read_data_format(filename_,format_,compress_) }
     /// Reads a solution from a JSOL file.
     ///
     /// # Arguments
@@ -9331,7 +9375,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readjsonsol>
-    pub fn read_json_sol(&mut self,filename_ : &str) -> Result<(),String> { self.task.read_json_sol(filename_) }
+    pub fn read_json_sol(&mut self,filename_ : &str) -> Result<(),String> { self.data.task.read_json_sol(filename_) }
     /// Load task data from a string in JSON format.
     ///
     /// # Arguments
@@ -9339,7 +9383,7 @@ impl TaskCB {
     /// - `data_` Problem data in text format.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readjsonstring>
-    pub fn read_json_string(&mut self,data_ : &str) -> Result<(),String> { self.task.read_json_string(data_) }
+    pub fn read_json_string(&mut self,data_ : &str) -> Result<(),String> { self.data.task.read_json_string(data_) }
     /// Load task data from a string in LP format.
     ///
     /// # Arguments
@@ -9347,7 +9391,7 @@ impl TaskCB {
     /// - `data_` Problem data in text format.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readlpstring>
-    pub fn read_lp_string(&mut self,data_ : &str) -> Result<(),String> { self.task.read_lp_string(data_) }
+    pub fn read_lp_string(&mut self,data_ : &str) -> Result<(),String> { self.data.task.read_lp_string(data_) }
     /// Load task data from a string in OPF format.
     ///
     /// # Arguments
@@ -9355,7 +9399,7 @@ impl TaskCB {
     /// - `data_` Problem data in text format.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readopfstring>
-    pub fn read_opf_string(&mut self,data_ : &str) -> Result<(),String> { self.task.read_opf_string(data_) }
+    pub fn read_opf_string(&mut self,data_ : &str) -> Result<(),String> { self.data.task.read_opf_string(data_) }
     /// Reads a parameter file.
     ///
     /// # Arguments
@@ -9363,7 +9407,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readparamfile>
-    pub fn read_param_file(&mut self,filename_ : &str) -> Result<(),String> { self.task.read_param_file(filename_) }
+    pub fn read_param_file(&mut self,filename_ : &str) -> Result<(),String> { self.data.task.read_param_file(filename_) }
     /// Load task data from a string in PTF format.
     ///
     /// # Arguments
@@ -9371,7 +9415,7 @@ impl TaskCB {
     /// - `data_` Problem data in text format.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readptfstring>
-    pub fn read_ptf_string(&mut self,data_ : &str) -> Result<(),String> { self.task.read_ptf_string(data_) }
+    pub fn read_ptf_string(&mut self,data_ : &str) -> Result<(),String> { self.data.task.read_ptf_string(data_) }
     /// Reads a solution from a file.
     ///
     /// # Arguments
@@ -9382,7 +9426,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsolution>
-    pub fn read_solution(&mut self,whichsol_ : i32,filename_ : &str) -> Result<(),String> { self.task.read_solution(whichsol_,filename_) }
+    pub fn read_solution(&mut self,whichsol_ : i32,filename_ : &str) -> Result<(),String> { self.data.task.read_solution(whichsol_,filename_) }
     /// Read solution file in format determined by the filename
     ///
     /// # Arguments
@@ -9390,7 +9434,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsolutionfile>
-    pub fn read_solution_file(&self,filename_ : &str) -> Result<(),String> { self.task.read_solution_file(filename_) }
+    pub fn read_solution_file(&self,filename_ : &str) -> Result<(),String> { self.data.task.read_solution_file(filename_) }
     /// Prints information about last file read.
     ///
     /// # Arguments
@@ -9400,7 +9444,7 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsummary>
-    pub fn read_summary(&mut self,whichstream_ : i32) -> Result<(),String> { self.task.read_summary(whichstream_) }
+    pub fn read_summary(&mut self,whichstream_ : i32) -> Result<(),String> { self.data.task.read_summary(whichstream_) }
     /// Load task data from a file.
     ///
     /// # Arguments
@@ -9408,7 +9452,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readtask>
-    pub fn read_task(&mut self,filename_ : &str) -> Result<(),String> { self.task.read_task(filename_) }
+    pub fn read_task(&mut self,filename_ : &str) -> Result<(),String> { self.data.task.read_task(filename_) }
     /// Removes a number of symmetric matrices.
     ///
     /// # Arguments
@@ -9416,7 +9460,7 @@ impl TaskCB {
     /// - `subset_` Indexes of symmetric matrices which should be removed.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.removebarvars>
-    pub fn remove_barvars(&mut self,subset_ : &[i32]) -> Result<(),String> { self.task.remove_barvars(subset_) }
+    pub fn remove_barvars(&mut self,subset_ : &[i32]) -> Result<(),String> { self.data.task.remove_barvars(subset_) }
     /// Removes a number of conic constraints from the problem.
     ///
     /// # Arguments
@@ -9424,7 +9468,7 @@ impl TaskCB {
     /// - `subset_` Indexes of cones which should be removed.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.removecones>
-    pub fn remove_cones(&mut self,subset_ : &[i32]) -> Result<(),String> { self.task.remove_cones(subset_) }
+    pub fn remove_cones(&mut self,subset_ : &[i32]) -> Result<(),String> { self.data.task.remove_cones(subset_) }
     /// Removes a number of constraints.
     ///
     /// # Arguments
@@ -9432,7 +9476,7 @@ impl TaskCB {
     /// - `subset_` Indexes of constraints which should be removed.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.removecons>
-    pub fn remove_cons(&mut self,subset_ : &[i32]) -> Result<(),String> { self.task.remove_cons(subset_) }
+    pub fn remove_cons(&mut self,subset_ : &[i32]) -> Result<(),String> { self.data.task.remove_cons(subset_) }
     /// Removes a number of variables.
     ///
     /// # Arguments
@@ -9440,7 +9484,7 @@ impl TaskCB {
     /// - `subset_` Indexes of variables which should be removed.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.removevars>
-    pub fn remove_vars(&mut self,subset_ : &[i32]) -> Result<(),String> { self.task.remove_vars(subset_) }
+    pub fn remove_vars(&mut self,subset_ : &[i32]) -> Result<(),String> { self.data.task.remove_vars(subset_) }
     /// Resizes an optimization task.
     ///
     /// # Arguments
@@ -9452,7 +9496,7 @@ impl TaskCB {
     /// - `maxnumqnz_` New maximum number of quadratic non-zeros elements.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resizetask>
-    pub fn resize_task(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String> { self.task.resize_task(maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_) }
+    pub fn resize_task(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,maxnumcone_ : i32,maxnumanz_ : i64,maxnumqnz_ : i64) -> Result<(),String> { self.data.task.resize_task(maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_) }
     /// Creates a sensitivity report.
     ///
     /// # Arguments
@@ -9462,11 +9506,11 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sensitivityreport>
-    pub fn sensitivity_report(&self,whichstream_ : i32) -> Result<(),String> { self.task.sensitivity_report(whichstream_) }
+    pub fn sensitivity_report(&self,whichstream_ : i32) -> Result<(),String> { self.data.task.sensitivity_report(whichstream_) }
     /// Resets all parameter values.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.setdefaults>
-    pub fn set_defaults(&mut self) -> Result<(),String> { self.task.set_defaults() }
+    pub fn set_defaults(&mut self) -> Result<(),String> { self.data.task.set_defaults() }
     /// Checks whether a solution is defined.
     ///
     /// # Arguments
@@ -9480,7 +9524,7 @@ impl TaskCB {
     ///   - `isdef` Is non-zero if the requested solution is defined.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutiondef>
-    pub fn solution_def(&self,whichsol_ : i32) -> Result<bool,String> { self.task.solution_def(whichsol_) }
+    pub fn solution_def(&self,whichsol_ : i32) -> Result<bool,String> { self.data.task.solution_def(whichsol_) }
     /// Prints a short summary of the current solutions.
     ///
     /// # Arguments
@@ -9490,7 +9534,7 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutionsummary>
-    pub fn solution_summary(&self,whichstream_ : i32) -> Result<(),String> { self.task.solution_summary(whichstream_) }
+    pub fn solution_summary(&self,whichstream_ : i32) -> Result<(),String> { self.data.task.solution_summary(whichstream_) }
     /// Solve a linear equation system involving a basis matrix.
     ///
     /// # Arguments
@@ -9505,7 +9549,7 @@ impl TaskCB {
     ///   - `numnzout` Output (number of non-zeros in solution vector).
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solvewithbasis>
-    pub fn solve_with_basis(&mut self,transp_ : bool,numnz_ : i32,sub_ : &mut[i32],val_ : &mut[f64]) -> Result<i32,String> { self.task.solve_with_basis(transp_,numnz_,sub_,val_) }
+    pub fn solve_with_basis(&mut self,transp_ : bool,numnz_ : i32,sub_ : &mut[i32],val_ : &mut[f64]) -> Result<i32,String> { self.data.task.solve_with_basis(transp_,numnz_,sub_,val_) }
     /// Obtains a cone type code.
     ///
     /// # Arguments
@@ -9516,7 +9560,7 @@ impl TaskCB {
     ///   See [Conetype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtoconetype>
-    pub fn str_to_cone_type(&self,str_ : &str,conetype_ : & mut i32) -> Result<(),String> { self.task.str_to_cone_type(str_,conetype_) }
+    pub fn str_to_cone_type(&self,str_ : &str,conetype_ : & mut i32) -> Result<(),String> { self.data.task.str_to_cone_type(str_,conetype_) }
     /// Obtains a status key.
     ///
     /// # Arguments
@@ -9527,11 +9571,11 @@ impl TaskCB {
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtosk>
-    pub fn str_to_sk(&self,str_ : &str,sk_ : & mut i32) -> Result<(),String> { self.task.str_to_sk(str_,sk_) }
+    pub fn str_to_sk(&self,str_ : &str,sk_ : & mut i32) -> Result<(),String> { self.data.task.str_to_sk(str_,sk_) }
     /// In-place reformulation of a QCQO to a conic quadratic problem.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.toconic>
-    pub fn toconic(&mut self) -> Result<(),String> { self.task.toconic() }
+    pub fn toconic(&mut self) -> Result<(),String> { self.data.task.toconic() }
     /// Disconnects a user-defined function from a task stream.
     ///
     /// # Arguments
@@ -9541,7 +9585,7 @@ impl TaskCB {
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.unlinkfuncfromtaskstream>
-    pub fn unlink_func_from_stream(&mut self,whichstream_ : i32) -> Result<(),String> { self.task.unlink_func_from_stream(whichstream_) }
+    pub fn unlink_func_from_stream(&mut self,whichstream_ : i32) -> Result<(),String> { self.data.task.unlink_func_from_stream(whichstream_) }
     /// Update the information items related to the solution.
     ///
     /// # Arguments
@@ -9551,7 +9595,7 @@ impl TaskCB {
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.updatesolutioninfo>
-    pub fn update_solution_info(&mut self,whichsol_ : i32) -> Result<(),String> { self.task.update_solution_info(whichsol_) }
+    pub fn update_solution_info(&mut self,whichsol_ : i32) -> Result<(),String> { self.data.task.update_solution_info(whichsol_) }
     /// Checks a parameter name.
     ///
     /// # Arguments
@@ -9563,7 +9607,7 @@ impl TaskCB {
     /// - `param_` Which parameter.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.whichparam>
-    pub fn which_param(&self,parname_ : &str,partype_ : & mut i32,param_ : &mut i32) -> Result<(),String> { self.task.which_param(parname_,partype_,param_) }
+    pub fn which_param(&self,parname_ : &str,partype_ : & mut i32,param_ : &mut i32) -> Result<(),String> { self.data.task.which_param(parname_,partype_,param_) }
     /// Write a binary dump of the task solution and information items.
     ///
     /// # Arguments
@@ -9574,7 +9618,7 @@ impl TaskCB {
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writebsolution>
-    pub fn write_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.write_b_solution(filename_,compress_) }
+    pub fn write_b_solution(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.data.task.write_b_solution(filename_,compress_) }
     /// Writes problem data to a file.
     ///
     /// # Arguments
@@ -9582,7 +9626,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writedata>
-    pub fn write_data(&self,filename_ : &str) -> Result<(),String> { self.task.write_data(filename_) }
+    pub fn write_data(&self,filename_ : &str) -> Result<(),String> { self.data.task.write_data(filename_) }
     /// Writes a solution to a JSON file.
     ///
     /// # Arguments
@@ -9590,7 +9634,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writejsonsol>
-    pub fn write_json_sol(&self,filename_ : &str) -> Result<(),String> { self.task.write_json_sol(filename_) }
+    pub fn write_json_sol(&self,filename_ : &str) -> Result<(),String> { self.data.task.write_json_sol(filename_) }
     /// Writes all the parameters to a parameter file.
     ///
     /// # Arguments
@@ -9598,7 +9642,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writeparamfile>
-    pub fn write_param_file(&self,filename_ : &str) -> Result<(),String> { self.task.write_param_file(filename_) }
+    pub fn write_param_file(&self,filename_ : &str) -> Result<(),String> { self.data.task.write_param_file(filename_) }
     /// Write a solution to a file.
     ///
     /// # Arguments
@@ -9609,7 +9653,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writesolution>
-    pub fn write_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String> { self.task.write_solution(whichsol_,filename_) }
+    pub fn write_solution(&self,whichsol_ : i32,filename_ : &str) -> Result<(),String> { self.data.task.write_solution(whichsol_,filename_) }
     /// Write solution file in format determined by the filename
     ///
     /// # Arguments
@@ -9617,7 +9661,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writesolutionfile>
-    pub fn write_solution_file(&self,filename_ : &str) -> Result<(),String> { self.task.write_solution_file(filename_) }
+    pub fn write_solution_file(&self,filename_ : &str) -> Result<(),String> { self.data.task.write_solution_file(filename_) }
     /// Appends a record to the statistics file.
     ///
     /// # Arguments
@@ -9625,7 +9669,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writestat>
-    pub fn write_stat(&mut self,filename_ : &str) -> Result<(),String> { self.task.write_stat(filename_) }
+    pub fn write_stat(&mut self,filename_ : &str) -> Result<(),String> { self.data.task.write_stat(filename_) }
     /// Write a complete binary dump of the task data.
     ///
     /// # Arguments
@@ -9633,7 +9677,7 @@ impl TaskCB {
     /// - `filename_` A valid file name.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetask>
-    pub fn write_task(&self,filename_ : &str) -> Result<(),String> { self.task.write_task(filename_) }
+    pub fn write_task(&self,filename_ : &str) -> Result<(),String> { self.data.task.write_task(filename_) }
     /// Internal
     ///
     /// # Arguments
@@ -9644,7 +9688,7 @@ impl TaskCB {
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetasksolverresult_file>
-    pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.task.write_task_solver_result_file(filename_,compress_) }
+    pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.data.task.write_task_solver_result_file(filename_,compress_) }
 
 }
 
@@ -9781,7 +9825,7 @@ impl Task {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendacc>
     #[allow(unused_parens)]
@@ -9799,7 +9843,7 @@ impl Task {
     ///
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccs>
     #[allow(unused_parens)]
@@ -9818,7 +9862,7 @@ impl Task {
     ///
     /// - `domidx_` Domain index.
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccseq>
     #[allow(unused_parens)]
@@ -9839,7 +9883,7 @@ impl Task {
     /// - `domidxs_` Domain indices.
     /// - `numafeidx_` Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
     /// - `afeidxfirst_` Index of the first affine expression.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendaccsseq>
     #[allow(unused_parens)]
@@ -9924,7 +9968,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),conepar_.len()),ct_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),conepar_.len()),nummem_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -10168,7 +10212,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subi_.len()),subj_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
@@ -10300,9 +10344,9 @@ impl Task {
     pub fn async_optimize(&mut self,address_ : &str,accesstoken_ : &str) -> Result<String,String> {
       let __tmp_1 = CString::new(address_).unwrap();
       let __tmp_3 = CString::new(accesstoken_).unwrap();
-      let mut token_ = Vec::new(); token_.resize(33 as usize,0);
+      let mut token_ = Vec::new(); token_.resize(65 as usize,0);
       self.handle_res(unsafe { MSK_asyncoptimize(self.ptr,__tmp_1.as_ptr(),__tmp_3.as_ptr(),token_.as_mut_ptr()) },"async_optimize")?;
-      return Result::Ok(String::from_utf8_lossy(&token_[..token_.iter().position(|&c| c == 0).unwrap_or(33 as usize)]).into_owned());
+      return Result::Ok(String::from_utf8_lossy(&token_[..token_.iter().position(|&c| c == 0).unwrap_or(65 as usize)]).into_owned());
     } // asyncoptimize
     /// Requests information about the status of the remote job.
     ///
@@ -14774,8 +14818,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),blc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(bkx_.len(),c_.len()),blx_.len()),aptre_.len()),aptrb_.len()),bux_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(blc_.len(),buc_.len()),bkc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(c_.len(),bkx_.len()),aptre_.len()),bux_.len()),blx_.len()),aptrb_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -14970,8 +15014,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
+      let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
       if leftpricei_.len() > 0 && leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
@@ -15014,7 +15058,7 @@ impl Task {
     /// - `accidx_` Affine conic constraint index.
     /// - `domidx_` Domain index.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacc>
     #[allow(unused_parens)]
@@ -15031,7 +15075,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `accidx_` Affine conic constraint index.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaccb>
     #[allow(unused_parens)]
@@ -15082,7 +15126,7 @@ impl Task {
     /// - `accidxs_` Affine conic constraint indices.
     /// - `domidxs_` Domain indices.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
     #[allow(unused_parens)]
@@ -15137,7 +15181,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacollist64>
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15181,7 +15225,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(valkl_.len(),afeidx_.len()),barvaridx_.len()),subk_.len()),subl_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(valkl_.len(),afeidx_.len()),barvaridx_.len()),subl_.len()),subk_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -15212,7 +15256,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentry>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry(&mut self,afeidx_ : i64,barvaridx_ : i32,termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentry(self.ptr,afeidx_,barvaridx_,numterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry")?;
       return Result::Ok(());
     } // putafebarfentry
@@ -15230,8 +15274,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),afeidx_.len()),ptrterm_.len()) as i64;
-      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(ptrterm_.len(),numterm_.len()),afeidx_.len()),barvaridx_.len()) as i64;
+      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
     } // putafebarfentrylist
@@ -15249,8 +15293,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(barvaridx_.len(),numterm_.len()),ptrterm_.len()) as i32;
-      let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(ptrterm_.len(),numterm_.len()),barvaridx_.len()) as i32;
+      let lenterm_ : i64 = std::cmp::min(termidx_.len(),termweight_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
     } // putafebarfrow
@@ -15294,7 +15338,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(val_.len(),afeidx_.len()),varidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),val_.len()),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -15309,7 +15353,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrow>
     #[allow(unused_parens)]
     pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i32 = std::cmp::min(val_.len(),varidx_.len()) as i32;
+      let numnz_ : i32 = std::cmp::min(varidx_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putafefrow(self.ptr,afeidx_,numnz_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row")?;
       return Result::Ok(());
     } // putafefrow
@@ -15326,8 +15370,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(ptrrow_.len(),afeidx_.len()),numnzrow_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(numnzrow_.len(),afeidx_.len()),ptrrow_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
@@ -15404,7 +15448,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subj_.len()),subi_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(valij_.len(),subi_.len()),subj_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -15419,7 +15463,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(subi_.len(),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
@@ -15436,7 +15480,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarowlist64>
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),sub_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
       if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
       if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
@@ -15498,7 +15542,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subj_.len()),subk_.len()),subl_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valijkl_.len(),subl_.len()),subk_.len()),subj_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -15529,7 +15573,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
@@ -15547,7 +15591,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),subj_.len()),subi_.len()),alphaptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),alphaptre_.len()),subi_.len()),subj_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -15571,7 +15615,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbararowlist>
     #[allow(unused_parens)]
     pub fn put_bara_row_list(&mut self,subi_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],subj_ : &[i32],nummat_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ptre_.len(),subi_.len()),ptrb_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(ptrb_.len(),ptre_.len()),subi_.len()) as i32;
       if nummat_.len() != (subj_.len()).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'nummat' has the wrong length, expected subj_.len()".to_string());
       }
@@ -15605,7 +15649,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subj_.len()),subk_.len()),subl_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(valjkl_.len(),subl_.len()),subk_.len()),subj_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -15632,7 +15676,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
+      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -15727,7 +15771,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putclist>
     #[allow(unused_parens)]
     pub fn put_c_list(&mut self,subj_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),val_.len()) as i32;
+      let num_ : i32 = std::cmp::min(val_.len(),subj_.len()) as i32;
       self.handle_res(unsafe { MSK_putclist(self.ptr,num_,subj_.as_ptr(),val_.as_ptr()) },"put_c_list")?;
       return Result::Ok(());
     } // putclist
@@ -15762,7 +15806,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),blc_.len()),sub_.len()),buc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),bkc_.len()),blc_.len()),buc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -15920,7 +15964,7 @@ impl Task {
     /// - `djcidx_` Index of the disjunctive constraint.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions.
+    /// - `b_` The vector of constant terms modifying affine expressions.
     /// - `termsizelist_` List of term sizes.
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putdjc>
@@ -15957,7 +16001,7 @@ impl Task {
     /// - `idxlast_` Index of the last disjunctive constraint in the slice plus 1.
     /// - `domidxlist_` List of domain indexes.
     /// - `afeidxlist_` List of affine expression indexes.
-    /// - `b_` The vector of constant terms added to affine expressions. Optional.
+    /// - `b_` The vector of constant terms modifying affine expressions. Optional.
     /// - `termsizelist_` List of term sizes.
     /// - `termsindjc_` Number of terms in each of the disjunctive constraints in the slice.
     ///
@@ -16250,7 +16294,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -16266,7 +16310,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
       if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
@@ -16728,7 +16772,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bux_.len(),blx_.len()),bkx_.len()),sub_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),bkx_.len()),bux_.len()),blx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -16858,7 +16902,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
     #[allow(unused_parens)]
     pub fn put_var_type_list(&mut self,subj_ : &[i32],vartype_ : &[i32]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(subj_.len(),vartype_.len()) as i32;
+      let num_ : i32 = std::cmp::min(vartype_.len(),subj_.len()) as i32;
       self.handle_res(unsafe { MSK_putvartypelist(self.ptr,num_,subj_.as_ptr(),vartype_.as_ptr()) },"put_var_type_list")?;
       return Result::Ok(());
     } // putvartypelist
@@ -17905,9 +17949,9 @@ pub fn license_cleanup() -> Result<(),String> {
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.linkfiletoenvstream>
 #[allow(unused_parens)]
-pub fn linkfiletosenvtream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
+pub fn link_file_to_stream(whichstream_ : i32,filename_ : &str,append_ : i32) -> Result<(),String> {
   let __tmp_1 = CString::new(filename_).unwrap();
-  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"linkfiletosenvtream")?;
+  handle_res_static(unsafe { MSK_linkfiletoenvstream(std::ptr::null(),whichstream_,__tmp_1.as_ptr(),append_) },"link_file_to_stream")?;
   return Result::Ok(());
 } // linkfiletoenvstream
 /// Optimize a number of tasks in parallel using a specified number of threads.
@@ -18040,7 +18084,7 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
   if lptrc_.len() != (n_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lptrc' has the wrong length, expected n_".to_string());
   }
-  let lensubnval_ : i64 = std::cmp::min(lvalc_.len(),lsubc_.len()) as i64;
+  let lensubnval_ : i64 = std::cmp::min(lsubc_.len(),lvalc_.len()) as i64;
   if lsubc_.len() != (lensubnval_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lsubc' has the wrong length, expected lensubnval_".to_string());
   }
