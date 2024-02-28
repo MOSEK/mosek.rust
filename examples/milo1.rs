@@ -37,10 +37,10 @@ fn main() -> Result<(),String> {
     let mut task = match Task::new() {
         Some(e) => e,
         None => return Err("Failed to create task".to_string()),
-        }.with_callbacks();
+        };
 
-    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
+    //task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
+    //task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
 
     // task.set_ItgSolutionCallback(
     //   new mosek.ItgSolutionCallback() {
@@ -88,11 +88,18 @@ fn main() -> Result<(),String> {
     task.put_obj_sense(Objsense::MAXIMIZE)?;
     /* Solve the problem */
 
-    let _trm = task.optimize()?;
-
-    // Print a summary containing information
-    //   about the solution for debugging purposes
-    task.solution_summary(Streamtype::MSG)?;
+    task.with_stream_callback(
+        Streamtype::LOG, 
+        &|msg| print!("{}",msg),
+        |task| task.with_itg_sol_callback(
+            &mut |xx| { println!("----- new solution: {:?}",xx); false },
+            |task| {
+                _ = task.optimize()?;
+                // Print a summary containing information
+                //   about the solution for debugging purposes
+                task.solution_summary(Streamtype::MSG)?;
+                Ok::<(), String>(()) 
+            }))?;
 
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
