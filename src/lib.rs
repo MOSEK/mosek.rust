@@ -55,13 +55,16 @@ extern {
                                 func        : extern fn (handle : * const c_void, msg : * const libc::c_char)) -> i32;
 
     fn MSK_putcallbackfunc(task        : * const u8,
-                           func        : extern fn (task : * const c_void, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
+                           func        : extern fn (task : * const u8, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
                            handle      : * const c_void) -> i32;
     #[link_name = "MSK_putcallbackfunc"]
     #[allow(clashing_extern_declarations)]
     fn MSK_putcallbackfunc_ptr(task        : * const u8,
                                func        : * const u8,
                                handle      : * const c_void) -> i32;
+    fn MSK_getcallbackfunc(task : * const u8,
+                           func : * const * const u8,
+                           handle : * const * const c_void) -> i32;
     fn MSK_getlasterror64(task         : * const u8,
                           lastreacode  : * mut i32,
                           sizelastmsg  : i64,
@@ -4801,7 +4804,7 @@ extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const lib
 }
 
 
-extern fn callback_proxy(_ : * const c_void,
+extern fn callback_proxy(_ : * const u8,
                           handle : * const c_void,
                           caller  : i32,
                           douinf  : * const f64,
@@ -9702,6 +9705,68 @@ extern fn wrap_data_write_handle(handle : * const libc::c_void,
     }
 }
 
+struct CallbackHandle {
+    codecb   : Option<* mut c_void>,
+    infocb   : Option<* mut c_void>,
+    intsolcb : Option<* mut c_void>,
+}
+impl CallbackHandle {
+    extern fn proxy(
+        task : * const u8,
+        handle : * const c_void,
+        caller : i32,                     
+        dinf : * const f64,               
+        iinf : * const i32,               
+        liinf : * const i64) -> i32       
+    {
+        let cbdata = handle as * mut CallbackHandle;
+        let r0 = if let Some(cb) = unsafe { (*cbdata).codecb } {
+            let cb : * mut c_void = cb;
+            let cb = cb as * mut Box<& mut dyn FnMut(i32) -> bool>;
+            unsafe { (*cb)(caller) }
+        } else {
+            false
+        };
+
+        let r1 = if let Some(cb) = unsafe { (*cbdata).infocb } {
+            let cb : * mut c_void = cb;
+            let cb = cb as * mut Box<& mut dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool>;
+            unsafe {
+                (*cb)(caller,
+                       & std::slice::from_raw_parts(dinf,  Dinfitem::END as usize),
+                       & std::slice::from_raw_parts(iinf,  Iinfitem::END as usize),
+                       & std::slice::from_raw_parts(liinf, Liinfitem::END as usize))
+            }
+        } else {
+            false
+        };
+
+        let r2 = if let Some(cb) = unsafe { (*cbdata).intsolcb } {
+            let cb : * mut c_void = cb;
+            let cb = cb as * mut Box<& mut dyn FnMut(&[f64]) -> bool>;
+            if caller == Callbackcode::NEW_INT_MIO {
+                let mut numvar : i32 = 0;                
+                if 0 == unsafe { MSK_getnumvar(task,& mut numvar) } {
+                    let mut xx : Vec<f64> = vec![0.0; numvar as usize];
+                    if 0 == unsafe { MSK_getxx(task,Soltype::ITG,xx.as_mut_ptr()) } {
+                        unsafe {(*cb)(xx.as_slice()) }
+                    } else {
+                        false
+                    }
+                } else { 
+                    false
+                }
+            } else {
+                false
+            }
+        } else { 
+            false
+        };
+
+        if r0 || r1 || r2 { 1 } else { 0 }
+    }
+}
+
 impl Task {
     /// Create a new task in the given environment or with the default environment with a given capacity
     pub fn with_capacity(env : Option<&Env>, numcon : i32, numvar : i32) -> Option<Task> {
@@ -9733,6 +9798,195 @@ impl Task {
 
     /// Create a new task in the default environment
     pub fn new()  -> Option<Task> { Task::with_capacity(None,0,0) }
+
+
+    extern fn stream_callback_proxy<F>(handle : * const c_void, msg : * const libc::c_char)
+        where F : Fn(&str)
+    {
+        let func = handle as * mut F;
+        unsafe {
+            let cstr = CStr::from_ptr(msg);
+            let cstr_bytes = cstr.to_bytes();
+            let s = String::from_utf8_lossy(cstr_bytes).into_owned();
+            (*func)(&s);
+        }
+    }
+
+    /// Temporarily attach a stream printer function to the task.
+    ///
+    /// # Arguments
+    /// - `whichstream` Which stream to attach to (See Streamtype)
+    /// - `streamfunc` The callback function
+    /// - `func` The function to call with the updated task. The stream callback will be attached
+    ///   for the duration of this call.
+    pub fn with_stream_callback<F,G,R>(& mut self, 
+                                       whichstream : i32,
+                                       streamfunc : &F,
+                                       mut func : G) -> R 
+        where G: FnMut(& mut Task) -> R,
+              F: Fn(&str),
+    {
+        unsafe{
+            let hnd = streamfunc as * const _ as * mut c_void;
+           _ = MSK_linkfunctotaskstream(self.ptr, whichstream,hnd, Task::stream_callback_proxy::<F>);
+        }
+
+        let res = func(self);
+        unsafe {
+            _ = MSK_unlinkfuncfromtaskstream(self.ptr,whichstream);
+        }
+        res
+    }
+
+    /// Temporarily attach a code callback to the task.
+    ///
+    /// For the duration of the call of `body`, the code callback will be set to `cbfunc`.
+    ///
+    /// # Arguments
+    /// - `cbfunc` A callback function that may be called repeatedly 
+    /// - `body` A function `(& mut Task) -> R` that is called exactly once. 
+    pub fn with_callback<F,G,R>(& mut self, cbfunc : & mut F, body : G ) -> R
+        where G : FnOnce(& mut Task) -> R,
+              F : FnMut(i32) -> bool
+    {
+        let mut prev_func   : * const u8     = std::ptr::null();
+        let mut prev_handle : * const c_void = std::ptr::null();
+        // We create a Box with a dyn function to make sure we pin the dyn function for the
+        // duration of the scope. We then convert a pointer to the box to a `* mut c_void` to
+        // subvert Rust's complaints about lifetimes when we pass it to MSK_putcallbackfunc and
+        // actually store it in unsafe-land.
+        // 
+        // This work only because we now KNOW that the content of the box will exists for the
+        // duration of this scope, and we make sure to erase the reference in unsafe-land before
+        // returning.
+        let mut new_handle : Box<& mut dyn FnMut(i32) -> bool> = Box::new(cbfunc);
+        unsafe {
+            _ = MSK_getcallbackfunc(self.ptr,&mut prev_func,&mut prev_handle);
+        }
+
+        let mut cbdata = CallbackHandle {
+            codecb   : Some(&mut new_handle as * mut _ as * mut c_void),
+            infocb   : None,
+            intsolcb : None,
+        };
+        
+        if ! prev_handle.is_null() {
+            cbdata.infocb   = unsafe { (*(prev_handle as *const CallbackHandle)).infocb };
+            cbdata.intsolcb = unsafe { (*(prev_handle as *const CallbackHandle)).intsolcb };
+        }
+
+        // Set the new callback handle and function
+        unsafe {
+            let hnd : * mut c_void = &cbdata as * const _ as * mut c_void;
+            _ = MSK_putcallbackfunc(self.ptr, CallbackHandle::proxy,hnd);
+        }
+
+        let res = body(self);
+
+        // Reset to the old handle and function. This removes the reference to new_handle in
+        // unsafe-land.
+        // TODO: Do some kind of unwind protect to ensure that this is called, even in event of a
+        // panic. See: std::panic::{catch_unwind, resume_unwind}
+        unsafe {
+            _ = MSK_putcallbackfunc_ptr(self.ptr, prev_func, prev_handle);
+        }
+        res
+    }
+
+    /// Temporarily attach an info callback to the task.
+    ///
+    /// For the duration of the call of `body`, the code callback will be set to `cbfunc`.
+    ///
+    /// # Arguments
+    /// - `cbfunc` A callback function that may be called repeatedly 
+    /// - `body` A function `(& mut Task) -> R` that is called exactly once. 
+    pub fn with_info_callback<F,G,R>(& mut self, cbfunc : & mut F, body : G ) -> R
+        where G : FnOnce(& mut Task) -> R,
+              F : FnMut(i32,&[f64],&[i32],&[i64]) -> bool
+    {
+        let mut prev_func   : * const u8     = std::ptr::null();
+        let mut prev_handle : * const c_void = std::ptr::null();
+        let mut new_handle : Box<& mut dyn FnMut(i32,&[f64],&[i32],&[i64]) -> bool> = Box::new(cbfunc);
+        unsafe {
+            _ = MSK_getcallbackfunc(self.ptr,&mut prev_func,&mut prev_handle);
+        }
+
+        let mut cbdata = CallbackHandle {
+            codecb   : None,
+            infocb   : Some(&mut new_handle as * mut _ as * mut c_void),
+            intsolcb : None,
+        };
+        
+        if ! prev_handle.is_null() {
+            cbdata.codecb   = unsafe { (*(prev_handle as *const CallbackHandle)).codecb };
+            cbdata.intsolcb = unsafe { (*(prev_handle as *const CallbackHandle)).intsolcb };
+        }
+
+        // Set the new callback handle and function
+        unsafe {
+            let hnd : * mut c_void = &cbdata as * const _ as * mut c_void;
+            _ = MSK_putcallbackfunc(self.ptr, CallbackHandle::proxy,hnd);
+        }
+
+        let res = body(self);
+
+        // Reset to the old handle and function. This removes the reference to new_handle in
+        // unsafe-land.
+        // TODO: Do some kind of unwind protect to ensure that this is called, even in event of a
+        // panic. See: std::panic::{catch_unwind, resume_unwind}
+        unsafe {
+            _ = MSK_putcallbackfunc_ptr(self.ptr, prev_func, prev_handle);
+        }
+        res
+    }
+
+    /// Temporarily attach an info callback to the task.
+    ///
+    /// For the duration of the call of `body`, the code callback will be set to `cbfunc`.
+    ///
+    /// # Arguments
+    /// - `cbfunc` A callback function that may be called repeatedly 
+    /// - `body` A function `(& mut Task) -> R` that is called exactly once. 
+    pub fn with_itg_sol_callback<F,G,R>(& mut self, cbfunc : & mut F, body : G ) -> R
+        where G : FnOnce(& mut Task) -> R,
+              F : FnMut(&[f64]) -> bool
+    {
+        let mut prev_func   : * const u8     = std::ptr::null();
+        let mut prev_handle : * const c_void = std::ptr::null();
+        let mut new_handle : Box<& mut dyn FnMut(&[f64]) -> bool> = Box::new(cbfunc);
+        unsafe {
+            _ = MSK_getcallbackfunc(self.ptr,&mut prev_func,&mut prev_handle);
+        }
+
+        let mut cbdata = CallbackHandle {
+            codecb   : None,
+            infocb   : None,
+            intsolcb : Some(&mut new_handle as * mut _ as * mut c_void),
+        };
+        
+        if ! prev_handle.is_null() {
+            cbdata.codecb   = unsafe { (*(prev_handle as *const CallbackHandle)).codecb };
+            cbdata.intsolcb = unsafe { (*(prev_handle as *const CallbackHandle)).intsolcb };
+        }
+
+        // Set the new callback handle and function
+        unsafe {
+            let hnd : * mut c_void = &cbdata as * const _ as * mut c_void;
+            _ = MSK_putcallbackfunc(self.ptr, CallbackHandle::proxy,hnd);
+        }
+
+        let res = body(self);
+
+        // Reset to the old handle and function. This removes the reference to new_handle in
+        // unsafe-land.
+        // TODO: Do some kind of unwind protect to ensure that this is called, even in event of a
+        // panic. See: std::panic::{catch_unwind, resume_unwind}
+        unsafe {
+            _ = MSK_putcallbackfunc_ptr(self.ptr, prev_func, prev_handle);
+        }
+        res
+    }
+
 
 
     /// This converts the Task object into a TaskCB object. The main
