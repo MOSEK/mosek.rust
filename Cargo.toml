@@ -21,3 +21,8 @@ itertools = "0.10"
 name = "testmosek-raw"
 test = false
 path = "tests/testmosek_raw.rs"
+
+[[bin]]
+name = "mosekcli"
+test = false
+path = "tests/mosekcli.rs"
