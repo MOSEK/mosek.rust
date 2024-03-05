@@ -106,7 +106,7 @@ fn main() -> Result<(),String> {
 
 fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
     /* Create the optimization task. */
-    let mut task = Task::new().unwrap().with_callbacks();
+    let mut task = Task::new().unwrap();
     match data {
         FileOrText::Text(data)  => { task.read_ptf_string(data)? },
         FileOrText::File(fname) => { task.read_data(fname)? }
@@ -122,10 +122,16 @@ fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
     }
 
     /* Directs the log task stream to the 'printstr' function. */
-    task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    task.put_callback(callback)?;
-
-    task.optimize()?;
+    task.with_stream_callback(
+        Streamtype::LOG,
+        & mut |msg| print!("{}",msg),
+        |task|
+            task.with_info_callback(
+                & mut callback,
+                |task|
+                    task.optimize()
+            )
+    )?;
 
     Result::Ok(())
 }

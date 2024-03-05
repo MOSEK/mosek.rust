@@ -63,8 +63,8 @@ extern {
                                func        : * const u8,
                                handle      : * const c_void) -> i32;
     fn MSK_getcallbackfunc(task : * const u8,
-                           func : * const * const u8,
-                           handle : * const * const c_void) -> i32;
+                           func : * mut * const u8,
+                           handle : * mut * const c_void) -> i32;
     fn MSK_getlasterror64(task         : * const u8,
                           lastreacode  : * mut i32,
                           sizelastmsg  : i64,
@@ -9966,7 +9966,7 @@ impl Task {
         
         if ! prev_handle.is_null() {
             cbdata.codecb   = unsafe { (*(prev_handle as *const CallbackHandle)).codecb };
-            cbdata.intsolcb = unsafe { (*(prev_handle as *const CallbackHandle)).intsolcb };
+            cbdata.infocb = unsafe { (*(prev_handle as *const CallbackHandle)).infocb };
         }
 
         // Set the new callback handle and function
@@ -9986,7 +9986,6 @@ impl Task {
         }
         res
     }
-
 
 
     /// This converts the Task object into a TaskCB object. The main

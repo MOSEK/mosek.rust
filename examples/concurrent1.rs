@@ -20,16 +20,23 @@ use std::cmp::Ordering;
 use std::thread;
 use std::env;
 
-fn optimize(t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
-    let mut t = t.with_callbacks();
+fn optimize(mut t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
     let cbstop = Arc::clone(&stop);
-    if let Err(_) = t.put_callback(move |_,_,_,_| ! *(cbstop.lock().unwrap()) ) { None }
-    else if let Ok(trm) = t.optimize() {
-        let mut st = stop.lock().unwrap();
-        *st = true;
-        Some((trm,t.without_callbacks()))
+    if let Some(trm) = t.with_callback(
+        &mut |_| cbstop.lock().and_then(|p| Ok(*p)).unwrap_or(false),
+        |task|
+            if let Ok(trm) = task.optimize() {
+                let mut st = stop.lock().unwrap();
+                *st = true;
+                Some(trm)
+            } else {
+                None
+            }) {
+        Some((trm,t))
     }
-    else { None }
+    else {
+        None
+    }
 }
 
 fn optimize_concurrent(task       : &mut mosek::Task,
@@ -152,13 +159,15 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
                         _ => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
                     }).unwrap();
 
-        {
-            let mut t = drop_except(tasks,besti).unwrap().with_callbacks();
-
-            t.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-            t.optimizer_summary(mosek::Streamtype::LOG)?;
-            t.solution_summary(mosek::Streamtype::LOG)?;
-        }
+        drop_except(tasks,besti).unwrap()
+            .with_stream_callback(
+                Streamtype::LOG, 
+                &mut |msg| print!("{}",msg),
+                |t| { 
+                    t.optimizer_summary(mosek::Streamtype::LOG)?;
+                    t.solution_summary(mosek::Streamtype::LOG)?;
+                    Ok::<(),String>(())
+                })?;
 
         println!("{} optimizers succeeded:",pobjs.len());
         for &(k,v) in pobjs.iter() {
@@ -179,7 +188,7 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
                         }.or_else(|| match t.get_sol_sta(Soltype::ITR) {
                             Ok(Solsta::PRIM_FEAS)|Ok(Solsta::OPTIMAL) => Some((k,t.get_primal_obj(Soltype::ITR).unwrap())),
                             _ => None
-                        }) )
+                        }))
             .collect();
 
         let &(besti,bestobj) = pobjs.iter()
@@ -189,13 +198,15 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
                         _ => if o1 > o2 {Ordering::Less} else if o2 > o1 {Ordering::Greater} else {Ordering::Equal}
                     }).unwrap();
 
-        {
-            let mut t = drop_except(tasks,besti).unwrap().with_callbacks();
-
-            t.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-            t.optimizer_summary(mosek::Streamtype::LOG)?;
-            t.solution_summary(mosek::Streamtype::LOG)?;
-        }
+        drop_except(tasks,besti).unwrap()
+            .with_stream_callback(
+                Streamtype::LOG, 
+                &mut|msg| print!("{}",msg),
+                |t| {
+                    t.optimizer_summary(mosek::Streamtype::LOG)?;
+                    t.solution_summary(mosek::Streamtype::LOG)?;
+                    Ok::<(),String>(())
+                })?;
 
         println!("{} optimizers succeeded:",pobjs.len());
         for &(k,v) in pobjs.iter() {

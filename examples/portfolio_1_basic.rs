@@ -10,7 +10,7 @@
 
 extern crate mosek;
 extern crate itertools;
-use mosek::{Task,Objsense,Streamtype,Soltype};
+use mosek::{Task,Objsense,Streamtype,Soltype,Solsta};
 use itertools::{iproduct};
 
 /// Solve basic Markowitz portfolio problem: Maximize expected return
@@ -97,6 +97,13 @@ fn portfolio(n     : i32,     // number of assets
     // task.write_data("portfolio_1_basic.ptf")?;
 
     let _trm = task.optimize()?;
+
+    // Check if the interior point solution is an optimal point
+    if task.get_sol_sta(Soltype::ITR)? != Solsta::OPTIMAL {
+        // See https://docs.mosek.com/latest/rustapi/accessing-solution.html about handling solution statuses.
+        eprintln!("Solution not optimal!");
+        std::process::exit(1);
+    }
 
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;

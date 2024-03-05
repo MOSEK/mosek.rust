@@ -1,6 +1,6 @@
 [package]
 name    = "mosek"
-version = "10.1.3"
+version = "10.1.5"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
@@ -21,3 +21,8 @@ itertools = "0.10"
 name = "testmosek-raw"
 test = false
 path = "tests/testmosek_raw.rs"
+
+[[bin]]
+name = "mosekcli"
+test = false
+path = "tests/mosekcli.rs"

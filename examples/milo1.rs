@@ -34,112 +34,95 @@ fn main() -> Result<(),String> {
     let ptre : Vec<usize> = vec![ 2, 4 ];
 
     /* Create the optimization task. */
-    let mut task = match Task::new() {
-        Some(e) => e,
-        None => return Err("Failed to create task".to_string()),
-        };
+    Task::new().expect("Failed to create task")
+        .with_stream_callback(
+            Streamtype::LOG,
+            &mut |msg| print!("{}",msg),
+            |task| task.with_itg_sol_callback(
+                &mut |xx| { println!("Found a new solution = {:?}",xx); false },
+                |task| {
+                    /* Append 'numcon' empty constraints.
+                    The constraints will initially have no bounds. */
+                    task.append_cons(numcon)?;
 
-    //task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
-    //task.put_callback(|caller,_,_,_| { println!("caller = {}",caller); true })?;
+                    /* Append 'numvar' variables.
+                    The variables will initially be fixed at zero (x=0). */
+                    task.append_vars(numvar)?;
 
-    // task.set_ItgSolutionCallback(
-    //   new mosek.ItgSolutionCallback() {
-    //     public void callback(double[] xx) {
-    //       System.out.print("New integer solution: ");
-    //       for (double v : xx) System.out.print("" + v + " ");
-    //       System.out.println("");
-    //     }
-    //   });
+                    for ((((j,cj),bk),bl),bu) in (0..numvar).zip(c.iter()).zip(bkx.iter()).zip(blx.iter()).zip(bux.iter()) {
+                        /* Set the linear term c_j in the objective.*/
+                        task.put_c_j(j, *cj)?;
+                        /* Set the bounds on variable j.
+                           blx[j] <= x_j <= bux[j] */
+                        task.put_var_bound(j, *bk, *bl, *bu)?;
+                        /* Input column j of A */
+                        task.put_a_col(j,                     /* Variable (column) index.*/
+                                       &asub[ptrb[j as usize]..ptre[j as usize]],               /* Row index of non-zeros in column j.*/
+                                       &aval[ptrb[j as usize]..ptre[j as usize]])?;              /* Non-zero Values of column j. */
+                    }
+                    // Set the bounds on constraints.
+                    // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
+                    for (((i,bk),bl),bu) in (0..numcon).zip(bkc.iter()).zip(blc.iter()).zip(buc.iter()) {
+                        task.put_con_bound(i, *bk, *bl, *bu)?;
+                    }
 
+                    /* Specify integer variables. */
+                    for j in 0..numvar {
+                        task.put_var_type(j, Variabletype::TYPE_INT)?;
+                    }
+                    /* Set max solution time */
+                    task.put_dou_param(Dparam::MIO_MAX_TIME, 60.0)?;
 
-    /* Append 'numcon' empty constraints.
-    The constraints will initially have no bounds. */
-    task.append_cons(numcon)?;
+                    /* A maximization problem */
+                    task.put_obj_sense(Objsense::MAXIMIZE)?;
+                    /* Solve the problem */
 
-    /* Append 'numvar' variables.
-    The variables will initially be fixed at zero (x=0). */
-    task.append_vars(numvar)?;
+                    let _trm = task.optimize()?;
 
-    for ((((j,cj),bk),bl),bu) in (0..numvar).zip(c.iter()).zip(bkx.iter()).zip(blx.iter()).zip(bux.iter()) {
-        /* Set the linear term c_j in the objective.*/
-        task.put_c_j(j, *cj)?;
-        /* Set the bounds on variable j.
-           blx[j] <= x_j <= bux[j] */
-        task.put_var_bound(j, *bk, *bl, *bu)?;
-        /* Input column j of A */
-        task.put_a_col(j,                     /* Variable (column) index.*/
-                       &asub[ptrb[j as usize]..ptre[j as usize]],               /* Row index of non-zeros in column j.*/
-                       &aval[ptrb[j as usize]..ptre[j as usize]])?;              /* Non-zero Values of column j. */
-    }
-    // Set the bounds on constraints.
-    // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
-    for (((i,bk),bl),bu) in (0..numcon).zip(bkc.iter()).zip(blc.iter()).zip(buc.iter()) {
-        task.put_con_bound(i, *bk, *bl, *bu)?;
-    }
+                    // Print a summary containing information
+                    //   about the solution for debugging purposes
+                    task.solution_summary(Streamtype::MSG)?;
 
-    /* Specify integer variables. */
-    for j in 0..numvar {
-        task.put_var_type(j, Variabletype::TYPE_INT)?;
-    }
-    /* Set max solution time */
-    task.put_dou_param(Dparam::MIO_MAX_TIME, 60.0)?;
+                    let mut xx = vec![0.0; numvar as usize];
+                    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
 
-    /* A maximization problem */
-    task.put_obj_sense(Objsense::MAXIMIZE)?;
-    /* Solve the problem */
+                    /* Get status information about the solution */
 
-    task.with_stream_callback(
-        Streamtype::LOG, 
-        &|msg| print!("{}",msg),
-        |task| task.with_itg_sol_callback(
-            &mut |xx| { println!("----- new solution: {:?}",xx); false },
-            |task| {
-                _ = task.optimize()?;
-                // Print a summary containing information
-                //   about the solution for debugging purposes
-                task.solution_summary(Streamtype::MSG)?;
-                Ok::<(), String>(()) 
-            }))?;
-
-    let mut xx = vec![0.0; numvar as usize];
-    task.get_xx(Soltype::ITG, xx.as_mut_slice())?;
-
-    /* Get status information about the solution */
-
-    match task.get_sol_sta(Soltype::ITG)? {
-        Solsta::INTEGER_OPTIMAL => {
-            println!("Optimal solution");
-            for (j,xj) in (0..numvar).zip(xx.iter()) {
-                println!("x[{}]: {}", j,xj);
-            }
-        }
-        Solsta::PRIM_FEAS => {
-            println!("Feasible solution");
-            for (j,xj) in (0..numvar).zip(xx.iter()) {
-                println!("x[{}]: {}", j,xj);
-            }
-        }
-        Solsta::UNKNOWN => {
-          match task.get_pro_sta(Soltype::ITG)? {
-              Prosta::PRIM_INFEAS_OR_UNBOUNDED => {
-                  println!("Problem status Infeasible or unbounded");
-              }
-              Prosta::PRIM_INFEAS => {
-                  println!("Problem status Infeasible.");
-              }
-              Prosta::UNKNOWN => {
-                  println!("Problem status unknown.");
-              }
-              _ => {
-                  println!("Other problem status.");
-              }
-          }
-        }
-        _ => {
-            println!("Other solution status");
-        }
-    }
-    Ok(())
+                    match task.get_sol_sta(Soltype::ITG)? {
+                        Solsta::INTEGER_OPTIMAL => {
+                            println!("Optimal solution");
+                            for (j,xj) in (0..numvar).zip(xx.iter()) {
+                                println!("x[{}]: {}", j,xj);
+                            }
+                        }
+                        Solsta::PRIM_FEAS => {
+                            println!("Feasible solution");
+                            for (j,xj) in (0..numvar).zip(xx.iter()) {
+                                println!("x[{}]: {}", j,xj);
+                            }
+                        }
+                        Solsta::UNKNOWN => {
+                          match task.get_pro_sta(Soltype::ITG)? {
+                              Prosta::PRIM_INFEAS_OR_UNBOUNDED => {
+                                  println!("Problem status Infeasible or unbounded");
+                              }
+                              Prosta::PRIM_INFEAS => {
+                                  println!("Problem status Infeasible.");
+                              }
+                              Prosta::UNKNOWN => {
+                                  println!("Problem status unknown.");
+                              }
+                              _ => {
+                                  println!("Other problem status.");
+                              }
+                          }
+                        }
+                        _ => {
+                            println!("Other solution status");
+                        }
+                    }
+                    Ok(())
+                }))
 }
 
 

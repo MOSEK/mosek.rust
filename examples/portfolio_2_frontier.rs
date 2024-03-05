@@ -100,6 +100,7 @@ fn portfolio(n : i32,
         else if let Err(_) = task.optimize() { None }
         else if let Err(_) = task.write_data(format!("portfolio_2_frontier-{}.ptf",alpha).as_str()) { None }
         else if let Ok(solsta) = task.get_sol_sta(Soltype::ITR) {
+            // See https://docs.mosek.com/latest/rustapi/accessing-solution.html about handling solution statuses.
             match solsta {
                 Solsta::OPTIMAL => {
                     let mut xx = vec![0.0; n as usize+1];
