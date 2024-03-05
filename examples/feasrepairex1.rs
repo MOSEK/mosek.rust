@@ -43,8 +43,8 @@ fn feasrepairex1(filename : FileOrText) -> Result<(),String> {
     }
     task.put_int_param(mosek::Iparam::LOG_FEAS_REPAIR, 3)?;
 
-    let wc = vec![0.0; task.get_num_con()? as usize];
-    let wx = vec![0.0; task.get_num_var()? as usize];
+    let wc = vec![1.0; task.get_num_con()? as usize];
+    let wx = vec![1.0; task.get_num_var()? as usize];
     task.primal_repair(wc.as_slice(),wc.as_slice(),wx.as_slice(),wx.as_slice())?;
 
     let sum_viol = task.get_dou_inf(mosek::Dinfitem::PRIMAL_REPAIR_PENALTY_OBJ)?;

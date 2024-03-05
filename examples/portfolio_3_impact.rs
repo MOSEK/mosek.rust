@@ -181,6 +181,8 @@ pub fn portfolio(n : i32,
     if ! task.solution_def(Soltype::ITR)? {
         return Err("No solultion defined".to_string());
     }
+
+    // See https://docs.mosek.com/latest/rustapi/accessing-solution.html about handling solution statuses.
     let solsta = task.get_sol_sta(Soltype::ITR)?;
     if solsta != Solsta::OPTIMAL {
         return Err("Unexpected solution status".to_string());

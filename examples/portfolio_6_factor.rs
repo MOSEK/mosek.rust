@@ -9,7 +9,7 @@
 
 extern crate mosek;
 extern crate itertools;
-use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Transpose};
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Transpose,Solsta};
 use itertools::{iproduct};
 use std::convert::TryInto;
 
@@ -77,7 +77,7 @@ fn portfolio(w      : f64,
                             GT.data_by_row().as_slice())?;
     // 3. The remaining n rows contain sqrt(theta) on the diagonal
     for (i,thetai) in (0..n).zip(theta.iter()) {
-        task.put_afe_f_entry(i as i64 + 1 + k as i64, voff_x + i, thetai.sqrt());
+        task.put_afe_f_entry(i as i64 + 1 + k as i64, voff_x + i, thetai.sqrt())?;
     }
 
     // Input the affine conic constraint (gamma, GT*x) \in QCone
@@ -101,6 +101,13 @@ fn portfolio(w      : f64,
         /* Display solution summary for quick inspection of results */
         let _ = task.solution_summary(Streamtype::LOG);
         let _ = task.write_data(format!("portfolio_6_factor-{}.ptf",gamma).as_str());
+
+        // Check if the interior point solution is an optimal point
+        if task.get_sol_sta(Soltype::ITR).ok()? != Solsta::OPTIMAL {
+            // See https://docs.mosek.com/latest/rustapi/accessing-solution.html about handling solution statuses.
+            eprintln!("Solution not optimal!");
+            std::process::exit(1);
+        }
 
         /* Read the results */
         let mut xx = vec![0.0; n as usize];

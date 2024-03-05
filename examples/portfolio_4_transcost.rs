@@ -8,7 +8,7 @@
 //!
 
 extern crate mosek;
-use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype,Boundkey};
+use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype,Boundkey,Solsta};
 extern crate itertools;
 use itertools::{iproduct};
 
@@ -155,6 +155,13 @@ fn portfolio(n : i32,
 
     /* Display the solution summary for quick inspection of results. */
     task.solution_summary(Streamtype::MSG)?;
+
+    // Check if the integer solution is an optimal point
+    if task.get_sol_sta(Soltype::ITG)? != Solsta::INTEGER_OPTIMAL {
+        // See https://docs.mosek.com/latest/rustapi/accessing-solution.html about handling solution statuses.
+        eprintln!("Solution not optimal!");
+        std::process::exit(1);
+    }
 
     let mut xx = vec![0.0;n as usize];
     task.get_xx_slice(Soltype::ITG, 0,n, xx.as_mut_slice())?;
