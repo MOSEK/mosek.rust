@@ -89,5 +89,3 @@ building complex constraint matrixes.
 Finally, it looks good. Rust language facilities allow us to write many array
 operations very compactly, yielding concise and readable model code.
 
-XXX
-XXX
