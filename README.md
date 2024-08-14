@@ -75,6 +75,11 @@ For example, add to your `Cargo.toml`:
 mosek = "10.2"
 ```
 
+When running a project that uses `mosek`, the mosek library must be in the
+library search path (`PATH` for Windows, `LD_LIBRARY_PATH` for linux,
+`DYLD_LIBRARY_PATH` for OS X).
+
+
 # Why Use Rust with Mosek?
 
 Rust has many advantages over other languages supported directly by MOSEK. For
