@@ -12,9 +12,9 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
         if      cfg!(target_arch = "x86_64") {
             ("win64x86".to_string(),  format!("mosek64_{}_{}",majorver,minorver))
         }
-        else if cfg!(target_arch = "x86") {
-            ("win32x86".to_string(),  format!("mosek{}_{}",majorver,minorver))
-        }
+        //else if cfg!(target_arch = "x86") {
+        //    ("win32x86".to_string(),  format!("mosek{}_{}",majorver,minorver))
+        //}
         else {
             panic!("Unsupported architecture")
         }
@@ -31,11 +31,11 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
         }
     }
     else if cfg!(target_os = "macos") {
-        if      cfg!(target_arch = "x86_64") {
-            ("osx64x86".to_string(),  "mosek64".to_string())
-        }
-        else if cfg!(target_arch = "aarch64") {
+        if      cfg!(target_arch = "aarch64") {
             ("osxaarch64".to_string(),  "mosek64".to_string())
+        }
+        else if cfg!(target_arch = "x86_64") {
+            ("osx64x86".to_string(),  "mosek64".to_string())
         }
         else {
             panic!("Unsupported architecture")
@@ -60,21 +60,15 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
         Some(p) => bindir_b.push(p),
         None    => {
             let inst_base =
-                match env::var_os("MOSEK_INST_BASE") {
-                    Some(p) => p,
-                    None =>
-                        match env::var_os("HOME") {
-                            Some(p) => p,
-                            None =>
-                                match env::var_os("HOMEPATH") {
-                                    Some(p) => {
-                                        let mut r = env::var_os("HOMEDRIVE").unwrap();
-                                        r.push(p);
-                                        r },
-                                    None => return None,
-                                }
-                        }
-                };
+                if let Some(p) = env::var_os("MOSEK_INST_BASE") { p }
+                else if let Some(p) = env::var_os("HOME") { p }
+                else if let (Some(homed),Some(homep)) = (env::var_os("HOMEDRIVE"),env::var_os("HOMEPATH")) {
+                    let mut r = homed;
+                    r.push(homep);
+                    r
+                }
+                else { return None; };
+
             bindir_b.push(inst_base);
             bindir_b.push("mosek");
             bindir_b.push(format!("{}.{}",majorver,minorver));
@@ -87,10 +81,30 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
 
     if ! bindir_b.as_path().is_dir() {
         return None
-        //panic!("MOSEK bin directory {} does not exist or is not a directory",bindir_b.as_path().to_str().unwrap());
     }
 
-    Some(bindir_b.as_path().to_str().unwrap().to_string())
+    let mut mosekbin = bindir_b.clone(); mosekbin.push("mosek");
+    let res = Command::new(mosekbin).arg("-v").output().expect("Failed to check mosek version");
+    let text : String = String::from_utf8_lossy(res.stdout.as_ref()).to_string();
+    if let Some(text) = text.strip_prefix("MOSEK version ") {
+        if let Some(p) = text.find('\n') {
+            let mut ver = text[0..p].split('.');
+            let vmajor = ver.next();
+            let vminor = ver.next();
+        
+            if let (Some(vmajor),Some(vminor)) = (vmajor,vminor) {
+                let vmajor : Option<i32> = FromStr::from_str(vmajor).ok();
+                let vminor : Option<i32> = FromStr::from_str(vminor).ok();
+
+                if let (Some(vmajor),Some(vminor)) = (vmajor,vminor) {
+                    if vmajor == majorver && vminor == minorver { 
+                        return Some(bindir_b.as_path().to_str().unwrap().to_string())
+                    }
+                }
+            }
+        }
+    }
+    None
 }
 
 // Given platform name and version, attempt to download and install the MOSEK distro.
@@ -163,6 +177,19 @@ fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     res.as_path().to_str().unwrap().to_string()
 }
 
+
+fn extract_version(text : &String) -> Option<(i32,i32)> {
+    let mosekverstr = text.trim();
+    match mosekverstr.find('.') {
+        None => None,
+        Some(p) => {
+            let vmajor : i32 = FromStr::from_str(&mosekverstr[0..p]).unwrap();
+            let vminor : i32 = FromStr::from_str(&mosekverstr[p+1..mosekverstr.len()]).unwrap();
+
+            Some((vmajor,vminor))
+        }
+    }
+}
 // Read a version stored in a file. The version must have the format `[0-9]+ '.' [0-9]+`
 fn readversion(filename : &str) -> (i32,i32) {
     let mut mosekverstr = String::new();
@@ -170,16 +197,10 @@ fn readversion(filename : &str) -> (i32,i32) {
         Err(_) => panic!("Failed to open version file '{}'",filename),
         Ok(mut f) => { let _ = f.read_to_string(& mut mosekverstr).unwrap(); }
     }
-    
-    let mosekverstr = mosekverstr.trim();
-    match mosekverstr.find('.') {
+   
+    match extract_version(&mosekverstr) {
         None => panic!("Invalid version file '{}'",filename),
-        Some(p) => {
-            let vmajor : i32 = FromStr::from_str(&mosekverstr[0..p]).unwrap();
-            let vminor : i32 = FromStr::from_str(&mosekverstr[p+1..mosekverstr.len()]).unwrap();
-
-            (vmajor,vminor)
-        }
+        Some(v) => { v }
     }
 }
 
