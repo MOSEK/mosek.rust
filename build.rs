@@ -207,9 +207,25 @@ fn readversion(filename : &str) -> (i32,i32) {
 fn main() {
     let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
 
+    let mosekrs_force_download = 
+        if let Some(s) = env::var_os("MOSEKRS_FORCE_DOWNLOAD") {
+            if let Some(s) = s.to_str() {
+                s.eq("YES")  || s.eq("ON") || s.eq("TRUE")
+            }
+            else {
+                false
+            }
+        }
+        else {
+            false
+        };
+
     let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
     let libdir = 
-        if let Some(p) = find_mosek_installation(&pfname,mskvermajor,mskverminor) { p } 
+        if ! mosekrs_force_download {
+            if let Some(p) = find_mosek_installation(&pfname,mskvermajor,mskverminor) { p } 
+            else { getmosek(&pfname, mskvermajor, mskverminor) }
+        }
         else { getmosek(&pfname, mskvermajor, mskverminor) };
 
     println!("cargo:rustc-link-search={}",libdir);
