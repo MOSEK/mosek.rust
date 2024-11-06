@@ -53,6 +53,7 @@ fn opt_server_async(inputfile : FileOrText, addr : String, numpolls : usize, cer
 
     println!("Task token = '{}'", token);
 
+
     println!("Setting log stream...");
     Task::new().unwrap().with_stream_callback(
         Streamtype::LOG,

@@ -1,4 +1,4 @@
-# Mosek 10.2 Rust interface
+# Mosek 11.0 Rust interface
 
 - Mosek optimization software: https://mosek.com/
 - Github repository for this package: https://github.com/MOSEK/mosek.rust
@@ -10,11 +10,10 @@ The package should work on
 - Linux x86_64
 - Linux aarch64 (RaspberryPi 4, Amazon Graviton 2 and others)
 - Windows x86_64
-- Mac OSX x86_64
 - Mac OSX aarch64
 
 Building the API requires the MOSEK library.
-- If the environment variable `MOSEK_BINDIR_102` is defined it is expected to
+- If the environment variable `MOSEK_BINDIR_110' is defined it is expected to
   point the the directory containing the MOSEK binaries,
 - otherwise if the environment variable `MOSEK_INST_BASE`, the build
   script will look for mosek `$MOSEK_INST_BASE/mosek`,
@@ -30,7 +29,7 @@ cargo build
 ```
 or
 ```
-export MOSEK_BINDIR_102=$HOME/local/mosek/10.2/tools/platform/linux64x86/bin
+export MOSEK_BINDIR_110=$HOME/local/mosek/11.0/tools/platform/linux64x86/bin
 cargo build
 ```
 
@@ -72,7 +71,7 @@ change between minor versions (though usually it will not change much).
 For example, add to your `Cargo.toml`:
 ```
 [dependencies]
-mosek = "10.2"
+mosek = "11.0"
 ```
 
 When running a project that uses `mosek`, the mosek library must be in the
@@ -94,4 +93,3 @@ building complex constraint matrixes.
 
 Finally, it looks good. Rust language facilities allow us to write many array
 operations very compactly, yielding concise and readable model code.
-
