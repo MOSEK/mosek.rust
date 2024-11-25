@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 0, 0]
+// Generted for MOSEK v[11, 1, 0]
 
 extern crate libc;
 use std::ffi::CString;
@@ -429,6 +429,8 @@ extern {
     #[allow(dead_code)]
     fn MSK_getlintinf(task_ : * const u8,whichliinf_ : i32,ivalue_ : & mut i64) -> i32;
     #[allow(dead_code)]
+    fn MSK_getlintparam(task_ : * const u8,param_ : i32,parvalue_ : & mut i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_getmaxnamelen(task_ : * const u8,maxlen_ : & mut i32) -> i32;
     #[allow(dead_code)]
     fn MSK_getmaxnumanz(task_ : * const u8,maxnumanz_ : & mut i32) -> i32;
@@ -789,6 +791,8 @@ extern {
     #[allow(dead_code)]
     fn MSK_putintparam(task_ : * const u8,param_ : i32,parvalue_ : i32) -> i32;
     #[allow(dead_code)]
+    fn MSK_putlintparam(task_ : * const u8,param_ : i32,parvalue_ : i64) -> i32;
+    #[allow(dead_code)]
     fn MSK_putmaxnumacc(task_ : * const u8,maxnumacc_ : i64) -> i32;
     #[allow(dead_code)]
     fn MSK_putmaxnumafe(task_ : * const u8,maxnumafe_ : i64) -> i32;
@@ -1096,8 +1100,6 @@ impl Basindtype {
   pub const NO_ERROR : i32 = 2;
   /// Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible.
   pub const IF_FEASIBLE : i32 = 3;
-  /// Not currently in use.
-  pub const RESERVERED : i32 = 4;
 } // impl Basindtype
 
 /// Bound keys
@@ -1224,22 +1226,6 @@ impl Intpnthotstart {
   pub const PRIMAL_DUAL : i32 = 3;
 } // impl Intpnthotstart
 
-/// Solution purification employed optimizer.
-#[non_exhaustive]
-pub struct Purify;
-impl Purify {
-  /// The optimizer performs no solution purification.
-  pub const NONE : i32 = 0;
-  /// The optimizer purifies the primal solution.
-  pub const PRIMAL : i32 = 1;
-  /// The optimizer purifies the dual solution.
-  pub const DUAL : i32 = 2;
-  /// The optimizer purifies both the primal and dual solution.
-  pub const PRIMAL_DUAL : i32 = 3;
-  /// TBD
-  pub const AUTO : i32 = 4;
-} // impl Purify
-
 /// Progress callback codes
 #[non_exhaustive]
 pub struct Callbackcode;
@@ -1270,196 +1256,212 @@ impl Callbackcode {
   pub const BEGIN_FOLDING_BI_OPTIMIZER : i32 = 11;
   /// TBD
   pub const BEGIN_FOLDING_BI_PRIMAL : i32 = 12;
-  /// The callback function is called when the infeasibility analyzer is started.
-  pub const BEGIN_INFEAS_ANA : i32 = 13;
-  /// The callback function is called from within the basis identification procedure when the initialization phase is started.
-  pub const BEGIN_INITIALIZE_BI : i32 = 14;
-  /// The callback function is called when the interior-point optimizer is started.
-  pub const BEGIN_INTPNT : i32 = 15;
-  /// Begin waiting for license.
-  pub const BEGIN_LICENSE_WAIT : i32 = 16;
-  /// The callback function is called when the mixed-integer optimizer is started.
-  pub const BEGIN_MIO : i32 = 17;
-  /// TBD.
-  pub const BEGIN_OPTIMIZE_BI : i32 = 18;
-  /// The callback function is called when the optimizer is started.
-  pub const BEGIN_OPTIMIZER : i32 = 19;
-  /// The callback function is called when the presolve is started.
-  pub const BEGIN_PRESOLVE : i32 = 20;
-  /// The callback function is called from within the basis identification procedure when the primal phase is started.
-  pub const BEGIN_PRIMAL_BI : i32 = 21;
-  /// Begin primal feasibility repair.
-  pub const BEGIN_PRIMAL_REPAIR : i32 = 22;
-  /// Primal sensitivity analysis is started.
-  pub const BEGIN_PRIMAL_SENSITIVITY : i32 = 23;
-  /// The callback function is called when the primal BI setup is started.
-  pub const BEGIN_PRIMAL_SETUP_BI : i32 = 24;
-  /// The callback function is called when the primal simplex optimizer is started.
-  pub const BEGIN_PRIMAL_SIMPLEX : i32 = 25;
-  /// The callback function is called from within the basis identification procedure when the primal simplex clean-up phase is started.
-  pub const BEGIN_PRIMAL_SIMPLEX_BI : i32 = 26;
-  /// Begin QCQO reformulation.
-  pub const BEGIN_QCQO_REFORMULATE : i32 = 27;
-  /// MOSEK has started reading a problem file.
-  pub const BEGIN_READ : i32 = 28;
-  /// The callback function is called when root cut generation is started.
-  pub const BEGIN_ROOT_CUTGEN : i32 = 29;
-  /// The callback function is called when the simplex optimizer is started.
-  pub const BEGIN_SIMPLEX : i32 = 30;
-  /// The callback function is called when solution of root relaxation is started.
-  pub const BEGIN_SOLVE_ROOT_RELAX : i32 = 31;
-  /// Begin conic reformulation.
-  pub const BEGIN_TO_CONIC : i32 = 32;
-  /// MOSEK has started writing a problem file.
-  pub const BEGIN_WRITE : i32 = 33;
-  /// The callback function is called from within the conic optimizer after the information database has been updated.
-  pub const CONIC : i32 = 34;
-  /// The callback function is called when the dedicated algorithm for independent blocks inside the mixed-integer solver is started.
-  pub const DECOMP_MIO : i32 = 35;
-  /// The callback function is called from within the dual simplex optimizer.
-  pub const DUAL_SIMPLEX : i32 = 36;
-  /// The callback function is called when the basis identification procedure is terminated.
-  pub const END_BI : i32 = 37;
-  /// The callback function is called when the conic optimizer is terminated.
-  pub const END_CONIC : i32 = 38;
-  /// The callback function is called from within the basis identification procedure when the dual phase is terminated.
-  pub const END_DUAL_BI : i32 = 39;
-  /// Dual sensitivity analysis is terminated.
-  pub const END_DUAL_SENSITIVITY : i32 = 40;
-  /// The callback function is called when the dual BI phase is terminated.
-  pub const END_DUAL_SETUP_BI : i32 = 41;
-  /// The callback function is called when the dual simplex optimizer is terminated.
-  pub const END_DUAL_SIMPLEX : i32 = 42;
-  /// The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated.
-  pub const END_DUAL_SIMPLEX_BI : i32 = 43;
-  /// The calback function is called at the end of folding.
-  pub const END_FOLDING : i32 = 44;
-  /// TBD
-  pub const END_FOLDING_BI : i32 = 45;
-  /// TBD
-  pub const END_FOLDING_BI_DUAL : i32 = 46;
-  /// TBD
-  pub const END_FOLDING_BI_INITIALIZE : i32 = 47;
-  /// TBD
-  pub const END_FOLDING_BI_OPTIMIZER : i32 = 48;
-  /// TBD
-  pub const END_FOLDING_BI_PRIMAL : i32 = 49;
-  /// The callback function is called when the infeasibility analyzer is terminated.
-  pub const END_INFEAS_ANA : i32 = 50;
-  /// The callback function is called from within the basis identification procedure when the initialization phase is terminated.
-  pub const END_INITIALIZE_BI : i32 = 51;
-  /// The callback function is called when the interior-point optimizer is terminated.
-  pub const END_INTPNT : i32 = 52;
-  /// End waiting for license.
-  pub const END_LICENSE_WAIT : i32 = 53;
-  /// The callback function is called when the mixed-integer optimizer is terminated.
-  pub const END_MIO : i32 = 54;
-  /// TBD.
-  pub const END_OPTIMIZE_BI : i32 = 55;
-  /// The callback function is called when the optimizer is terminated.
-  pub const END_OPTIMIZER : i32 = 56;
-  /// The callback function is called when the presolve is completed.
-  pub const END_PRESOLVE : i32 = 57;
-  /// The callback function is called from within the basis identification procedure when the primal phase is terminated.
-  pub const END_PRIMAL_BI : i32 = 58;
-  /// End primal feasibility repair.
-  pub const END_PRIMAL_REPAIR : i32 = 59;
-  /// Primal sensitivity analysis is terminated.
-  pub const END_PRIMAL_SENSITIVITY : i32 = 60;
-  /// The callback function is called when the primal BI setup is terminated.
-  pub const END_PRIMAL_SETUP_BI : i32 = 61;
-  /// The callback function is called when the primal simplex optimizer is terminated.
-  pub const END_PRIMAL_SIMPLEX : i32 = 62;
-  /// The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated.
-  pub const END_PRIMAL_SIMPLEX_BI : i32 = 63;
-  /// End QCQO reformulation.
-  pub const END_QCQO_REFORMULATE : i32 = 64;
-  /// MOSEK has finished reading a problem file.
-  pub const END_READ : i32 = 65;
-  /// The callback function is called when root cut generation is terminated.
-  pub const END_ROOT_CUTGEN : i32 = 66;
-  /// The callback function is called when the simplex optimizer is terminated.
-  pub const END_SIMPLEX : i32 = 67;
-  /// The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated.
-  pub const END_SIMPLEX_BI : i32 = 68;
-  /// The callback function is called when solution of root relaxation is terminated.
-  pub const END_SOLVE_ROOT_RELAX : i32 = 69;
-  /// End conic reformulation.
-  pub const END_TO_CONIC : i32 = 70;
-  /// MOSEK has finished writing a problem file.
-  pub const END_WRITE : i32 = 71;
-  /// TBD
-  pub const FOLDING_BI_DUAL : i32 = 72;
-  /// TBD
-  pub const FOLDING_BI_OPTIMIZER : i32 = 73;
-  /// TBD
-  pub const FOLDING_BI_PRIMAL : i32 = 74;
-  /// A heartbeat callback.
-  pub const HEARTBEAT : i32 = 75;
-  /// The callback function is called at an intermediate stage of the dual sensitivity analysis.
-  pub const IM_DUAL_SENSIVITY : i32 = 76;
-  /// The callback function is called at an intermediate point in the dual simplex optimizer.
-  pub const IM_DUAL_SIMPLEX : i32 = 77;
-  /// MOSEK is waiting for a license.
-  pub const IM_LICENSE_WAIT : i32 = 78;
-  /// The callback function is called from within the LU factorization procedure at an intermediate point.
-  pub const IM_LU : i32 = 79;
-  /// The callback function is called at an intermediate point in the mixed-integer optimizer.
-  pub const IM_MIO : i32 = 80;
-  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer.
-  pub const IM_MIO_DUAL_SIMPLEX : i32 = 81;
-  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer.
-  pub const IM_MIO_INTPNT : i32 = 82;
-  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer.
-  pub const IM_MIO_PRIMAL_SIMPLEX : i32 = 83;
   /// The callback function is called from within the matrix ordering procedure at an intermediate point.
-  pub const IM_ORDER : i32 = 84;
-  /// The callback function is called at an intermediate stage of the primal sensitivity analysis.
-  pub const IM_PRIMAL_SENSIVITY : i32 = 85;
-  /// The callback function is called at an intermediate point in the primal simplex optimizer.
-  pub const IM_PRIMAL_SIMPLEX : i32 = 86;
-  /// Intermediate stage in reading.
-  pub const IM_READ : i32 = 87;
-  /// The callback is called from within root cut generation at an intermediate stage.
-  pub const IM_ROOT_CUTGEN : i32 = 88;
-  /// The callback function is called from within the simplex optimizer at an intermediate point.
-  pub const IM_SIMPLEX : i32 = 89;
-  /// The callback function is called from within the interior-point optimizer after the information database has been updated.
-  pub const INTPNT : i32 = 90;
-  /// The callback function is called after a new integer solution has been located by the mixed-integer optimizer.
-  pub const NEW_INT_MIO : i32 = 91;
+  pub const BEGIN_GP_ORDER : i32 = 13;
+  /// The callback function is called when the infeasibility analyzer is started.
+  pub const BEGIN_INFEAS_ANA : i32 = 14;
+  /// The callback function is called from within the basis identification procedure when the initialization phase is started.
+  pub const BEGIN_INITIALIZE_BI : i32 = 15;
+  /// The callback function is called when the interior-point optimizer is started.
+  pub const BEGIN_INTPNT : i32 = 16;
+  /// Begin waiting for license.
+  pub const BEGIN_LICENSE_WAIT : i32 = 17;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const BEGIN_LOCAL_ORDER : i32 = 18;
+  /// The callback function is called when the mixed-integer optimizer is started.
+  pub const BEGIN_MIO : i32 = 19;
   /// TBD.
-  pub const OPTIMIZE_BI : i32 = 92;
+  pub const BEGIN_OPTIMIZE_BI : i32 = 20;
+  /// The callback function is called when the optimizer is started.
+  pub const BEGIN_OPTIMIZER : i32 = 21;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const BEGIN_ORDER : i32 = 22;
+  /// The callback function is called when the presolve is started.
+  pub const BEGIN_PRESOLVE : i32 = 23;
+  /// The callback function is called from within the basis identification procedure when the primal phase is started.
+  pub const BEGIN_PRIMAL_BI : i32 = 24;
+  /// Begin primal feasibility repair.
+  pub const BEGIN_PRIMAL_REPAIR : i32 = 25;
+  /// Primal sensitivity analysis is started.
+  pub const BEGIN_PRIMAL_SENSITIVITY : i32 = 26;
+  /// The callback function is called when the primal BI setup is started.
+  pub const BEGIN_PRIMAL_SETUP_BI : i32 = 27;
+  /// The callback function is called when the primal simplex optimizer is started.
+  pub const BEGIN_PRIMAL_SIMPLEX : i32 = 28;
+  /// The callback function is called from within the basis identification procedure when the primal simplex clean-up phase is started.
+  pub const BEGIN_PRIMAL_SIMPLEX_BI : i32 = 29;
+  /// Begin QCQO reformulation.
+  pub const BEGIN_QCQO_REFORMULATE : i32 = 30;
+  /// MOSEK has started reading a problem file.
+  pub const BEGIN_READ : i32 = 31;
+  /// The callback function is called when root cut generation is started.
+  pub const BEGIN_ROOT_CUTGEN : i32 = 32;
+  /// The callback function is called when the simplex optimizer is started.
+  pub const BEGIN_SIMPLEX : i32 = 33;
+  /// The callback function is called when solution of root relaxation is started.
+  pub const BEGIN_SOLVE_ROOT_RELAX : i32 = 34;
+  /// Begin conic reformulation.
+  pub const BEGIN_TO_CONIC : i32 = 35;
+  /// MOSEK has started writing a problem file.
+  pub const BEGIN_WRITE : i32 = 36;
+  /// The callback function is called from within the conic optimizer after the information database has been updated.
+  pub const CONIC : i32 = 37;
+  /// The callback function is called when the dedicated algorithm for independent blocks inside the mixed-integer solver is started.
+  pub const DECOMP_MIO : i32 = 38;
+  /// The callback function is called from within the dual simplex optimizer.
+  pub const DUAL_SIMPLEX : i32 = 39;
+  /// The callback function is called when the basis identification procedure is terminated.
+  pub const END_BI : i32 = 40;
+  /// The callback function is called when the conic optimizer is terminated.
+  pub const END_CONIC : i32 = 41;
+  /// The callback function is called from within the basis identification procedure when the dual phase is terminated.
+  pub const END_DUAL_BI : i32 = 42;
+  /// Dual sensitivity analysis is terminated.
+  pub const END_DUAL_SENSITIVITY : i32 = 43;
+  /// The callback function is called when the dual BI phase is terminated.
+  pub const END_DUAL_SETUP_BI : i32 = 44;
+  /// The callback function is called when the dual simplex optimizer is terminated.
+  pub const END_DUAL_SIMPLEX : i32 = 45;
+  /// The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated.
+  pub const END_DUAL_SIMPLEX_BI : i32 = 46;
+  /// The calback function is called at the end of folding.
+  pub const END_FOLDING : i32 = 47;
+  /// TBD
+  pub const END_FOLDING_BI : i32 = 48;
+  /// TBD
+  pub const END_FOLDING_BI_DUAL : i32 = 49;
+  /// TBD
+  pub const END_FOLDING_BI_INITIALIZE : i32 = 50;
+  /// TBD
+  pub const END_FOLDING_BI_OPTIMIZER : i32 = 51;
+  /// TBD
+  pub const END_FOLDING_BI_PRIMAL : i32 = 52;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const END_GP_ORDER : i32 = 53;
+  /// The callback function is called when the infeasibility analyzer is terminated.
+  pub const END_INFEAS_ANA : i32 = 54;
+  /// The callback function is called from within the basis identification procedure when the initialization phase is terminated.
+  pub const END_INITIALIZE_BI : i32 = 55;
+  /// The callback function is called when the interior-point optimizer is terminated.
+  pub const END_INTPNT : i32 = 56;
+  /// End waiting for license.
+  pub const END_LICENSE_WAIT : i32 = 57;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const END_LOCAL_ORDER : i32 = 58;
+  /// The callback function is called when the mixed-integer optimizer is terminated.
+  pub const END_MIO : i32 = 59;
+  /// TBD.
+  pub const END_OPTIMIZE_BI : i32 = 60;
+  /// The callback function is called when the optimizer is terminated.
+  pub const END_OPTIMIZER : i32 = 61;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const END_ORDER : i32 = 62;
+  /// The callback function is called when the presolve is completed.
+  pub const END_PRESOLVE : i32 = 63;
+  /// The callback function is called from within the basis identification procedure when the primal phase is terminated.
+  pub const END_PRIMAL_BI : i32 = 64;
+  /// End primal feasibility repair.
+  pub const END_PRIMAL_REPAIR : i32 = 65;
+  /// Primal sensitivity analysis is terminated.
+  pub const END_PRIMAL_SENSITIVITY : i32 = 66;
+  /// The callback function is called when the primal BI setup is terminated.
+  pub const END_PRIMAL_SETUP_BI : i32 = 67;
+  /// The callback function is called when the primal simplex optimizer is terminated.
+  pub const END_PRIMAL_SIMPLEX : i32 = 68;
+  /// The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated.
+  pub const END_PRIMAL_SIMPLEX_BI : i32 = 69;
+  /// End QCQO reformulation.
+  pub const END_QCQO_REFORMULATE : i32 = 70;
+  /// MOSEK has finished reading a problem file.
+  pub const END_READ : i32 = 71;
+  /// The callback function is called when root cut generation is terminated.
+  pub const END_ROOT_CUTGEN : i32 = 72;
+  /// The callback function is called when the simplex optimizer is terminated.
+  pub const END_SIMPLEX : i32 = 73;
+  /// The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated.
+  pub const END_SIMPLEX_BI : i32 = 74;
+  /// The callback function is called when solution of root relaxation is terminated.
+  pub const END_SOLVE_ROOT_RELAX : i32 = 75;
+  /// End conic reformulation.
+  pub const END_TO_CONIC : i32 = 76;
+  /// MOSEK has finished writing a problem file.
+  pub const END_WRITE : i32 = 77;
+  /// TBD
+  pub const FOLDING_BI_DUAL : i32 = 78;
+  /// TBD
+  pub const FOLDING_BI_OPTIMIZER : i32 = 79;
+  /// TBD
+  pub const FOLDING_BI_PRIMAL : i32 = 80;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const GP_ORDER : i32 = 81;
+  /// A heartbeat callback.
+  pub const HEARTBEAT : i32 = 82;
+  /// The callback function is called at an intermediate stage of the dual sensitivity analysis.
+  pub const IM_DUAL_SENSIVITY : i32 = 83;
+  /// The callback function is called at an intermediate point in the dual simplex optimizer.
+  pub const IM_DUAL_SIMPLEX : i32 = 84;
+  /// MOSEK is waiting for a license.
+  pub const IM_LICENSE_WAIT : i32 = 85;
+  /// The callback function is called from within the LU factorization procedure at an intermediate point.
+  pub const IM_LU : i32 = 86;
+  /// The callback function is called at an intermediate point in the mixed-integer optimizer.
+  pub const IM_MIO : i32 = 87;
+  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer.
+  pub const IM_MIO_DUAL_SIMPLEX : i32 = 88;
+  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer.
+  pub const IM_MIO_INTPNT : i32 = 89;
+  /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer.
+  pub const IM_MIO_PRIMAL_SIMPLEX : i32 = 90;
+  /// The callback function is called at an intermediate stage of the primal sensitivity analysis.
+  pub const IM_PRIMAL_SENSIVITY : i32 = 91;
+  /// The callback function is called at an intermediate point in the primal simplex optimizer.
+  pub const IM_PRIMAL_SIMPLEX : i32 = 92;
+  /// Intermediate stage in reading.
+  pub const IM_READ : i32 = 93;
+  /// The callback is called from within root cut generation at an intermediate stage.
+  pub const IM_ROOT_CUTGEN : i32 = 94;
+  /// The callback function is called from within the simplex optimizer at an intermediate point.
+  pub const IM_SIMPLEX : i32 = 95;
+  /// The callback function is called from within the interior-point optimizer after the information database has been updated.
+  pub const INTPNT : i32 = 96;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const LOCAL_ORDER : i32 = 97;
+  /// The callback function is called after a new integer solution has been located by the mixed-integer optimizer.
+  pub const NEW_INT_MIO : i32 = 98;
+  /// TBD.
+  pub const OPTIMIZE_BI : i32 = 99;
+  /// The callback function is called from within the matrix ordering procedure at an intermediate point.
+  pub const ORDER : i32 = 100;
   /// The callback function is called from within the primal simplex optimizer.
-  pub const PRIMAL_SIMPLEX : i32 = 93;
+  pub const PRIMAL_SIMPLEX : i32 = 101;
   /// The callback function is called at an intermediate stage of the conic quadratic reformulation.
-  pub const QO_REFORMULATE : i32 = 94;
+  pub const QO_REFORMULATE : i32 = 102;
   /// The callback function is called from the OPF reader.
-  pub const READ_OPF : i32 = 95;
+  pub const READ_OPF : i32 = 103;
   /// A chunk of Q non-zeros has been read from a problem file.
-  pub const READ_OPF_SECTION : i32 = 96;
+  pub const READ_OPF_SECTION : i32 = 104;
   /// The callback function is called when the mixed-integer optimizer is restarted.
-  pub const RESTART_MIO : i32 = 97;
+  pub const RESTART_MIO : i32 = 105;
   /// The callback function is called while the task is being solved on a remote server.
-  pub const SOLVING_REMOTE : i32 = 98;
+  pub const SOLVING_REMOTE : i32 = 106;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the dual phase.
-  pub const UPDATE_DUAL_BI : i32 = 99;
+  pub const UPDATE_DUAL_BI : i32 = 107;
   /// The callback function is called in the dual simplex optimizer.
-  pub const UPDATE_DUAL_SIMPLEX : i32 = 100;
+  pub const UPDATE_DUAL_SIMPLEX : i32 = 108;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the dual simplex clean-up phase.
-  pub const UPDATE_DUAL_SIMPLEX_BI : i32 = 101;
+  pub const UPDATE_DUAL_SIMPLEX_BI : i32 = 109;
   /// The callback function is called from within the presolve procedure.
-  pub const UPDATE_PRESOLVE : i32 = 102;
+  pub const UPDATE_PRESOLVE : i32 = 110;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the primal phase.
-  pub const UPDATE_PRIMAL_BI : i32 = 103;
+  pub const UPDATE_PRIMAL_BI : i32 = 111;
   /// The callback function is called  in the primal simplex optimizer.
-  pub const UPDATE_PRIMAL_SIMPLEX : i32 = 104;
+  pub const UPDATE_PRIMAL_SIMPLEX : i32 = 112;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the primal simplex clean-up phase.
-  pub const UPDATE_PRIMAL_SIMPLEX_BI : i32 = 105;
+  pub const UPDATE_PRIMAL_SIMPLEX_BI : i32 = 113;
   /// The callback function is called from simplex optimizer.
-  pub const UPDATE_SIMPLEX : i32 = 106;
+  pub const UPDATE_SIMPLEX : i32 = 114;
   /// The callback function is called from the OPF writer.
-  pub const WRITE_OPF : i32 = 107;
+  pub const WRITE_OPF : i32 = 115;
 } // impl Callbackcode
 
 /// Compression types
@@ -1871,102 +1873,106 @@ impl Dparam {
   pub const DATA_TOL_X : i32 = 14;
   /// Tolerance for coefficient equality during folding.
   pub const FOLDING_TOL_EQ : i32 = 15;
+  /// Controls heartbeat frequency for the new simplex optimizers.
+  pub const HEARTBEAT_SIM_FREQ_TICKS : i32 = 16;
   /// Dual feasibility tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_DFEAS : i32 = 16;
+  pub const INTPNT_CO_TOL_DFEAS : i32 = 17;
   /// Infeasibility tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_INFEAS : i32 = 17;
+  pub const INTPNT_CO_TOL_INFEAS : i32 = 18;
   /// Relative complementarity gap tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_MU_RED : i32 = 18;
+  pub const INTPNT_CO_TOL_MU_RED : i32 = 19;
   /// Optimality tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_NEAR_REL : i32 = 19;
+  pub const INTPNT_CO_TOL_NEAR_REL : i32 = 20;
   /// Primal feasibility tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_PFEAS : i32 = 20;
+  pub const INTPNT_CO_TOL_PFEAS : i32 = 21;
   /// Relative gap termination tolerance used by the interior-point optimizer for conic problems.
-  pub const INTPNT_CO_TOL_REL_GAP : i32 = 21;
+  pub const INTPNT_CO_TOL_REL_GAP : i32 = 22;
   /// Dual feasibility tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_DFEAS : i32 = 22;
+  pub const INTPNT_QO_TOL_DFEAS : i32 = 23;
   /// Infeasibility tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_INFEAS : i32 = 23;
+  pub const INTPNT_QO_TOL_INFEAS : i32 = 24;
   /// Relative complementarity gap tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_MU_RED : i32 = 24;
+  pub const INTPNT_QO_TOL_MU_RED : i32 = 25;
   /// Optimality tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_NEAR_REL : i32 = 25;
+  pub const INTPNT_QO_TOL_NEAR_REL : i32 = 26;
   /// Primal feasibility tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_PFEAS : i32 = 26;
+  pub const INTPNT_QO_TOL_PFEAS : i32 = 27;
   /// Relative gap termination tolerance used by the interior-point optimizer for quadratic problems.
-  pub const INTPNT_QO_TOL_REL_GAP : i32 = 27;
+  pub const INTPNT_QO_TOL_REL_GAP : i32 = 28;
   /// Dual feasibility tolerance used by the interior-point optimizer for linear problems.
-  pub const INTPNT_TOL_DFEAS : i32 = 28;
+  pub const INTPNT_TOL_DFEAS : i32 = 29;
   /// Controls the interior-point dual starting point.
-  pub const INTPNT_TOL_DSAFE : i32 = 29;
+  pub const INTPNT_TOL_DSAFE : i32 = 30;
   /// Infeasibility tolerance used by the interior-point optimizer for linear problems.
-  pub const INTPNT_TOL_INFEAS : i32 = 30;
+  pub const INTPNT_TOL_INFEAS : i32 = 31;
   /// Relative complementarity gap tolerance used by the interior-point optimizer for linear problems.
-  pub const INTPNT_TOL_MU_RED : i32 = 31;
+  pub const INTPNT_TOL_MU_RED : i32 = 32;
   /// Interior-point centering aggressiveness.
-  pub const INTPNT_TOL_PATH : i32 = 32;
+  pub const INTPNT_TOL_PATH : i32 = 33;
   /// Primal feasibility tolerance used by the interior-point optimizer for linear problems.
-  pub const INTPNT_TOL_PFEAS : i32 = 33;
+  pub const INTPNT_TOL_PFEAS : i32 = 34;
   /// Controls the interior-point primal starting point.
-  pub const INTPNT_TOL_PSAFE : i32 = 34;
+  pub const INTPNT_TOL_PSAFE : i32 = 35;
   /// Relative gap termination tolerance used by the interior-point optimizer for linear problems.
-  pub const INTPNT_TOL_REL_GAP : i32 = 35;
+  pub const INTPNT_TOL_REL_GAP : i32 = 36;
   /// Relative step size to the boundary for linear and quadratic optimization problems.
-  pub const INTPNT_TOL_REL_STEP : i32 = 36;
+  pub const INTPNT_TOL_REL_STEP : i32 = 37;
   /// Minimal step size tolerance for the interior-point optimizer.
-  pub const INTPNT_TOL_STEP_SIZE : i32 = 37;
+  pub const INTPNT_TOL_STEP_SIZE : i32 = 38;
+  /// Controls logging frequency for the new simplex optimizers.
+  pub const LOG_SIM_FREQ_TICKS : i32 = 39;
   /// Objective bound.
-  pub const LOWER_OBJ_CUT : i32 = 38;
+  pub const LOWER_OBJ_CUT : i32 = 40;
   /// Objective bound.
-  pub const LOWER_OBJ_CUT_FINITE_TRH : i32 = 39;
+  pub const LOWER_OBJ_CUT_FINITE_TRH : i32 = 41;
   /// Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
-  pub const MIO_CLIQUE_TABLE_SIZE_FACTOR : i32 = 40;
+  pub const MIO_CLIQUE_TABLE_SIZE_FACTOR : i32 = 42;
   /// Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
-  pub const MIO_DJC_MAX_BIGM : i32 = 41;
+  pub const MIO_DJC_MAX_BIGM : i32 = 43;
   /// Time limit for the mixed-integer optimizer.
-  pub const MIO_MAX_TIME : i32 = 42;
+  pub const MIO_MAX_TIME : i32 = 44;
   /// This value is used to compute the relative gap for the solution to an integer optimization problem.
-  pub const MIO_REL_GAP_CONST : i32 = 43;
+  pub const MIO_REL_GAP_CONST : i32 = 45;
   /// Absolute optimality tolerance employed by the mixed-integer optimizer.
-  pub const MIO_TOL_ABS_GAP : i32 = 44;
+  pub const MIO_TOL_ABS_GAP : i32 = 46;
   /// Integer feasibility tolerance.
-  pub const MIO_TOL_ABS_RELAX_INT : i32 = 45;
+  pub const MIO_TOL_ABS_RELAX_INT : i32 = 47;
   /// Feasibility tolerance for mixed integer solver.
-  pub const MIO_TOL_FEAS : i32 = 46;
+  pub const MIO_TOL_FEAS : i32 = 48;
   /// Controls cut generation for mixed-integer optimizer.
-  pub const MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 47;
+  pub const MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT : i32 = 49;
   /// Relative optimality tolerance employed by the mixed-integer optimizer.
-  pub const MIO_TOL_REL_GAP : i32 = 48;
+  pub const MIO_TOL_REL_GAP : i32 = 50;
   /// Solver ticks limit.
-  pub const OPTIMIZER_MAX_TICKS : i32 = 49;
+  pub const OPTIMIZER_MAX_TICKS : i32 = 51;
   /// Solver time limit.
-  pub const OPTIMIZER_MAX_TIME : i32 = 50;
+  pub const OPTIMIZER_MAX_TIME : i32 = 52;
   /// Absolute tolerance employed by the linear dependency checker.
-  pub const PRESOLVE_TOL_ABS_LINDEP : i32 = 51;
+  pub const PRESOLVE_TOL_ABS_LINDEP : i32 = 53;
   /// The presolve is allowed to perturb a bound on a constraint or variable by this amount if it removes an infeasibility.
-  pub const PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 52;
+  pub const PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION : i32 = 54;
   /// Relative tolerance employed by the linear dependency checker.
-  pub const PRESOLVE_TOL_REL_LINDEP : i32 = 53;
+  pub const PRESOLVE_TOL_REL_LINDEP : i32 = 55;
   /// Absolute zero tolerance employed for slack variables in the presolve.
-  pub const PRESOLVE_TOL_S : i32 = 54;
+  pub const PRESOLVE_TOL_S : i32 = 56;
   /// Absolute zero tolerance employed for variables in the presolve.
-  pub const PRESOLVE_TOL_X : i32 = 55;
+  pub const PRESOLVE_TOL_X : i32 = 57;
   /// This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
-  pub const QCQO_REFORMULATE_REL_DROP_TOL : i32 = 56;
+  pub const QCQO_REFORMULATE_REL_DROP_TOL : i32 = 58;
   /// Tolerance to define a matrix to be positive semidefinite.
-  pub const SEMIDEFINITE_TOL_APPROX : i32 = 57;
+  pub const SEMIDEFINITE_TOL_APPROX : i32 = 59;
   /// Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
-  pub const SIM_LU_TOL_REL_PIV : i32 = 58;
+  pub const SIM_LU_TOL_REL_PIV : i32 = 60;
   /// TBD.
-  pub const SIM_PRECISION_SCALING_EXTENDED : i32 = 59;
+  pub const SIM_PRECISION_SCALING_EXTENDED : i32 = 61;
   /// TBD.
-  pub const SIM_PRECISION_SCALING_NORMAL : i32 = 60;
+  pub const SIM_PRECISION_SCALING_NORMAL : i32 = 62;
   /// Absolute pivot tolerance employed by the simplex optimizers.
-  pub const SIMPLEX_ABS_TOL_PIV : i32 = 61;
+  pub const SIMPLEX_ABS_TOL_PIV : i32 = 63;
   /// Objective bound.
-  pub const UPPER_OBJ_CUT : i32 = 62;
+  pub const UPPER_OBJ_CUT : i32 = 64;
   /// Objective bound.
-  pub const UPPER_OBJ_CUT_FINITE_TRH : i32 = 63;
+  pub const UPPER_OBJ_CUT_FINITE_TRH : i32 = 65;
 } // impl Dparam
 
 /// Long integer information items.
@@ -2341,7 +2347,7 @@ impl Iparam {
   pub const BASIS_SOLVE_USE_PLUS_ONE : i32 = 4;
   /// Controls which simplex optimizer is used in the clean-up phase.
   pub const BI_CLEAN_OPTIMIZER : i32 = 5;
-  /// Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
+  /// Basis identification is performed even if the interior-point optimizer is terminated due to maximum number of iterations.
   pub const BI_IGNORE_MAX_ITER : i32 = 6;
   /// Turns on basis identification in case the interior-point optimizer is terminated due to a numerical problem.
   pub const BI_IGNORE_NUM_ERROR : i32 = 7;
@@ -2355,359 +2361,357 @@ impl Iparam {
   pub const FOLDING_USE : i32 = 11;
   /// Detect LMIs and optimize their dualization.
   pub const GETDUAL_CONVERT_LMIS : i32 = 12;
-  /// Controls heartbeat frequency for the new simplex optimizers.
-  pub const HEARTBEAT_SIM_FREQ_TICKS : i32 = 13;
   /// Controls the contents of the infeasibility report.
-  pub const INFEAS_GENERIC_NAMES : i32 = 14;
+  pub const INFEAS_GENERIC_NAMES : i32 = 13;
   /// Turns the feasibility report on or off.
-  pub const INFEAS_REPORT_AUTO : i32 = 15;
+  pub const INFEAS_REPORT_AUTO : i32 = 14;
   /// Controls the contents of the infeasibility report.
-  pub const INFEAS_REPORT_LEVEL : i32 = 16;
+  pub const INFEAS_REPORT_LEVEL : i32 = 15;
   /// Controls whether basis identification is performed.
-  pub const INTPNT_BASIS : i32 = 17;
+  pub const INTPNT_BASIS : i32 = 16;
   /// Controls whether different step sizes are allowed in the primal and dual space.
-  pub const INTPNT_DIFF_STEP : i32 = 18;
+  pub const INTPNT_DIFF_STEP : i32 = 17;
   /// Currently not in use.
-  pub const INTPNT_HOTSTART : i32 = 19;
+  pub const INTPNT_HOTSTART : i32 = 18;
   /// Controls the maximum number of iterations allowed in the interior-point optimizer.
-  pub const INTPNT_MAX_ITERATIONS : i32 = 20;
+  pub const INTPNT_MAX_ITERATIONS : i32 = 19;
   /// Maximum number of correction steps.
-  pub const INTPNT_MAX_NUM_COR : i32 = 21;
+  pub const INTPNT_MAX_NUM_COR : i32 = 20;
   /// Controls the aggressiveness of the offending column detection.
-  pub const INTPNT_OFF_COL_TRH : i32 = 22;
+  pub const INTPNT_OFF_COL_TRH : i32 = 21;
   /// This parameter controls the number of random seeds tried.
-  pub const INTPNT_ORDER_GP_NUM_SEEDS : i32 = 23;
+  pub const INTPNT_ORDER_GP_NUM_SEEDS : i32 = 22;
   /// Controls the ordering strategy.
-  pub const INTPNT_ORDER_METHOD : i32 = 24;
-  /// Currently not in use.
-  pub const INTPNT_PURIFY : i32 = 25;
+  pub const INTPNT_ORDER_METHOD : i32 = 23;
   /// Controls whether regularization is allowed.
-  pub const INTPNT_REGULARIZATION_USE : i32 = 26;
+  pub const INTPNT_REGULARIZATION_USE : i32 = 24;
   /// Controls how the problem is scaled before the interior-point optimizer is used.
-  pub const INTPNT_SCALING : i32 = 27;
+  pub const INTPNT_SCALING : i32 = 25;
   /// Controls whether the primal or the dual problem is solved.
-  pub const INTPNT_SOLVE_FORM : i32 = 28;
+  pub const INTPNT_SOLVE_FORM : i32 = 26;
   /// Starting point used by the interior-point optimizer.
-  pub const INTPNT_STARTING_POINT : i32 = 29;
+  pub const INTPNT_STARTING_POINT : i32 = 27;
   /// Controls the license manager client debugging behavior.
-  pub const LICENSE_DEBUG : i32 = 30;
+  pub const LICENSE_DEBUG : i32 = 28;
   /// Controls license manager client behavior.
-  pub const LICENSE_PAUSE_TIME : i32 = 31;
+  pub const LICENSE_PAUSE_TIME : i32 = 29;
   /// Controls license manager client behavior.
-  pub const LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 32;
+  pub const LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 30;
   /// Controls when expiry warnings are issued.
-  pub const LICENSE_TRH_EXPIRY_WRN : i32 = 33;
+  pub const LICENSE_TRH_EXPIRY_WRN : i32 = 31;
   /// Controls if MOSEK should queue for a license if none is available.
-  pub const LICENSE_WAIT : i32 = 34;
+  pub const LICENSE_WAIT : i32 = 32;
   /// Controls the amount of log information.
-  pub const LOG : i32 = 35;
+  pub const LOG : i32 = 33;
   /// Controls amount of output from the problem analyzer.
-  pub const LOG_ANA_PRO : i32 = 36;
+  pub const LOG_ANA_PRO : i32 = 34;
   /// Controls the amount of output printed by the basis identification procedure. A higher level implies that more information is logged.
-  pub const LOG_BI : i32 = 37;
+  pub const LOG_BI : i32 = 35;
   /// Controls the logging frequency.
-  pub const LOG_BI_FREQ : i32 = 38;
+  pub const LOG_BI_FREQ : i32 = 36;
   /// Controls the reduction in the log levels for the second and any subsequent optimizations.
-  pub const LOG_CUT_SECOND_OPT : i32 = 39;
+  pub const LOG_CUT_SECOND_OPT : i32 = 37;
   /// Controls the amount of logging when a data item such as the maximum number constrains is expanded.
-  pub const LOG_EXPAND : i32 = 40;
+  pub const LOG_EXPAND : i32 = 38;
   /// Controls the amount of output printed when performing feasibility repair. A value higher than one means extensive logging.
-  pub const LOG_FEAS_REPAIR : i32 = 41;
+  pub const LOG_FEAS_REPAIR : i32 = 39;
   /// If turned on, then some log info is printed when a file is written or read.
-  pub const LOG_FILE : i32 = 42;
+  pub const LOG_FILE : i32 = 40;
   /// Controls whether solution summary should be printed by the optimizer.
-  pub const LOG_INCLUDE_SUMMARY : i32 = 43;
+  pub const LOG_INCLUDE_SUMMARY : i32 = 41;
   /// Controls log level for the infeasibility analyzer.
-  pub const LOG_INFEAS_ANA : i32 = 44;
+  pub const LOG_INFEAS_ANA : i32 = 42;
   /// Controls the amount of log information from the interior-point optimizers.
-  pub const LOG_INTPNT : i32 = 45;
+  pub const LOG_INTPNT : i32 = 43;
   /// Control whether local identifying information is printed to the log.
-  pub const LOG_LOCAL_INFO : i32 = 46;
+  pub const LOG_LOCAL_INFO : i32 = 44;
   /// Controls the amount of log information from the mixed-integer optimizers.
-  pub const LOG_MIO : i32 = 47;
+  pub const LOG_MIO : i32 = 45;
   /// The mixed-integer optimizer logging frequency.
-  pub const LOG_MIO_FREQ : i32 = 48;
+  pub const LOG_MIO_FREQ : i32 = 46;
   /// If turned on, then factor lines are added to the log.
-  pub const LOG_ORDER : i32 = 49;
+  pub const LOG_ORDER : i32 = 47;
   /// Controls amount of output printed by the presolve procedure. A higher level implies that more information is logged.
-  pub const LOG_PRESOLVE : i32 = 50;
+  pub const LOG_PRESOLVE : i32 = 48;
   /// Control logging in sensitivity analyzer.
-  pub const LOG_SENSITIVITY : i32 = 51;
+  pub const LOG_SENSITIVITY : i32 = 49;
   /// Control logging in sensitivity analyzer.
-  pub const LOG_SENSITIVITY_OPT : i32 = 52;
+  pub const LOG_SENSITIVITY_OPT : i32 = 50;
   /// Controls the amount of log information from the simplex optimizers.
-  pub const LOG_SIM : i32 = 53;
+  pub const LOG_SIM : i32 = 51;
   /// Controls simplex logging frequency.
-  pub const LOG_SIM_FREQ : i32 = 54;
+  pub const LOG_SIM_FREQ : i32 = 52;
   /// Controls logging frequency for the new simplex optimizers.
-  pub const LOG_SIM_FREQ_GIGA_TICKS : i32 = 55;
+  pub const LOG_SIM_FREQ_GIGA_TICKS : i32 = 53;
   /// Controls the memory related log information.
-  pub const LOG_STORAGE : i32 = 56;
+  pub const LOG_STORAGE : i32 = 54;
   /// Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
-  pub const MAX_NUM_WARNINGS : i32 = 57;
+  pub const MAX_NUM_WARNINGS : i32 = 55;
   /// Controls whether the mixed-integer optimizer is branching up or down by default.
-  pub const MIO_BRANCH_DIR : i32 = 58;
+  pub const MIO_BRANCH_DIR : i32 = 56;
   /// Controls the amount of conflict analysis employed by the mixed-integer optimizer.
-  pub const MIO_CONFLICT_ANALYSIS_LEVEL : i32 = 59;
+  pub const MIO_CONFLICT_ANALYSIS_LEVEL : i32 = 57;
   /// Toggles outer approximation for conic problems.
-  pub const MIO_CONIC_OUTER_APPROXIMATION : i32 = 60;
+  pub const MIO_CONIC_OUTER_APPROXIMATION : i32 = 58;
   /// Controls if an initial mixed integer solution should be constructed from the values of the integer variables.
-  pub const MIO_CONSTRUCT_SOL : i32 = 61;
+  pub const MIO_CONSTRUCT_SOL : i32 = 59;
   /// Maximum number of nodes in each call to Crossover.
-  pub const MIO_CROSSOVER_MAX_NODES : i32 = 62;
+  pub const MIO_CROSSOVER_MAX_NODES : i32 = 60;
   /// Controls whether clique cuts should be generated.
-  pub const MIO_CUT_CLIQUE : i32 = 63;
+  pub const MIO_CUT_CLIQUE : i32 = 61;
   /// Controls whether mixed integer rounding cuts should be generated.
-  pub const MIO_CUT_CMIR : i32 = 64;
+  pub const MIO_CUT_CMIR : i32 = 62;
   /// Controls whether GMI cuts should be generated.
-  pub const MIO_CUT_GMI : i32 = 65;
+  pub const MIO_CUT_GMI : i32 = 63;
   /// Controls whether implied bound cuts should be generated.
-  pub const MIO_CUT_IMPLIED_BOUND : i32 = 66;
+  pub const MIO_CUT_IMPLIED_BOUND : i32 = 64;
   /// Controls whether knapsack cover cuts should be generated.
-  pub const MIO_CUT_KNAPSACK_COVER : i32 = 67;
+  pub const MIO_CUT_KNAPSACK_COVER : i32 = 65;
   /// Controls whether lift-and-project cuts should be generated.
-  pub const MIO_CUT_LIPRO : i32 = 68;
+  pub const MIO_CUT_LIPRO : i32 = 66;
   /// Controls how aggressively generated cuts are selected to be included in the relaxation.
-  pub const MIO_CUT_SELECTION_LEVEL : i32 = 69;
+  pub const MIO_CUT_SELECTION_LEVEL : i32 = 67;
   /// Controls what problem data permutation method is appplied to mixed-integer problems.
-  pub const MIO_DATA_PERMUTATION_METHOD : i32 = 70;
+  pub const MIO_DATA_PERMUTATION_METHOD : i32 = 68;
   /// Controls the amount of dual ray analysis employed by the mixed-integer optimizer.
-  pub const MIO_DUAL_RAY_ANALYSIS_LEVEL : i32 = 71;
+  pub const MIO_DUAL_RAY_ANALYSIS_LEVEL : i32 = 69;
   /// Controls the way the Feasibility Pump heuristic is employed by the mixed-integer optimizer.
-  pub const MIO_FEASPUMP_LEVEL : i32 = 72;
+  pub const MIO_FEASPUMP_LEVEL : i32 = 70;
   /// Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution.
-  pub const MIO_HEURISTIC_LEVEL : i32 = 73;
+  pub const MIO_HEURISTIC_LEVEL : i32 = 71;
   /// Controls the way the mixed-integer optimizer exploits independent-block structure in the problem.
-  pub const MIO_INDEPENDENT_BLOCK_LEVEL : i32 = 74;
+  pub const MIO_INDEPENDENT_BLOCK_LEVEL : i32 = 72;
   /// Maximum number of branches allowed during the branch and bound search.
-  pub const MIO_MAX_NUM_BRANCHES : i32 = 75;
+  pub const MIO_MAX_NUM_BRANCHES : i32 = 73;
   /// Maximum number of relaxations in branch and bound search.
-  pub const MIO_MAX_NUM_RELAXS : i32 = 76;
+  pub const MIO_MAX_NUM_RELAXS : i32 = 74;
   /// Maximum number of restarts allowed during the branch and bound search.
-  pub const MIO_MAX_NUM_RESTARTS : i32 = 77;
+  pub const MIO_MAX_NUM_RESTARTS : i32 = 75;
   /// Maximum number of cut separation rounds at the root node.
-  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 78;
+  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 76;
   /// Controls how many feasible solutions the mixed-integer optimizer investigates.
-  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 79;
+  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 77;
   /// Controls how much emphasis is put on reducing memory usage.
-  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 80;
+  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 78;
   /// Number of times a variable must have been branched on for its pseudocost to be considered reliable.
-  pub const MIO_MIN_REL : i32 = 81;
+  pub const MIO_MIN_REL : i32 = 79;
   /// Turns on/off the mixed-integer mode.
-  pub const MIO_MODE : i32 = 82;
+  pub const MIO_MODE : i32 = 80;
   /// Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
-  pub const MIO_NODE_OPTIMIZER : i32 = 83;
+  pub const MIO_NODE_OPTIMIZER : i32 = 81;
   /// Controls the node selection strategy employed by the mixed-integer optimizer.
-  pub const MIO_NODE_SELECTION : i32 = 84;
+  pub const MIO_NODE_SELECTION : i32 = 82;
   /// Controls how much emphasis is put on reducing numerical problems
-  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 85;
+  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 83;
   /// Maximum number of nodes in each call to RINS.
-  pub const MIO_OPT_FACE_MAX_NODES : i32 = 86;
+  pub const MIO_OPT_FACE_MAX_NODES : i32 = 84;
   /// Enables or disables perspective reformulation in presolve.
-  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 87;
+  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 85;
   /// Controls if the aggregator should be used.
-  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 88;
+  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 86;
   /// Controls the amount of probing employed by the mixed-integer optimizer in presolve.
-  pub const MIO_PROBING_LEVEL : i32 = 89;
+  pub const MIO_PROBING_LEVEL : i32 = 87;
   /// Use objective domain propagation.
-  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 90;
+  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 88;
   /// Controls what reformulation method is applied to mixed-integer quadratic problems.
-  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 91;
+  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 89;
   /// Maximum number of nodes in each call to RENS.
-  pub const MIO_RENS_MAX_NODES : i32 = 92;
+  pub const MIO_RENS_MAX_NODES : i32 = 90;
   /// Maximum number of nodes in each call to RINS.
-  pub const MIO_RINS_MAX_NODES : i32 = 93;
+  pub const MIO_RINS_MAX_NODES : i32 = 91;
   /// Controls which optimizer is employed at the root node in the mixed-integer optimizer.
-  pub const MIO_ROOT_OPTIMIZER : i32 = 94;
+  pub const MIO_ROOT_OPTIMIZER : i32 = 92;
   /// Sets the random seed used for randomization in the mixed integer optimizer.
-  pub const MIO_SEED : i32 = 95;
+  pub const MIO_SEED : i32 = 93;
   /// Controls the amount of symmetry detection and handling employed by the mixed-integer optimizer in presolve.
-  pub const MIO_SYMMETRY_LEVEL : i32 = 96;
+  pub const MIO_SYMMETRY_LEVEL : i32 = 94;
   /// Controls the variable selection strategy employed by the mixed-integer optimizer.
-  pub const MIO_VAR_SELECTION : i32 = 97;
+  pub const MIO_VAR_SELECTION : i32 = 95;
   /// Controls how much effort is put into detecting variable bounds.
-  pub const MIO_VB_DETECTION_LEVEL : i32 = 98;
+  pub const MIO_VB_DETECTION_LEVEL : i32 = 96;
   /// Set the number of iterations to spin before sleeping.
-  pub const MT_SPINCOUNT : i32 = 99;
+  pub const MT_SPINCOUNT : i32 = 97;
   /// Not in use
-  pub const NG : i32 = 100;
+  pub const NG : i32 = 98;
   /// The number of threads employed by the optimizer.
-  pub const NUM_THREADS : i32 = 101;
+  pub const NUM_THREADS : i32 = 99;
   /// Write a text header with date and MOSEK version in an OPF file.
-  pub const OPF_WRITE_HEADER : i32 = 102;
+  pub const OPF_WRITE_HEADER : i32 = 100;
   /// Write a hint section with problem dimensions in the beginning of an OPF file.
-  pub const OPF_WRITE_HINTS : i32 = 103;
+  pub const OPF_WRITE_HINTS : i32 = 101;
   /// Aim to keep lines in OPF files not much longer than this.
-  pub const OPF_WRITE_LINE_LENGTH : i32 = 104;
+  pub const OPF_WRITE_LINE_LENGTH : i32 = 102;
   /// Write a parameter section in an OPF file.
-  pub const OPF_WRITE_PARAMETERS : i32 = 105;
+  pub const OPF_WRITE_PARAMETERS : i32 = 103;
   /// Write objective, constraints, bounds etc. to an OPF file.
-  pub const OPF_WRITE_PROBLEM : i32 = 106;
+  pub const OPF_WRITE_PROBLEM : i32 = 104;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_BAS : i32 = 107;
+  pub const OPF_WRITE_SOL_BAS : i32 = 105;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITG : i32 = 108;
+  pub const OPF_WRITE_SOL_ITG : i32 = 106;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITR : i32 = 109;
+  pub const OPF_WRITE_SOL_ITR : i32 = 107;
   /// Enable inclusion of solutions in the OPF files.
-  pub const OPF_WRITE_SOLUTIONS : i32 = 110;
+  pub const OPF_WRITE_SOLUTIONS : i32 = 108;
   /// Controls which optimizer is used to optimize the task.
-  pub const OPTIMIZER : i32 = 111;
+  pub const OPTIMIZER : i32 = 109;
   /// If turned on, then names in the parameter file are case sensitive.
-  pub const PARAM_READ_CASE_NAME : i32 = 112;
+  pub const PARAM_READ_CASE_NAME : i32 = 110;
   /// If turned on, then errors in parameter settings is ignored.
-  pub const PARAM_READ_IGN_ERROR : i32 = 113;
+  pub const PARAM_READ_IGN_ERROR : i32 = 111;
   /// Maximum amount of fill-in created in one pivot during the elimination phase.
-  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 114;
+  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 112;
   /// Control the maximum number of times the eliminator is tried.
-  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 115;
+  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 113;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 116;
+  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 114;
   /// Controls whether a new experimental linear dependency checker is employed.
-  pub const PRESOLVE_LINDEP_NEW : i32 = 117;
+  pub const PRESOLVE_LINDEP_NEW : i32 = 115;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 118;
+  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 116;
   /// Controls whether the linear constraints are checked for linear dependencies.
-  pub const PRESOLVE_LINDEP_USE : i32 = 119;
+  pub const PRESOLVE_LINDEP_USE : i32 = 117;
   /// Control the maximum number of times presolve passes over the problem.
-  pub const PRESOLVE_MAX_NUM_PASS : i32 = 120;
+  pub const PRESOLVE_MAX_NUM_PASS : i32 = 118;
   /// Controls the maximum number of reductions performed by the presolve.
-  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 121;
+  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 119;
   /// Controls whether the presolve is applied to a problem before it is optimized.
-  pub const PRESOLVE_USE : i32 = 122;
+  pub const PRESOLVE_USE : i32 = 120;
   /// Controls which optimizer that is used to find the optimal repair.
-  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 123;
+  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 121;
   /// Controls whether parameters section is written in PTF files.
-  pub const PTF_WRITE_PARAMETERS : i32 = 124;
+  pub const PTF_WRITE_PARAMETERS : i32 = 122;
   /// Controls whether PSD terms with a coefficient matrix of just one non-zero are written as a single term instead of as a matrix term.
-  pub const PTF_WRITE_SINGLE_PSD_TERMS : i32 = 125;
+  pub const PTF_WRITE_SINGLE_PSD_TERMS : i32 = 123;
   /// Controls whether solution section is written in PTF files.
-  pub const PTF_WRITE_SOLUTIONS : i32 = 126;
+  pub const PTF_WRITE_SOLUTIONS : i32 = 124;
   /// Controls if simple transformation are done when writing PTF files.
-  pub const PTF_WRITE_TRANSFORM : i32 = 127;
+  pub const PTF_WRITE_TRANSFORM : i32 = 125;
   /// Controls whether files are read using synchronous or asynchronous reader.
-  pub const READ_ASYNC : i32 = 128;
+  pub const READ_ASYNC : i32 = 126;
   /// Turns on additional debugging information when reading files.
-  pub const READ_DEBUG : i32 = 129;
+  pub const READ_DEBUG : i32 = 127;
   /// Controls whether the free constraints are included in the problem. Applies to MPS files.
-  pub const READ_KEEP_FREE_CON : i32 = 130;
+  pub const READ_KEEP_FREE_CON : i32 = 128;
   /// Controls how strictly the MPS file reader interprets the MPS format.
-  pub const READ_MPS_FORMAT : i32 = 131;
+  pub const READ_MPS_FORMAT : i32 = 129;
   /// Controls the maximal number of characters allowed in one line of the MPS file.
-  pub const READ_MPS_WIDTH : i32 = 132;
+  pub const READ_MPS_WIDTH : i32 = 130;
   /// Controls what information is used from the task files.
-  pub const READ_TASK_IGNORE_PARAM : i32 = 133;
+  pub const READ_TASK_IGNORE_PARAM : i32 = 131;
   /// Use compression when sending data to an optimization server
-  pub const REMOTE_USE_COMPRESSION : i32 = 134;
+  pub const REMOTE_USE_COMPRESSION : i32 = 132;
   /// Removes unused solutions before the optimization is performed.
-  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 135;
+  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 133;
   /// Controls sensitivity report behavior.
-  pub const SENSITIVITY_ALL : i32 = 136;
+  pub const SENSITIVITY_ALL : i32 = 134;
   /// Controls which type of sensitivity analysis is to be performed.
-  pub const SENSITIVITY_TYPE : i32 = 137;
+  pub const SENSITIVITY_TYPE : i32 = 135;
   /// Controls whether an LU factorization of the basis is used in a hot-start.
-  pub const SIM_BASIS_FACTOR_USE : i32 = 138;
+  pub const SIM_BASIS_FACTOR_USE : i32 = 136;
+  /// TBD
+  pub const SIM_CACHE : i32 = 137;
   /// Controls how aggressively degeneration is handled.
-  pub const SIM_DEGEN : i32 = 139;
+  pub const SIM_DEGEN : i32 = 138;
   /// Not in use.
-  pub const SIM_DETECT_PWL : i32 = 140;
+  pub const SIM_DETECT_PWL : i32 = 139;
   /// Controls whether crashing is performed in the dual simplex optimizer.
-  pub const SIM_DUAL_CRASH : i32 = 141;
+  pub const SIM_DUAL_CRASH : i32 = 140;
   /// An experimental feature.
-  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 142;
+  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 141;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 143;
+  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 142;
   /// Controls the dual simplex strategy.
-  pub const SIM_DUAL_SELECTION : i32 = 144;
+  pub const SIM_DUAL_SELECTION : i32 = 143;
   /// Controls if the simplex optimizers are allowed to exploit duplicated columns.
-  pub const SIM_EXPLOIT_DUPVEC : i32 = 145;
+  pub const SIM_EXPLOIT_DUPVEC : i32 = 144;
   /// Controls the type of hot-start that the simplex optimizer perform.
-  pub const SIM_HOTSTART : i32 = 146;
+  pub const SIM_HOTSTART : i32 = 145;
   /// Determines if the simplex optimizer should exploit the initial factorization.
-  pub const SIM_HOTSTART_LU : i32 = 147;
+  pub const SIM_HOTSTART_LU : i32 = 146;
   /// Maximum number of iterations that can be used by a simplex optimizer.
-  pub const SIM_MAX_ITERATIONS : i32 = 148;
+  pub const SIM_MAX_ITERATIONS : i32 = 147;
   /// Controls how many set-backs that are allowed within a simplex optimizer.
-  pub const SIM_MAX_NUM_SETBACKS : i32 = 149;
+  pub const SIM_MAX_NUM_SETBACKS : i32 = 148;
   /// Controls if the simplex optimizer ensures a non-singular basis, if possible.
-  pub const SIM_NON_SINGULAR : i32 = 150;
-  pub const SIM_PRECISION : i32 = 151;
+  pub const SIM_NON_SINGULAR : i32 = 149;
+  pub const SIM_PRECISION : i32 = 150;
   /// Controls whether the simplex optimizer is allowed to boost the precision.
-  pub const SIM_PRECISION_BOOST : i32 = 152;
+  pub const SIM_PRECISION_BOOST : i32 = 151;
   /// Controls the simplex crash.
-  pub const SIM_PRIMAL_CRASH : i32 = 153;
+  pub const SIM_PRIMAL_CRASH : i32 = 152;
   /// An experimental feature.
-  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 154;
+  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 153;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 155;
+  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 154;
   /// Controls the primal simplex strategy.
-  pub const SIM_PRIMAL_SELECTION : i32 = 156;
+  pub const SIM_PRIMAL_SELECTION : i32 = 155;
   /// Controls the basis refactoring frequency.
-  pub const SIM_REFACTOR_FREQ : i32 = 157;
+  pub const SIM_REFACTOR_FREQ : i32 = 156;
   /// Controls if the simplex optimizers are allowed to reformulate the problem.
-  pub const SIM_REFORMULATION : i32 = 158;
+  pub const SIM_REFORMULATION : i32 = 157;
   /// Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
-  pub const SIM_SAVE_LU : i32 = 159;
+  pub const SIM_SAVE_LU : i32 = 158;
   /// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
-  pub const SIM_SCALING : i32 = 160;
+  pub const SIM_SCALING : i32 = 159;
   /// Controls how the problem is scaled before a simplex optimizer is used.
-  pub const SIM_SCALING_METHOD : i32 = 161;
+  pub const SIM_SCALING_METHOD : i32 = 160;
   /// Sets the random seed used for randomization in the simplex optimizers.
-  pub const SIM_SEED : i32 = 162;
+  pub const SIM_SEED : i32 = 161;
   /// Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
-  pub const SIM_SOLVE_FORM : i32 = 163;
+  pub const SIM_SOLVE_FORM : i32 = 162;
   /// Controls the simplex behavior.
-  pub const SIM_SWITCH_OPTIMIZER : i32 = 164;
+  pub const SIM_SWITCH_OPTIMIZER : i32 = 163;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_BASIC : i32 = 165;
+  pub const SOL_FILTER_KEEP_BASIC : i32 = 164;
   /// Controls the input solution file format.
-  pub const SOL_READ_NAME_WIDTH : i32 = 166;
+  pub const SOL_READ_NAME_WIDTH : i32 = 165;
   /// Controls the input solution file format.
-  pub const SOL_READ_WIDTH : i32 = 167;
+  pub const SOL_READ_WIDTH : i32 = 166;
   /// Controls the amount of timing performed inside MOSEK.
-  pub const TIMING_LEVEL : i32 = 168;
+  pub const TIMING_LEVEL : i32 = 167;
   /// Controls whether files are read using synchronous or asynchronous writer.
-  pub const WRITE_ASYNC : i32 = 169;
+  pub const WRITE_ASYNC : i32 = 168;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_CONSTRAINTS : i32 = 170;
+  pub const WRITE_BAS_CONSTRAINTS : i32 = 169;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_HEAD : i32 = 171;
+  pub const WRITE_BAS_HEAD : i32 = 170;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_VARIABLES : i32 = 172;
+  pub const WRITE_BAS_VARIABLES : i32 = 171;
   /// Controls output file compression.
-  pub const WRITE_COMPRESSION : i32 = 173;
+  pub const WRITE_COMPRESSION : i32 = 172;
   /// Controls the output file data.
-  pub const WRITE_FREE_CON : i32 = 174;
+  pub const WRITE_FREE_CON : i32 = 173;
   /// Controls the output file data.
-  pub const WRITE_GENERIC_NAMES : i32 = 175;
+  pub const WRITE_GENERIC_NAMES : i32 = 174;
   /// Controls if the writer ignores incompatible problem items when writing files.
-  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 176;
+  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 175;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_CONSTRAINTS : i32 = 177;
+  pub const WRITE_INT_CONSTRAINTS : i32 = 176;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_HEAD : i32 = 178;
+  pub const WRITE_INT_HEAD : i32 = 177;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_VARIABLES : i32 = 179;
+  pub const WRITE_INT_VARIABLES : i32 = 178;
   /// When set, the JSON task and solution files are written with indentation for better readability.
-  pub const WRITE_JSON_INDENTATION : i32 = 180;
+  pub const WRITE_JSON_INDENTATION : i32 = 179;
   /// Write full linear objective
-  pub const WRITE_LP_FULL_OBJ : i32 = 181;
+  pub const WRITE_LP_FULL_OBJ : i32 = 180;
   /// Controls the LP output file format.
-  pub const WRITE_LP_LINE_WIDTH : i32 = 182;
+  pub const WRITE_LP_LINE_WIDTH : i32 = 181;
   /// Controls in which format the MPS file is written.
-  pub const WRITE_MPS_FORMAT : i32 = 183;
+  pub const WRITE_MPS_FORMAT : i32 = 182;
   /// Controls the output file data.
-  pub const WRITE_MPS_INT : i32 = 184;
+  pub const WRITE_MPS_INT : i32 = 183;
   /// Controls the solution file format.
-  pub const WRITE_SOL_BARVARIABLES : i32 = 185;
+  pub const WRITE_SOL_BARVARIABLES : i32 = 184;
   /// Controls the solution file format.
-  pub const WRITE_SOL_CONSTRAINTS : i32 = 186;
+  pub const WRITE_SOL_CONSTRAINTS : i32 = 185;
   /// Controls solution file format.
-  pub const WRITE_SOL_HEAD : i32 = 187;
+  pub const WRITE_SOL_HEAD : i32 = 186;
   /// Controls whether the user specified names are employed even if they are invalid names.
-  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 188;
+  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 187;
   /// Controls the solution file format.
-  pub const WRITE_SOL_VARIABLES : i32 = 189;
+  pub const WRITE_SOL_VARIABLES : i32 = 188;
 } // impl Iparam
 
 /// Specifies the branching direction.
@@ -2808,7 +2812,7 @@ impl Miovarseltype {
   pub const FREE : i32 = 0;
   /// The optimizer employs pseudocost variable selection.
   pub const PSEUDOCOST : i32 = 1;
-  /// The optimizer employs strong branching variable selection.
+  /// The optimizer employs strong branching varfiable selection
   pub const STRONG : i32 = 2;
 } // impl Miovarseltype
 
@@ -2862,12 +2866,14 @@ impl Optimizertype {
   pub const INTPNT : i32 = 4;
   /// The mixed-integer optimizer.
   pub const MIXED_INT : i32 = 5;
-  /// The new dual simplex optimizer is used.
+  /// The new exprimental dual simplex optimizer is used.
   pub const NEW_DUAL_SIMPLEX : i32 = 6;
-  /// The new primal simplex optimizer is used. It is not recommended to use this option.
-  pub const NEW_PRIMAL_SIMPLEX : i32 = 7;
+  /// The new exprimental interior-point optimizer is used.
+  pub const NEW_INTPNT : i32 = 7;
+  /// The new exprimental primal simplex optimizer is used. It is not recommended to use this option.
+  pub const NEW_PRIMAL_SIMPLEX : i32 = 8;
   /// The primal simplex optimizer is used.
-  pub const PRIMAL_SIMPLEX : i32 = 8;
+  pub const PRIMAL_SIMPLEX : i32 = 9;
 } // impl Optimizertype
 
 /// Ordering strategies
@@ -2912,8 +2918,6 @@ impl Foldingmode {
   pub const FREE_UNLESS_BASIC : i32 = 2;
   /// Full folding is always performed regardless of workload.
   pub const FORCE : i32 = 3;
-  /// (A development stage option for testing of fold itself, remove for release). Like FREE, but the optimizer exits after folding.
-  pub const ONLY : i32 = 4;
 } // impl Foldingmode
 
 /// Parameter type
@@ -3088,14 +3092,6 @@ impl Rescode {
   pub const WRN_DUPLICATE_BARVARIABLE_NAMES : i32 = 852;
   /// Two cone names are identical.
   pub const WRN_DUPLICATE_CONE_NAMES : i32 = 853;
-  /// LP file will be written with generic variable names.
-  pub const WRN_WRITE_LP_INVALID_VAR_NAMES : i32 = 854;
-  /// LP file will be written with generic variable names.
-  pub const WRN_WRITE_LP_DUPLICATE_VAR_NAMES : i32 = 855;
-  /// LP file will be written with generic constraint names.
-  pub const WRN_WRITE_LP_INVALID_CON_NAMES : i32 = 856;
-  /// LP file will be written with generic constraint names.
-  pub const WRN_WRITE_LP_DUPLICATE_CON_NAMES : i32 = 857;
   /// Warn against very large bounds.
   pub const WRN_ANA_LARGE_BOUNDS : i32 = 900;
   /// Warn against all objective coefficients being zero.
@@ -3250,8 +3246,18 @@ impl Rescode {
   pub const ERR_DIMENSION_SPECIFICATION : i32 = 1082;
   /// Invalid axis names specification
   pub const ERR_AXIS_NAME_SPECIFICATION : i32 = 1083;
+  /// Encountered premature end-of-file in input stream.
+  pub const ERR_READ_PREMATURE_EOF : i32 = 1089;
   /// The specified format cannot be read.
   pub const ERR_READ_FORMAT : i32 = 1090;
+  /// Invalid variable name. Cannot write valid LP file.
+  pub const ERR_WRITE_LP_INVALID_VAR_NAMES : i32 = 1091;
+  /// Duplicate variable names. Cannot write valid LP file.
+  pub const ERR_WRITE_LP_DUPLICATE_VAR_NAMES : i32 = 1092;
+  /// Invalid constraint name. Cannot write valid LP file.
+  pub const ERR_WRITE_LP_INVALID_CON_NAMES : i32 = 1093;
+  /// Duplicate constraint names. Cannot write valid LP file.
+  pub const ERR_WRITE_LP_DUPLICATE_CON_NAMES : i32 = 1094;
   /// An error occurred while reading an MPS file.
   pub const ERR_MPS_FILE : i32 = 1100;
   /// Invalid field occurred while reading an MPS file.
@@ -3720,6 +3726,10 @@ impl Rescode {
   pub const ERR_TASK_INVALID : i32 = 2561;
   /// Failed to write the task file.
   pub const ERR_TASK_WRITE : i32 = 2562;
+  /// Failed to read or write due to an I/O error.
+  pub const ERR_READ_WRITE : i32 = 2563;
+  /// The Task file ended prematurely.
+  pub const ERR_TASK_PREMATURE_EOF : i32 = 2564;
   /// Could not compute the LU factors of the matrix within the maximum number of allowed tries.
   pub const ERR_LU_MAX_NUM_TRIES : i32 = 2800;
   /// An invalid UTF8 string is encountered.
@@ -4004,6 +4014,8 @@ impl Rescode {
   pub const ERR_SERVER_PROBLEM_SIZE : i32 = 8008;
   /// The hard timeout limit was reached on solver server
   pub const ERR_SERVER_HARD_TIMEOUT : i32 = 8009;
+  /// Solution file version from server not supported.
+  pub const ERR_SERVER_VERSION_MISMATCH : i32 = 8010;
   /// An element in a sparse matrix is specified twice.
   pub const ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX : i32 = 20050;
   /// An index is specified twice in an affine expression list.
@@ -4519,7 +4531,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
     #[allow(unused_parens)]
     pub fn compute_sparse_cholesky(&self,numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
       let mut __tmp_0 : * const i32 = std::ptr::null();
       let mut __tmp_1 : * const f64 = std::ptr::null();
       let mut __tmp_2 : * const i32 = std::ptr::null();
@@ -4822,7 +4834,7 @@ impl Env {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
     #[allow(unused_parens)]
     pub fn sparse_triangular_solve_dense(&self,transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-      let n_ : i32 = std::cmp::min(std::cmp::min(lptrc_.len(),b_.len()),lnzc_.len()) as i32;
+      let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lptrc_.len()),lnzc_.len()) as i32;
       if lnzc_.len() != (n_).try_into().unwrap() {
         return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
       }
@@ -5101,6 +5113,16 @@ impl TaskCB {
         self.update_callback()
     }
 
+    pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+        where F : FnMut(&[u8]) -> usize 
+    {
+        self.data.task.write_data_stream(func,format,compress)
+    }
+    
+    pub fn read_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+        where F : FnMut(&mut [u8]) -> usize {
+        self.data.task.read_data_stream(func,format,compress)
+    }
     /// Analyze the names and issue an error for the first invalid name.
     ///
     /// # Arguments
@@ -6962,6 +6984,20 @@ impl TaskCB {
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getlintinf>
     pub fn get_lint_inf(&self,whichliinf_ : i32) -> Result<i64,String> { self.data.task.get_lint_inf(whichliinf_) }
+    /// Obtains an integer parameter.
+    ///
+    /// # Arguments
+    ///
+    /// - `param_` Which parameter.
+    ///   
+    ///   See [Iparam]
+    ///
+    /// # Returns
+    ///
+    ///   - `parvalue` Parameter value.
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getlintparam>
+    pub fn get_lint_param(&self,param_ : i32) -> Result<i64,String> { self.data.task.get_lint_param(param_) }
     /// Obtains the maximum length (not including terminating zero character) of any objective, constraint, variable, domain or cone name.
     ///
     /// # Arguments
@@ -8848,6 +8884,17 @@ impl TaskCB {
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putintparam>
     pub fn put_int_param(&mut self,param_ : i32,parvalue_ : i32) -> Result<(),String> { self.data.task.put_int_param(param_,parvalue_) }
+    /// Sets an integer parameter.
+    ///
+    /// # Arguments
+    ///
+    /// - `param_` Which parameter.
+    ///   
+    ///   See [Iparam]
+    /// - `parvalue_` Parameter value.
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlintparam>
+    pub fn put_lint_param(&mut self,param_ : i32,parvalue_ : i64) -> Result<(),String> { self.data.task.put_lint_param(param_,parvalue_) }
     /// Sets the number of preallocated affine conic constraints.
     ///
     /// # Arguments
@@ -10412,7 +10459,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendconesseq>
     #[allow(unused_parens)]
     pub fn append_cones_seq(&mut self,ct_ : &[i32],conepar_ : &[f64],nummem_ : &[i32],j_ : i32) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(ct_.len(),conepar_.len()),nummem_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(nummem_.len(),ct_.len()),conepar_.len()) as i32;
       self.handle_res(unsafe { MSK_appendconesseq(self.ptr,num_,ct_.as_ptr(),conepar_.as_ptr(),nummem_.as_ptr(),j_) },"append_cones_seq")?;
       return Result::Ok(());
     } // appendconesseq
@@ -10656,7 +10703,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmat>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat(&mut self,dim_ : i32,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<i64,String> {
-      let nz_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),subj_.len()),valij_.len()) as i64;
+      let nz_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
       let mut __tmp_0 : i64 = i64::default();
       if subi_.len() != subj_.len() || subi_.len() != valij_.len() { return Err("append_sparse_sym_mat: Mismatching lengths if subi, subj and valij".to_string()); }
       self.handle_res(unsafe { MSK_appendsparsesymmat(self.ptr,dim_,nz_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr(),&mut __tmp_0) },"append_sparse_sym_mat")?;
@@ -10676,7 +10723,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.appendsparsesymmatlist>
     #[allow(unused_parens)]
     pub fn append_sparse_sym_mat_list(&mut self,dims_ : &[i32],nz_ : &[i64],subi_ : &[i32],subj_ : &[i32],valij_ : &[f64],idx_ : &mut[i64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(nz_.len(),dims_.len()) as i32;
+      let num_ : i32 = std::cmp::min(dims_.len(),nz_.len()) as i32;
       let mut __tmp_0 : i64 = i64::default();
       for __tmp_1 in nz_ { __tmp_0 += __tmp_1; }
       if subi_.len() != (__tmp_0).try_into().unwrap() {
@@ -13381,6 +13428,25 @@ impl Task {
       self.handle_res(unsafe { MSK_getlintinf(self.ptr,whichliinf_,&mut __tmp_0) },"get_lint_inf")?;
       return Result::Ok(__tmp_0);
     } // getlintinf
+    /// Obtains an integer parameter.
+    ///
+    /// # Arguments
+    ///
+    /// - `param_` Which parameter.
+    ///   
+    ///   See [Iparam]
+    ///
+    /// # Returns
+    ///
+    ///   - `parvalue` Parameter value.
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getlintparam>
+    #[allow(unused_parens)]
+    pub fn get_lint_param(&self,param_ : i32) -> Result<i64,String> {
+      let mut __tmp_0 : i64 = i64::default();
+      self.handle_res(unsafe { MSK_getlintparam(self.ptr,param_,&mut __tmp_0) },"get_lint_param")?;
+      return Result::Ok(__tmp_0);
+    } // getlintparam
     /// Obtains the maximum length (not including terminating zero character) of any objective, constraint, variable, domain or cone name.
     ///
     /// # Arguments
@@ -15280,8 +15346,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.inputdata64>
     #[allow(unused_parens)]
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),blc_.len()),buc_.len()) as i32;
-      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),aptrb_.len()),bux_.len()),c_.len()),bkx_.len()),aptre_.len()) as i32;
+      let numcon_ : i32 = std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),blc_.len()) as i32;
+      let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(aptrb_.len(),bkx_.len()),bux_.len()),c_.len()),blx_.len()),aptre_.len()) as i32;
       if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
       if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
       if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
@@ -15478,8 +15544,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.primalsensitivity>
     #[allow(unused_parens)]
     pub fn primal_sensitivity(&mut self,subi_ : &[i32],marki_ : &[i32],subj_ : &[i32],markj_ : &[i32],leftpricei_ : &mut[f64],rightpricei_ : &mut[f64],leftrangei_ : &mut[f64],rightrangei_ : &mut[f64],leftpricej_ : &mut[f64],rightpricej_ : &mut[f64],leftrangej_ : &mut[f64],rightrangej_ : &mut[f64]) -> Result<(),String> {
-      let numi_ : i32 = std::cmp::min(marki_.len(),subi_.len()) as i32;
-      let numj_ : i32 = std::cmp::min(markj_.len(),subj_.len()) as i32;
+      let numi_ : i32 = std::cmp::min(subi_.len(),marki_.len()) as i32;
+      let numj_ : i32 = std::cmp::min(subj_.len(),markj_.len()) as i32;
       if leftpricei_.len() > 0 && leftpricei_.len() != (numi_).try_into().unwrap() {
         return Result::Err("primal_sensitivity: Argument 'leftpricei' has the wrong length, expected numi_".to_string());
       }
@@ -15595,7 +15661,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacclist>
     #[allow(unused_parens)]
     pub fn put_acc_list(&mut self,accidxs_ : &[i64],domidxs_ : &[i64],afeidxlist_ : &[i64],b_ : &[f64]) -> Result<(),String> {
-      let numaccs_ : i64 = std::cmp::min(domidxs_.len(),accidxs_.len()) as i64;
+      let numaccs_ : i64 = std::cmp::min(accidxs_.len(),domidxs_.len()) as i64;
       let numafeidx_ : i64 = afeidxlist_.len() as i64;
       if b_.len() > 0 && b_.len() != (numafeidx_).try_into().unwrap() {
         return Result::Err("put_acc_list: Argument 'b' has the wrong length, expected numafeidx_".to_string());
@@ -15628,7 +15694,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacol>
     #[allow(unused_parens)]
     pub fn put_a_col(&mut self,j_ : i32,subj_ : &[i32],valj_ : &[f64]) -> Result<(),String> {
-      let nzj_ : i32 = std::cmp::min(valj_.len(),subj_.len()) as i32;
+      let nzj_ : i32 = std::cmp::min(subj_.len(),valj_.len()) as i32;
       self.handle_res(unsafe { MSK_putacol(self.ptr,j_,nzj_,subj_.as_ptr(),valj_.as_ptr()) },"put_a_col")?;
       return Result::Ok(());
     } // putacol
@@ -15689,7 +15755,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfblocktriplet>
     #[allow(unused_parens)]
     pub fn put_afe_barf_block_triplet(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],subk_ : &[i32],subl_ : &[i32],valkl_ : &[f64]) -> Result<(),String> {
-      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),valkl_.len()),subl_.len()),barvaridx_.len()),subk_.len()) as i64;
+      let numtrip_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(subk_.len(),valkl_.len()),afeidx_.len()),subl_.len()),barvaridx_.len()) as i64;
       if afeidx_.len() != (numtrip_).try_into().unwrap() {
         return Result::Err("put_afe_barf_block_triplet: Argument 'afeidx' has the wrong length, expected numtrip_".to_string());
       }
@@ -15738,7 +15804,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_barf_entry_list(&mut self,afeidx_ : &[i64],barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(afeidx_.len(),ptrterm_.len()),numterm_.len()),barvaridx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(ptrterm_.len(),barvaridx_.len()),numterm_.len()),afeidx_.len()) as i64;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfentrylist(self.ptr,numafeidx_,afeidx_.as_ptr(),barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_entry_list")?;
       return Result::Ok(());
@@ -15757,7 +15823,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafebarfrow>
     #[allow(unused_parens)]
     pub fn put_afe_barf_row(&mut self,afeidx_ : i64,barvaridx_ : &[i32],numterm_ : &[i64],ptrterm_ : &[i64],termidx_ : &[i64],termweight_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i32 = std::cmp::min(std::cmp::min(ptrterm_.len(),numterm_.len()),barvaridx_.len()) as i32;
+      let numentr_ : i32 = std::cmp::min(std::cmp::min(ptrterm_.len(),barvaridx_.len()),numterm_.len()) as i32;
       let lenterm_ : i64 = std::cmp::min(termweight_.len(),termidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafebarfrow(self.ptr,afeidx_,numentr_,barvaridx_.as_ptr(),numterm_.as_ptr(),ptrterm_.as_ptr(),lenterm_,termidx_.as_ptr(),termweight_.as_ptr()) },"put_afe_barf_row")?;
       return Result::Ok(());
@@ -15773,7 +15839,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefcol>
     #[allow(unused_parens)]
     pub fn put_afe_f_col(&mut self,varidx_ : i32,afeidx_ : &[i64],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i64 = std::cmp::min(afeidx_.len(),val_.len()) as i64;
+      let numnz_ : i64 = std::cmp::min(val_.len(),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefcol(self.ptr,varidx_,numnz_,afeidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_col")?;
       return Result::Ok(());
     } // putafefcol
@@ -15802,7 +15868,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefentrylist>
     #[allow(unused_parens)]
     pub fn put_afe_f_entry_list(&mut self,afeidx_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numentr_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),val_.len()),varidx_.len()) as i64;
+      let numentr_ : i64 = std::cmp::min(std::cmp::min(varidx_.len(),val_.len()),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafefentrylist(self.ptr,numentr_,afeidx_.as_ptr(),varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_entry_list")?;
       return Result::Ok(());
     } // putafefentrylist
@@ -15817,7 +15883,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrow>
     #[allow(unused_parens)]
     pub fn put_afe_f_row(&mut self,afeidx_ : i64,varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numnz_ : i32 = std::cmp::min(val_.len(),varidx_.len()) as i32;
+      let numnz_ : i32 = std::cmp::min(varidx_.len(),val_.len()) as i32;
       self.handle_res(unsafe { MSK_putafefrow(self.ptr,afeidx_,numnz_,varidx_.as_ptr(),val_.as_ptr()) },"put_afe_f_row")?;
       return Result::Ok(());
     } // putafefrow
@@ -15834,8 +15900,8 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafefrowlist>
     #[allow(unused_parens)]
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
-      let lenidxval_ : i64 = std::cmp::min(val_.len(),varidx_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(std::cmp::min(numnzrow_.len(),afeidx_.len()),ptrrow_.len()) as i64;
+      let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
       if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
@@ -15866,7 +15932,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putafeglist>
     #[allow(unused_parens)]
     pub fn put_afe_g_list(&mut self,afeidx_ : &[i64],g_ : &[f64]) -> Result<(),String> {
-      let numafeidx_ : i64 = std::cmp::min(afeidx_.len(),g_.len()) as i64;
+      let numafeidx_ : i64 = std::cmp::min(g_.len(),afeidx_.len()) as i64;
       self.handle_res(unsafe { MSK_putafeglist(self.ptr,numafeidx_,afeidx_.as_ptr(),g_.as_ptr()) },"put_afe_g_list")?;
       return Result::Ok(());
     } // putafeglist
@@ -15912,7 +15978,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putaijlist64>
     #[allow(unused_parens)]
     pub fn put_aij_list(&mut self,subi_ : &[i32],subj_ : &[i32],valij_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(subi_.len(),subj_.len()),valij_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),valij_.len()) as i64;
       self.handle_res(unsafe { MSK_putaijlist64(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),valij_.as_ptr()) },"put_aij_list")?;
       return Result::Ok(());
     } // putaijlist64
@@ -15927,7 +15993,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putarow>
     #[allow(unused_parens)]
     pub fn put_a_row(&mut self,i_ : i32,subi_ : &[i32],vali_ : &[f64]) -> Result<(),String> {
-      let nzi_ : i32 = std::cmp::min(vali_.len(),subi_.len()) as i32;
+      let nzi_ : i32 = std::cmp::min(subi_.len(),vali_.len()) as i32;
       self.handle_res(unsafe { MSK_putarow(self.ptr,i_,nzi_,subi_.as_ptr(),vali_.as_ptr()) },"put_a_row")?;
       return Result::Ok(());
     } // putarow
@@ -16006,7 +16072,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarablocktriplet>
     #[allow(unused_parens)]
     pub fn put_bara_block_triplet(&mut self,subi_ : &[i32],subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valijkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),valijkl_.len()),subk_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),valijkl_.len()),subk_.len()),subl_.len()) as i64;
       if subi_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_bara_block_triplet: Argument 'subi' has the wrong length, expected num_".to_string());
       }
@@ -16037,7 +16103,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraij>
     #[allow(unused_parens)]
     pub fn put_bara_ij(&mut self,i_ : i32,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbaraij(self.ptr,i_,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_bara_ij")?;
       return Result::Ok(());
     } // putbaraij
@@ -16055,7 +16121,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbaraijlist>
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(alphaptrb_.len(),subi_.len()),subj_.len()),alphaptre_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),subi_.len()),alphaptrb_.len()),alphaptre_.len()) as i32;
       if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
       if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
       if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
@@ -16113,7 +16179,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcblocktriplet>
     #[allow(unused_parens)]
     pub fn put_barc_block_triplet(&mut self,subj_ : &[i32],subk_ : &[i32],subl_ : &[i32],valjkl_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subl_.len(),valjkl_.len()),subk_.len()),subj_.len()) as i64;
+      let num_ : i64 = std::cmp::min(std::cmp::min(std::cmp::min(subj_.len(),valjkl_.len()),subk_.len()),subl_.len()) as i64;
       if subj_.len() != (num_).try_into().unwrap() {
         return Result::Err("put_barc_block_triplet: Argument 'subj' has the wrong length, expected num_".to_string());
       }
@@ -16140,7 +16206,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putbarcj>
     #[allow(unused_parens)]
     pub fn put_barc_j(&mut self,j_ : i32,sub_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
-      let num_ : i64 = std::cmp::min(sub_.len(),weights_.len()) as i64;
+      let num_ : i64 = std::cmp::min(weights_.len(),sub_.len()) as i64;
       self.handle_res(unsafe { MSK_putbarcj(self.ptr,j_,num_,sub_.as_ptr(),weights_.as_ptr()) },"put_barc_j")?;
       return Result::Ok(());
     } // putbarcj
@@ -16270,7 +16336,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putconboundlist>
     #[allow(unused_parens)]
     pub fn put_con_bound_list(&mut self,sub_ : &[i32],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(sub_.len(),bkc_.len()),blc_.len()),buc_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(bkc_.len(),buc_.len()),sub_.len()),blc_.len()) as i32;
       self.handle_res(unsafe { MSK_putconboundlist(self.ptr,num_,sub_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr()) },"put_con_bound_list")?;
       return Result::Ok(());
     } // putconboundlist
@@ -16528,6 +16594,21 @@ impl Task {
       self.handle_res(unsafe { MSK_putintparam(self.ptr,param_,parvalue_) },"put_int_param")?;
       return Result::Ok(());
     } // putintparam
+    /// Sets an integer parameter.
+    ///
+    /// # Arguments
+    ///
+    /// - `param_` Which parameter.
+    ///   
+    ///   See [Iparam]
+    /// - `parvalue_` Parameter value.
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putlintparam>
+    #[allow(unused_parens)]
+    pub fn put_lint_param(&mut self,param_ : i32,parvalue_ : i64) -> Result<(),String> {
+      self.handle_res(unsafe { MSK_putlintparam(self.ptr,param_,parvalue_) },"put_lint_param")?;
+      return Result::Ok(());
+    } // putlintparam
     /// Sets the number of preallocated affine conic constraints.
     ///
     /// # Arguments
@@ -16758,7 +16839,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqcon>
     #[allow(unused_parens)]
     pub fn put_q_con(&mut self,qcsubk_ : &[i32],qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
       self.handle_res(unsafe { MSK_putqcon(self.ptr,numqcnz_,qcsubk_.as_ptr(),qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con")?;
       return Result::Ok(());
     } // putqcon
@@ -16774,7 +16855,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqconk>
     #[allow(unused_parens)]
     pub fn put_q_con_k(&mut self,k_ : i32,qcsubi_ : &[i32],qcsubj_ : &[i32],qcval_ : &[f64]) -> Result<(),String> {
-      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcval_.len(),qcsubi_.len()),qcsubj_.len()) as i32;
+      let numqcnz_ : i32 = std::cmp::min(std::cmp::min(qcsubi_.len(),qcval_.len()),qcsubj_.len()) as i32;
       if qcsubi_.len() != qcsubj_.len() || qcsubi_.len() != qcval_.len() { return Err("put_q_con_k: Mismatching lengths if qcsubi, qcsubj and qcval".to_string()); }
       self.handle_res(unsafe { MSK_putqconk(self.ptr,k_,numqcnz_,qcsubi_.as_ptr(),qcsubj_.as_ptr(),qcval_.as_ptr()) },"put_q_con_k")?;
       return Result::Ok(());
@@ -16790,7 +16871,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putqobj>
     #[allow(unused_parens)]
     pub fn put_q_obj(&mut self,qosubi_ : &[i32],qosubj_ : &[i32],qoval_ : &[f64]) -> Result<(),String> {
-      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qosubj_.len(),qoval_.len()),qosubi_.len()) as i32;
+      let numqonz_ : i32 = std::cmp::min(std::cmp::min(qoval_.len(),qosubj_.len()),qosubi_.len()) as i32;
       if qosubi_.len() != qosubj_.len() || qosubi_.len() != qoval_.len() { return Err("put_q_obj: Mismatching lengths if qosubi, qosubj and qoval".to_string()); }
       self.handle_res(unsafe { MSK_putqobj(self.ptr,numqonz_,qosubi_.as_ptr(),qosubj_.as_ptr(),qoval_.as_ptr()) },"put_q_obj")?;
       return Result::Ok(());
@@ -17236,7 +17317,7 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvarboundlist>
     #[allow(unused_parens)]
     pub fn put_var_bound_list(&mut self,sub_ : &[i32],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
-      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),sub_.len()),bkx_.len()),bux_.len()) as i32;
+      let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(blx_.len(),bux_.len()),sub_.len()),bkx_.len()) as i32;
       self.handle_res(unsafe { MSK_putvarboundlist(self.ptr,num_,sub_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"put_var_bound_list")?;
       return Result::Ok(());
     } // putvarboundlist
@@ -18193,7 +18274,7 @@ pub fn check_version(major_ : i32,minor_ : i32,revision_ : i32) -> Result<(),Str
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.computesparsecholesky>
 #[allow(unused_parens)]
 pub fn compute_sparse_cholesky(numthreads_ : i32,ordermethod_ : i32,tolsingular_ : f64,anzc_ : &[i32],aptrc_ : &[i64],asubc_ : &[i32],avalc_ : &[f64],perm_ : &mut Vec<i32>,diag_ : &mut Vec<f64>,lnzc_ : &mut Vec<i32>,lptrc_ : &mut Vec<i64>,lensubnval_ : &mut i64,lsubc_ : &mut Vec<i32>,lvalc_ : &mut Vec<f64>) -> Result<(),String> {
-  let n_ : i32 = std::cmp::min(anzc_.len(),aptrc_.len()) as i32;
+  let n_ : i32 = std::cmp::min(aptrc_.len(),anzc_.len()) as i32;
   let mut __tmp_0 : * const i32 = std::ptr::null();
   let mut __tmp_1 : * const f64 = std::ptr::null();
   let mut __tmp_2 : * const i32 = std::ptr::null();
@@ -18613,7 +18694,7 @@ pub fn shutdown_global_threadpool() -> Result<(),String> {
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sparsetriangularsolvedense>
 #[allow(unused_parens)]
 pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &[i64],lsubc_ : &[i32],lvalc_ : &[f64],b_ : &mut[f64]) -> Result<(),String> {
-  let n_ : i32 = std::cmp::min(std::cmp::min(lptrc_.len(),b_.len()),lnzc_.len()) as i32;
+  let n_ : i32 = std::cmp::min(std::cmp::min(b_.len(),lptrc_.len()),lnzc_.len()) as i32;
   if lnzc_.len() != (n_).try_into().unwrap() {
     return Result::Err("sparse_triangular_solve_dense: Argument 'lnzc' has the wrong length, expected n_".to_string());
   }
