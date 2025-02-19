@@ -99,9 +99,11 @@ fn main() -> Result<(),String> {
     let args : Vec<String> = env::args().collect();
     if args.len() < 3 {
         println!("Syntax: callback (psim|dsim|intpnt) FILENAME");
+        Ok(())
     }
-
-    callbackmain(args[1].as_str(),FileOrText::File(args[2].as_str()))
+    else {
+        callbackmain(args[1].as_str(),FileOrText::File(args[2].as_str()))
+    }
 }
 
 fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {

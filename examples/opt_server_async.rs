@@ -123,11 +123,11 @@ Variables
     @x1
     @x2
 ";
-    #[test]
-    fn test() {
-        super::opt_server_async(super::FileOrText::Text(DFLT_FILE.to_string()),
-                                "http://solve.mosek.com:30080".to_string(),
-                                100,
-                                None).unwrap();
-    }
+    //#[test]
+    //fn test() {
+    //    super::opt_server_async(super::FileOrText::Text(DFLT_FILE.to_string()),
+    //                            "http://solve.mosek.com:30080".to_string(),
+    //                            100,
+    //                            None).unwrap();
+    //}
 }
