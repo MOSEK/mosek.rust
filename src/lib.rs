@@ -5091,6 +5091,17 @@ impl TaskCB {
         self.update_callback()
     }
 
+    pub fn write_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+        where F : FnMut(&[u8]) -> usize 
+    {
+        self.data.task.write_data_stream(func,format,compress)
+    }
+    
+    pub fn read_data_stream<F>(&self, func : F,  format : i32, compress : i32) -> Result<(),String>
+        where F : FnMut(&mut [u8]) -> usize 
+    {
+        self.data.task.read_data_stream(func,format,compress)
+    }
     /// Analyze the names and issue an error for the first invalid name.
     ///
     /// # Arguments
