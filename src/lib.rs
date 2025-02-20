@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 0, 2]
+// Generted for MOSEK v[11, 0, 8]
 
 extern crate libc;
 use std::ffi::CString;
@@ -1130,13 +1130,13 @@ impl Mark {
   pub const UP : i32 = 1;
 } // impl Mark
 
-/// Exprimental. Usage not recommended.
+/// Experimental. Usage not recommended.
 #[non_exhaustive]
 pub struct Simprecision;
 impl Simprecision {
-  /// Exprimental. Usage not recommended.
+  /// Experimental. Usage not recommended.
   pub const NORMAL : i32 = 0;
-  /// Exprimental. Usage not recommended.
+  /// Experimental. Usage not recommended.
   pub const EXTENDED : i32 = 1;
 } // impl Simprecision
 
@@ -1907,7 +1907,7 @@ impl Dparam {
   pub const LOWER_OBJ_CUT : i32 = 38;
   /// Objective bound.
   pub const LOWER_OBJ_CUT_FINITE_TRH : i32 = 39;
-  /// Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
+  /// Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
   pub const MIO_CLIQUE_TABLE_SIZE_FACTOR : i32 = 40;
   /// Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
   pub const MIO_DJC_MAX_BIGM : i32 = 41;
@@ -1945,9 +1945,9 @@ impl Dparam {
   pub const SEMIDEFINITE_TOL_APPROX : i32 = 57;
   /// Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
   pub const SIM_LU_TOL_REL_PIV : i32 = 58;
-  /// Exprimental. Usage not recommended.
+  /// Experimental. Usage not recommended.
   pub const SIM_PRECISION_SCALING_EXTENDED : i32 = 59;
-  /// Exprimental. Usage not recommended.
+  /// Experimental. Usage not recommended.
   pub const SIM_PRECISION_SCALING_NORMAL : i32 = 60;
   /// Absolute pivot tolerance employed by the simplex optimizers.
   pub const SIMPLEX_ABS_TOL_PIV : i32 = 61;
@@ -2617,6 +2617,7 @@ impl Iparam {
   pub const SIM_MAX_NUM_SETBACKS : i32 = 148;
   /// Controls if the simplex optimizer ensures a non-singular basis, if possible.
   pub const SIM_NON_SINGULAR : i32 = 149;
+  /// Experimental. Usage not recommended.
   pub const SIM_PRECISION : i32 = 150;
   /// Controls whether the simplex optimizer is allowed to boost the precision.
   pub const SIM_PRECISION_BOOST : i32 = 151;
@@ -4228,7 +4229,7 @@ impl Sparam {
   pub const ITR_SOL_FILE_NAME : i32 = 4;
   /// For internal debugging purposes.
   pub const MIO_DEBUG_STRING : i32 = 5;
-  /// Solution file comment character.
+  /// Parameter file comment character.
   pub const PARAM_COMMENT_SIGN : i32 = 6;
   /// Modifications to the parameter database is read from this file.
   pub const PARAM_READ_FILE_NAME : i32 = 7;
