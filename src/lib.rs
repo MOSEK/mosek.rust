@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2025 MOSEK ApS. All rights reserved.
+Copyright (c) 2021 MOSEK ApS. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 0, 8]
+// Generted for MOSEK v[11, 0, 15]
 
 extern crate libc;
 use std::ffi::CString;
@@ -1913,7 +1913,7 @@ impl Dparam {
   pub const MIO_DJC_MAX_BIGM : i32 = 41;
   /// Time limit for the mixed-integer optimizer.
   pub const MIO_MAX_TIME : i32 = 42;
-  /// This value is used to compute the relative gap for the solution to an integer optimization problem.
+  /// This value is used to compute the relative gap for the solution to a mixed-integer optimization problem.
   pub const MIO_REL_GAP_CONST : i32 = 43;
   /// Absolute optimality tolerance employed by the mixed-integer optimizer.
   pub const MIO_TOL_ABS_GAP : i32 = 44;
@@ -4936,10 +4936,10 @@ extern fn callback_proxy(_ : * const u8,
         let task : & mut TaskCBData = &mut (*(handle as * mut TaskCBData));
         let mut stop = false;
         if let Some(ref mut cb) = task.codecb {
-            stop = stop && (*cb)(caller);
+            stop = stop || (*cb)(caller);
         }
         if let Some(ref mut cb) = task.valuecb {
-            stop = stop && (*cb)(caller,
+            stop = stop || (*cb)(caller,
                                  & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
                                  & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
                                  & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize));
