@@ -4936,13 +4936,13 @@ extern fn callback_proxy(_ : * const u8,
         let task : & mut TaskCBData = &mut (*(handle as * mut TaskCBData));
         let mut stop = false;
         if let Some(ref mut cb) = task.codecb {
-            stop = stop || (*cb)(caller);
+            stop = (*cb)(caller) || stop;
         }
         if let Some(ref mut cb) = task.valuecb {
-            stop = stop || (*cb)(caller,
-                                 & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
-                                 & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
-                                 & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize));
+            stop = (*cb)(caller,
+                         & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
+                         & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
+                         & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize)) || stop;
         }
         if caller == Callbackcode::NEW_INT_MIO && task.intsolcb.is_some() {
             if let Ok(numvar) = task.task.get_num_var() {
