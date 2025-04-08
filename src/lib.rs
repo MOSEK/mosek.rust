@@ -4955,7 +4955,7 @@ extern fn callback_proxy(_ : * const u8,
                 }
             }
         }
-        if stop { 1 } else { 0 }
+        if !stop { 1 } else { 0 }
     }
 }
 
