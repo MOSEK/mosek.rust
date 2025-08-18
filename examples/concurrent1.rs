@@ -1,7 +1,7 @@
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
-//!  File : concurrent1.rs
+//!  File : ==FILE==
 //!
 //!  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
 //!
@@ -13,17 +13,22 @@
 //!           that stops the optimizer when requested.
 
 extern crate mosek;
+extern crate itertools;
 
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype};
 use std::sync::{Arc,Mutex};
 use std::cmp::Ordering;
 use std::thread;
 use std::env;
+use itertools::{Either,Either::*};
 
+//TAG:begin-setup
 fn optimize(mut t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
     let cbstop = Arc::clone(&stop);
+//TAG:begin-cb
     if let Some(trm) = t.with_callback(
         &mut |_| cbstop.lock().and_then(|p| Ok(*p)).unwrap_or(false),
+//TAG:end-cb
         |task|
             if let Ok(trm) = task.optimize() {
                 let mut st = stop.lock().unwrap();
@@ -38,7 +43,9 @@ fn optimize(mut t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::
         None
     }
 }
+//TAG:end-setup
 
+//TAG:begin-linear
 fn optimize_concurrent(task       : &mut mosek::Task,
                        optimizers : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
     let stop = Arc::new(Mutex::new(false));
@@ -58,7 +65,9 @@ fn optimize_concurrent(task       : &mut mosek::Task,
                         Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
+//TAG:end-linear
 
+//TAG:begin-mio
 fn optimize_concurrent_mio(task  : & mut mosek::Task,
                            seeds : &[i32]) -> Vec<(usize,i32,mosek::Task)> {
     let stop = Arc::new(Mutex::new(false));
@@ -79,11 +88,8 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
                         Some((r,t)) => Some((i,r,t)) } )
         .collect()
 }
+//TAG:end-mio
 
-enum FileOrText {
-    File(String),
-    Text(String)
-}
 fn main() -> Result<(),String> {
     let mut args = env::args();
     if args.len() < 2 {
@@ -93,11 +99,11 @@ fn main() -> Result<(),String> {
     let _ = args.next();
     let filename = args.next().unwrap();
     let timelimit = args.next();
-    concurrent1(FileOrText::File(filename),
+    concurrent1(Right(filename.to_string()),
                 timelimit)
 }
 
-fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),String> {
+fn concurrent1(data : Either<String,String>, timelimit : Option<String>) -> Result<(),String> {
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
@@ -105,8 +111,8 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
         };
 
     match data {
-        FileOrText::File(fname) => task.read_data(fname.as_str())?,
-        FileOrText::Text(text)  => task.read_ptf_string(text.as_str())?
+        Either::Right(fname) => task.read_data(fname.as_str())?,
+        Either::Left(text)  => task.read_ptf_string(text.as_str())?
     }
     if let Some(timelimit) = timelimit {
         task.put_dou_param(mosek::Dparam::OPTIMIZER_MAX_TIME, timelimit.parse().unwrap())?;
@@ -114,16 +120,20 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
 
     let numintvar = task.get_num_int_var()?;
 
+//TAG:begin-demo-linear
     let r = if numintvar == 0 {
         let optimizers = &[mosek::Optimizertype::CONIC,
                            mosek::Optimizertype::DUAL_SIMPLEX,
                            mosek::Optimizertype::PRIMAL_SIMPLEX];
         optimize_concurrent(& mut task, optimizers)
     }
+//TAG:end-demo-linear
+//TAG:begin-demo-mio
     else {
         let seeds = &[ 42, 13, 71749373 ];
         optimize_concurrent_mio(& mut task, seeds)
     };
+//TAG:end-demo-mio
 
 
     let sense = task.get_obj_sense()?;
@@ -249,6 +259,7 @@ fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
 
 #[cfg(test)]
 mod tests {
+    use itertools::{Either,Either::*};
     const DFLT_FILE1 : &str = "Task
 Objective
     Maximize + 2 @x0 + 3 @x1 - @x2
@@ -278,7 +289,7 @@ Integers
 ";
     #[test]
     fn test() {
-        super::concurrent1(super::FileOrText::Text(DFLT_FILE1.to_string()),None).unwrap();
-        super::concurrent1(super::FileOrText::Text(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
+        super::concurrent1(Either::Left(DFLT_FILE1.to_string()),None).unwrap();
+        super::concurrent1(Either::Left(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
     }
 }

@@ -1,20 +1,19 @@
 //!
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!   Copyright : ==COPYRIGHT==
 //!
-//!   File : simple.rs
+//!   File : ==FILE==
 //!
 //!   Purpose :   Demonstrates a very simple example using MOSEK by
 //!               reading a problem file, solving the problem and
 //!               writing the problem+solution to a file.
 
+//TAG:begin-code
+extern crate itertools;
 extern crate mosek;
 use mosek::{Task,Streamtype,Iparam,Onoffkey};
 use std::env;
+use itertools::Either::{self,*};
 
-enum FileOrText {
-    File(String),
-    Text(String)
-}
 fn main() -> Result<(),String> {
     let mut args = env::args();
     if args.len() < 2 {
@@ -22,21 +21,23 @@ fn main() -> Result<(),String> {
         return Err("Invalid argument list".to_string())
     }
     let _ = args.next();
-    simple(FileOrText::File(args.next().unwrap()),
+    simple(Right(args.next().unwrap()),
            args.next())
 }
 
-fn simple(filename : FileOrText, outfile : Option<String>) -> Result<(),String> {
+fn simple(filename : Either<String,String>, outfile : Option<String>) -> Result<(),String> {
     let mut task = Task::new().unwrap().with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     // We assume that a problem file was given as the first command
     // line argument (received in `args')
     match filename {
-        FileOrText::File(fname) => {
+        Right(fname) => {
+//TAG:begin-readdata
             task.read_data(fname.as_str())?
+//TAG:end-readdata
         },
-        FileOrText::Text(data) => {
+        Left(data) => {
             task.read_ptf_string(data.as_str())?
         }
     }
@@ -56,10 +57,13 @@ fn simple(filename : FileOrText, outfile : Option<String>) -> Result<(),String> 
 
         task.put_int_param(Iparam::PTF_WRITE_SOLUTIONS,  Onoffkey::ON)?;
 
+//TAG:begin-writedata
         task.write_data(outfile.as_str())?;
+//TAG:end-writedata
     }
     Ok(())
 }
+//TAG:end-code
 
 
 
@@ -84,6 +88,6 @@ Variables
 
     #[test]
     fn test() {
-        super::simple(super::FileOrText::Text(DFLT_FILE.to_string()),None).unwrap();
+        super::simple(itertools::Either::Left(DFLT_FILE.to_string()),None).unwrap();
     }
 }

@@ -1,19 +1,17 @@
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
-//!  File : solutionquality.rs
+//!  File : ==FILE==
 //!
 //!  Purpose :   To demonstrate how to examine the quality of a solution.
 
+//TAG:begin-code
 extern crate mosek;
+extern crate itertools;
 
 use mosek::{Task,Streamtype,Solsta,Soltype};
 use std::env;
-
-enum FileOrText {
-    File(String),
-    Text(String)
-}
+use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
     let mut args = env::args();
@@ -23,17 +21,17 @@ fn main() -> Result<(),String> {
     }
     let _ = args.next();
     let filename = args.next().unwrap();
-    solutionquality(FileOrText::File(filename))
+    solutionquality(Right(filename))
 }
 
-fn solutionquality(filename : FileOrText) -> Result<(),String> {
+fn solutionquality(filename : Either<String,String>) -> Result<(),String> {
     let mut task = Task::new().unwrap().with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
     // We assume that a problem file was given as the first command
     // line argument (received in `args')
     match filename {
-        FileOrText::File(filename) => task.read_data (filename.as_str())?,
-        FileOrText::Text(data) => task.read_ptf_string(data.as_str())?
+        Right(filename) => task.read_data (filename.as_str())?,
+        Left(data) => task.read_ptf_string(data.as_str())?
     }
 
     // Solve the problem
@@ -119,6 +117,7 @@ fn solutionquality(filename : FileOrText) -> Result<(),String> {
     }
     Ok(())
 }
+//TAG:end-code
 
 
 #[cfg(test)]
@@ -140,6 +139,6 @@ Variables
 
     #[test]
     fn test() {
-        super::solutionquality(super::FileOrText::Text(DFLT_FILE.to_string())).unwrap();
+        super::solutionquality(itertools::Either::Left(DFLT_FILE.to_string())).unwrap();
     }
 }

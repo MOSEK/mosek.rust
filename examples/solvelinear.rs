@@ -1,6 +1,6 @@
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!   Copyright : ==COPYRIGHT==
 //!
-//!   File : solvelinear.rs
+//!   File : ==FILE==
 //!
 //!   Purpose :   To demonstrate the usage of MSK_solvewithbasis
 //!               when solving the linear system:
@@ -17,6 +17,7 @@
 //!               b = (7.0, 0.0)
 
 
+/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Streamtype,Soltype,Stakey};
@@ -73,7 +74,9 @@ fn main() -> Result<(),String> {
     // double[]    b     = new double[numvar];
     // int[]       basis = new int[numvar];
 
+    //TAG:begin-maketask
     let mut task = Task::new().unwrap();
+    //TAG:end-maketask
 
     // Put A matrix and factor A.  Call this function only once for a
     // given task.
@@ -126,6 +129,7 @@ fn main() -> Result<(),String> {
     Ok(())
 }
 
+//TAG:end-code
 
 #[cfg(test)]
 mod tests {

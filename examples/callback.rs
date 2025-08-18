@@ -1,7 +1,7 @@
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
-//!  File : callback.rs
+//!  File : ==FILE==
 //!
 //!  Purpose :   To demonstrate how to use the progress
 //!              callback.
@@ -18,12 +18,15 @@
 
 
 extern crate mosek;
+extern crate itertools;
 
 use std::env;
 use mosek::{Task,Streamtype,Iparam,Optimizertype,Callbackcode,Dinfitem,Iinfitem};
+use itertools::{Either,Either::*};
 
 const MAXTIME : f64 = 0.05;
 
+/*TAG:begin-callback*/
 fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool {
     let mut opttime = 0.0;
     match caller {
@@ -88,28 +91,31 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
         true
     }
 }
-
-
-enum FileOrText<'a> {
-    File(& 'a str),
-    Text(&'a str)
-}
+/*TAG:end-callback*/
 
 fn main() -> Result<(),String> {
     let args : Vec<String> = env::args().collect();
-    if args.len() < 3 {
-        println!("Syntax: callback (psim|dsim|intpnt) FILENAME");
-    }
 
-    callbackmain(args[1].as_str(),FileOrText::File(args[2].as_str()))
+
+    if args.len() < 2 {
+        println!("Syntax: callback (psim|dsim|intpnt) [FILENAME]");
+        Ok(())
+    }
+    else {
+        callbackmain(
+            args[1].as_str(),
+            args.get(2)
+                .map(|v| Right(v.clone()))
+                .unwrap_or(Left(DFLT_FILE.to_string())))
+    }
 }
 
-fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
+fn callbackmain(which : &str, data : Either<String,String>) -> Result<(),String> {
     /* Create the optimization task. */
     let mut task = Task::new().unwrap();
     match data {
-        FileOrText::Text(data)  => { task.read_ptf_string(data)? },
-        FileOrText::File(fname) => { task.read_data(fname)? }
+        Left(data)   => { task.read_ptf_string(data.as_str())? },
+        Right(fname) => { task.read_data(fname.as_str())? }
     }
 
     task.write_data("callback.ptf")?;
@@ -126,9 +132,11 @@ fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
         Streamtype::LOG,
         & mut |msg| print!("{}",msg),
         |task|
+            /*TAG:begin-callback-handler*/
             task.with_info_callback(
                 & mut callback,
                 |task|
+            /*TAG:end-callback-handler*/
                     task.optimize()
             )
     )?;
@@ -137,9 +145,7 @@ fn callbackmain(which : &str, data : FileOrText) -> Result<(),String> {
 }
 
 
-#[cfg(test)]
-mod tests {
-    const DFLT_FILE : &str = "Task
+const DFLT_FILE : &str = "Task
 Objective
     Maximize + 3 @x0 + @x1 + 5 @x2 + @x3
 Constraints
@@ -152,10 +158,15 @@ Variables
     @x2 [0;+inf]
     @x3 [0;+inf]
 ";
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use itertools::{Left,Right};
     #[test]
     fn test() {
-        super::callbackmain("psim",   super::FileOrText::Text(DFLT_FILE) ).unwrap();
-        super::callbackmain("dsim",   super::FileOrText::Text(DFLT_FILE) ).unwrap();
-        super::callbackmain("intpnt", super::FileOrText::Text(DFLT_FILE) ).unwrap();
+        callbackmain("psim",   Left(DFLT_FILE.to_string()) ).unwrap();
+        callbackmain("dsim",   Left(DFLT_FILE.to_string()) ).unwrap();
+        callbackmain("intpnt", Left(DFLT_FILE.to_string()) ).unwrap();
     }
 }

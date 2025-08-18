@@ -1,7 +1,7 @@
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
-//!  File : feasrepairex1.rs
+//!  File : ==FILE==
 //!
 //!  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
 //!              locate the cause of an infeasibility.
@@ -14,15 +14,13 @@
 //!*/
 
 extern crate mosek;
+extern crate itertools;
 
 use std::env;
 use mosek::{Task,Streamtype};
+use itertools::Either::{self,*};
 
-enum FileOrText {
-    File(String),
-    Text(String)
-}
-
+//TAG:begin-code
 fn main() -> Result<(),String> {
     let mut args = env::args();
     if args.len() < 2 {
@@ -30,16 +28,16 @@ fn main() -> Result<(),String> {
         return Err("Invalid argument list".to_string());
     }
     let _ = args.next();
-    feasrepairex1(FileOrText::File(args.next().unwrap()))
+    feasrepairex1(Right(args.next().unwrap()))
 }
-fn feasrepairex1(filename : FileOrText) -> Result<(),String> {
+fn feasrepairex1(filename : Either<String,String>) -> Result<(),String> {
 
     let mut task = Task::new().unwrap().with_callbacks();
     task.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg))?;
 
     match filename {
-        FileOrText::File(fname) => task.read_data(fname.as_str())?,
-        FileOrText::Text(data) => task.read_lp_string(data.as_str())?
+        Right(fname) => task.read_data(fname.as_str())?,
+        Left(data) => task.read_lp_string(data.as_str())?
     }
     task.put_int_param(mosek::Iparam::LOG_FEAS_REPAIR, 3)?;
 
@@ -58,6 +56,7 @@ fn feasrepairex1(filename : FileOrText) -> Result<(),String> {
     Ok(())
 }
 
+//TAG:end-code
 
 
 #[cfg(test)]
@@ -79,7 +78,7 @@ end
     #[test]
     fn test() {
         
-        super::feasrepairex1(super::FileOrText::Text(FEASREPAIR_LP.to_string())).unwrap();
+        super::feasrepairex1(itertools::Either::Left(FEASREPAIR_LP.to_string())).unwrap();
     }
 }
 

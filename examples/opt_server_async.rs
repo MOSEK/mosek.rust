@@ -1,23 +1,21 @@
 //!
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!   Copyright : ==COPYRIGHT==
 //!
-//!   File : opt_server_async.rs
+//!   File : ==FILE==
 //!
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem asynchronously
 
+//TAG:begin-code
 extern crate mosek;
+extern crate itertools;
 
 use mosek::{Task,Streamtype,Sparam};
 use std::env;
 use std::time::Duration;
 use std::thread::sleep;
+use itertools::{Either,Either::*};
 
-#[derive(Debug)]
-enum FileOrText {
-    File(String),
-    Text(String)
-}
 fn main() {
     let mut args = env::args();
     if args.len() < 3 {
@@ -26,12 +24,12 @@ fn main() {
         panic!("Missing arguments");
     }
     let _ = args.next();
-    opt_server_async(FileOrText::File(args.next().unwrap()),
+    opt_server_async(Either::Right(args.next().unwrap()),
                      args.next().unwrap(),
                      args.next().unwrap().parse().unwrap(),
                      args.next()).unwrap();
 }
-fn opt_server_async(inputfile : FileOrText, addr : String, numpolls : usize, cert : Option<String>) -> Result<(),String> {
+fn opt_server_async(inputfile : Either<String,String>, addr : String, numpolls : usize, cert : Option<String>) -> Result<(),String> {
     // Path to certificate, if any
 
     let token = {
@@ -40,9 +38,9 @@ fn opt_server_async(inputfile : FileOrText, addr : String, numpolls : usize, cer
                 Streamtype::LOG,
                 &mut |msg| print!("{}",msg),
                 |task| {
-                    match inputfile {
-                        FileOrText::File(ref filename) => task.read_data(filename.as_str()).unwrap(),
-                        FileOrText::Text(ref data)     => task.read_ptf_string(data.as_str()).unwrap()
+                    match &inputfile {
+                        Either::Right(filename) => task.read_data(filename.as_str()).unwrap(),
+                        Either::Left(data)     => task.read_ptf_string(data.as_str()).unwrap()
                     }
                     if let Some(ref cert) = cert {
                         task.put_str_param(Sparam::REMOTE_TLS_CERT_PATH,cert.as_str())?;
@@ -62,9 +60,9 @@ fn opt_server_async(inputfile : FileOrText, addr : String, numpolls : usize, cer
             &mut|caller| { println!("caller = {}",caller); false },
             |task| {
                 println!("Reading input file '{:?}'...",inputfile);
-                match inputfile {
-                    FileOrText::File(ref filename) => task.read_data(filename.as_str()).unwrap(),
-                    FileOrText::Text(ref data)     => task.read_ptf_string(data.as_str()).unwrap()
+                match &inputfile {
+                    Right(filename) => task.read_data(filename.as_str()).unwrap(),
+                    Left(data)     => task.read_ptf_string(data.as_str()).unwrap()
                 }
                 if let Some(ref cert) = cert {
                     task.put_str_param(Sparam::REMOTE_TLS_CERT_PATH,cert.as_str())?;
@@ -104,11 +102,13 @@ fn opt_server_async(inputfile : FileOrText, addr : String, numpolls : usize, cer
                 Err("Max num polls".to_string())
             }))
 }
+//TAG:end-code
 
 
 
 #[cfg(test)]
 mod tests {
+    use itertools::Either;
     const DFLT_FILE : &str = "Task
 Objective
     Maximize + 2 @x0 + 3 @x1 - @x2
@@ -125,7 +125,7 @@ Variables
 ";
     #[test]
     fn test() {
-        super::opt_server_async(super::FileOrText::Text(DFLT_FILE.to_string()),
+        super::opt_server_async(Either::Left(DFLT_FILE.to_string()),
                                 "http://solve.mosek.com:30080".to_string(),
                                 100,
                                 None).unwrap();

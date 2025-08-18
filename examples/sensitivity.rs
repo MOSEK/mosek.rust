@@ -1,7 +1,7 @@
 //!
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!   Copyright : ==COPYRIGHT==
 //!
-//!   File : sensitivity.rs
+//!   File : ==FILE==
 //!
 //!   Purpose :   To demonstrate how to perform sensitivity
 //!               analysis from the API on a small problem:
@@ -21,6 +21,7 @@
 //!               The example uses basis type sensitivity analysis.
 //!
 
+//TAG:begin-code
 extern crate mosek;
 use mosek::{Task,Boundkey,Streamtype,Mark,Objsense};
 
@@ -146,6 +147,7 @@ fn main() -> Result<(),String> {
 
     return Result::Ok(());
 }
+//TAG:end-code
 
 #[cfg(test)]
 mod tests {

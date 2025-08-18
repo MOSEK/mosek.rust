@@ -1,7 +1,7 @@
 /*
-   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+   Copyright: ==COPYRIGHT==
 
-   File:      sparsecholesky.rs
+   File:      ==FILE==
 
    Purpose:   Demonstrate the sparse Cholesky factorization.
 
@@ -41,6 +41,7 @@ fn print_sparse(n     : usize,
 fn main() -> Result<(),String> {
     /* Create the mosek environment. */
     //Example from the manual
+//TAG:begin-example1*/
     //Observe that anzc, aptrc, asubc and avalc only specify the lower triangular part.
     let n     = 4;
     let anzc  = [4, 1, 1, 1];
@@ -48,6 +49,7 @@ fn main() -> Result<(),String> {
     let aptrc = [0, 4, 5, 6];
     let avalc = [4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
     let b     = [13.0, 3.0, 4.0, 5.0];
+//TAG:end-example1*/
 
     let mut perm   = Vec::new();
     let mut lnzc   = Vec::new();
@@ -57,6 +59,7 @@ fn main() -> Result<(),String> {
     let mut lvalc  = Vec::new();
     let mut lensubnval = 0;
 
+//TAG:begin-factorization*/
     mosek::compute_sparse_cholesky(0,        //Mosek chooses number of threads
                                    1,        //Apply reordering heuristic
                                    1.0e-14,  //Singularity tolerance
@@ -77,11 +80,14 @@ fn main() -> Result<(),String> {
            iproduct!(0..n,izip!(perm.iter(),x.iter()))
            .filter_map(|(i,(&pj,&xj))|if pj as usize == i { Some(xj) } else { None })
            .collect::<Vec<f64>>());
+//TAG:end-factorization*/
+//TAG:begin-example2 */
     let n     = 3;
     let anzc  = [3, 2, 1];
     let asubc = [0, 1, 2, 1, 2, 2];
     let aptrc = [0, 3, 5, ];
     let avalc = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+//TAG:end-example2 */
 
     let mut perm   = Vec::new();
     let mut lnzc   = Vec::new();

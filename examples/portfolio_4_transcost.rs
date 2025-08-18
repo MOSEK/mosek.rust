@@ -1,12 +1,14 @@
-//!  File : portfolio_4_transcost.rs
+//!  File : ==FILE==
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
 //!  Description :  Implements a basic portfolio optimization model
 //!                 with fixed setup costs and transaction costs
 //!                 as a mixed-integer problem.
 //!
 
+/*TAG:begin-code*/
+/*TAG:begin-transactions-cost*/
 extern crate mosek;
 use mosek::{Task,Objsense,Streamtype,Soltype,Variabletype,Boundkey,Solsta};
 extern crate itertools;
@@ -201,6 +203,8 @@ fn main() -> Result<(),String> {
     println!("Solution vector = {:?}\n", level);
     Ok(())
 }
+/*TAG:end-code*/
+/*TAG:end-transactions-cost*/
 
 
 #[cfg(test)]

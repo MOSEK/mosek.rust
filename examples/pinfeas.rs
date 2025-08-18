@@ -1,17 +1,19 @@
 //!
-//!  File : pinfeas.rs
+//!  File : ==FILE==
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
 //!  Purpose: Demonstrates how to fetch a primal infeasibility certificate
 //!           for a linear problem
 //!
+//TAG:begin-pinfeas
 
 extern crate mosek;
 use mosek::{Streamtype,Boundkey,Soltype,Prosta};
 
 const INF : f64 = 0.0;
 
+//TAG:begin-example-def
 fn test_problem() -> Result<mosek::Task,String> {
     let mut task = mosek::Task::new().unwrap();
     task.append_vars(7)?;
@@ -28,7 +30,9 @@ fn test_problem() -> Result<mosek::Task,String> {
     task.put_var_bound_slice_const(0, 7, Boundkey::UP, 0.0, INF)?;
     Ok(task)
 }
+//TAG:end-example-def
 
+//TAG:begin-analyze-certificate
 // Analyzes and prints infeasibility contributing elements
 // sl - dual values for lower bounds
 // su - dual values for upper bounds
@@ -43,6 +47,7 @@ fn analyze_certificate(sl : &[f64], su : &[f64], eps : f64) {
         }
     }
 }
+//TAG:end-analyze-certificate
 
 fn main() -> Result<(),String> {
     // In this example we set up a simple problem
@@ -61,10 +66,12 @@ fn main() -> Result<(),String> {
     task.optimize()?;
     task.solution_summary(Streamtype::LOG)?;
 
+//TAG:begin-check-status
     // Check problem status, we use the interior point solution
     if task.get_pro_sta(Soltype::ITR)? == Prosta::PRIM_INFEAS {
         // Set the tolerance at which we consider a dual value as essential
         let eps = 1e-7;
+//TAG:end-check-status
 
         println!("Variable bounds important for infeasibility: ");
         let mut slx = vec![0.0; n as usize]; task.get_slx(Soltype::ITR, slx.as_mut_slice())?;
@@ -78,9 +85,13 @@ fn main() -> Result<(),String> {
     }
     else {
         println!("The problem is not primal infeasible, no certificate to show");
+//TAG:ASSERT:begin-assert-wrong-answer
+        assert!(false);
+//TAG:ASSERT:end-assert-wrong-answer
     }
     Ok(())
 }
+//TAG:end-pinfeas
 
 
 #[cfg(test)]

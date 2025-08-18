@@ -1,12 +1,13 @@
 
 //!
-//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//! Copyright : ==COPYRIGHT==
 //!
-//! File : portfolio_6_factor.rs
+//! File : ==FILE==
 //!
 //! Purpose :   Implements a portfolio optimization model using factor model.
 //!
 
+//TAG:begin-code
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Transpose,Solsta};
@@ -16,6 +17,7 @@ use std::convert::TryInto;
 
 const INF : f64 = 0.0;
 
+//TAG:begin-factor-markowitz
 #[allow(non_snake_case)]
 fn portfolio(w      : f64,
              mu     : &[f64],
@@ -37,12 +39,14 @@ fn portfolio(w      : f64,
     let n : i32 = nx.try_into().unwrap();
     let total_budget : f64 = w + x0.iter().sum::<f64>();
 
+//TAG:begin-offsets
     //Offset of variables into the API variable.
     let numvar = n;
     let voff_x : i32 = 0;
 
     // Constraint offset
     let coff_bud : i32 = 0;
+//TAG:end-offsets
 
     // Holding variable x of length n
     // No other auxiliary variables are needed in this formulation
@@ -64,6 +68,7 @@ fn portfolio(w      : f64,
     }
     task.put_con_bound(coff_bud, Boundkey::FX, total_budget, total_budget)?;
 
+//TAG:begin-factor-conic
     // Input (gamma, G_factor_T x, diag(sqrt(theta))*x) in the AFE (affine expression) storage
     // We need k+n+1 rows and we fill them in in three parts
     task.append_afes((k+n) as i64 + 1)?;
@@ -79,6 +84,7 @@ fn portfolio(w      : f64,
     for (i,thetai) in (0..n).zip(theta.iter()) {
         task.put_afe_f_entry(i as i64 + 1 + k as i64, voff_x + i, thetai.sqrt())?;
     }
+    //TAG:end-factor-conic
 
     // Input the affine conic constraint (gamma, GT*x) \in QCone
     // Add the quadratic domain of dimension k+1
@@ -115,6 +121,7 @@ fn portfolio(w      : f64,
         Some((gamma,xx.iter().zip(mu.iter()).map(|(&xj,&muj)| xj*muj).sum::<f64>()))
     }).collect::<Vec<(f64,f64)>>())
 }
+//TAG:end-factor-markowitz
 
 
 
@@ -126,6 +133,7 @@ fn main() -> Result<(),String> {
     let w  = 1.0;
     let mu = &[0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379];
     let x0 = &[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+    //TAG:begin-factor-model-vars
     // Factor exposure matrix, n x 2
     let B = Matrix::new_by_row(n as usize, 2,
                                [ 0.4256,  0.1869,
@@ -144,9 +152,12 @@ fn main() -> Result<(),String> {
 
     // Specific risk components
     let theta : &[f64] = &[0.0720, 0.0508, 0.0377, 0.0394, 0.0663, 0.0224, 0.0417, 0.0459];
+    //TAG:end-factor-model-vars
+    //TAG:begin-factor-model-G  
     let S_sqrt_theta = Matrix::diag_matrix(theta.iter().map(|&v| v.sqrt()).collect());
     let P = S_F.cholesky().unwrap();
     let BP = B.mul(&P).unwrap();
+    //TAG:end-factor-model-G 
 
     //let GT  = BP.concat_h(&S_theta.sqrt_element().unwrap()).unwrap().transpose();
     let GT  = BP.concat_h(&S_sqrt_theta).unwrap().transpose();
@@ -162,6 +173,7 @@ fn main() -> Result<(),String> {
     }
     Ok(())
 }
+//TAG:end-code
 
 // Matrix with data stored in colunn format
 #[derive(Copy,Clone)]
@@ -177,6 +189,7 @@ pub struct Matrix {
     data : Vec<f64>
 }
 
+//TAG:begin-factor-markowitz-helper 
 impl Matrix {
     pub fn new(fmt : MatrixOrder, dimi : usize, dimj : usize, data : Vec<f64>) -> Option<Matrix> {
         if dimi*dimj == data.len() {
@@ -298,6 +311,7 @@ impl Matrix {
         }
     }
 }
+//TAG:end-factor-markowitz-helper 
 
 #[cfg(test)]
 mod tests {

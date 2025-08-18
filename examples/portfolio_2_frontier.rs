@@ -1,12 +1,14 @@
 //!
-//! File : portfolio_2_frontier.rs
+//! File : ==FILE==
 //!
-//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//! Copyright : ==COPYRIGHT==
 //!
 //! Description :  Implements a basic portfolio optimization model.
 //!                Determines points on the efficient frontier.
 //!
 
+/*TAG:begin-code*/
+/*TAG:begin-efficient-frontier*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Solsta,Soltype};
@@ -148,6 +150,8 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
+/*TAG:end-code*/
+/*TAG:end-efficient-frontier*/
 
 
 #[cfg(test)]

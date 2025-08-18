@@ -1,7 +1,7 @@
 //!
-//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!  Copyright : ==COPYRIGHT==
 //!
-//!  File : acc1.rs
+//!  File : ==FILE==
 //!
 //!  Purpose :   Tutorial example for affine conic constraints.
 //!              Models the problem:
@@ -11,6 +11,7 @@
 //!                          gamma >= |Gx+h|_2
 //!
 
+/*TAG:begin-code*/
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
@@ -46,9 +47,12 @@ fn main() -> Result<(),String> {
     task.put_a_row(0,x.as_slice(), vec![1.0; n as usize].as_slice())?;
     task.put_con_bound(0, Boundkey::FX, 1.0, 1.0)?;
 
+    //TAG:begin-appendafes
     // Append empty AFE rows for affine expression storage
     task.append_afes(k + 1)?;
+    //TAG:end-appendafes
 
+    //TAG:begin-putafe
     // G matrix in sparse form
     let Gsubi : &[i64] = &[0, 0, 1, 1];
     let Gsubj : &[i32] = &[0, 1, 0, 2];
@@ -67,15 +71,21 @@ fn main() -> Result<(),String> {
     // Fill in g storage
     task.put_afe_g(0, gamma)?;
     task.put_afe_g_slice(1, k+1, h)?;
+    //TAG:end-putafe
 
+    //TAG:begin-appenddomain
     // Define a conic quadratic domain
     let quadDom = task.append_quadratic_cone_domain(k + 1)?;
+    //TAG:end-appenddomain
 
+    //TAG:begin-appendacc
     // Create the ACC
     task.append_acc(quadDom,    // Domain index
                     (0..k+1).collect::<Vec<i64>>().as_slice(), // Indices of AFE rows [0,...,k]
                     vec![0.0; (k+1) as usize].as_slice())?;       // Ignored
+    //TAG:end-appendacc
 
+    //TAG:begin-solve
     // Solve and retrieve solution
     let _ = task.optimize()?;
     task.write_data("acc1.ptf")?;
@@ -84,6 +94,7 @@ fn main() -> Result<(),String> {
 
     assert!(task.get_sol_sta(Soltype::ITR)? == Solsta::OPTIMAL);
     println!("Solution: {:?}",xx);
+    //TAG:end-solve
 
     // Demonstrate retrieving activity of ACC
     let mut activity = vec![0.0; (k+1) as usize];
@@ -92,10 +103,20 @@ fn main() -> Result<(),String> {
     task.evaluate_acc(Soltype::ITR,0,activity.as_mut_slice())?;
     println!("Activity of ACC:: {:?}",activity);
 
+    //TAG:begin-getdoty
     // Demonstrate retrieving the dual of ACC
     task.get_acc_dot_y(Soltype::ITR,0,doty.as_mut_slice())?;
     println!("Dual of ACC:: {:?}",doty);
+    //TAG:end-getdoty
 
+    //TAG:ASSERT:begin-check-solution
+    let compl : f64 = dot(activity.as_slice(),doty.as_slice());
+    assert! (compl.abs() < 1e-7);
+    assert! (maxgap(xx.as_slice(),      &[-0.07838011145615721, 1.1289128998004547, -0.0505327883442975]) < 1e-7);
+    assert! (maxgap(doty.as_slice(),    &[-1.9429680870375095, -0.30303030303030304, -1.9191919191919191]) < 1e-7);
+    assert! (maxgap(activity.as_slice(),&[0.03, -0.004678877204190343, -0.029632888959872067]) < 1e-7);
+    println!("Complementarity {}",compl);
+    //TAG:ASSERT:end-check-solution
 
     Ok(())
 }
@@ -106,6 +127,7 @@ fn maxgap(a : &[f64], b : &[f64]) -> f64 {
 fn dot(a : &[f64], b : &[f64]) -> f64 {
     a.iter().zip(b.iter()).map(|(&a,&b)| (a * b)).sum()
 }
+/*TAG:end-code*/
 
 #[cfg(test)]
 mod tests {

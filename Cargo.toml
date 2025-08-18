@@ -17,6 +17,9 @@ categories = ["api-bindings","mathematics","science"]
 libc = "0.2"
 itertools = "0.10"
 
+[dec-dependencies]
+itertools = "0.10"
+
 [[bin]]
 name = "testmosek-raw"
 test = false

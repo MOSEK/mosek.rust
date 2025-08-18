@@ -1,13 +1,15 @@
 //!
-//! File : portfolio_1_basic.rs
+//! File : ==FILE==
 //!
-//! Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//! Copyright : ==COPYRIGHT==
 //!
 //! Description :  Implements a basic portfolio optimization model.
 //!
 //! More details can be found at <https://docs.mosek.com/latest/capi/case-portfolio.html#doc-optimizer-case-portfolio>
 //!
 
+//TAG:begin-code
+//TAG:begin-basic-markowitz
 extern crate mosek;
 extern crate itertools;
 use mosek::{Task,Objsense,Streamtype,Soltype,Solsta};
@@ -81,10 +83,12 @@ fn portfolio(n     : i32,     // number of assets
         let afei = task.get_num_afe()?;
 
         task.append_afes(k as i64 + 1)?;
+//TAG:begin-basic-markowitz-appendaccseq
         let dom = task.append_quadratic_cone_domain(k as i64+1)?;
         task.append_acc_seq(dom,
                             afei,
                             vec![0.0; k as usize + 1].as_slice())?;
+//TAG:end-basic-markowitz-appendaccseq
         task.put_acc_name(acci,"risk")?;
         task.put_afe_g(afei,gamma)?;
 
@@ -106,9 +110,13 @@ fn portfolio(n     : i32,     // number of assets
     }
 
     /* Display the solution summary for quick inspection of results. */
+//TAG:begin-solutionsummary 
     task.solution_summary(Streamtype::MSG)?;
+//TAG:end-solutionsummary 
 
+//TAG:begin-writedata
     task.write_data("portfolio_1_basic.ptf")?;
+//TAG:end-writedata
 
     /* Read the x variables one by one and compute expected return. */
     /* Can also be obtained as value of the objective. */
@@ -143,6 +151,8 @@ fn main() -> Result<(),String> {
 
     Ok(())
 }
+//TAG:end-code
+//TAG:end-basic-markowitz
 
 #[cfg(test)]
 mod tests {

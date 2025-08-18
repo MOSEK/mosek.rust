@@ -1,7 +1,7 @@
 //!
-//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+//!   Copyright : ==COPYRIGHT==
 //!
-//!   File : parallel.rs
+//!   File : ==FILE==
 //!
 //!   Purpose: Demonstrates parallel optimization using optimizebatch()
 //!
@@ -10,14 +10,10 @@ extern crate itertools;
 
 use mosek::{Task};
 use std::env;
-use itertools::{izip};
+use itertools::{izip,Either::{self,*}};
 
 /// Example of how to use env.optimize_batch().
 /// Optimizes tasks whose names were read from command line.
-enum FileOrText {
-    File(String),
-    Text(String)
-}
 fn main() -> Result<(),String> {
     let mut args = env::args();
     if args.len() < 3 {
@@ -26,22 +22,23 @@ fn main() -> Result<(),String> {
     }
     else {
         let _ = args.next();
-        parallel(args.map(|s| FileOrText::File(s)).collect())
+        parallel(args.map(|s| Right(s)).collect())
     }
 }
-fn parallel(files : Vec<FileOrText>) -> Result<(),String> {
+//TAG:begin-paroptexample
+fn parallel(files : Vec<Either<String,String>>) -> Result<(),String> {
     // Create an example list of tasks to optimize
     let mut tasks : Vec<(String,Task)> = files.iter().filter_map(|fname| {
         let mut t = Task::new().unwrap();
         match fname {
-            FileOrText::File(fname) => {
+            Right(fname) => {
                 if let Err(_) = t.read_data(fname.as_str()) { None }
                 else {
                     t.put_int_param(mosek::Iparam::NUM_THREADS, 2).unwrap();
                     Some((fname.as_str().to_string(),t))
                 }
             },
-            FileOrText::Text(data) => {
+            Left(data) => {
                 if let Err(_) = t.read_ptf_string(data.as_str()) { None }
                 else {
                     t.put_int_param(mosek::Iparam::NUM_THREADS, 2).unwrap();
@@ -78,6 +75,7 @@ fn parallel(files : Vec<FileOrText>) -> Result<(),String> {
     }
     Ok(())
 }
+//TAG:end-paroptexample
 
 
 
@@ -113,7 +111,7 @@ Integers
 ";
     #[test]
     fn test() {
-        super::parallel(vec![super::FileOrText::Text(DFLT_FILE1.to_string()),
-                             super::FileOrText::Text(DFLT_FILE2.to_string())]).unwrap();
+        super::parallel(vec![itertools::Left(DFLT_FILE1.to_string()),
+                             itertools::Left(DFLT_FILE2.to_string())]).unwrap();
     }
 }
