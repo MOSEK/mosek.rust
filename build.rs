@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::str::FromStr;
 use std::io::prelude::*;
-//use curl::easy::Easy;
 use std::process::Command;
 
 
@@ -12,9 +11,6 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
         if      cfg!(target_arch = "x86_64") {
             ("win64x86".to_string(),  format!("mosek64_{}_{}",majorver,minorver))
         }
-        //else if cfg!(target_arch = "x86") {
-        //    ("win32x86".to_string(),  format!("mosek{}_{}",majorver,minorver))
-        //}
         else {
             panic!("Unsupported architecture")
         }
@@ -33,9 +29,6 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     else if cfg!(target_os = "macos") {
         if      cfg!(target_arch = "aarch64") {
             ("osxaarch64".to_string(),  "mosek64".to_string())
-        }
-        else if cfg!(target_arch = "x86_64") {
-            ("osx64x86".to_string(),  "mosek64".to_string())
         }
         else {
             panic!("Unsupported architecture")
@@ -78,6 +71,7 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
             bindir_b.push("bin");
             },
         }
+
 
     if ! bindir_b.as_path().is_dir() {
         return None
