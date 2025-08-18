@@ -7,7 +7,7 @@
 //!          and handle the solver result and the problem
 //!          solution.
 //!
-//! ```
+//! ```text
 //! Maximize 3 x1 + x2 + 5 x3 + x4
 //! Such that
 //!     3 x1 +   x2 + 2 x3        =  39
