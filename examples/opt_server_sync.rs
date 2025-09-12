@@ -70,7 +70,7 @@ Variables
     @x1
     @x2
 ";
-    #[test]
+    //#[test]
     fn test() {
         super::opt_server_sync(Either::Left(DFLT_FILE.to_string()),
                                "http://solve.mosek.com:30080".to_string(),

@@ -79,6 +79,7 @@ fn parallel(files : Vec<Either<String,String>>) -> Result<(),String> {
 
 #[cfg(test)]
 mod tests {
+    use itertools::Either::Left;
 
     const DFLT_FILE1 : &str = "Task
 Objective
@@ -109,7 +110,7 @@ Integers
 ";
     #[test]
     fn test() {
-        super::parallel(vec![itertools::Left(DFLT_FILE1.to_string()),
-                             itertools::Left(DFLT_FILE2.to_string())]).unwrap();
+        super::parallel(vec![Left(DFLT_FILE1.to_string()),
+                             Left(DFLT_FILE2.to_string())]).unwrap();
     }
 }

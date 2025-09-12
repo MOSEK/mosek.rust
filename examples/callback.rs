@@ -22,7 +22,7 @@ extern crate itertools;
 
 use std::env;
 use mosek::{Task,Streamtype,Iparam,Optimizertype,Callbackcode,Dinfitem,Iinfitem};
-use itertools::{Either,Either::*};
+use itertools::Either::{self,*};
 
 const MAXTIME : f64 = 0.05;
 
@@ -157,8 +157,8 @@ Variables
 
 #[cfg(test)]
 mod tests {
+    use itertools::Either::*;
     use super::*;
-    use itertools::{Left,Right};
     #[test]
     fn test() {
         callbackmain("psim",   Left(DFLT_FILE.to_string()) ).unwrap();
