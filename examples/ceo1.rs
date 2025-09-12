@@ -1,7 +1,7 @@
 //!
-//!   Copyright : ==COPYRIGHT==
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : ==FILE==
+//!   File : ceo1.rs
 //!
 //!   Description:
 //!       Demonstrates how to solve a small conic exponential
@@ -15,7 +15,6 @@
 //!           |    1|   |x3|
 //!           x1,x2,x3 are free
 //!
-/*TAG:begin-code*/
 extern crate mosek;
 
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
@@ -49,30 +48,19 @@ fn main() -> Result<(),String> {
                 |task| {
                     /* Append 'numcon' empty constraints.
                        The constraints will initially have no bounds. */
-                    /*TAG:begin-append*/
                     task.append_cons(numcon)?;
 
                       /* Append 'numvar' variables.
                          The variables will initially be fixed at zero (x=0). */
                     task.append_vars(numvar)?;
-                    /*TAG:end-append*/
 
                     /* Define the linear part of the problem */
-                    /*TAG:begin-putcj*/
                     task.put_c_slice(0, numvar, c.as_slice())?;
-                    /*TAG:end-putcj*/
-                    /*TAG:begin-putavec*/
                     task.put_a_row(0, asub.as_slice(), a.as_slice())?;
-                    /*TAG:end-putavec*/
-                    /*TAG:begin-putbound-con*/
                     task.put_con_bound(0, bkc, blc, buc)?;
-                    /*TAG:end-putbound-con*/
-                    /*TAG:begin-putbound-var*/
                     task.put_var_bound_slice(0, numvar, bkx.as_slice(), blx.as_slice(), bux.as_slice())?;
-                    /*TAG:end-putbound-var*/
 
                     /* Add a conic constraint */
-                    //TAG:begin-appendcone
                     task.append_afes(3)?;
                     let afeidxs = vec![0,  1,  2  ];
                     let b       = vec![0.0,0.0,0.0];
@@ -83,15 +71,12 @@ fn main() -> Result<(),String> {
                                             vec![0,1,2].as_slice(),
                                             vec![1.0,1.0,1.0].as_slice())?;
                     task.append_acc(domidx,afeidxs.as_slice(),b.as_slice())?;
-                    //TAG:end-appendcone
 
                     task.put_obj_sense(Objsense::MINIMIZE)?;
 
                     println!("optimize");
                     /* Solve the problem */
-                    /*TAG:begin-optimize*/
                     task.optimize()?;
-                    /*TAG:end-optimize*/
                     // Print a summary containing information
                     // about the solution for debugging purposes
                     task.solution_summary(Streamtype::MSG)?;
@@ -111,7 +96,6 @@ fn main() -> Result<(),String> {
                     Ok(())
                 }))
 }
-/*TAG:end-code*/
 
 #[cfg(test)]
 mod tests {

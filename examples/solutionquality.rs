@@ -1,11 +1,10 @@
 //!
-//!  Copyright : ==COPYRIGHT==
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : ==FILE==
+//!  File : solutionquality.rs
 //!
 //!  Purpose :   To demonstrate how to examine the quality of a solution.
 
-//TAG:begin-code
 extern crate mosek;
 extern crate itertools;
 
@@ -117,7 +116,6 @@ fn solutionquality(filename : Either<String,String>) -> Result<(),String> {
     }
     Ok(())
 }
-//TAG:end-code
 
 
 #[cfg(test)]

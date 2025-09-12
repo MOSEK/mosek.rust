@@ -1,13 +1,12 @@
 //
-//   Copyright : ==COPYRIGHT==
+//   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //
-//   File :      ==FILE==
+//   File :      parameters.rs
 //
 //   Purpose :   Demonstrates a very simple example about how to get/set
 //               parameters with MOSEK Julia API
 //
 
-//TAG:begin-code
 extern crate mosek;
 
 use mosek::{Task,Iparam,Dparam,Dinfitem,Iinfitem,Optimizertype,Basindtype};
@@ -16,7 +15,6 @@ fn main() -> Result<(),String> {
     let mut task = Task::new().unwrap();
     println!("Test MOSEK parameter get/set functions");
 
-//TAG:begin-set-parameter
     // Set log level (integer parameter)
     task.put_int_param(Iparam::LOG, 1)?;
     // Select interior-point optimizer... (integer parameter)
@@ -35,13 +33,10 @@ fn main() -> Result<(),String> {
     if let Err(_) = task.put_dou_param(Dparam::INTPNT_CO_TOL_REL_GAP, -1.0) {
         println!("Wrong parameter value");
     }
-//TAG:end-set-parameter
 
 
-//TAG:begin-get-parameter
     let param = task.get_dou_param(Dparam::INTPNT_CO_TOL_REL_GAP)?;
     println!("Current value for parameter intpnt_co_tol_rel_gap = {}",param);
-//TAG:end-get-parameter
 
     // Define and solve an optimization problem here
     // optimize(task,)
@@ -49,13 +44,10 @@ fn main() -> Result<(),String> {
 
     println!("Get MOSEK information items");
 
-//TAG:begin-infitems
     let tm = task.get_dou_inf(Dinfitem::OPTIMIZER_TIME)?;
     let iter = task.get_int_inf(Iinfitem::INTPNT_ITER)?;
-//TAG:end-infitems
 
     println!("Time: {}",tm);
     println!("Iterations: {}",iter);
     Ok(())
 }
-//TAG:end-code

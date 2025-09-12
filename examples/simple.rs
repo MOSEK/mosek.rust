@@ -1,13 +1,12 @@
 //!
-//!   Copyright : ==COPYRIGHT==
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : ==FILE==
+//!   File : simple.rs
 //!
 //!   Purpose :   Demonstrates a very simple example using MOSEK by
 //!               reading a problem file, solving the problem and
 //!               writing the problem+solution to a file.
 
-//TAG:begin-code
 extern crate itertools;
 extern crate mosek;
 use mosek::{Task,Streamtype,Iparam,Onoffkey};
@@ -33,9 +32,7 @@ fn simple(filename : Either<String,String>, outfile : Option<String>) -> Result<
     // line argument (received in `args')
     match filename {
         Right(fname) => {
-//TAG:begin-readdata
             task.read_data(fname.as_str())?
-//TAG:end-readdata
         },
         Left(data) => {
             task.read_ptf_string(data.as_str())?
@@ -57,13 +54,10 @@ fn simple(filename : Either<String,String>, outfile : Option<String>) -> Result<
 
         task.put_int_param(Iparam::PTF_WRITE_SOLUTIONS,  Onoffkey::ON)?;
 
-//TAG:begin-writedata
         task.write_data(outfile.as_str())?;
-//TAG:end-writedata
     }
     Ok(())
 }
-//TAG:end-code
 
 
 

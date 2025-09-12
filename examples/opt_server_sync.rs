@@ -1,12 +1,11 @@
 //!
-//!   Copyright : ==COPYRIGHT==
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : ==FILE==
+//!   File : opt_server_sync.rs
 //!
 //!   Purpose :   Demonstrates how to use MOSEK OptServer
 //!               to solve optimization problem synchronously
 //!
-//TAG:begin-code
 extern crate mosek;
 extern crate itertools;
 
@@ -52,7 +51,6 @@ fn opt_server_sync(inputfile : Either<String,String>, addr : String, cert : Opti
 
     Ok(())
 }
-//TAG:end-code
 
 
 #[cfg(test)]

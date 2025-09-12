@@ -1,7 +1,7 @@
 //!
-//!  Copyright : ==COPYRIGHT==
+//!  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!  File : ==FILE==
+//!  File : feasrepairex1.rs
 //!
 //!  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
 //!              locate the cause of an infeasibility.
@@ -20,7 +20,6 @@ use std::env;
 use mosek::{Task,Streamtype};
 use itertools::Either::{self,*};
 
-//TAG:begin-code
 fn main() -> Result<(),String> {
     let mut args = env::args();
     if args.len() < 2 {
@@ -56,7 +55,6 @@ fn feasrepairex1(filename : Either<String,String>) -> Result<(),String> {
     Ok(())
 }
 
-//TAG:end-code
 
 
 #[cfg(test)]

@@ -1,7 +1,7 @@
 //!
-//!   Copyright : ==COPYRIGHT==
+//!   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 //!
-//!   File : ==FILE==
+//!   File : parallel.rs
 //!
 //!   Purpose: Demonstrates parallel optimization using optimizebatch()
 //!
@@ -25,7 +25,6 @@ fn main() -> Result<(),String> {
         parallel(args.map(|s| Right(s)).collect())
     }
 }
-//TAG:begin-paroptexample
 fn parallel(files : Vec<Either<String,String>>) -> Result<(),String> {
     // Create an example list of tasks to optimize
     let mut tasks : Vec<(String,Task)> = files.iter().filter_map(|fname| {
@@ -75,7 +74,6 @@ fn parallel(files : Vec<Either<String,String>>) -> Result<(),String> {
     }
     Ok(())
 }
-//TAG:end-paroptexample
 
 
 

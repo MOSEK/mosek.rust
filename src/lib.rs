@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 1, 0]
+// Generted for MOSEK v[12, 0, 0]
 
 extern crate libc;
 use std::ffi::CString;
@@ -1674,247 +1674,253 @@ impl Dinfitem {
   pub const BI_CLEAN_TIME : i32 = 1;
   /// Time spent within the dual phase basis identification procedure since its invocation (in seconds).
   pub const BI_DUAL_TIME : i32 = 2;
+  /// TBD
+  pub const BI_OPTIMIZE_128BIT_TIME : i32 = 3;
+  /// TBD
+  pub const BI_OPTIMIZE_TIME : i32 = 4;
   /// Time spent within the primal phase of the basis identification procedure since its invocation (in seconds).
-  pub const BI_PRIMAL_TIME : i32 = 3;
+  pub const BI_PRIMAL_TIME : i32 = 5;
   /// Time spent within the basis identification procedure since its invocation (in seconds).
-  pub const BI_TIME : i32 = 4;
+  pub const BI_TIME : i32 = 6;
   /// Problem size after folding as a fraction of the original size.
-  pub const FOLDING_FACTOR : i32 = 5;
+  pub const FOLDING_FACTOR : i32 = 7;
   /// Total time spent in folding for continuous problems (in seconds).
-  pub const FOLDING_TIME : i32 = 6;
+  pub const FOLDING_TIME : i32 = 8;
   /// Dual feasibility measure reported by the interior-point optimizer.
-  pub const INTPNT_DUAL_FEAS : i32 = 7;
+  pub const INTPNT_DUAL_FEAS : i32 = 9;
   /// Dual objective value reported by the interior-point optimizer.
-  pub const INTPNT_DUAL_OBJ : i32 = 8;
+  pub const INTPNT_DUAL_OBJ : i32 = 10;
   /// An estimate of the number of flops used in the factorization.
-  pub const INTPNT_FACTOR_NUM_FLOPS : i32 = 9;
+  pub const INTPNT_FACTOR_NUM_FLOPS : i32 = 11;
   /// A measure of optimality of the solution.
-  pub const INTPNT_OPT_STATUS : i32 = 10;
+  pub const INTPNT_OPT_STATUS : i32 = 12;
   /// Order time (in seconds).
-  pub const INTPNT_ORDER_TIME : i32 = 11;
+  pub const INTPNT_ORDER_TIME : i32 = 13;
   /// Primal feasibility measure reported by the interior-point optimizer.
-  pub const INTPNT_PRIMAL_FEAS : i32 = 12;
+  pub const INTPNT_PRIMAL_FEAS : i32 = 14;
   /// Primal objective value reported by the interior-point optimizer.
-  pub const INTPNT_PRIMAL_OBJ : i32 = 13;
+  pub const INTPNT_PRIMAL_OBJ : i32 = 15;
   /// Interior-point optimizer setup time (in seconds).
-  pub const INTPNT_SETUP_TIME : i32 = 14;
+  pub const INTPNT_SETUP_TIME : i32 = 16;
   /// Time spent within the interior-point optimizer since its invocation (in seconds).
-  pub const INTPNT_TIME : i32 = 15;
+  pub const INTPNT_TIME : i32 = 17;
   /// Selection time for clique cuts (in seconds).
-  pub const MIO_CLIQUE_SELECTION_TIME : i32 = 16;
+  pub const MIO_CLIQUE_SELECTION_TIME : i32 = 18;
   /// Separation time for clique cuts (in seconds).
-  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 17;
+  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 19;
   /// Selection time for CMIR cuts (in seconds).
-  pub const MIO_CMIR_SELECTION_TIME : i32 = 18;
+  pub const MIO_CMIR_SELECTION_TIME : i32 = 20;
   /// Separation time for CMIR cuts (in seconds).
-  pub const MIO_CMIR_SEPARATION_TIME : i32 = 19;
+  pub const MIO_CMIR_SEPARATION_TIME : i32 = 21;
   /// Optimal objective value corresponding to the feasible solution.
-  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 20;
+  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 22;
   /// Value of the dual bound after presolve but before cut generation.
-  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 21;
+  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 23;
   /// Selection time for GMI cuts (in seconds).
-  pub const MIO_GMI_SELECTION_TIME : i32 = 22;
+  pub const MIO_GMI_SELECTION_TIME : i32 = 24;
   /// Separation time for GMI cuts (in seconds).
-  pub const MIO_GMI_SEPARATION_TIME : i32 = 23;
+  pub const MIO_GMI_SEPARATION_TIME : i32 = 25;
   /// Selection time for implied bound cuts (in seconds).
-  pub const MIO_IMPLIED_BOUND_SELECTION_TIME : i32 = 24;
+  pub const MIO_IMPLIED_BOUND_SELECTION_TIME : i32 = 26;
   /// Separation time for implied bound cuts (in seconds).
-  pub const MIO_IMPLIED_BOUND_SEPARATION_TIME : i32 = 25;
+  pub const MIO_IMPLIED_BOUND_SEPARATION_TIME : i32 = 27;
   /// Optimal objective value corresponding to the user provided initial solution.
-  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 26;
+  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 28;
   /// Selection time for knapsack cover (in seconds).
-  pub const MIO_KNAPSACK_COVER_SELECTION_TIME : i32 = 27;
+  pub const MIO_KNAPSACK_COVER_SELECTION_TIME : i32 = 29;
   /// Separation time for knapsack cover (in seconds).
-  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 28;
+  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 30;
   /// Selection time for lift-and-project cuts (in seconds).
-  pub const MIO_LIPRO_SELECTION_TIME : i32 = 29;
+  pub const MIO_LIPRO_SELECTION_TIME : i32 = 31;
   /// Separation time for lift-and-project cuts (in seconds).
-  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 30;
+  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 32;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
-  pub const MIO_OBJ_ABS_GAP : i32 = 31;
+  pub const MIO_OBJ_ABS_GAP : i32 = 33;
   /// The best bound on the objective value known.
-  pub const MIO_OBJ_BOUND : i32 = 32;
+  pub const MIO_OBJ_BOUND : i32 = 34;
   /// The primal objective value corresponding to the best integer feasible solution.
-  pub const MIO_OBJ_INT : i32 = 33;
+  pub const MIO_OBJ_INT : i32 = 35;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap.
-  pub const MIO_OBJ_REL_GAP : i32 = 34;
+  pub const MIO_OBJ_REL_GAP : i32 = 36;
   /// Total time for probing (in seconds).
-  pub const MIO_PROBING_TIME : i32 = 35;
+  pub const MIO_PROBING_TIME : i32 = 37;
   /// Total time for cut selection (in seconds).
-  pub const MIO_ROOT_CUT_SELECTION_TIME : i32 = 36;
+  pub const MIO_ROOT_CUT_SELECTION_TIME : i32 = 38;
   /// Total time for cut separation (in seconds).
-  pub const MIO_ROOT_CUT_SEPARATION_TIME : i32 = 37;
+  pub const MIO_ROOT_CUT_SEPARATION_TIME : i32 = 39;
   /// Time spent in the contiuous optimizer while processing the root node relaxation (in seconds).
-  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 38;
+  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 40;
   /// Time spent presolving the problem at the root node (in seconds).
-  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 39;
+  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 41;
   /// Time spent processing the root node (in seconds).
-  pub const MIO_ROOT_TIME : i32 = 40;
+  pub const MIO_ROOT_TIME : i32 = 42;
   /// Total time for symmetry detection (in seconds).
-  pub const MIO_SYMMETRY_DETECTION_TIME : i32 = 41;
+  pub const MIO_SYMMETRY_DETECTION_TIME : i32 = 43;
   /// Degree to which the problem is affected by detected symmetry.
-  pub const MIO_SYMMETRY_FACTOR : i32 = 42;
+  pub const MIO_SYMMETRY_FACTOR : i32 = 44;
   /// Time spent in the mixed-integer optimizer (in seconds).
-  pub const MIO_TIME : i32 = 43;
+  pub const MIO_TIME : i32 = 45;
   /// If the objective cut is used, then this information item has the value of the cut.
-  pub const MIO_USER_OBJ_CUT : i32 = 44;
+  pub const MIO_USER_OBJ_CUT : i32 = 46;
   /// Total number of ticks spent in the optimizer since it was invoked. It is strictly negative if it is not available.
-  pub const OPTIMIZER_TICKS : i32 = 45;
+  pub const OPTIMIZER_TICKS : i32 = 47;
   /// Total time spent in the optimizer since it was invoked (in seconds).
-  pub const OPTIMIZER_TIME : i32 = 46;
+  pub const OPTIMIZER_TIME : i32 = 48;
   /// Total time spent in the eliminator since the presolve was invoked (in seconds).
-  pub const PRESOLVE_ELI_TIME : i32 = 47;
+  pub const PRESOLVE_ELI_TIME : i32 = 49;
   /// Total time spent  in the linear dependency checker since the presolve was invoked (in seconds).
-  pub const PRESOLVE_LINDEP_TIME : i32 = 48;
+  pub const PRESOLVE_LINDEP_TIME : i32 = 50;
   /// Total time spent in the presolve since it was invoked (in seconds).
-  pub const PRESOLVE_TIME : i32 = 49;
+  pub const PRESOLVE_TIME : i32 = 51;
   /// Total perturbation of the bounds of the primal problem.
-  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 50;
+  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 52;
   /// The optimal objective value of the penalty function.
-  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 51;
+  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 53;
   /// Maximum absolute diagonal perturbation occurring during the QCQO reformulation.
-  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 52;
+  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 54;
   /// Time spent with conic quadratic reformulation (in seconds).
-  pub const QCQO_REFORMULATE_TIME : i32 = 53;
+  pub const QCQO_REFORMULATE_TIME : i32 = 55;
   /// Worst Cholesky column scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 54;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 56;
   /// Worst Cholesky diagonal scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 55;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 57;
   /// Time spent reading the data file (in seconds).
-  pub const READ_DATA_TIME : i32 = 56;
+  pub const READ_DATA_TIME : i32 = 58;
   /// The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server (in seconds).
-  pub const REMOTE_TIME : i32 = 57;
+  pub const REMOTE_TIME : i32 = 59;
   /// Time spent in the dual simplex optimizer since invoking it (in seconds).
-  pub const SIM_DUAL_TIME : i32 = 58;
+  pub const SIM_DUAL_TIME : i32 = 60;
   /// Feasibility measure reported by the simplex optimizer.
-  pub const SIM_FEAS : i32 = 59;
+  pub const SIM_FEAS : i32 = 61;
   /// Objective value reported by the simplex optimizer.
-  pub const SIM_OBJ : i32 = 60;
+  pub const SIM_OBJ : i32 = 62;
   /// Time spent in the primal simplex optimizer since invoking it (in seconds).
-  pub const SIM_PRIMAL_TIME : i32 = 61;
+  pub const SIM_PRIMAL_TIME : i32 = 63;
   /// Time spent in the simplex optimizer since invoking it (in seconds).
-  pub const SIM_TIME : i32 = 62;
+  pub const SIM_TIME : i32 = 64;
   /// Dual objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DUAL_OBJ : i32 = 63;
+  pub const SOL_BAS_DUAL_OBJ : i32 = 65;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLCON : i32 = 64;
+  pub const SOL_BAS_DVIOLCON : i32 = 66;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLVAR : i32 = 65;
+  pub const SOL_BAS_DVIOLVAR : i32 = 67;
   /// Infinity norm of barx in the basic solution.
-  pub const SOL_BAS_NRM_BARX : i32 = 66;
+  pub const SOL_BAS_NRM_BARX : i32 = 68;
   /// Infinity norm of slc in the basic solution.
-  pub const SOL_BAS_NRM_SLC : i32 = 67;
+  pub const SOL_BAS_NRM_SLC : i32 = 69;
   /// Infinity norm of slx in the basic solution.
-  pub const SOL_BAS_NRM_SLX : i32 = 68;
+  pub const SOL_BAS_NRM_SLX : i32 = 70;
   /// Infinity norm of suc in the basic solution.
-  pub const SOL_BAS_NRM_SUC : i32 = 69;
+  pub const SOL_BAS_NRM_SUC : i32 = 71;
   /// Infinity norm of sux in the basic solution.
-  pub const SOL_BAS_NRM_SUX : i32 = 70;
+  pub const SOL_BAS_NRM_SUX : i32 = 72;
   /// Infinity norm of xc in the basic solution.
-  pub const SOL_BAS_NRM_XC : i32 = 71;
+  pub const SOL_BAS_NRM_XC : i32 = 73;
   /// Infinity norm of xx in the basic solution.
-  pub const SOL_BAS_NRM_XX : i32 = 72;
+  pub const SOL_BAS_NRM_XX : i32 = 74;
   /// Infinity norm of Y in the basic solution.
-  pub const SOL_BAS_NRM_Y : i32 = 73;
+  pub const SOL_BAS_NRM_Y : i32 = 75;
   /// Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PRIMAL_OBJ : i32 = 74;
+  pub const SOL_BAS_PRIMAL_OBJ : i32 = 76;
   /// Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLCON : i32 = 75;
+  pub const SOL_BAS_PVIOLCON : i32 = 77;
   /// Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLVAR : i32 = 76;
+  pub const SOL_BAS_PVIOLVAR : i32 = 78;
   /// Infinity norm of barx in the integer solution.
-  pub const SOL_ITG_NRM_BARX : i32 = 77;
+  pub const SOL_ITG_NRM_BARX : i32 = 79;
   /// Infinity norm of xc in the integer solution.
-  pub const SOL_ITG_NRM_XC : i32 = 78;
+  pub const SOL_ITG_NRM_XC : i32 = 80;
   /// Infinity norm of xx in the integer solution.
-  pub const SOL_ITG_NRM_XX : i32 = 79;
+  pub const SOL_ITG_NRM_XX : i32 = 81;
   /// Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PRIMAL_OBJ : i32 = 80;
+  pub const SOL_ITG_PRIMAL_OBJ : i32 = 82;
   /// Maximal primal violation for affine conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLACC : i32 = 81;
+  pub const SOL_ITG_PVIOLACC : i32 = 83;
   /// Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLBARVAR : i32 = 82;
+  pub const SOL_ITG_PVIOLBARVAR : i32 = 84;
   /// Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCON : i32 = 83;
+  pub const SOL_ITG_PVIOLCON : i32 = 85;
   /// Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCONES : i32 = 84;
+  pub const SOL_ITG_PVIOLCONES : i32 = 86;
   /// Maximal primal violation for disjunctive constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLDJC : i32 = 85;
+  pub const SOL_ITG_PVIOLDJC : i32 = 87;
   /// Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLITG : i32 = 86;
+  pub const SOL_ITG_PVIOLITG : i32 = 88;
   /// Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLVAR : i32 = 87;
+  pub const SOL_ITG_PVIOLVAR : i32 = 89;
   /// Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DUAL_OBJ : i32 = 88;
+  pub const SOL_ITR_DUAL_OBJ : i32 = 90;
   /// Maximal dual violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLACC : i32 = 89;
+  pub const SOL_ITR_DVIOLACC : i32 = 91;
   /// Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLBARVAR : i32 = 90;
+  pub const SOL_ITR_DVIOLBARVAR : i32 = 92;
   /// Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCON : i32 = 91;
+  pub const SOL_ITR_DVIOLCON : i32 = 93;
   /// Maximal dual violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCONES : i32 = 92;
+  pub const SOL_ITR_DVIOLCONES : i32 = 94;
   /// Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLVAR : i32 = 93;
+  pub const SOL_ITR_DVIOLVAR : i32 = 95;
   /// Infinity norm of bars in the interior-point solution.
-  pub const SOL_ITR_NRM_BARS : i32 = 94;
+  pub const SOL_ITR_NRM_BARS : i32 = 96;
   /// Infinity norm of barx in the interior-point solution.
-  pub const SOL_ITR_NRM_BARX : i32 = 95;
+  pub const SOL_ITR_NRM_BARX : i32 = 97;
   /// Infinity norm of slc in the interior-point solution.
-  pub const SOL_ITR_NRM_SLC : i32 = 96;
+  pub const SOL_ITR_NRM_SLC : i32 = 98;
   /// Infinity norm of slx in the interior-point solution.
-  pub const SOL_ITR_NRM_SLX : i32 = 97;
+  pub const SOL_ITR_NRM_SLX : i32 = 99;
   /// Infinity norm of snx in the interior-point solution.
-  pub const SOL_ITR_NRM_SNX : i32 = 98;
+  pub const SOL_ITR_NRM_SNX : i32 = 100;
   /// Infinity norm of suc in the interior-point solution.
-  pub const SOL_ITR_NRM_SUC : i32 = 99;
+  pub const SOL_ITR_NRM_SUC : i32 = 101;
   /// Infinity norm of sux in the interior-point solution.
-  pub const SOL_ITR_NRM_SUX : i32 = 100;
+  pub const SOL_ITR_NRM_SUX : i32 = 102;
   /// Infinity norm of xc in the interior-point solution.
-  pub const SOL_ITR_NRM_XC : i32 = 101;
+  pub const SOL_ITR_NRM_XC : i32 = 103;
   /// Infinity norm of xx in the interior-point solution.
-  pub const SOL_ITR_NRM_XX : i32 = 102;
+  pub const SOL_ITR_NRM_XX : i32 = 104;
   /// Infinity norm of Y in the interior-point solution.
-  pub const SOL_ITR_NRM_Y : i32 = 103;
+  pub const SOL_ITR_NRM_Y : i32 = 105;
   /// Primal objective value of the interior-point solution.
-  pub const SOL_ITR_PRIMAL_OBJ : i32 = 104;
+  pub const SOL_ITR_PRIMAL_OBJ : i32 = 106;
   /// Maximal primal violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLACC : i32 = 105;
+  pub const SOL_ITR_PVIOLACC : i32 = 107;
   /// Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLBARVAR : i32 = 106;
+  pub const SOL_ITR_PVIOLBARVAR : i32 = 108;
   /// Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCON : i32 = 107;
+  pub const SOL_ITR_PVIOLCON : i32 = 109;
   /// Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCONES : i32 = 108;
+  pub const SOL_ITR_PVIOLCONES : i32 = 110;
   /// Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLVAR : i32 = 109;
+  pub const SOL_ITR_PVIOLVAR : i32 = 111;
   /// Time spent in the last to conic reformulation (in seconds).
-  pub const TO_CONIC_TIME : i32 = 110;
+  pub const TO_CONIC_TIME : i32 = 112;
   /// TBD
-  pub const UNDUALIZE_BI_DUAL_TIME : i32 = 111;
+  pub const UNDUALIZE_BI_DUAL_TIME : i32 = 113;
   /// TBD
-  pub const UNDUALIZE_BI_INITIALIZE_TIME : i32 = 112;
+  pub const UNDUALIZE_BI_INITIALIZE_TIME : i32 = 114;
   /// TBD
-  pub const UNDUALIZE_BI_OPTIMIZE_128BIT_TIME : i32 = 113;
+  pub const UNDUALIZE_BI_OPTIMIZE_128BIT_TIME : i32 = 115;
   /// TBD
-  pub const UNDUALIZE_BI_OPTIMIZE_TIME : i32 = 114;
+  pub const UNDUALIZE_BI_OPTIMIZE_TIME : i32 = 116;
   /// TBD
-  pub const UNDUALIZE_BI_PRIMAL_TIME : i32 = 115;
+  pub const UNDUALIZE_BI_PRIMAL_TIME : i32 = 117;
   /// TBD
-  pub const UNDUALIZE_BI_TIME : i32 = 116;
+  pub const UNDUALIZE_BI_TIME : i32 = 118;
   /// TBD
-  pub const UNFOLD_BI_DUAL_TIME : i32 = 117;
+  pub const UNFOLD_BI_DUAL_TIME : i32 = 119;
   /// TBD
-  pub const UNFOLD_BI_INITIALIZE_TIME : i32 = 118;
+  pub const UNFOLD_BI_INITIALIZE_TIME : i32 = 120;
   /// TBD
-  pub const UNFOLD_BI_OPTIMIZE_TIME : i32 = 119;
+  pub const UNFOLD_BI_OPTIMIZE_128BIT_TIME : i32 = 121;
   /// TBD
-  pub const UNFOLD_BI_PRIMAL_TIME : i32 = 120;
+  pub const UNFOLD_BI_OPTIMIZE_TIME : i32 = 122;
   /// TBD
-  pub const UNFOLD_BI_TIME : i32 = 121;
+  pub const UNFOLD_BI_PRIMAL_TIME : i32 = 123;
+  /// TBD
+  pub const UNFOLD_BI_TIME : i32 = 124;
   /// Time spent writing the data file (in seconds).
-  pub const WRITE_DATA_TIME : i32 = 122;
-  pub const END : i32 = 122;
+  pub const WRITE_DATA_TIME : i32 = 125;
+  pub const END : i32 = 125;
 } // impl Dinfitem
 
 /// License feature
