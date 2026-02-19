@@ -13,7 +13,7 @@
 
 extern crate mosek;
 
-use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype};
 
 // Since the value of infinity is ignored, we define it solely
 // for symbolic purposes

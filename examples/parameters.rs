@@ -36,7 +36,7 @@ fn main() -> Result<(),String> {
 
 
     let param = task.get_dou_param(Dparam::INTPNT_CO_TOL_REL_GAP)?;
-    println!("Current value for parameter intpnt_co_tol_rel_gap = $param");
+    println!("Current value for parameter intpnt_co_tol_rel_gap = {}",param);
 
     // Define and solve an optimization problem here
     // optimize(task,)

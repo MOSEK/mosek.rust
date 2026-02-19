@@ -96,7 +96,7 @@ fn main() -> Result<(),String> {
     let solsta = task.get_sol_sta(Soltype::BAS)?;
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::BAS, // Basic solution.
-                xx.as_mut_slice());
+                xx.as_mut_slice())?;
 
     match solsta {
         Solsta::OPTIMAL =>
