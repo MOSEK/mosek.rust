@@ -9,7 +9,8 @@ documentation = "https://docs.rs/mosek"
 repository = "https://github.com/MOSEK/Mosek.rust"
 build = "build.rs"
 license = "BSD-4-Clause"
-rust-version = "1.59"
+rust-version = "1.85"
+edition = "2024"
 keywords = ["mosek","optimization","conic_optimization","linear_optimization","integer_optimization"]
 categories = ["api-bindings","mathematics","science"]
 
