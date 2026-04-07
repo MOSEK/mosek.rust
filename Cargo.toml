@@ -1,6 +1,6 @@
 [package]
 name    = "mosek"
-version = "11.1.0"
+version = "11.1.1"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
@@ -14,7 +14,7 @@ keywords = ["mosek","optimization","conic_optimization","linear_optimization","i
 categories = ["api-bindings","mathematics","science"]
 
 [dependencies]
-libc = "0.2"
+libc = ">=0.2.0, <=0.2.183"
 itertools = "0.10"
 
 [[bin]]
