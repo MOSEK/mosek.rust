@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 1, 5]
+// Generted for MOSEK v[11, 2, 0]
 
 extern crate libc;
 use std::ffi::CString;
