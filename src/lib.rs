@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[11, 2, 0]
+// Generted for MOSEK v[11, 2, 2]
 
 extern crate libc;
 use std::ffi::CString;
@@ -48,14 +48,14 @@ use std::default::Default;
 use std::marker::Send;
 
 //#[link(name = "mosek64")]
-extern {
+extern "C" {
     fn MSK_linkfunctotaskstream(task        : * const u8,
                                 whichstream : i32,
                                 handle      : * const c_void,
-                                func        : extern fn (handle : * const c_void, msg : * const libc::c_char)) -> i32;
+                                func        : extern "C" fn (handle : * const c_void, msg : * const libc::c_char)) -> i32;
 
     fn MSK_putcallbackfunc(task        : * const u8,
-                           func        : extern fn (task : * const u8, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
+                           func        : extern "C" fn (task : * const u8, handle : * const c_void, caller : i32, douinf : * const f64, intinf : * const i32, lintinf : * const i64) -> i32,
                            handle      : * const c_void) -> i32;
     #[link_name = "MSK_putcallbackfunc"]
     #[allow(clashing_extern_declarations)]
@@ -71,12 +71,12 @@ extern {
                           lastmsglen   : * mut i64,
                           lastmsg      : * mut u8) -> i32;
     fn MSK_writedatahandle(task     : * const u8,
-                           func     : extern fn (handle : * const c_void, src : * const u8, count : usize) -> usize,
+                           func     : extern "C" fn (handle : * const c_void, src : * const u8, count : usize) -> usize,
                            handle   : * const c_void,
                            format   : i32,
                            compress : i32) -> i32;
     fn MSK_readdatahandle(task     : * const u8,
-                          func     : extern fn (handle : * const c_void, dst : * mut u8, count : usize) -> usize,
+                          func     : extern "C" fn (handle : * const c_void, dst : * mut u8, count : usize) -> usize,
                           handle   : * const c_void,
                           format   : i32,
                           compress : i32) -> i32;
@@ -4917,7 +4917,7 @@ impl Env {
 
 //const MSK_GLOBAL_ENV : Env = Env{ ptr : std::ptr::null() };
 
-extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
+extern "C" fn stream_callback_proxy(handle : * const libc::c_void, msg : * const libc::c_char) {
     let h = handle as * const Box<dyn Fn(&str)>;
     unsafe
     {
@@ -4929,7 +4929,7 @@ extern fn stream_callback_proxy(handle : * const libc::c_void, msg : * const lib
 }
 
 
-extern fn callback_proxy(_ : * const u8,
+extern "C" fn callback_proxy(_ : * const u8,
                           handle : * const c_void,
                           caller  : i32,
                           douinf  : * const f64,
@@ -9923,7 +9923,7 @@ impl TaskCB {
 }
 
 
-extern fn wrap_data_write_handle(handle : * const libc::c_void,
+extern "C" fn wrap_data_write_handle(handle : * const libc::c_void,
                                  src    : * const u8,
                                  count  : usize) -> usize {
     let h = handle as * mut Box<dyn FnMut(&[u8]) -> usize>;
@@ -9932,7 +9932,7 @@ extern fn wrap_data_write_handle(handle : * const libc::c_void,
     }
 }
 
-extern fn wrap_data_read_handle(handle : * const libc::c_void,
+extern "C" fn wrap_data_read_handle(handle : * const libc::c_void,
                                 dst    : * mut u8,
                                 count  : usize) -> usize {
     let h = handle as * mut Box<dyn FnMut(&mut [u8]) -> usize>;
@@ -9947,7 +9947,7 @@ struct CallbackHandle {
     intsolcb : Option<* mut c_void>,
 }
 impl CallbackHandle {
-    extern fn proxy(
+    extern "C" fn proxy(
         task : * const u8,
         handle : * const c_void,
         caller : i32,                     
@@ -10036,7 +10036,7 @@ impl Task {
     pub fn new()  -> Option<Task> { Task::with_capacity(None,0,0) }
 
 
-    extern fn stream_callback_proxy<F>(handle : * const c_void, msg : * const libc::c_char)
+    extern "C" fn stream_callback_proxy<F>(handle : * const c_void, msg : * const libc::c_char)
         where F : Fn(&str)
     {
         let func = handle as * mut F;

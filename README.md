@@ -1,4 +1,4 @@
-# Mosek 11.0 Rust interface
+# Mosek 11.2 Rust interface
 
 - Mosek optimization software: https://mosek.com/
 - Github repository for this package: https://github.com/MOSEK/mosek.rust
@@ -29,7 +29,7 @@ cargo build
 ```
 or
 ```
-export MOSEK_BINDIR_110=$HOME/local/mosek/11.0/tools/platform/linux64x86/bin
+export MOSEK_BINDIR_110=$HOME/local/mosek/11.2/tools/platform/linux64x86/bin
 cargo build
 ```
 
@@ -71,7 +71,7 @@ change between minor versions (though usually it will not change much).
 For example, add to your `Cargo.toml`:
 ```
 [dependencies]
-mosek = "11.0"
+mosek = "11.2"
 ```
 
 When running a project that uses `mosek`, the mosek library must be in the
