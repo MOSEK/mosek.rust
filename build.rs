@@ -232,9 +232,9 @@ fn main() {
     println!("cargo:rustc-link-lib={}",libname);
 
     if cfg!(target_os = "linux") {
-        println!("cargo:rustc-link-arg=\"-Wl,-rpath={}\"",libdir);
+        println!("cargo:rustc-link-arg=-Wl,-rpath=\"{}\"",libdir);
     }
     else if cfg!(target_os = "macos") {
-        println!("cargo:rustc-link-arg=\"-Wl,-rpath,{}\"",libdir);
+        println!("cargo:rustc-link-arg=-Wl,-rpath,\"{}\"",libdir);
     }
 }
