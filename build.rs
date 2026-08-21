@@ -72,6 +72,7 @@ fn mosek_from_base_dir(p : &OsStr, pfname : &str, majorver : i32, minorver : i32
 ///
 /// Returns `Some(path: String)` if found, otherwise `None`
 fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> Option<String> {
+    let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
     let mosekexe =
         match pfname.as_str() {
             "win64x86" =>  "mosek.exe",
@@ -79,54 +80,62 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
         };
 
     let mosekbin : PathBuf =
-        // Traverse PATH to find mosek binary.
-        // If it is found and is a symlink, follow the link.
-        env::var_os("PATH")
-            .and_then(|p| env::split_paths(&p).find_map(|path| {
-                let mut pb = PathBuf::from(&path);
+        env::var_os(&bindirvar)
+            .map(|p| { let mut pb = PathBuf::from(p); pb.push(mosekexe); pb })
+            .or_else(||env::var_os("MOSEK_INST_BASE").map(|p| {
+                let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver);
                 pb.push(mosekexe);
-                if pb.exists() {
-                    //println!("cargo:warning=Located MOSEK {}", pb.to_string_lossy());
-                    let mosekbin =
-                        if pb.is_symlink() {
-                            let pb2 = std::fs::read_link(pb).ok()?;
-                            if pb2.is_absolute() {
-                                pb2
+                pb
+            }))
+            // Traverse PATH to find mosek binary.
+            // If it is found and is a symlink, follow the link.
+            .or_else(||
+                env::var_os("PATH")
+                    .and_then(|p| env::split_paths(&p).find_map(|path| {
+                        let mut pb = PathBuf::from(&path);
+                        pb.push(mosekexe);
+                        if pb.exists() {
+                            //println!("cargo:warning=Located MOSEK {}", pb.to_string_lossy());
+                            let mosekbin =
+                                if pb.is_symlink() {
+                                    let pb2 = std::fs::read_link(pb).ok()?;
+                                    if pb2.is_absolute() {
+                                        pb2
+                                    }
+                                    else {
+                                        let mut pb = path;
+                                        pb.push(pb2);
+                                        pb
+                                    }
+                                }
+                                else {
+                                    pb
+                                };
+                            //println!("cargo:warning=Located resolved MOSEK {}", mosekbin.to_string_lossy());
+
+                            let (vmajor,vminor) =
+                                std::str::from_utf8(&Command::new(&mosekbin).arg("-v").output().unwrap().stdout).ok()
+                                    .and_then(|text| text.strip_prefix("MOSEK version "))
+                                    .and_then(|text| text.find('\n').map(|p| &text[0..p]) )
+                                    .and_then(|text| {
+                                        let mut ver = text.split('.');
+                                        ver.next()
+                                            .and_then(|s| FromStr::from_str(s).ok())
+                                            .and_then(|v0 : i32| ver.next().and_then(|s| FromStr::from_str(s).ok().map(|v1 : i32| (v0,v1))))
+                                    })?;
+
+                            if vmajor != majorver || vminor != minorver {
+                                println!("cargo:warning=Located MOSEK but version was {}.{} (expected {}.{})", vmajor,vminor,majorver,minorver);
+                                None
                             }
                             else {
-                                let mut pb = path;
-                                pb.push(pb2);
-                                pb
+                                Some(mosekbin)
                             }
                         }
                         else {
-                            pb
-                        };
-                    //println!("cargo:warning=Located resolved MOSEK {}", mosekbin.to_string_lossy());
-
-                    let (vmajor,vminor) =
-                        std::str::from_utf8(&Command::new(&mosekbin).arg("-v").output().unwrap().stdout).ok()
-                            .and_then(|text| text.strip_prefix("MOSEK version "))
-                            .and_then(|text| text.find('\n').map(|p| &text[0..p]) )
-                            .and_then(|text| {
-                                let mut ver = text.split('.');
-                                ver.next()
-                                    .and_then(|s| FromStr::from_str(s).ok())
-                                    .and_then(|v0 : i32| ver.next().and_then(|s| FromStr::from_str(s).ok().map(|v1 : i32| (v0,v1))))
-                            })?;
-
-                    if vmajor != majorver || vminor != minorver {
-                        println!("cargo:warning=Located MOSEK but version was {}.{} (expected {}.{})", vmajor,vminor,majorver,minorver);
-                        None
-                    }
-                    else {
-                        Some(mosekbin)
-                    }
-                }
-                else {
-                    None
-                }
-            }))
+                            None
+                        }
+                    })))
             .or_else(||
                 env::var_os("HOME")
                     .map(|p| { let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver); pb.push(mosekexe); pb }))
