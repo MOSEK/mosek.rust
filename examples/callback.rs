@@ -42,7 +42,7 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
             println!("  Elapsed time: {:6.2}({:.2})",opttime, stime);
             println!("  Primal obj.: {:-18.6e}  Dual obj.: {:-18.6e}",pobj, dobj);
         },
-        Callbackcode::END_INTPNT => 
+        Callbackcode::END_INTPNT =>
             println!("Interior-point optimizer finished."),
         Callbackcode::BEGIN_PRIMAL_SIMPLEX =>
             println!("Primal simplex optimizer started."),
@@ -158,7 +158,7 @@ Variables
 #[cfg(test)]
 mod tests {
     use super::*;
-    use itertools::{Left,Right};
+    use itertools::Either::*;
     #[test]
     fn test() {
         callbackmain("psim",   Left(DFLT_FILE.to_string()) ).unwrap();

@@ -1,6 +1,6 @@
 [package]
 name    = "mosek"
-version = "11.2.2"
+version = "11.2.3"
 edition = "2021"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
@@ -16,7 +16,7 @@ categories = ["api-bindings","mathematics","science"]
 
 [dependencies]
 libc = ">=0.2.0, <=0.2.183"
-itertools = "0.10"
+itertools = "0.15"
 
 [[bin]]
 name = "testmosek-raw"
