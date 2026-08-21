@@ -64,38 +64,51 @@ fn mosek_from_base_dir(p : &OsStr, pfname : &str, majorver : i32, minorver : i32
 
 }
 
-/// Given platform name and version, look for a MOSEK installation in the default locations:
-/// - $MOSEK_INST_BASE (all platforms)
-/// - Use `which` or `where` to locate mosek binary and assume that the same directory holds the library.
-/// - $HOME/mosek (on linux/osx)
-/// - %HOMEDRIVE%%HOMEPATH%\mosek (on windows)
+/// Given platform name and version, the location ofthe MOSEK library is determined as follows:
+/// - `$MOSEK_BINDIR_XY` environment variable for X=major version, Y=minor version if the variable exists.
+/// - `$MOSEK_INST_BASE/mosek/$MAJORVER.$MINORVER/tools/platform/$PLATFORM/bin` (all platforms) if `MOSEK_INST_BASE` is defined.
+/// - Search for mosek binary in `PATH` environment variable.
+/// - Search in `$HOME/mosek/$MAJORVER.$MINORVER/tools/platform/$PLATFORM/bin` (on linux/osx)
+/// - Search in `%HOMEDRIVE%%HOMEPATH%\\mosek\\%MAJORVER%.%MINORVER%\\tools\\platform\\win64x86\\bin` (on windows)
 ///
-/// Returns `Some(path: String)` if found, otherwise `None`
+/// Returns the directory of the mosek library as `Some(path: String)` if found, otherwise `None`
 fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> Option<String> {
+    let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
     let mosekexe =
         match pfname.as_str() {
             "win64x86" =>  "mosek.exe",
             _ => "mosek"
         };
+    //for (k,v) in env::vars() {
+    //    println!("cargo:warning={}={}",k,v);
+    //}
 
     let mosekbin : PathBuf =
         // Traverse PATH to find mosek binary.
         // If it is found and is a symlink, follow the link.
-        env::var_os("PATH")
-            .and_then(|p| env::split_paths(&p).find_map(|mut pb| {
+        env::var_os(&bindirvar)
+            .map(|p| { let mut pb = PathBuf::from(p); pb.push(mosekexe); pb })
+            .or_else(||env::var_os("MOSEK_INST_BASE").map(|p| {
+                let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver);
                 pb.push(mosekexe);
-                if pb.exists() {
-                    if pb.is_symlink() {
-                        std::fs::read_link(pb).ok()
-                    }
-                    else {
-                        Some(pb)
-                    }
-                }
-                else {
-                    None
-                }
+                pb
             }))
+            .or_else(||
+                env::var_os("PATH")
+                    .and_then(|p| env::split_paths(&p).find_map(|mut pb| {
+                        pb.push(mosekexe);
+                        if pb.exists() {
+                            if pb.is_symlink() {
+                                std::fs::read_link(pb).ok()
+                            }
+                            else {
+                                Some(pb)
+                            }
+                        }
+                        else {
+                            None
+                        }
+                    })))
             .or_else(||
                 env::var_os("HOME")
                     .map(|p| { let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver); pb.push(mosekexe); pb }))
@@ -105,7 +118,10 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
                     .map(|p| { let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver); pb.push(mosekexe); pb }))
         ?;
 
-    if ! mosekbin.exists() { return None; }
+    if ! mosekbin.exists() {
+        println!("cargo:warning=No MOSEK detected");
+        return None;
+    }
     let mosekpath = mosekbin.parent()?;
 
     let res = Command::new(&mosekbin).arg("-v").output().ok()?;
@@ -126,6 +142,7 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
         None
     }
     else {
+        println!("cargo:warning=Use MOSEK: {}",mosekpath.to_string_lossy());
         mosekpath.to_str().map(|s| s.to_string())
     }
 
