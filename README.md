@@ -87,25 +87,5 @@ change between minor versions (though usually it will not change much).
 For example, add to your `Cargo.toml`:
 ```
 [dependencies]
-mosek = "12.0"
+mosek = { version = "12.0", features = ["dynamic"] }
 ```
-
-When running a project that uses `mosek`, the mosek library must be in the
-library search path (`PATH` for Windows, `LD_LIBRARY_PATH` for linux,
-`DYLD_LIBRARY_PATH` for OS X).
-
-
-# Why Use Rust with Mosek?
-
-Rust has many advantages over other languages supported directly by MOSEK. For
-data wrangling it is faster than Python, Java or .NET, and it is significantly
-safer than C or C++. When building non-trivial models, the time it takes to
-form the input data for a problem may become non-trivial as well. When
-efficiency is critical, the traditional language of choice would have been C or C++, 
-but now Rust provides a much safer alternative. 
-
-Compared to Java and .NET Rust is in many cases somewhat faster when e.g.
-building complex constraint matrixes.
-
-Finally, it looks good. Rust language facilities allow us to write many array
-operations very compactly, yielding concise and readable model code.
