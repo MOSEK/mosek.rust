@@ -21,9 +21,6 @@ dynamic = []
 libc = "0.2"
 itertools = "0.10"
 
-[dev-dependencies]
-itertools = "0.10"
-
 [build-dependencies]
 cc = "1.0"
 

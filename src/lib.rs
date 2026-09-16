@@ -18576,30 +18576,8 @@ impl Drop for Task
     }
 }
 
-#[cfg(feature = "dynamic")]
-pub fn is_initialized() -> bool {
-    0 != unsafe { MSK_isinitialized() }
-}
-#[cfg(not(feature = "dynamic"))]
-pub fn is_initialized() -> bool { true }
+pub const VERSION : (u32,u32) = (12,0);
 
-
-#[cfg(feature = "dynamic")]
-pub fn initialize(paths : Option<&[&str]>) -> Result<(),String> {
-    let r : i32 =
-        if let Some(paths) = paths {
-            let cpaths : Vec<CString> = paths.iter().filter_map(|&p| CString::new(p).ok()).collect();
-            let pathptr : Vec<*const c_char> = cpaths.iter().map(|s| s.as_ptr()).collect();
-            unsafe { MSK_initializedynamicwithpaths(pathptr.len().min(i32::MAX as usize) as i32, pathptr.as_ptr()) }
-        }
-        else {
-            unsafe { MSK_initializedynamicwithpaths(0,std::ptr::null()) }
-        };
-    if 0 != r { Err(format!("Failed to load libmosek64. Searched in: {:?}",paths)) }
-    else { Ok(()) }
-}
-#[cfg(not(feature = "dynamic"))]
-pub fn initialize(paths : Option<&[&str]>) -> Result<(),String> { Ok(()) }
 
 /// Computes vector addition and multiplication by a scalar.
 ///
@@ -19228,3 +19206,38 @@ pub fn syrk(uplo_ : i32,trans_ : i32,n_ : i32,k_ : i32,alpha_ : f64,a_ : &[f64],
   return Result::Ok(());
 } // syrk
 
+
+
+
+#[cfg(feature = "dynamic")]
+pub fn is_initialized() -> bool {
+    0 != unsafe { MSK_isinitialized() }
+}
+#[cfg(not(feature = "dynamic"))]
+pub fn is_initialized() -> bool { true }
+
+
+#[cfg(feature = "dynamic")]
+pub fn initialize(paths : Option<&[&std::path::Path]>) -> Result<(),String> {
+    let r : i32 =
+        if let Some(paths) = paths {
+            let cpaths : Vec<CString> = paths.iter().filter_map(|&p| CString::new(p.as_os_str().as_encoded_bytes()).ok()).collect();
+
+            let pathptr : Vec<*const c_char> = cpaths.iter().map(|s| s.as_ptr()).collect();
+            unsafe { MSK_initializedynamicwithpaths(pathptr.len().min(i32::MAX as usize) as i32, pathptr.as_ptr()) }
+        }
+        else {
+            unsafe { MSK_initializedynamicwithpaths(0,std::ptr::null()) }
+        };
+    if 0 != r {
+        if let Some(paths) = paths {
+            Err(format!("Failed to load libmosek64 from: {:?}",paths))
+        }
+        else {
+            Err(format!("Failed to load libmosek64 using system defaults."))
+        }
+    }
+    else { Ok(()) }
+}
+#[cfg(not(feature = "dynamic"))]
+pub fn initialize<S>(paths : Option<&[S]>) -> Result<(),String> where S : Into<Vec<u8>> { Ok(()) }
