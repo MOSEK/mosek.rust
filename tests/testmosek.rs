@@ -186,9 +186,10 @@ Variables
 
 #[test]
 fn basic_tests() {
+    mosek::initialize(None).unwrap();
     let mut t = Task::new().unwrap().with_callbacks();
     t.put_stream_callback(Streamtype::LOG, |msg| print!("{}",msg)).unwrap();
-    t.read_ptf_string(POW1_PTF).unwrap();  
+    t.read_ptf_string(POW1_PTF).unwrap();
     let _ = t.optimize().unwrap();
     assert_eq!(2, t.get_num_acc().unwrap(),"Expected two ACCs");
     assert_eq!(5, t.get_num_var().unwrap(),"Expected empty task");

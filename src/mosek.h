@@ -31,10 +31,10 @@
 #define MSK_INFINITY 1.0e30
 
 
-/* BEGIN PLATFORM SPECIFIC DEFINITIONS (linux64x86) */
+/* BEGIN PLATFORM SPECIFIC DEFINITIONS (linuxaarch64) */
 #define MSKAPI
 #define MSKAPIVA
-/* END   PLATFORM SPECIFIC DEFINITIONS (linux64x86) */
+/* END   PLATFORM SPECIFIC DEFINITIONS (linuxaarch64) */
 
 
 /* Enums and constants */
@@ -272,9 +272,9 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_BEGIN_ORDER                                      = 23,
   /** The callback function is called when the presolve is started. */
   MSK_CALLBACK_BEGIN_PRESOLVE                                   = 24,
-  /** TBD */
+  /** The presolve elimination phase is started. */
   MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR                        = 25,
-  /** TBD */
+  /** The presolve linear depdency check phase is started. */
   MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES               = 26,
   /** The callback function is called when the primal-dual simplex optimizer started. */
   MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX                        = 27,
@@ -298,7 +298,7 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX                           = 36,
   /** Begin conic reformulation. */
   MSK_CALLBACK_BEGIN_TO_CONIC                                   = 37,
-  /** TBD */
+  /** Basis identification after undualizing is started. */
   MSK_CALLBACK_BEGIN_UNDUALIZE_BI                               = 38,
   /** TBD */
   MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL                          = 39,
@@ -314,17 +314,17 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL                        = 44,
   /** The callback function is called when undualizing is started. */
   MSK_CALLBACK_BEGIN_UNDUALIZING                                = 45,
-  /** TBD */
+  /** Basis identification after unfolding is started. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI                                  = 46,
-  /** TBD */
+  /** Basis identification dual phase after unfolding is started. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL                             = 47,
-  /** TBD */
+  /** Basis identification initialization after unfolding is started. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE                       = 48,
-  /** TBD */
+  /** Basis identification optimizer phase after unfolding is started. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZER                        = 49,
-  /** Reoptimizing the basic solution. */
+  /** Basis identification primal-dual-simplex phase after unfolding is started.. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX    = 50,
-  /** TBD */
+  /** Basis identification primal phase after unfolding is started. */
   MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL                           = 51,
   /** The calback function is called at the beginning of unfolding. */
   MSK_CALLBACK_BEGIN_UNFOLDING                                  = 52,
@@ -386,9 +386,9 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_END_ORDER                                        = 80,
   /** The callback function is called when the presolve is completed. */
   MSK_CALLBACK_END_PRESOLVE                                     = 81,
-  /** TBD */
+  /** The presolve elimination phase is terminated. */
   MSK_CALLBACK_END_PRESOLVE_ELIMINATOR                          = 82,
-  /** TBD */
+  /** The presolve linear depdency check phase is terminated. */
   MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES                 = 83,
   /** The callback function is called when the primal-dual optimizer is terminated. */
   MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX                          = 84,
@@ -416,7 +416,7 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_END_SOLVE_ROOT_RELAX                             = 95,
   /** End conic reformulation. */
   MSK_CALLBACK_END_TO_CONIC                                     = 96,
-  /** TBD */
+  /** Basis identification after undualizing is terminated. */
   MSK_CALLBACK_END_UNDUALIZE_BI                                 = 97,
   /** TBD */
   MSK_CALLBACK_END_UNDUALIZE_BI_DUAL                            = 98,
@@ -432,17 +432,17 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL                          = 103,
   /** The callback function is called when undualizing is terminated. */
   MSK_CALLBACK_END_UNDUALIZING                                  = 104,
-  /** TBD */
+  /** Basis identification after unfolding is terminated. */
   MSK_CALLBACK_END_UNFOLD_BI                                    = 105,
-  /** TBD */
+  /** Basis identification dual phase after unfolding is started. */
   MSK_CALLBACK_END_UNFOLD_BI_DUAL                               = 106,
-  /** TBD */
+  /** Basis identification initialization after unfolding is terminated. */
   MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE                         = 107,
-  /** TBD */
+  /** Basis identification optimizer phase after unfolding is terminated. */
   MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZER                          = 108,
-  /** Reoptimizing the basic solution. */
+  /** Basis identification primal-dual simplex phase after unfolding is terminated. */
   MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX      = 109,
-  /** TBD */
+  /** Basis identification primal phase after unfolding is terminated. */
   MSK_CALLBACK_END_UNFOLD_BI_PRIMAL                             = 110,
   /** The calback function is called at the end of unfolding. */
   MSK_CALLBACK_END_UNFOLDING                                    = 111,
@@ -508,11 +508,11 @@ enum MSKcallbackcode_enum {
   MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX       = 141,
   /** TBD */
   MSK_CALLBACK_UNDUALIZE_BI_PRIMAL                              = 142,
-  /** TBD */
+  /** Basis indentification dual phase after unfolding. */
   MSK_CALLBACK_UNFOLD_BI_DUAL                                   = 143,
   /** Reoptimizing the basic solution. */
   MSK_CALLBACK_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX          = 144,
-  /** TBD */
+  /** Basis indentification primal phase after unfolding. */
   MSK_CALLBACK_UNFOLD_BI_PRIMAL                                 = 145,
   /** The callback function is called from within the basis identification procedure at an intermediate point in the dual phase. */
   MSK_CALLBACK_UPDATE_BI_DUAL                                   = 146,
@@ -732,7 +732,7 @@ enum MSKdinfitem_enum {
   MSK_DINF_INTPNT_PRIMAL_FEAS                             = 17,
   /** Primal objective value reported by the interior-point optimizer. */
   MSK_DINF_INTPNT_PRIMAL_OBJ                              = 18,
-  /** Interior-point optimizer setup time (in seconds). */
+  /** Interior-point optimizer setup time. */
   MSK_DINF_INTPNT_SETUP_TIME                              = 19,
   /** Time spent within the interior-point optimizer since its invocation (in seconds). */
   MSK_DINF_INTPNT_TIME                                    = 20,
@@ -926,29 +926,29 @@ enum MSKdinfitem_enum {
   MSK_DINF_SOL_ITR_PVIOLVAR                               = 114,
   /** Time spent in the last to conic reformulation (in seconds). */
   MSK_DINF_TO_CONIC_TIME                                  = 115,
-  /** TBD */
+  /** Time spent in basis identification dual phase after undualizing. */
   MSK_DINF_UNDUALIZE_BI_DUAL_TIME                         = 116,
-  /** TBD */
+  /** Time spent in basis identification initialization after undualizing. */
   MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME                   = 117,
-  /** TBD */
+  /** ime spent in basis identification optimizer using 128bit floating point precision undualizing. */
   MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME              = 118,
-  /** TBD */
+  /** Time spent in basis identification optimizer using 64bit floating point precision undualizing. */
   MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME                     = 119,
-  /** TBD */
+  /** Time spent in basis identification primal phase after undualizing. */
   MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME                       = 120,
-  /** TBD */
+  /** Time spent in basis identification after undualizing. */
   MSK_DINF_UNDUALIZE_BI_TIME                              = 121,
-  /** TBD */
+  /** Time spent in basis identification dual phase after unfolding. */
   MSK_DINF_UNFOLD_BI_DUAL_TIME                            = 122,
-  /** TBD */
+  /** Time spent in basis identification initialization after unfolding. */
   MSK_DINF_UNFOLD_BI_INITIALIZE_TIME                      = 123,
-  /** TBD */
+  /** Time spent in basis identification optimizer phase using 128bit floating point precision after unfolding. */
   MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME                 = 124,
-  /** TBD */
+  /** Time spent in basis identification optimizer phase using 64bit floating point precision after unfolding. */
   MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME                        = 125,
-  /** TBD */
+  /** Time spent in basis identification primal phase after unfolding. */
   MSK_DINF_UNFOLD_BI_PRIMAL_TIME                          = 126,
-  /** TBD */
+  /** Time spent in basis identification after unfolding. */
   MSK_DINF_UNFOLD_BI_TIME                                 = 127,
   /** Time spent writing the data file (in seconds). */
   MSK_DINF_WRITE_DATA_TIME                                = 128
@@ -1602,364 +1602,358 @@ enum MSKiparam_enum {
   MSK_IPAR_FOLDING_USE                        = 14,
   /** Detect LMIs and optimize their dualization. */
   MSK_IPAR_GETDUAL_CONVERT_LMIS               = 15,
-  /** Deprecated. */
-  MSK_IPAR_HEARTBEAT_SIM_FREQ_TICKS           = 16,
   /** Controls the contents of the infeasibility report. */
-  MSK_IPAR_INFEAS_GENERIC_NAMES               = 17,
+  MSK_IPAR_INFEAS_GENERIC_NAMES               = 16,
   /** Turns the feasibility report on or off. */
-  MSK_IPAR_INFEAS_REPORT_AUTO                 = 18,
+  MSK_IPAR_INFEAS_REPORT_AUTO                 = 17,
   /** Controls the contents of the infeasibility report. */
-  MSK_IPAR_INFEAS_REPORT_LEVEL                = 19,
+  MSK_IPAR_INFEAS_REPORT_LEVEL                = 18,
   /** Controls whether basis identification is performed. */
-  MSK_IPAR_INTPNT_BASIS                       = 20,
-  /** Controls whether the interior-point solution is returned. */
-  MSK_IPAR_INTPNT_BASIS_ONLY                  = 21,
+  MSK_IPAR_INTPNT_BASIS                       = 19,
   /** Currently not in use. */
-  MSK_IPAR_INTPNT_HOTSTART                    = 22,
+  MSK_IPAR_INTPNT_HOTSTART                    = 20,
   /** Controls the maximum number of iterations allowed in the interior-point optimizer. */
-  MSK_IPAR_INTPNT_MAX_ITERATIONS              = 23,
+  MSK_IPAR_INTPNT_MAX_ITERATIONS              = 21,
   /** Maximum number of correction steps. */
-  MSK_IPAR_INTPNT_MAX_NUM_COR                 = 24,
+  MSK_IPAR_INTPNT_MAX_NUM_COR                 = 22,
   /** Currently not in use. */
-  MSK_IPAR_INTPNT_NOT_IN_USE                  = 25,
+  MSK_IPAR_INTPNT_NOT_IN_USE                  = 23,
   /** Controls the aggressiveness of the offending column detection. */
-  MSK_IPAR_INTPNT_OFF_COL_TRH                 = 26,
+  MSK_IPAR_INTPNT_OFF_COL_TRH                 = 24,
   /** This parameter controls the number of random seeds tried. */
-  MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS          = 27,
+  MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS          = 25,
   /** Controls the ordering strategy. */
-  MSK_IPAR_INTPNT_ORDER_METHOD                = 28,
+  MSK_IPAR_INTPNT_ORDER_METHOD                = 26,
   /** Controls whether regularization is allowed. */
-  MSK_IPAR_INTPNT_REGULARIZATION_USE          = 29,
+  MSK_IPAR_INTPNT_REGULARIZATION_USE          = 27,
   /** Controls how the problem is scaled before the interior-point optimizer is used. */
-  MSK_IPAR_INTPNT_SCALING                     = 30,
+  MSK_IPAR_INTPNT_SCALING                     = 28,
   /** Starting point used by the interior-point optimizer. */
-  MSK_IPAR_INTPNT_STARTING_POINT              = 31,
+  MSK_IPAR_INTPNT_STARTING_POINT              = 29,
   /** Controls the license manager client debugging behavior. */
-  MSK_IPAR_LICENSE_DEBUG                      = 32,
+  MSK_IPAR_LICENSE_DEBUG                      = 30,
   /** Controls license manager client behavior. */
-  MSK_IPAR_LICENSE_PAUSE_TIME                 = 33,
+  MSK_IPAR_LICENSE_PAUSE_TIME                 = 31,
   /** Controls license manager client behavior. */
-  MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS       = 34,
+  MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS       = 32,
   /** Controls when expiry warnings are issued. */
-  MSK_IPAR_LICENSE_TRH_EXPIRY_WRN             = 35,
+  MSK_IPAR_LICENSE_TRH_EXPIRY_WRN             = 33,
   /** Controls if MOSEK should queue for a license if none is available. */
-  MSK_IPAR_LICENSE_WAIT                       = 36,
+  MSK_IPAR_LICENSE_WAIT                       = 34,
   /** Controls the amount of log information. */
-  MSK_IPAR_LOG                                = 37,
+  MSK_IPAR_LOG                                = 35,
   /** Controls amount of output from the problem analyzer. */
-  MSK_IPAR_LOG_ANA_PRO                        = 38,
+  MSK_IPAR_LOG_ANA_PRO                        = 36,
   /** Controls the amount of output printed by the basis identification procedure. A higher level implies that more information is logged. */
-  MSK_IPAR_LOG_BI                             = 39,
+  MSK_IPAR_LOG_BI                             = 37,
   /** Controls the logging frequency. */
-  MSK_IPAR_LOG_BI_FREQ                        = 40,
+  MSK_IPAR_LOG_BI_FREQ                        = 38,
   /** Controls the amount of log information from the concurrent optimizer. */
-  MSK_IPAR_LOG_CONCURRENT                     = 41,
+  MSK_IPAR_LOG_CONCURRENT                     = 39,
   /** Controls the reduction in the log levels for the second and any subsequent optimizations. */
-  MSK_IPAR_LOG_CUT_SECOND_OPT                 = 42,
+  MSK_IPAR_LOG_CUT_SECOND_OPT                 = 40,
   /** Controls the amount of logging when a data item such as the maximum number constrains is expanded. */
-  MSK_IPAR_LOG_EXPAND                         = 43,
+  MSK_IPAR_LOG_EXPAND                         = 41,
   /** Controls the amount of output printed when performing feasibility repair. A value higher than one means extensive logging. */
-  MSK_IPAR_LOG_FEAS_REPAIR                    = 44,
+  MSK_IPAR_LOG_FEAS_REPAIR                    = 42,
   /** If turned on, then some log info is printed when a file is written or read. */
-  MSK_IPAR_LOG_FILE                           = 45,
+  MSK_IPAR_LOG_FILE                           = 43,
   /** Controls whether solution summary should be printed by the optimizer. */
-  MSK_IPAR_LOG_INCLUDE_SUMMARY                = 46,
+  MSK_IPAR_LOG_INCLUDE_SUMMARY                = 44,
   /** Controls log level for the infeasibility analyzer. */
-  MSK_IPAR_LOG_INFEAS_ANA                     = 47,
+  MSK_IPAR_LOG_INFEAS_ANA                     = 45,
   /** Controls the amount of log information from the interior-point optimizers. */
-  MSK_IPAR_LOG_INTPNT                         = 48,
+  MSK_IPAR_LOG_INTPNT                         = 46,
   /** Control whether local identifying information is printed to the log. */
-  MSK_IPAR_LOG_LOCAL_INFO                     = 49,
+  MSK_IPAR_LOG_LOCAL_INFO                     = 47,
   /** Controls the amount of log information from the mixed-integer optimizers. */
-  MSK_IPAR_LOG_MIO                            = 50,
+  MSK_IPAR_LOG_MIO                            = 48,
   /** The mixed-integer optimizer logging frequency. */
-  MSK_IPAR_LOG_MIO_FREQ                       = 51,
+  MSK_IPAR_LOG_MIO_FREQ                       = 49,
   /** If turned on, then factor lines are added to the log. */
-  MSK_IPAR_LOG_ORDER                          = 52,
+  MSK_IPAR_LOG_ORDER                          = 50,
   /** Controls amount of output printed by the presolve procedure. A higher level implies that more information is logged. */
-  MSK_IPAR_LOG_PRESOLVE                       = 53,
+  MSK_IPAR_LOG_PRESOLVE                       = 51,
   /** Control logging in sensitivity analyzer. */
-  MSK_IPAR_LOG_SENSITIVITY                    = 54,
+  MSK_IPAR_LOG_SENSITIVITY                    = 52,
   /** Control logging in sensitivity analyzer. */
-  MSK_IPAR_LOG_SENSITIVITY_OPT                = 55,
+  MSK_IPAR_LOG_SENSITIVITY_OPT                = 53,
   /** Controls the amount of log information from the simplex optimizers. */
-  MSK_IPAR_LOG_SIM                            = 56,
+  MSK_IPAR_LOG_SIM                            = 54,
   /** Controls simplex logging frequency. */
-  MSK_IPAR_LOG_SIM_FREQ                       = 57,
-  /** Deprecated. */
-  MSK_IPAR_LOG_SIM_FREQ_GIGA_TICKS            = 58,
+  MSK_IPAR_LOG_SIM_FREQ                       = 55,
   /** Controls the memory related log information. */
-  MSK_IPAR_LOG_STORAGE                        = 59,
+  MSK_IPAR_LOG_STORAGE                        = 56,
   /** Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times. */
-  MSK_IPAR_MAX_NUM_WARNINGS                   = 60,
+  MSK_IPAR_MAX_NUM_WARNINGS                   = 57,
   /** Controls whether the mixed-integer optimizer is branching up or down by default. */
-  MSK_IPAR_MIO_BRANCH_DIR                     = 61,
+  MSK_IPAR_MIO_BRANCH_DIR                     = 58,
   /** Controls the amount of conflict analysis employed by the mixed-integer optimizer. */
-  MSK_IPAR_MIO_CONFLICT_ANALYSIS_LEVEL        = 62,
+  MSK_IPAR_MIO_CONFLICT_ANALYSIS_LEVEL        = 59,
   /** Toggles outer approximation for conic problems. */
-  MSK_IPAR_MIO_CONIC_OUTER_APPROXIMATION      = 63,
+  MSK_IPAR_MIO_CONIC_OUTER_APPROXIMATION      = 60,
   /** Controls if an initial mixed integer solution should be constructed from the values of the integer variables. */
-  MSK_IPAR_MIO_CONSTRUCT_SOL                  = 64,
+  MSK_IPAR_MIO_CONSTRUCT_SOL                  = 61,
   /** Maximum number of nodes in each call to Crossover. */
-  MSK_IPAR_MIO_CROSSOVER_MAX_NODES            = 65,
+  MSK_IPAR_MIO_CROSSOVER_MAX_NODES            = 62,
   /** Controls whether clique cuts should be generated. */
-  MSK_IPAR_MIO_CUT_CLIQUE                     = 66,
+  MSK_IPAR_MIO_CUT_CLIQUE                     = 63,
   /** Controls whether mixed integer rounding cuts should be generated. */
-  MSK_IPAR_MIO_CUT_CMIR                       = 67,
+  MSK_IPAR_MIO_CUT_CMIR                       = 64,
   /** Controls whether GMI cuts should be generated. */
-  MSK_IPAR_MIO_CUT_GMI                        = 68,
+  MSK_IPAR_MIO_CUT_GMI                        = 65,
   /** Controls whether implied bound cuts should be generated. */
-  MSK_IPAR_MIO_CUT_IMPLIED_BOUND              = 69,
+  MSK_IPAR_MIO_CUT_IMPLIED_BOUND              = 66,
   /** Controls whether knapsack cover cuts should be generated. */
-  MSK_IPAR_MIO_CUT_KNAPSACK_COVER             = 70,
+  MSK_IPAR_MIO_CUT_KNAPSACK_COVER             = 67,
   /** Controls whether lift-and-project cuts should be generated. */
-  MSK_IPAR_MIO_CUT_LIPRO                      = 71,
+  MSK_IPAR_MIO_CUT_LIPRO                      = 68,
   /** Controls how aggressively generated cuts are selected to be included in the relaxation. */
-  MSK_IPAR_MIO_CUT_SELECTION_LEVEL            = 72,
+  MSK_IPAR_MIO_CUT_SELECTION_LEVEL            = 69,
   /** Controls what problem data permutation method is appplied to mixed-integer problems. */
-  MSK_IPAR_MIO_DATA_PERMUTATION_METHOD        = 73,
+  MSK_IPAR_MIO_DATA_PERMUTATION_METHOD        = 70,
   /** Controls the amount of dual ray analysis employed by the mixed-integer optimizer. */
-  MSK_IPAR_MIO_DUAL_RAY_ANALYSIS_LEVEL        = 74,
+  MSK_IPAR_MIO_DUAL_RAY_ANALYSIS_LEVEL        = 71,
   /** Controls the way the Feasibility Pump heuristic is employed by the mixed-integer optimizer. */
-  MSK_IPAR_MIO_FEASPUMP_LEVEL                 = 75,
+  MSK_IPAR_MIO_FEASPUMP_LEVEL                 = 72,
   /** Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution. */
-  MSK_IPAR_MIO_HEURISTIC_LEVEL                = 76,
+  MSK_IPAR_MIO_HEURISTIC_LEVEL                = 73,
   /** Controls the way the mixed-integer optimizer exploits independent-block structure in the problem. */
-  MSK_IPAR_MIO_INDEPENDENT_BLOCK_LEVEL        = 77,
+  MSK_IPAR_MIO_INDEPENDENT_BLOCK_LEVEL        = 74,
   /** Maximum number of branches allowed during the branch and bound search. */
-  MSK_IPAR_MIO_MAX_NUM_BRANCHES               = 78,
+  MSK_IPAR_MIO_MAX_NUM_BRANCHES               = 75,
   /** Maximum number of relaxations in branch and bound search. */
-  MSK_IPAR_MIO_MAX_NUM_RELAXS                 = 79,
+  MSK_IPAR_MIO_MAX_NUM_RELAXS                 = 76,
   /** Maximum number of restarts allowed during the branch and bound search. */
-  MSK_IPAR_MIO_MAX_NUM_RESTARTS               = 80,
+  MSK_IPAR_MIO_MAX_NUM_RESTARTS               = 77,
   /** Maximum number of cut separation rounds at the root node. */
-  MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS        = 81,
+  MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS        = 78,
   /** Controls how many feasible solutions the mixed-integer optimizer investigates. */
-  MSK_IPAR_MIO_MAX_NUM_SOLUTIONS              = 82,
+  MSK_IPAR_MIO_MAX_NUM_SOLUTIONS              = 79,
   /** Controls how much emphasis is put on reducing memory usage. */
-  MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL          = 83,
+  MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL          = 80,
   /** Number of times a variable must have been branched on for its pseudocost to be considered reliable. */
-  MSK_IPAR_MIO_MIN_REL                        = 84,
+  MSK_IPAR_MIO_MIN_REL                        = 81,
   /** Turns on/off the mixed-integer mode. */
-  MSK_IPAR_MIO_MODE                           = 85,
+  MSK_IPAR_MIO_MODE                           = 82,
   /** Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer. */
-  MSK_IPAR_MIO_NODE_OPTIMIZER                 = 86,
+  MSK_IPAR_MIO_NODE_OPTIMIZER                 = 83,
   /** Controls the node selection strategy employed by the mixed-integer optimizer. */
-  MSK_IPAR_MIO_NODE_SELECTION                 = 87,
+  MSK_IPAR_MIO_NODE_SELECTION                 = 84,
   /** Controls how much emphasis is put on reducing numerical problems */
-  MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL       = 88,
+  MSK_IPAR_MIO_NUMERICAL_EMPHASIS_LEVEL       = 85,
   /** Maximum number of nodes in each call to RINS. */
-  MSK_IPAR_MIO_OPT_FACE_MAX_NODES             = 89,
+  MSK_IPAR_MIO_OPT_FACE_MAX_NODES             = 86,
   /** Enables or disables perspective reformulation in presolve. */
-  MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE        = 90,
+  MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE        = 87,
   /** Controls if the aggregator should be used. */
-  MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE        = 91,
+  MSK_IPAR_MIO_PRESOLVE_AGGREGATOR_USE        = 88,
   /** Controls the amount of probing employed by the mixed-integer optimizer in presolve. */
-  MSK_IPAR_MIO_PROBING_LEVEL                  = 92,
+  MSK_IPAR_MIO_PROBING_LEVEL                  = 89,
   /** Use objective domain propagation. */
-  MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT = 93,
+  MSK_IPAR_MIO_PROPAGATE_OBJECTIVE_CONSTRAINT = 90,
   /** Controls what reformulation method is applied to mixed-integer quadratic problems. */
-  MSK_IPAR_MIO_QCQO_REFORMULATION_METHOD      = 94,
+  MSK_IPAR_MIO_QCQO_REFORMULATION_METHOD      = 91,
   /** Maximum number of nodes in each call to RENS. */
-  MSK_IPAR_MIO_RENS_MAX_NODES                 = 95,
+  MSK_IPAR_MIO_RENS_MAX_NODES                 = 92,
   /** Maximum number of nodes in each call to RINS. */
-  MSK_IPAR_MIO_RINS_MAX_NODES                 = 96,
+  MSK_IPAR_MIO_RINS_MAX_NODES                 = 93,
   /** Controls which optimizer is employed at the root node in the mixed-integer optimizer. */
-  MSK_IPAR_MIO_ROOT_OPTIMIZER                 = 97,
+  MSK_IPAR_MIO_ROOT_OPTIMIZER                 = 94,
   /** Sets the random seed used for randomization in the mixed integer optimizer. */
-  MSK_IPAR_MIO_SEED                           = 98,
+  MSK_IPAR_MIO_SEED                           = 95,
   /** Controls the amount of symmetry detection and handling employed by the mixed-integer optimizer in presolve. */
-  MSK_IPAR_MIO_SYMMETRY_LEVEL                 = 99,
+  MSK_IPAR_MIO_SYMMETRY_LEVEL                 = 96,
   /** Controls the variable selection strategy employed by the mixed-integer optimizer. */
-  MSK_IPAR_MIO_VAR_SELECTION                  = 100,
+  MSK_IPAR_MIO_VAR_SELECTION                  = 97,
   /** Controls how much effort is put into detecting variable bounds. */
-  MSK_IPAR_MIO_VB_DETECTION_LEVEL             = 101,
+  MSK_IPAR_MIO_VB_DETECTION_LEVEL             = 98,
   /** Set the number of iterations to spin before sleeping. */
-  MSK_IPAR_MT_SPINCOUNT                       = 102,
+  MSK_IPAR_MT_SPINCOUNT                       = 99,
   /** Not in use */
-  MSK_IPAR_NG                                 = 103,
+  MSK_IPAR_NG                                 = 100,
   /** The number of threads employed by the optimizer. */
-  MSK_IPAR_NUM_THREADS                        = 104,
+  MSK_IPAR_NUM_THREADS                        = 101,
   /** Write a text header with date and MOSEK version in an OPF file. */
-  MSK_IPAR_OPF_WRITE_HEADER                   = 105,
+  MSK_IPAR_OPF_WRITE_HEADER                   = 102,
   /** Write a hint section with problem dimensions in the beginning of an OPF file. */
-  MSK_IPAR_OPF_WRITE_HINTS                    = 106,
+  MSK_IPAR_OPF_WRITE_HINTS                    = 103,
   /** Aim to keep lines in OPF files not much longer than this. */
-  MSK_IPAR_OPF_WRITE_LINE_LENGTH              = 107,
+  MSK_IPAR_OPF_WRITE_LINE_LENGTH              = 104,
   /** Write a parameter section in an OPF file. */
-  MSK_IPAR_OPF_WRITE_PARAMETERS               = 108,
+  MSK_IPAR_OPF_WRITE_PARAMETERS               = 105,
   /** Write objective, constraints, bounds etc. to an OPF file. */
-  MSK_IPAR_OPF_WRITE_PROBLEM                  = 109,
+  MSK_IPAR_OPF_WRITE_PROBLEM                  = 106,
   /** Controls what is written to the OPF files. */
-  MSK_IPAR_OPF_WRITE_SOL_BAS                  = 110,
+  MSK_IPAR_OPF_WRITE_SOL_BAS                  = 107,
   /** Controls what is written to the OPF files. */
-  MSK_IPAR_OPF_WRITE_SOL_ITG                  = 111,
+  MSK_IPAR_OPF_WRITE_SOL_ITG                  = 108,
   /** Controls what is written to the OPF files. */
-  MSK_IPAR_OPF_WRITE_SOL_ITR                  = 112,
+  MSK_IPAR_OPF_WRITE_SOL_ITR                  = 109,
   /** Enable inclusion of solutions in the OPF files. */
-  MSK_IPAR_OPF_WRITE_SOLUTIONS                = 113,
+  MSK_IPAR_OPF_WRITE_SOLUTIONS                = 110,
   /** Controls which optimizer is used to optimize the task. */
-  MSK_IPAR_OPTIMIZER                          = 114,
+  MSK_IPAR_OPTIMIZER                          = 111,
   /** If turned on, then names in the parameter file are case sensitive. */
-  MSK_IPAR_PARAM_READ_CASE_NAME               = 115,
+  MSK_IPAR_PARAM_READ_CASE_NAME               = 112,
   /** If turned on, then errors in parameter settings is ignored. */
-  MSK_IPAR_PARAM_READ_IGN_ERROR               = 116,
+  MSK_IPAR_PARAM_READ_IGN_ERROR               = 113,
   /** Maximum amount of fill-in created in one pivot during the elimination phase. */
-  MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       = 117,
+  MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL       = 114,
   /** Control the maximum number of times the eliminator is tried. */
-  MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  = 118,
+  MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES  = 115,
   /** Controls linear dependency check in presolve. */
-  MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       = 119,
+  MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH       = 116,
   /** Controls whether a new experimental linear dependency checker is employed. */
-  MSK_IPAR_PRESOLVE_LINDEP_NEW                = 120,
+  MSK_IPAR_PRESOLVE_LINDEP_NEW                = 117,
   /** Controls linear dependency check in presolve. */
-  MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       = 121,
+  MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH       = 118,
   /** Controls whether the linear constraints are checked for linear dependencies. */
-  MSK_IPAR_PRESOLVE_LINDEP_USE                = 122,
+  MSK_IPAR_PRESOLVE_LINDEP_USE                = 119,
   /** Control the maximum number of times presolve passes over the problem. */
-  MSK_IPAR_PRESOLVE_MAX_NUM_PASS              = 123,
+  MSK_IPAR_PRESOLVE_MAX_NUM_PASS              = 120,
   /** Controls the maximum number of reductions performed by the presolve. */
-  MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        = 124,
+  MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS        = 121,
   /** Controls whether the presolve is applied to a problem before it is optimized. */
-  MSK_IPAR_PRESOLVE_USE                       = 125,
+  MSK_IPAR_PRESOLVE_USE                       = 122,
   /** Controls which optimizer that is used to find the optimal repair. */
-  MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            = 126,
+  MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER            = 123,
   /** Controls whether parameters section is written in PTF files. */
-  MSK_IPAR_PTF_WRITE_PARAMETERS               = 127,
+  MSK_IPAR_PTF_WRITE_PARAMETERS               = 124,
   /** Controls whether PSD terms with a coefficient matrix of just one non-zero are written as a single term instead of as a matrix term. */
-  MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS         = 128,
+  MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS         = 125,
   /** Controls whether solution section is written in PTF files. */
-  MSK_IPAR_PTF_WRITE_SOLUTIONS                = 129,
+  MSK_IPAR_PTF_WRITE_SOLUTIONS                = 126,
   /** Controls whether files are read using synchronous or asynchronous reader. */
-  MSK_IPAR_READ_ASYNC                         = 130,
+  MSK_IPAR_READ_ASYNC                         = 127,
   /** Turns on additional debugging information when reading files. */
-  MSK_IPAR_READ_DEBUG                         = 131,
+  MSK_IPAR_READ_DEBUG                         = 128,
   /** Controls whether the free constraints are included in the problem. Applies to MPS files. */
-  MSK_IPAR_READ_KEEP_FREE_CON                 = 132,
+  MSK_IPAR_READ_KEEP_FREE_CON                 = 129,
   /** Controls how strictly the MPS file reader interprets the MPS format. */
-  MSK_IPAR_READ_MPS_FORMAT                    = 133,
+  MSK_IPAR_READ_MPS_FORMAT                    = 130,
   /** Controls the maximal number of characters allowed in one line of the MPS file. */
-  MSK_IPAR_READ_MPS_WIDTH                     = 134,
+  MSK_IPAR_READ_MPS_WIDTH                     = 131,
   /** Controls what information is used from the task files. */
-  MSK_IPAR_READ_TASK_IGNORE_PARAM             = 135,
+  MSK_IPAR_READ_TASK_IGNORE_PARAM             = 132,
   /** Use compression when sending data to an optimization server */
-  MSK_IPAR_REMOTE_USE_COMPRESSION             = 136,
+  MSK_IPAR_REMOTE_USE_COMPRESSION             = 133,
   /** Removes unused solutions before the optimization is performed. */
-  MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            = 137,
+  MSK_IPAR_REMOVE_UNUSED_SOLUTIONS            = 134,
+  /** If turned on, then an interior-point solution is available even if a basic solution is available. */
+  MSK_IPAR_REQUEST_INTPNT                     = 135,
   /** Controls sensitivity report behavior. */
-  MSK_IPAR_SENSITIVITY_ALL                    = 138,
+  MSK_IPAR_SENSITIVITY_ALL                    = 136,
   /** Controls which type of sensitivity analysis is to be performed. */
-  MSK_IPAR_SENSITIVITY_TYPE                   = 139,
+  MSK_IPAR_SENSITIVITY_TYPE                   = 137,
   /** Controls whether an LU factorization of the basis is used in a hot-start. */
-  MSK_IPAR_SIM_BASIS_FACTOR_USE               = 140,
+  MSK_IPAR_SIM_BASIS_FACTOR_USE               = 138,
   /** TBD */
-  MSK_IPAR_SIM_CACHE                          = 141,
+  MSK_IPAR_SIM_CACHE                          = 139,
   /** Controls how aggressively degeneration is handled. */
-  MSK_IPAR_SIM_DEGEN                          = 142,
+  MSK_IPAR_SIM_DEGEN                          = 140,
   /** Not in use. */
-  MSK_IPAR_SIM_DETECT_PWL                     = 143,
+  MSK_IPAR_SIM_DETECT_PWL                     = 141,
   /** Controls whether crashing is performed in the dual simplex optimizer. */
-  MSK_IPAR_SIM_DUAL_CRASH                     = 144,
+  MSK_IPAR_SIM_DUAL_CRASH                     = 142,
   /** An experimental feature. */
-  MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           = 145,
+  MSK_IPAR_SIM_DUAL_PHASEONE_METHOD           = 143,
   /** Controls how aggressively restricted selection is used. */
-  MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        = 146,
+  MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION        = 144,
   /** Controls the dual simplex strategy. */
-  MSK_IPAR_SIM_DUAL_SELECTION                 = 147,
-  /** Controls if the simplex optimizers are allowed to exploit duplicated columns. */
-  MSK_IPAR_SIM_EXPLOIT_DUPVEC                 = 148,
+  MSK_IPAR_SIM_DUAL_SELECTION                 = 145,
   /** Controls the type of hot-start that the simplex optimizer perform. */
-  MSK_IPAR_SIM_HOTSTART                       = 149,
+  MSK_IPAR_SIM_HOTSTART                       = 146,
   /** Determines if the simplex optimizer should exploit the initial factorization. */
-  MSK_IPAR_SIM_HOTSTART_LU                    = 150,
+  MSK_IPAR_SIM_HOTSTART_LU                    = 147,
   /** Maximum number of iterations that can be used by a simplex optimizer. */
-  MSK_IPAR_SIM_MAX_ITERATIONS                 = 151,
+  MSK_IPAR_SIM_MAX_ITERATIONS                 = 148,
   /** Controls how many set-backs that are allowed within a simplex optimizer. */
-  MSK_IPAR_SIM_MAX_NUM_SETBACKS               = 152,
+  MSK_IPAR_SIM_MAX_NUM_SETBACKS               = 149,
   /** Controls if the simplex optimizer ensures a non-singular basis, if possible. */
-  MSK_IPAR_SIM_NON_SINGULAR                   = 153,
+  MSK_IPAR_SIM_NON_SINGULAR                   = 150,
   /** Experimental. Usage not recommended. */
-  MSK_IPAR_SIM_PRECISION                      = 154,
+  MSK_IPAR_SIM_PRECISION                      = 151,
   /** Controls whether the simplex optimizer is allowed to boost the precision. */
-  MSK_IPAR_SIM_PRECISION_BOOST                = 155,
+  MSK_IPAR_SIM_PRECISION_BOOST                = 152,
   /** Controls the simplex crash. */
-  MSK_IPAR_SIM_PRIMAL_CRASH                   = 156,
+  MSK_IPAR_SIM_PRIMAL_CRASH                   = 153,
   /** An experimental feature. */
-  MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         = 157,
+  MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD         = 154,
   /** Controls how aggressively restricted selection is used. */
-  MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      = 158,
+  MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION      = 155,
   /** Controls the primal simplex strategy. */
-  MSK_IPAR_SIM_PRIMAL_SELECTION               = 159,
+  MSK_IPAR_SIM_PRIMAL_SELECTION               = 156,
   /** Controls the basis refactoring frequency. */
-  MSK_IPAR_SIM_REFACTOR_FREQ                  = 160,
+  MSK_IPAR_SIM_REFACTOR_FREQ                  = 157,
   /** Controls if the simplex optimizers are allowed to reformulate the problem. */
-  MSK_IPAR_SIM_REFORMULATION                  = 161,
+  MSK_IPAR_SIM_REFORMULATION                  = 158,
   /** Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis. */
-  MSK_IPAR_SIM_SAVE_LU                        = 162,
+  MSK_IPAR_SIM_SAVE_LU                        = 159,
   /** Controls how much effort is used in scaling the problem before a simplex optimizer is used. */
-  MSK_IPAR_SIM_SCALING                        = 163,
+  MSK_IPAR_SIM_SCALING                        = 160,
   /** Controls how the problem is scaled before a simplex optimizer is used. */
-  MSK_IPAR_SIM_SCALING_METHOD                 = 164,
+  MSK_IPAR_SIM_SCALING_METHOD                 = 161,
   /** Sets the random seed used for randomization in the simplex optimizers. */
-  MSK_IPAR_SIM_SEED                           = 165,
+  MSK_IPAR_SIM_SEED                           = 162,
   /** Experimental. Usage not recommended. */
-  MSK_IPAR_SIM_SOLUTION_REFINEMENT            = 166,
+  MSK_IPAR_SIM_SOLUTION_REFINEMENT            = 163,
   /** Controls the simplex behavior. */
-  MSK_IPAR_SIM_SWITCH_OPTIMIZER               = 167,
+  MSK_IPAR_SIM_SWITCH_OPTIMIZER               = 164,
   /** Control the contents of the solution files. */
-  MSK_IPAR_SOL_FILTER_KEEP_BASIC              = 168,
+  MSK_IPAR_SOL_FILTER_KEEP_BASIC              = 165,
   /** Controls the input solution file format. */
-  MSK_IPAR_SOL_READ_NAME_WIDTH                = 169,
+  MSK_IPAR_SOL_READ_NAME_WIDTH                = 166,
   /** Controls the input solution file format. */
-  MSK_IPAR_SOL_READ_WIDTH                     = 170,
+  MSK_IPAR_SOL_READ_WIDTH                     = 167,
   /** Controls whether the primal or the dual problem is solved by the continous optimizers. */
-  MSK_IPAR_SOLVE_FORM                         = 171,
+  MSK_IPAR_SOLVE_FORM                         = 168,
   /** Controls the amount of timing performed inside MOSEK. */
-  MSK_IPAR_TIMING_LEVEL                       = 172,
+  MSK_IPAR_TIMING_LEVEL                       = 169,
   /** Controls whether files are read using synchronous or asynchronous writer. */
-  MSK_IPAR_WRITE_ASYNC                        = 173,
+  MSK_IPAR_WRITE_ASYNC                        = 170,
   /** Controls the basic solution file format. */
-  MSK_IPAR_WRITE_BAS_CONSTRAINTS              = 174,
+  MSK_IPAR_WRITE_BAS_CONSTRAINTS              = 171,
   /** Controls the basic solution file format. */
-  MSK_IPAR_WRITE_BAS_HEAD                     = 175,
+  MSK_IPAR_WRITE_BAS_HEAD                     = 172,
   /** Controls the basic solution file format. */
-  MSK_IPAR_WRITE_BAS_VARIABLES                = 176,
+  MSK_IPAR_WRITE_BAS_VARIABLES                = 173,
   /** Controls output file compression. */
-  MSK_IPAR_WRITE_COMPRESSION                  = 177,
+  MSK_IPAR_WRITE_COMPRESSION                  = 174,
   /** Controls the output file data. */
-  MSK_IPAR_WRITE_FREE_CON                     = 178,
+  MSK_IPAR_WRITE_FREE_CON                     = 175,
   /** Controls the output file data. */
-  MSK_IPAR_WRITE_GENERIC_NAMES                = 179,
+  MSK_IPAR_WRITE_GENERIC_NAMES                = 176,
   /** Controls if the writer ignores incompatible problem items when writing files. */
-  MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    = 180,
+  MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS    = 177,
   /** Controls the integer solution file format. */
-  MSK_IPAR_WRITE_INT_CONSTRAINTS              = 181,
+  MSK_IPAR_WRITE_INT_CONSTRAINTS              = 178,
   /** Controls the integer solution file format. */
-  MSK_IPAR_WRITE_INT_HEAD                     = 182,
+  MSK_IPAR_WRITE_INT_HEAD                     = 179,
   /** Controls the integer solution file format. */
-  MSK_IPAR_WRITE_INT_VARIABLES                = 183,
+  MSK_IPAR_WRITE_INT_VARIABLES                = 180,
   /** When set, the JSON task and solution files are written with indentation for better readability. */
-  MSK_IPAR_WRITE_JSON_INDENTATION             = 184,
+  MSK_IPAR_WRITE_JSON_INDENTATION             = 181,
   /** Write full linear objective. */
-  MSK_IPAR_WRITE_LP_FULL_OBJ                  = 185,
+  MSK_IPAR_WRITE_LP_FULL_OBJ                  = 182,
   /** Ignore free constraints while writing a LP formatted file. */
-  MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS   = 186,
+  MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS   = 183,
   /** Controls the LP output file format. */
-  MSK_IPAR_WRITE_LP_LINE_WIDTH                = 187,
+  MSK_IPAR_WRITE_LP_LINE_WIDTH                = 184,
   /** Controls in which format the MPS file is written. */
-  MSK_IPAR_WRITE_MPS_FORMAT                   = 188,
+  MSK_IPAR_WRITE_MPS_FORMAT                   = 185,
   /** Controls the output file data. */
-  MSK_IPAR_WRITE_MPS_INT                      = 189,
+  MSK_IPAR_WRITE_MPS_INT                      = 186,
   /** Controls the solution file format. */
-  MSK_IPAR_WRITE_SOL_BARVARIABLES             = 190,
+  MSK_IPAR_WRITE_SOL_BARVARIABLES             = 187,
   /** Controls the solution file format. */
-  MSK_IPAR_WRITE_SOL_CONSTRAINTS              = 191,
+  MSK_IPAR_WRITE_SOL_CONSTRAINTS              = 188,
   /** Controls solution file format. */
-  MSK_IPAR_WRITE_SOL_HEAD                     = 192,
+  MSK_IPAR_WRITE_SOL_HEAD                     = 189,
   /** Controls whether the user specified names are employed even if they are invalid names. */
-  MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     = 193,
+  MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES     = 190,
   /** Controls the solution file format. */
-  MSK_IPAR_WRITE_SOL_VARIABLES                = 194
+  MSK_IPAR_WRITE_SOL_VARIABLES                = 191
 }; /* MSKiparam_enum */
 #define MSK_IPAR_BEGIN MSK_IPAR_ANA_SOL_BASIS
 #define MSK_IPAR_END   (1+MSK_IPAR_WRITE_SOL_VARIABLES)
@@ -1985,12 +1979,10 @@ typedef enum MSKiparam_enum MSKiparame;
 #define MSK_IPAR_FIXING_REQUIRE_FEAS_           "MSK_IPAR_FIXING_REQUIRE_FEAS"
 #define MSK_IPAR_FOLDING_USE_                   "MSK_IPAR_FOLDING_USE"
 #define MSK_IPAR_GETDUAL_CONVERT_LMIS_          "MSK_IPAR_GETDUAL_CONVERT_LMIS"
-#define MSK_IPAR_HEARTBEAT_SIM_FREQ_TICKS_      "MSK_IPAR_HEARTBEAT_SIM_FREQ_TICKS"
 #define MSK_IPAR_INFEAS_GENERIC_NAMES_          "MSK_IPAR_INFEAS_GENERIC_NAMES"
 #define MSK_IPAR_INFEAS_REPORT_AUTO_            "MSK_IPAR_INFEAS_REPORT_AUTO"
 #define MSK_IPAR_INFEAS_REPORT_LEVEL_           "MSK_IPAR_INFEAS_REPORT_LEVEL"
 #define MSK_IPAR_INTPNT_BASIS_                  "MSK_IPAR_INTPNT_BASIS"
-#define MSK_IPAR_INTPNT_BASIS_ONLY_             "MSK_IPAR_INTPNT_BASIS_ONLY"
 #define MSK_IPAR_INTPNT_HOTSTART_               "MSK_IPAR_INTPNT_HOTSTART"
 #define MSK_IPAR_INTPNT_MAX_ITERATIONS_         "MSK_IPAR_INTPNT_MAX_ITERATIONS"
 #define MSK_IPAR_INTPNT_MAX_NUM_COR_            "MSK_IPAR_INTPNT_MAX_NUM_COR"
@@ -2027,7 +2019,6 @@ typedef enum MSKiparam_enum MSKiparame;
 #define MSK_IPAR_LOG_SENSITIVITY_OPT_           "MSK_IPAR_LOG_SENSITIVITY_OPT"
 #define MSK_IPAR_LOG_SIM_                       "MSK_IPAR_LOG_SIM"
 #define MSK_IPAR_LOG_SIM_FREQ_                  "MSK_IPAR_LOG_SIM_FREQ"
-#define MSK_IPAR_LOG_SIM_FREQ_GIGA_TICKS_       "MSK_IPAR_LOG_SIM_FREQ_GIGA_TICKS"
 #define MSK_IPAR_LOG_STORAGE_                   "MSK_IPAR_LOG_STORAGE"
 #define MSK_IPAR_MAX_NUM_WARNINGS_              "MSK_IPAR_MAX_NUM_WARNINGS"
 #define MSK_IPAR_MIO_BRANCH_DIR_                "MSK_IPAR_MIO_BRANCH_DIR"
@@ -2107,6 +2098,7 @@ typedef enum MSKiparam_enum MSKiparame;
 #define MSK_IPAR_READ_TASK_IGNORE_PARAM_        "MSK_IPAR_READ_TASK_IGNORE_PARAM"
 #define MSK_IPAR_REMOTE_USE_COMPRESSION_        "MSK_IPAR_REMOTE_USE_COMPRESSION"
 #define MSK_IPAR_REMOVE_UNUSED_SOLUTIONS_       "MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
+#define MSK_IPAR_REQUEST_INTPNT_                "MSK_IPAR_REQUEST_INTPNT"
 #define MSK_IPAR_SENSITIVITY_ALL_               "MSK_IPAR_SENSITIVITY_ALL"
 #define MSK_IPAR_SENSITIVITY_TYPE_              "MSK_IPAR_SENSITIVITY_TYPE"
 #define MSK_IPAR_SIM_BASIS_FACTOR_USE_          "MSK_IPAR_SIM_BASIS_FACTOR_USE"
@@ -2117,7 +2109,6 @@ typedef enum MSKiparam_enum MSKiparame;
 #define MSK_IPAR_SIM_DUAL_PHASEONE_METHOD_      "MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"
 #define MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION_   "MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"
 #define MSK_IPAR_SIM_DUAL_SELECTION_            "MSK_IPAR_SIM_DUAL_SELECTION"
-#define MSK_IPAR_SIM_EXPLOIT_DUPVEC_            "MSK_IPAR_SIM_EXPLOIT_DUPVEC"
 #define MSK_IPAR_SIM_HOTSTART_                  "MSK_IPAR_SIM_HOTSTART"
 #define MSK_IPAR_SIM_HOTSTART_LU_               "MSK_IPAR_SIM_HOTSTART_LU"
 #define MSK_IPAR_SIM_MAX_ITERATIONS_            "MSK_IPAR_SIM_MAX_ITERATIONS"
@@ -2343,31 +2334,25 @@ typedef int MSKonoffkeye;
 
 enum MSKoptimizertype_enum {
   /** An experimental concurrent optimizer for continous linear optimization problems. */
-  MSK_OPTIMIZER_CONCURRENT                = 0,
+  MSK_OPTIMIZER_CONCURRENT          = 0,
   /** The optimizer for problems having conic constraints. */
-  MSK_OPTIMIZER_CONIC                     = 1,
-  /** The deprecated dual simplex optimizer. */
-  MSK_OPTIMIZER_DEPRECATED_DUAL_SIMPLEX   = 2,
-  /** The deprecated free simplex optimizer. */
-  MSK_OPTIMIZER_DEPRECATED_FREE_SIMPLEX   = 3,
+  MSK_OPTIMIZER_CONIC               = 1,
   /** The deprecated interior-point optimizer. */
-  MSK_OPTIMIZER_DEPRECATED_INTPNT         = 4,
-  /** The deprecated primal simplex optimizer. */
-  MSK_OPTIMIZER_DEPRECATED_PRIMAL_SIMPLEX = 5,
+  MSK_OPTIMIZER_DEPRECATED_INTPNT   = 2,
   /** The dual simplex optimizer. */
-  MSK_OPTIMIZER_DUAL_SIMPLEX              = 6,
+  MSK_OPTIMIZER_DUAL_SIMPLEX        = 3,
   /** The optimizer is chosen automatically. */
-  MSK_OPTIMIZER_FREE                      = 7,
+  MSK_OPTIMIZER_FREE                = 4,
   /** The primal and dual simplex optimizer ran concurrently or a simplex optimizer chosen automatically. */
-  MSK_OPTIMIZER_FREE_SIMPLEX              = 8,
+  MSK_OPTIMIZER_FREE_SIMPLEX        = 5,
   /** The interior-point optimizer. */
-  MSK_OPTIMIZER_INTPNT                    = 9,
+  MSK_OPTIMIZER_INTPNT              = 6,
   /** The mixed-integer optimizer. */
-  MSK_OPTIMIZER_MIXED_INT                 = 10,
+  MSK_OPTIMIZER_MIXED_INT           = 7,
   /** The primal-dual simplex optimizer. It is an experimental implementation of the parametric primal-dual simplex algorithm. */
-  MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX       = 11,
+  MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX = 8,
   /** The primal simplex optimizer. */
-  MSK_OPTIMIZER_PRIMAL_SIMPLEX            = 12
+  MSK_OPTIMIZER_PRIMAL_SIMPLEX      = 9
 }; /* MSKoptimizertype_enum */
 #define MSK_OPTIMIZER_BEGIN MSK_OPTIMIZER_CONCURRENT
 #define MSK_OPTIMIZER_END   (1+MSK_OPTIMIZER_PRIMAL_SIMPLEX)

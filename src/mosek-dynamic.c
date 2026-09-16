@@ -2796,7 +2796,8 @@ MSKrescodee MSK_initializedynamicwithpaths(int num_paths, const char * paths[]) 
     if (! libmosek_handle) {
         if (num_paths > 0) {
             size_t libnamelen = strlen(libname);
-            size_t maxpathlen = 0; for (int i = 0; paths[i]; ++i) {
+            size_t maxpathlen = 0;
+            for (int i = 0; i < num_paths; ++i) {
                 size_t n = strlen(paths[i]);
                 maxpathlen = maxpathlen > n ? maxpathlen : n;
             }
