@@ -66,6 +66,13 @@ To compile examples, run
 cargo build --examples
 ```
 
+or 
+
+```
+cargo build --features dynamic --examples
+```
+
+
 To run example binaries it is necessary to add the path to the MOSEK
 library to the `LD_LIBRARY_PATH` (linux), `DYLD_LIBRARY_PATH` (OS X)
 or `PATH` (Windows) environment variable.
