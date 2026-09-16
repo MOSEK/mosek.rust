@@ -16,6 +16,7 @@ use itertools::izip;
 
 fn main() -> Result<(),String>
 {
+    mosek::initialize(None)?;
     let numvar  : i32 = 6;
     let numcon  : i32 = 1;
 

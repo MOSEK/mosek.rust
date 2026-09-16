@@ -21,6 +21,7 @@ const INF : f64 = 0.0;
 
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Create a task object
     let mut task = match Task::new() {
         Some(e) => e,

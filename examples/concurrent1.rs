@@ -83,6 +83,7 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
 }
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: concurrent1 FILENAME [ TIMELIMIT ]");
@@ -159,9 +160,9 @@ fn concurrent1(data : Either<String,String>, timelimit : Option<String>) -> Resu
 
         drop_except(tasks,besti).unwrap()
             .with_stream_callback(
-                Streamtype::LOG, 
+                Streamtype::LOG,
                 &mut |msg| print!("{}",msg),
-                |t| { 
+                |t| {
                     t.optimizer_summary(mosek::Streamtype::LOG)?;
                     t.solution_summary(mosek::Streamtype::LOG)?;
                     Ok::<(),String>(())
@@ -198,7 +199,7 @@ fn concurrent1(data : Either<String,String>, timelimit : Option<String>) -> Resu
 
         drop_except(tasks,besti).unwrap()
             .with_stream_callback(
-                Streamtype::LOG, 
+                Streamtype::LOG,
                 &mut|msg| print!("{}",msg),
                 |t| {
                     t.optimizer_summary(mosek::Streamtype::LOG)?;
@@ -277,6 +278,7 @@ Integers
 ";
     #[test]
     fn test() {
+        mosek::initialize(None).unwrap();
         super::concurrent1(Either::Left(DFLT_FILE1.to_string()),None).unwrap();
         super::concurrent1(Either::Left(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
     }

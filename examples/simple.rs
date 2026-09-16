@@ -14,6 +14,7 @@ use std::env;
 use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: simple FILENAME [ OUTFILE ]");
@@ -82,6 +83,7 @@ Variables
 
     #[test]
     fn test() {
+        mosek::initialize(None).unwrap();
         super::simple(itertools::Either::Left(DFLT_FILE.to_string()),None).unwrap();
     }
 }

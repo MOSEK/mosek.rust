@@ -21,6 +21,7 @@ use mosek::{Task,Streamtype};
 use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: feasrepairex1 FILENAME");
@@ -75,8 +76,7 @@ end
 
     #[test]
     fn test() {
-        
+        mosek::initialize(None).unwrap();
         super::feasrepairex1(itertools::Either::Left(FEASREPAIR_LP.to_string())).unwrap();
     }
 }
-

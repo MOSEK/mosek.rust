@@ -27,6 +27,7 @@ use mosek::{Task,Boundkey,Streamtype,Mark,Objsense};
 const INFINITY : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let bkc = vec![
         Boundkey::UP, Boundkey::UP,
         Boundkey::UP, Boundkey::FX,

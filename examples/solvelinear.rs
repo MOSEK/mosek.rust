@@ -59,6 +59,7 @@ fn setup(task : & mut mosek::Task,
   }
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numcon : i32 = 2;
     let numvar : i32 = 2;
 

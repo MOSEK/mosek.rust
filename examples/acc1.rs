@@ -23,6 +23,7 @@ const k : i64 = 2;
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Create a task
     let mut task = match Task::new() {
         Some(e) => e,

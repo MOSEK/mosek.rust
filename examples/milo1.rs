@@ -11,6 +11,7 @@ extern crate mosek;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Prosta,Soltype,Variabletype,Dparam};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numcon : i32 = 2;
     let numvar : i32 = 2;
 

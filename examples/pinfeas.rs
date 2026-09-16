@@ -45,6 +45,7 @@ fn analyze_certificate(sl : &[f64], su : &[f64], eps : f64) {
 }
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // In this example we set up a simple problem
     // One could use any task or a task read from a file
     let mut task = test_problem()?.with_callbacks();
@@ -59,21 +60,27 @@ fn main() -> Result<(),String> {
 
     // Perform the optimization.
     task.optimize()?;
+
+    let whichsol =
+        if task.solution_def(Soltype::ITG)? { Soltype::ITG }
+            else if task.solution_def(Soltype::BAS)? { Soltype::BAS }
+                else { Soltype::ITR };
+
     task.solution_summary(Streamtype::LOG)?;
 
     // Check problem status, we use the interior point solution
-    if task.get_pro_sta(Soltype::ITR)? == Prosta::PRIM_INFEAS {
+    if task.get_pro_sta(whichsol)? == Prosta::PRIM_INFEAS {
         // Set the tolerance at which we consider a dual value as essential
         let eps = 1e-7;
 
         println!("Variable bounds important for infeasibility: ");
-        let mut slx = vec![0.0; n as usize]; task.get_slx(Soltype::ITR, slx.as_mut_slice())?;
-        let mut sux = vec![0.0; n as usize]; task.get_sux(Soltype::ITR, sux.as_mut_slice())?;
+        let mut slx = vec![0.0; n as usize]; task.get_slx(whichsol, slx.as_mut_slice())?;
+        let mut sux = vec![0.0; n as usize]; task.get_sux(whichsol, sux.as_mut_slice())?;
         analyze_certificate(slx.as_slice(), sux.as_slice(), eps);
 
         println!("Constraint bounds important for infeasibility: ");
-        let mut slc = vec![0.0; m as usize]; task.get_slc(Soltype::ITR, slc.as_mut_slice())?;
-        let mut suc = vec![0.0; m as usize]; task.get_suc(Soltype::ITR, suc.as_mut_slice())?;
+        let mut slc = vec![0.0; m as usize]; task.get_slc(whichsol, slc.as_mut_slice())?;
+        let mut suc = vec![0.0; m as usize]; task.get_suc(whichsol, suc.as_mut_slice())?;
         analyze_certificate(slc.as_mut_slice(), suc.as_mut_slice(), eps);
     }
     else {

@@ -19,6 +19,7 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numafe : i64 = 4;  /* Number of affine expressions.              */
     let numvar : i32 = 2;  /* Number of scalar variables */
     let dimbarvar = &[2];         /* Dimension of semidefinite cone */

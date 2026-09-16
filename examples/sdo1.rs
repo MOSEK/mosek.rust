@@ -24,6 +24,7 @@ const NUMVAR    : usize = 3;   /* Number of conic quadratic variables */
 
 fn main() -> Result<(),String>
 {
+    mosek::initialize(None)?;
     let dimbarvar = vec![3];         /* Dimension of semidefinite cone */
 
     let bkc = &[ mosek::Boundkey::FX, mosek::Boundkey::FX ];

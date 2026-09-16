@@ -42,7 +42,7 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
             println!("  Elapsed time: {:6.2}({:.2})",opttime, stime);
             println!("  Primal obj.: {:-18.6e}  Dual obj.: {:-18.6e}",pobj, dobj);
         },
-        Callbackcode::END_INTPNT => 
+        Callbackcode::END_INTPNT =>
             println!("Interior-point optimizer finished."),
         Callbackcode::BEGIN_PRIMAL_SIMPLEX =>
             println!("Primal simplex optimizer started."),
@@ -92,6 +92,7 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
 }
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let args : Vec<String> = env::args().collect();
 
 
@@ -109,6 +110,7 @@ fn main() -> Result<(),String> {
 }
 
 fn callbackmain(which : &str, data : Either<String,String>) -> Result<(),String> {
+    mosek::initialize(None)?;
     /* Create the optimization task. */
     let mut task = Task::new().unwrap();
     match data {

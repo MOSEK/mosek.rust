@@ -13,6 +13,7 @@ use std::env;
 use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: solutionquality FILENAME");
@@ -137,6 +138,7 @@ Variables
 
     #[test]
     fn test() {
+        mosek::initialize(None).unwrap();
         super::solutionquality(itertools::Either::Left(DFLT_FILE.to_string())).unwrap();
     }
 }

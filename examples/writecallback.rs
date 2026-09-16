@@ -25,6 +25,7 @@ Variables
 ";
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut task = Task::new().unwrap();
     task.read_ptf_string(DFLT_FILE).unwrap();
 

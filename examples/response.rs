@@ -29,6 +29,7 @@ Variables
 
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let args: Vec<String> = env::args().collect();
 
     let mut task = Task::new().unwrap().with_callbacks();

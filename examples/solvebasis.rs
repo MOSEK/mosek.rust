@@ -122,6 +122,7 @@ fn solve() -> Result<(),String> {
 }
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     solve()
 }
 

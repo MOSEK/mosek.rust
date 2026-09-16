@@ -120,6 +120,7 @@ fn portfolio(w      : f64,
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Since the value infinity is never used, we define
     // 'infinity' for symbolic purposes only
     let n : i32      = 8;

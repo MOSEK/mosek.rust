@@ -18577,12 +18577,15 @@ impl Drop for Task
 }
 
 #[cfg(feature = "dynamic")]
-pub fn mosek_is_initialized() -> bool {
+pub fn is_initialized() -> bool {
     0 != unsafe { MSK_isinitialized() }
 }
+#[cfg(not(feature = "dynamic"))]
+pub fn is_initialized() -> bool { true }
+
 
 #[cfg(feature = "dynamic")]
-pub fn initialize_mosek(paths : Option<&[&str]>) -> Result<(),String> {
+pub fn initialize(paths : Option<&[&str]>) -> Result<(),String> {
     let r : i32 =
         if let Some(paths) = paths {
             let cpaths : Vec<CString> = paths.iter().filter_map(|&p| CString::new(p).ok()).collect();
@@ -18592,9 +18595,11 @@ pub fn initialize_mosek(paths : Option<&[&str]>) -> Result<(),String> {
         else {
             unsafe { MSK_initializedynamicwithpaths(0,std::ptr::null()) }
         };
-    if 0 == r { Err(format!("Failed to load libmosek64. Searched in: {:?}",paths)) }
+    if 0 != r { Err(format!("Failed to load libmosek64. Searched in: {:?}",paths)) }
     else { Ok(()) }
 }
+#[cfg(not(feature = "dynamic"))]
+pub fn initialize(paths : Option<&[&str]>) -> Result<(),String> { Ok(()) }
 
 /// Computes vector addition and multiplication by a scalar.
 ///

@@ -20,6 +20,7 @@ fn print_matrix(x : &[f64], r : i32, c : i32) {
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
 
     let n = 3i32;
     let m = 2i32;

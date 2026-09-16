@@ -25,6 +25,7 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numvar = 4;
     let numcon = 3;
 

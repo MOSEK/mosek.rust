@@ -15,7 +15,8 @@ use std::time::Duration;
 use std::thread::sleep;
 use itertools::{Either,Either::*};
 
-fn main() {
+fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 3 {
         println!("Missing argument, syntax is:");
@@ -26,7 +27,7 @@ fn main() {
     opt_server_async(Either::Right(args.next().unwrap()),
                      args.next().unwrap(),
                      args.next().unwrap().parse().unwrap(),
-                     args.next()).unwrap();
+                     args.next())
 }
 fn opt_server_async(inputfile : Either<String,String>, addr : String, numpolls : usize, cert : Option<String>) -> Result<(),String> {
     // Path to certificate, if any

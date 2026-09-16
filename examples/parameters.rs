@@ -12,6 +12,7 @@ extern crate mosek;
 use mosek::{Task,Iparam,Dparam,Dinfitem,Iinfitem,Optimizertype,Basindtype};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut task = Task::new().unwrap();
     println!("Test MOSEK parameter get/set functions");
 

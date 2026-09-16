@@ -14,6 +14,7 @@ use std::env;
 use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 3 {
         println!("Missing argument, syntax is:");

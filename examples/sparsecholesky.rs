@@ -39,6 +39,7 @@ fn print_sparse(n     : usize,
 
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     /* Create the mosek environment. */
     //Example from the manual
     //Observe that anzc, aptrc, asubc and avalc only specify the lower triangular part.
