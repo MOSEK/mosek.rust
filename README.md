@@ -12,14 +12,20 @@ The package should work on
 - Windows x86_64
 - Mac OSX aarch64
 
-Building the API requires the MOSEK library. 
-- If the MOSEK command line tool is on the `PATH`, this will be used to locate the MOSEK installation.
-- Otherwise  the build script will look for MOSEK in `$HOME/mosek` (Linux and OSX) and `$HOMEDRIVE/$HOMEPATH/mosek` (Windows).
-- If none of the above produces a MOSEK distro, on linux and OSX it will
-  attempt to download and unpack the latest MOSEK distro (this requires
-  external tools `curl`, `tar` and `bzip2`). On Windows it will fail.
+Building the API requires the MOSEK library. By default, the build script will look in certain platform dependant
+standard locations for MOSEK:
+- If the environment defines `MOSEKRS_FORCE_DOWNLOAD=TRUE`, the build script will attempt to download and install MOSEK
+  in the build directory. This requires external tools `curl`, `tar` and `bzip2`, and on Windows it will fail. Otherwise
+- If the MOSEK command line tool is on the `PATH`, this will be used to locate the MOSEK library.
+- Otherwise following locations are search:
+  - `$HOME/mosek` (linux, osx)
+  - `$USERPROFILE/mosek` (windows)
+  - `$HOME/Applications/mosek` (osx)
+  - `$HOME/.local/mosek` (osx, linux)
+  - `$LOCALAPPDATA/mosek` (windows)
+- If MOSEK is not found, the build script will not specify a link path, and building will most likely fail.
 
-## External dependencies
+## Minimal external dependencies
 The MOSEK Rust API currently depends only on `libc` and `itertools`, and the
 MOSEK library.
 

@@ -1,4 +1,5 @@
 [package]
+edition = "2024"
 name    = "mosek"
 version = "12.0.0-alpha.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
@@ -9,23 +10,29 @@ documentation = "https://docs.rs/mosek"
 repository = "https://github.com/MOSEK/Mosek.rust"
 build = "build.rs"
 license = "BSD-4-Clause"
-rust-version = "1.59"
 keywords = ["mosek","optimization","conic_optimization","linear_optimization","integer_optimization"]
 categories = ["api-bindings","mathematics","science"]
+
+[features]
+dynamic = []
+
 
 [dependencies]
 libc = "0.2"
 itertools = "0.10"
 
-[dec-dependencies]
+[dev-dependencies]
 itertools = "0.10"
 
-[[bin]]
-name = "testmosek-raw"
-test = false
-path = "tests/testmosek_raw.rs"
+[build-dependencies]
+cc = "1.0"
 
-[[bin]]
-name = "mosekcli"
-test = false
-path = "tests/mosekcli.rs"
+# [[bin]]
+# name = "testmosek-raw"
+# test = false
+# path = "tests/testmosek_raw.rs"
+
+# [[bin]]
+# name = "mosekcli"
+# test = false
+# path = "tests/mosekcli.rs"

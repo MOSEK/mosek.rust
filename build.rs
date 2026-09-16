@@ -1,13 +1,11 @@
 use std::env;
-use std::ffi::OsStr;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::str::FromStr;
 use std::io::prelude::*;
-//use curl::easy::Easy;
 use std::process::Command;
 
-
+#[allow(unused)]
 fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     if cfg!(target_os = "windows") {
         if      cfg!(target_arch = "x86_64") {
@@ -47,11 +45,8 @@ fn get_platform_name(majorver : i32,minorver : i32) -> (String,String) {
     }
 }
 
-
-
-
-
-fn mosek_from_base_dir(p : &OsStr, pfname : &str, majorver : i32, minorver : i32) -> PathBuf {
+#[allow(unused)]
+fn mosek_from_base_dir(p : &Path, pfname : &str, majorver : i32, minorver : i32) -> PathBuf {
     let mut res = PathBuf::new();
     res.push(p);
     res.push("mosek");
@@ -65,91 +60,103 @@ fn mosek_from_base_dir(p : &OsStr, pfname : &str, majorver : i32, minorver : i32
 }
 
 /// Given platform name and version, look for a MOSEK installation in the default locations:
-/// - $MOSEK_INST_BASE (all platforms)
-/// - Use `which` or `where` to locate mosek binary and assume that the same directory holds the library.
-/// - $HOME/mosek (on linux/osx)
-/// - %HOMEDRIVE%%HOMEPATH%\mosek (on windows)
+/// - in `$MOSEK_INST_BASE`
+/// - in `$MOSEK_BINDIR_120`, location
+/// - in `PATH`, with the assumption that the library is co-located with the mosek binary
+/// - in standard locations:
+///   - `$HOME/.local/mosek`
+///   - `$HOME/Applications/mosek` (os x only)
+///   - `%USERPROFILE%/mosek` (windows only)
+///   - `$HOME/mosek`
+///   - `%USERPROFILE%/AppData/mosek` (windows only)
+///   - `%HOMEDRIVE%/%HOMEPATH%/mosek` (windows only)
+///   - `%LOCALAPPDATA%/mosek` (windows only)
 ///
 /// Returns `Some(path: String)` if found, otherwise `None`
+#[allow(unused)]
 fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> Option<String> {
     let bindirvar = format!("MOSEK_BINDIR_{}{}",majorver,minorver);
-    let mosekexe =
+    let (mosekexe,libname) =
         match pfname.as_str() {
-            "win64x86" =>  "mosek.exe",
-            _ => "mosek"
+            "win64x86"     => ("mosek.exe",format!("{}mosek64_{majorver}_{minorver}{}",env::consts::DLL_PREFIX,env::consts::DLL_SUFFIX)),
+            "osxaarch64"   => ("mosek",    format!("{}mosek64.{majorver}.{minorver}{}",env::consts::DLL_PREFIX,env::consts::DLL_SUFFIX)),
+            _              => ("mosek",    format!("{}mosek64{}.{majorver}.{minorver}",env::consts::DLL_PREFIX,env::consts::DLL_SUFFIX))
         };
 
-    let mosekbin : PathBuf =
-        env::var_os(&bindirvar)
-            .map(|p| { let mut pb = PathBuf::from(p); pb.push(mosekexe); pb })
-            .or_else(||env::var_os("MOSEK_INST_BASE").map(|p| {
-                let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver);
-                pb.push(mosekexe);
-                pb
-            }))
-            // Traverse PATH to find mosek binary.
-            // If it is found and is a symlink, follow the link.
+    let moseklibdir : PathBuf =
+        // If MOSEK_BINDIR_XY is set, use use that
+        env::var(&bindirvar).ok().map(|p| PathBuf::from(p))
+            // Othrewise, of MOSEK_INST_BASE is set, use that to construct the path to the mosek library
+            .or_else(|| env::var("MOSEK_INST_BASE").ok().map(|p| mosek_from_base_dir(&PathBuf::from(p), pfname, majorver, minorver)))
+            // Otherwise, traverse PATH to find mosek binary. If it is found and is a symlink, follow the link, then look for the
+            // mosek library in the same directory as the binary.
             .or_else(||
                 env::var_os("PATH")
                     .and_then(|p| env::split_paths(&p).find_map(|path| {
                         let mut pb = PathBuf::from(&path);
                         pb.push(mosekexe);
-                        if pb.exists() {
-                            //println!("cargo:warning=Located MOSEK {}", pb.to_string_lossy());
-                            let mosekbin =
-                                if pb.is_symlink() {
-                                    let pb2 = std::fs::read_link(pb).ok()?;
-                                    if pb2.is_absolute() {
-                                        pb2
-                                    }
-                                    else {
-                                        let mut pb = path;
-                                        pb.push(pb2);
-                                        pb
-                                    }
-                                }
-                                else {
-                                    pb
-                                };
-                            //println!("cargo:warning=Located resolved MOSEK {}", mosekbin.to_string_lossy());
-
-                            let (vmajor,vminor) =
-                                std::str::from_utf8(&Command::new(&mosekbin).arg("-v").output().unwrap().stdout).ok()
-                                    .and_then(|text| text.strip_prefix("MOSEK version "))
-                                    .and_then(|text| text.find('\n').map(|p| &text[0..p]) )
-                                    .and_then(|text| {
-                                        let mut ver = text.split('.');
-                                        ver.next()
-                                            .and_then(|s| FromStr::from_str(s).ok())
-                                            .and_then(|v0 : i32| ver.next().and_then(|s| FromStr::from_str(s).ok().map(|v1 : i32| (v0,v1))))
-                                    })?;
-
-                            if vmajor != majorver || vminor != minorver {
-                                println!("cargo:warning=Located MOSEK but version was {}.{} (expected {}.{})", vmajor,vminor,majorver,minorver);
-                                None
-                            }
+                        let mosekexefullpath : PathBuf =
+                            if !pb.exists() { return None }
+                            else if ! pb.is_symlink() { pb }
                             else {
-                                Some(mosekbin)
-                            }
+                                let pb2 = std::fs::read_link(&pb).ok()?;
+                                if pb2.is_absolute() { pb2 }
+                                else { pb.parent()?.join(pb2) }
+                            };
+
+                        let libdir = mosekexefullpath.parent()?;
+                        let mut libfile = libdir.to_owned();
+                        libfile.push(&libname);
+
+                        if libfile.exists() {
+                            Some(libdir.to_owned())
                         }
                         else {
                             None
                         }
                     })))
+            // Otherwise look in standard locations
             .or_else(||
-                env::var_os("HOME")
-                    .map(|p| { let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver); pb.push(mosekexe); pb }))
-            .or_else(||
-                env::var_os("HOMEDRIVE")
-                    .and_then(|mut a| env::var_os("HOMEPATH").map(|b| { a.push(b); a }))
-                    .map(|p| { let mut pb = mosek_from_base_dir(&p, pfname, majorver, minorver); pb.push(mosekexe); pb }))
-        ?;
+                {
+                    let mut searchdirs : Vec<PathBuf> = Vec::new();
+                    match env::consts::OS {
+                        "windows" =>
+                            // $USERPROFILE/mosek/...
+                            // $LOCALAPPDATA/mosek/...
+                            for key in ["USERPROFILE","LOCALAPPDATA"] {
+                                if let Ok(p) = env::var(key) {
+                                    searchdirs.push(PathBuf::from(p));
+                                }
+                            },
+                        "macos" =>
+                            // $HOME/Applications/mosek/...
+                            // $HOME/.local/mosek/...
+                            // $HOME/mosek/...
+                            if let Ok(home) = env::var("HOME") {
+                                let mut home = PathBuf::from(home);
+                                home.push("Applications"); searchdirs.push(home.clone()); _ = home.pop();
+                                home.push(".local"); searchdirs.push(home.clone()); _ = home.pop();
+                                searchdirs.push(home);
+                            },
+                        _ =>
+                            // $HOME/mosek/...
+                            // $HOME/.local/mosek/...
+                            if let Ok(home) = env::var("HOME") {
+                                let mut home = PathBuf::from(home);
+                                home.push(".local"); searchdirs.push(home.clone()); _ = home.pop();
+                                searchdirs.push(home);
+                            },
+                    }
+                    searchdirs.iter().find_map(|p| {
+                        let mut moseklib = mosek_from_base_dir(p, pfname, majorver, minorver);
+                        moseklib.push(&libname);
+                        if moseklib.exists() { _ = moseklib.pop(); Some(moseklib) }
+                        else { None }
+                    })
+                })?;
 
-    if ! mosekbin.exists() { return None; }
-    let mosekpath = mosekbin.parent()?;
-
-    println!("cargo:warning=Use MOSEK at: {}", mosekpath.to_string_lossy());
-    mosekpath.to_str().map(|s|s.to_owned())
+    println!("cargo:warning=Use MOSEK at: {}", moseklibdir.to_string_lossy());
+    moseklibdir.to_str().map(|s|s.to_owned())
 }
 
 // Given platform name and version, attempt to download and install the MOSEK distro.
@@ -160,6 +167,7 @@ fn find_mosek_installation(pfname : &String, majorver : i32, minorver : i32) -> 
 // - `tar` and `bzip` (in linux/osx)
 //
 // Returns `Some(path: String)` on success, otherwise `None`.
+#[allow(unused)]
 fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     let mut outdir = PathBuf::new();
     // OUT_DIR is defined by cargo
@@ -168,9 +176,7 @@ fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     let (archname,iszip) = match pfname.as_str() {
         "linux64x86"   => ("mosektoolslinux64x86.tar.bz2",false),
         "linuxaarch64" => ("mosektoolslinuxaarch64.tar.bz2",false),
-        "osx64x86"     => ("mosektoolsosx64x86.tar.bz2",false),
         "osxaarch64"   => ("mosektoolsosxaarch64.tar.bz2",false),
-        "win32x86"     => ("mosektoolswin32x86.zip",true),
         "win64x86"     => ("mosektoolswin64x86.zip",true),
         _ => panic!("Invalid platform")
     };
@@ -222,7 +228,7 @@ fn getmosek(pfname : &String,majorver : i32, minorver : i32) -> String {
     res.as_path().to_str().unwrap().to_string()
 }
 
-
+#[allow(unused)]
 fn extract_version(text : &String) -> Option<(i32,i32)> {
     let mosekverstr = text.trim();
     match mosekverstr.find('.') {
@@ -236,6 +242,7 @@ fn extract_version(text : &String) -> Option<(i32,i32)> {
     }
 }
 // Read a version stored in a file. The version must have the format `[0-9]+ '.' [0-9]+`
+#[allow(unused)]
 fn readversion(filename : &str) -> (i32,i32) {
     let mut mosekverstr = String::new();
     match File::open(filename) {
@@ -250,36 +257,44 @@ fn readversion(filename : &str) -> (i32,i32) {
 }
 
 fn main() {
-    let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
+    #[cfg(feature = "dynamic")]
+    {
+        cc::Build::new()
+            .flag("-Wno-cast-function-type")
+            .file("src/mosek-dynamic.c")
+            .compile("mosek-dynamic");
+        println!("cargo:rerun-if-changed=src/mosek-dynamic.c");
+    }
+    #[cfg(not(feature = "dynamic"))]
+    {
+        let (mskvermajor,mskverminor) = readversion("MOSEKVERSION");
 
-    let mosekrs_force_download =
-        if let Some(s) = env::var_os("MOSEKRS_FORCE_DOWNLOAD") {
-            if let Some(s) = s.to_str() {
-                s.eq("YES")  || s.eq("ON") || s.eq("TRUE")
+        let mosekrs_force_download = env::var("MOSEKRS_FORCE_DOWNLOAD").ok()
+            .map(|v| match v.as_str() { "YES"|"yes"|"ON"|"on"|"TRUE"|"true" => true, _ => false})
+            .unwrap_or(false);
+
+        let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
+
+        let libdir : Option<String> =
+            if mosekrs_force_download {
+                Some(getmosek(&pfname, mskvermajor, mskverminor))
             }
-            else {
-                false
-            }
-        }
         else {
-            false
+            find_mosek_installation(&pfname,mskvermajor,mskverminor)
         };
 
-    let (pfname, libname) = get_platform_name(mskvermajor,mskverminor);
-    let libdir =
-        if ! mosekrs_force_download {
-            if let Some(p) = find_mosek_installation(&pfname,mskvermajor,mskverminor) { p }
-            else { getmosek(&pfname, mskvermajor, mskverminor) }
+        if let Some(libdir) = &libdir {
+            println!("cargo:rustc-link-search={}",libdir);
         }
-        else { getmosek(&pfname, mskvermajor, mskverminor) };
+        println!("cargo:rustc-link-lib={}",libname);
 
-    println!("cargo:rustc-link-search={}",libdir);
-    println!("cargo:rustc-link-lib={}",libname);
-
-    if cfg!(target_os = "linux") {
-        println!("cargo:rustc-link-arg=-Wl,-rpath=\"{}\"",libdir);
-    }
-    else if cfg!(target_os = "macos") {
-        println!("cargo:rustc-link-arg=-Wl,-rpath,\"{}\"",libdir);
+        if let Some(libdir) = &libdir {
+            if cfg!(target_os = "linux") {
+                println!("cargo:rustc-link-arg=-Wl,-rpath=\"{}\"",libdir);
+            }
+            else if cfg!(target_os = "macos") {
+                println!("cargo:rustc-link-arg=-Wl,-rpath,\"{}\"",libdir);
+            }
+        }
     }
 }
