@@ -30,12 +30,13 @@
 
 #define MSK_INFINITY 1.0e30
 
-
-/* BEGIN PLATFORM SPECIFIC DEFINITIONS (linuxaarch64) */
+#if _WIN32
+#define MSKAPI __cdecl
+#define MSKAPIVA __stdcall
+#else
 #define MSKAPI
 #define MSKAPIVA
-/* END   PLATFORM SPECIFIC DEFINITIONS (linuxaarch64) */
-
+#endif
 
 /* Enums and constants */
 

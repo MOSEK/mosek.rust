@@ -61,6 +61,19 @@
     static const char PATH_SEP = '/';
 #endif
 
+
+
+#ifdef _WIN32
+HANDLE libhandle_mux = CreateMutex(NULL,FALSE,NULL);
+#define acquire_handle() WaitForSingleObject(libhandle_mux, INFINITE)
+#define release_handle() ReleaseMutex(libhandle_mux)
+#else
+#include <pthread.h>
+pthread_mutex_t libhandle_mux = PTHREAD_MUTEX_INITIALIZER;
+#define acquire_handle() pthread_mutex_lock(&libhandle_mux)
+#define release_handle() pthread_mutex_unlock(&libhandle_mux)
+#endif
+
 static libhandle_t libmosek_handle = NULL;
 
 
@@ -2793,6 +2806,8 @@ int MSK_isinitialized() {
 MSKrescodee MSK_initializedynamicwithpaths(int num_paths, const char * paths[]) {
     const char * errmsg = NULL;
     char * buf = NULL;
+
+    acquire_handle();
     if (! libmosek_handle) {
         if (num_paths > 0) {
             size_t libnamelen = strlen(libname);
@@ -3917,8 +3932,10 @@ EXIT_ERROR:
 
     }
     if (buf) free(buf);
+    release_handle();
     return 1;
 EXIT_OK:
     if (buf) free(buf);
+    release_handle();
     return 0;
 }
