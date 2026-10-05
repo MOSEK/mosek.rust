@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name    = "mosek"
-version = "12.0.0-alpha.0"
+version = "12.0.0-beta.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
