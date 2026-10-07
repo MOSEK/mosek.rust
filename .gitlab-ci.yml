@@ -35,6 +35,7 @@ build-job:       # This job runs in the build stage, which runs first.
       tar xf mosektoolslinux64x86.tar.bz2
       export MOSEK_INST_BASE=$(pwd)
       export MOSEKLM_LICENSE_FILE=$(pwd)/mosek.lic
+      export LD_LIBRARY_PATH=$(pwd)/mosek/12.0/tools/platform/linux64x86/bin
       cargo build
       cargo test --release
       cargo test --release --doc
