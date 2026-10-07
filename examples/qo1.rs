@@ -16,6 +16,7 @@ const NUMCON : usize = 1;   /* Number of constraints.             */
 const NUMVAR : usize = 3;   /* Number of variables.               */
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let c = vec![ 0.0,-1.0,0.0 ];
 
     let bkc = vec![ mosek::Boundkey::LO ];

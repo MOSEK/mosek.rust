@@ -122,6 +122,7 @@ fn portfolio(n     : i32,     // number of assets
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let n    = 8i32;
     let w    = 59.0;
     let mu   = &[0.07197349, 0.15518171, 0.17535435, 0.0898094 , 0.42895777, 0.39291844, 0.32170722, 0.18378628];

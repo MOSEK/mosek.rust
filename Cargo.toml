@@ -1,6 +1,7 @@
 [package]
+edition = "2024"
 name    = "mosek"
-version = "10.2.1"
+version = "12.0.0-beta.0"
 authors = [ "Ulf Worsøe <ulf.worsoe@mosek.com>" ]
 description = "Rust API for MOSEK optimization tools"
 homepage = "https://mosek.com"
@@ -14,16 +15,23 @@ edition = "2024"
 keywords = ["mosek","optimization","conic_optimization","linear_optimization","integer_optimization"]
 categories = ["api-bindings","mathematics","science"]
 
+[features]
+dynamic = []
+
+
 [dependencies]
 libc = "0.2"
 itertools = "0.10"
 
-[[bin]]
-name = "testmosek-raw"
-test = false
-path = "tests/testmosek_raw.rs"
+[build-dependencies]
+cc = "1.0"
 
-[[bin]]
-name = "mosekcli"
-test = false
-path = "tests/mosekcli.rs"
+# [[bin]]
+# name = "testmosek-raw"
+# test = false
+# path = "tests/testmosek_raw.rs"
+
+# [[bin]]
+# name = "mosekcli"
+# test = false
+# path = "tests/mosekcli.rs"

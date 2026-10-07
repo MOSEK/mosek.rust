@@ -13,6 +13,7 @@ use itertools::izip;
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
 
     let numcon = 3;
     let numvar = 3;

@@ -13,12 +13,14 @@
 //!           that stops the optimizer when requested.
 
 extern crate mosek;
+extern crate itertools;
 
 use mosek::{Task,Objsense,Streamtype,Solsta,Soltype};
 use std::sync::{Arc,Mutex};
 use std::cmp::Ordering;
 use std::thread;
 use std::env;
+use itertools::{Either,Either::*};
 
 fn optimize(mut t : mosek::Task, stop : Arc<Mutex<bool>>) -> Option<(i32,mosek::Task)> {
     let cbstop = Arc::clone(&stop);
@@ -80,11 +82,8 @@ fn optimize_concurrent_mio(task  : & mut mosek::Task,
         .collect()
 }
 
-enum FileOrText {
-    File(String),
-    Text(String)
-}
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: concurrent1 FILENAME [ TIMELIMIT ]");
@@ -93,11 +92,11 @@ fn main() -> Result<(),String> {
     let _ = args.next();
     let filename = args.next().unwrap();
     let timelimit = args.next();
-    concurrent1(FileOrText::File(filename),
+    concurrent1(Right(filename.to_string()),
                 timelimit)
 }
 
-fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),String> {
+fn concurrent1(data : Either<String,String>, timelimit : Option<String>) -> Result<(),String> {
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
@@ -105,8 +104,8 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
         };
 
     match data {
-        FileOrText::File(fname) => task.read_data(fname.as_str())?,
-        FileOrText::Text(text)  => task.read_ptf_string(text.as_str())?
+        Either::Right(fname) => task.read_data(fname.as_str())?,
+        Either::Left(text)  => task.read_ptf_string(text.as_str())?
     }
     if let Some(timelimit) = timelimit {
         task.put_dou_param(mosek::Dparam::OPTIMIZER_MAX_TIME, timelimit.parse().unwrap())?;
@@ -161,9 +160,9 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
 
         drop_except(tasks,besti).unwrap()
             .with_stream_callback(
-                Streamtype::LOG, 
+                Streamtype::LOG,
                 &mut |msg| print!("{}",msg),
-                |t| { 
+                |t| {
                     t.optimizer_summary(mosek::Streamtype::LOG)?;
                     t.solution_summary(mosek::Streamtype::LOG)?;
                     Ok::<(),String>(())
@@ -200,7 +199,7 @@ fn concurrent1(data : FileOrText, timelimit : Option<String>) -> Result<(),Strin
 
         drop_except(tasks,besti).unwrap()
             .with_stream_callback(
-                Streamtype::LOG, 
+                Streamtype::LOG,
                 &mut|msg| print!("{}",msg),
                 |t| {
                     t.optimizer_summary(mosek::Streamtype::LOG)?;
@@ -249,6 +248,7 @@ fn split3vec<A,B,C>(mut v : Vec<(A,B,C)>) -> (Vec<A>,Vec<B>,Vec<C>) {
 
 #[cfg(test)]
 mod tests {
+    use itertools::{Either,Either::*};
     const DFLT_FILE1 : &str = "Task
 Objective
     Maximize + 2 @x0 + 3 @x1 - @x2
@@ -278,7 +278,8 @@ Integers
 ";
     #[test]
     fn test() {
-        super::concurrent1(super::FileOrText::Text(DFLT_FILE1.to_string()),None).unwrap();
-        super::concurrent1(super::FileOrText::Text(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
+        mosek::initialize(None).unwrap();
+        super::concurrent1(Either::Left(DFLT_FILE1.to_string()),None).unwrap();
+        super::concurrent1(Either::Left(DFLT_FILE2.to_string()),Some("100.0".to_string())).unwrap();
     }
 }

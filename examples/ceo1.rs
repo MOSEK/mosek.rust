@@ -22,6 +22,7 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numcon = 1;
     let numvar = 3;
 
@@ -37,8 +38,6 @@ fn main() -> Result<(),String> {
     let c   = vec![ 1.0, 1.0, 0.0 ];
     let a   = vec![ 1.0, 1.0, 1.0 ];
     let asub = vec![0, 1, 2];
-    //let csub = new int[numvar];
-    //double[] xx  = new double[numvar];
 
     /* Create the optimization task. */
     Task::new().expect("Failed to create task")

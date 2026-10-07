@@ -108,6 +108,7 @@ fn max_volume_box(Aw : f64,
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // maximize     h*w*d
     // subjecto to  2*(h*w + h*d) <= Awall
     //              w*d <= Afloor

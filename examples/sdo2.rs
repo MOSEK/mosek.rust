@@ -22,6 +22,7 @@ use mosek::{Task,Streamtype,Solsta,Soltype};
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
 
     /* Input data */
     let  numcon : i32       = 2;              /* Number of constraints. */

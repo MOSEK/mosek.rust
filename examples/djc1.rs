@@ -13,7 +13,7 @@
 
 extern crate mosek;
 
-use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
+use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype};
 
 // Since the value of infinity is ignored, we define it solely
 // for symbolic purposes
@@ -21,6 +21,7 @@ const INF : f64 = 0.0;
 
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Create a task object
     let mut task = match Task::new() {
         Some(e) => e,

@@ -18,6 +18,7 @@ use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
 
 #[allow(non_upper_case_globals)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Define problem data
     const n : i32 = 3;
     const k : i64 = 2;

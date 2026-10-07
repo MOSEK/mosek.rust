@@ -19,6 +19,7 @@ const INF : f64 = 0.0;
 
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     const NUMCON : i32 = 1;   /* Number of constraints.             */
     const NUMVAR : i32 = 3;   /* Number of variables.               */
 

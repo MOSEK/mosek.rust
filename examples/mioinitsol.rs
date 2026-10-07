@@ -13,6 +13,7 @@ use mosek::{Task,Boundkey,Variabletype,Objsense,Streamtype,Soltype};
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let numvar : i32 = 4;
     let numcon : i32 = 1;
 

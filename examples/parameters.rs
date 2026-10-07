@@ -12,6 +12,7 @@ extern crate mosek;
 use mosek::{Task,Iparam,Dparam,Dinfitem,Iinfitem,Optimizertype,Basindtype};
 
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     let mut task = Task::new().unwrap();
     println!("Test MOSEK parameter get/set functions");
 
@@ -36,7 +37,7 @@ fn main() -> Result<(),String> {
 
 
     let param = task.get_dou_param(Dparam::INTPNT_CO_TOL_REL_GAP)?;
-    println!("Current value for parameter intpnt_co_tol_rel_gap = $param");
+    println!("Current value for parameter intpnt_co_tol_rel_gap = {}",param);
 
     // Define and solve an optimization problem here
     // optimize(task,)

@@ -191,6 +191,7 @@ fn logistic_regression(X : &[f64],
 
 #[allow(non_snake_case)]
 fn main() -> Result<(),String> {
+    mosek::initialize(None)?;
     // Test: detect and approximate a circle using degree 2 polynomials
     let n : i32 = 30;
     let d : i32 = 2;
