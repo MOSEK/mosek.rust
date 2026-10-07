@@ -28,7 +28,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - docker-runner
   script:
     - |
-      apt-get update && apt-get install -y bzip2 tar curl
+      apt-get update && apt-get install -y bzip2 tar curl clang
       curl -o mosek.lic http://files.mosek.intranet/docs/lic/mosek12-1.lic
       export MOSEKLM_LICENSE_FILE=$(pwd)/mosek.lic
       cargo build
