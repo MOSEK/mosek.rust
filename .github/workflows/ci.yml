@@ -19,7 +19,7 @@ jobs:
             VER2=$(cat MOSEKVERSION)
             VERSION=$(curl --silent -L -s https://download.mosek.com/stable/$VER2/version)
             LD_LIBRARY_PATH=mosek/$VER2/tools/platform/linux64x86/bin
-
+            MOSEK_INST_BASE=$(pwd)
             curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/latest/$VERSION/mosektoolslinux64x86.tar.bz2
             tar xf mosektoolslinux64x86.tar.bz2
             echo $MOSEKLIC > /tmp/mosek.lic
