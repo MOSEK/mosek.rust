@@ -10,4 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test
+      - uses: egor-tensin/setup-clang@v2
+      - name: "Cargo Test"
+        env:
+          MOSEKLIC: ${{ secret.mosek_lic }}
+          MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
+        run: |
+            echo $MOSEKLIC > /tmp/mosek.lic
+            cargo test
