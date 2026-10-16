@@ -18,7 +18,7 @@ jobs:
         run: |
             VER2=$(cat MOSEKVERSION)
             VERSION=$(curl --silent -L -s https://download.mosek.com/stable/$VER2/version)
-            curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
+            curl -L --no-progress-bar -v -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
             tar xf mosektoolslinux64x86.tar.bz2
             echo $MOSEKLIC > /tmp/mosek.lic
             MOSEK_INST_BASE=$(pwd) LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin cargo test --examples
