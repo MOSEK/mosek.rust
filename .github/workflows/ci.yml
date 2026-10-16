@@ -17,7 +17,7 @@ jobs:
           MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
         run: |
             VER2=$(cat MOSEKVERSION)
-            VERSION=${curl -s https://download.mosek.com/stable/$VER2/version}
+            VERSION=$(curl -s https://download.mosek.com/stable/$VER2/version)
             LD_LIBRARY_PATH=mosek/$VER2/tools/platform/linux64x86/bin
 
             curl -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/latest/$VERSION/mosektoolslinux64x86.tar.bz2
