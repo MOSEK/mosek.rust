@@ -286,14 +286,20 @@ fn main() {
         if let Some(libdir) = &libdir {
             println!("cargo:rustc-link-search={}",libdir);
         }
+        else {
+            println!("cargo:warning=No MOSEK installation found" );
+
+        }
         println!("cargo:rustc-link-lib={}",libname);
 
         if let Some(libdir) = &libdir {
             if cfg!(target_os = "linux") {
-                println!("cargo:rustc-link-arg=-Wl,-rpath=\"{}\"",libdir);
+                println!("cargo:rustc-link-arg=-Wl,-rpath={}",libdir);
+                println!("cargo:rustc-link-arg=-Wl,-rpath-link={}",libdir);
             }
             else if cfg!(target_os = "macos") {
-                println!("cargo:rustc-link-arg=-Wl,-rpath,\"{}\"",libdir);
+                println!("cargo:rustc-link-arg=-Wl,-rpath,{}",libdir);
+                println!("cargo:rustc-link-arg=-Wl,-rpath-link,{}",libdir);
             }
         }
     }
