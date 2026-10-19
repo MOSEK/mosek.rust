@@ -25,18 +25,20 @@ jobs:
             echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
       - name: Build MOSEK/Rust API
         run: |
-            env --help
-            which env
-            env --file .env cargo build --release
-            env --file .env cargo build --release --examples
-            env --file .env cargo build --release --doc
+            . .env
+            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
+            cargo build --release
+            cargo build --release --examples
+            cargo build --release --doc
       - name: Test MOSEK/Rust API
         env:
           MOSEKLIC: ${{ secrets.mosek_lic }}
           MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
         run: |
+            . .env
+            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             echo "$MOSEKLIC" > $MOSEKLM_LICENSE_FILE
 
-            env --file .env cargo test --release
-            env --file .env cargo test --release --examples
-            env --file .env cargo test --release --doc
+            cargo test --release
+            cargo test --release --examples
+            cargo test --release --doc
