@@ -21,7 +21,7 @@ jobs:
       - name: Build MOSEK/Rust API
         env:
           MOSEK_INST_BASE: ${{ env.HOME }}
-          LD_LIBRARY_PATH: ${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
+          LD_LIBRARY_PATH:  ${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
             VER2=$(cat MOSEKVERSION)
             MOSEK_INST_BASE=$HOME LD_LIBRARY_PATH=$HOME/mosek/$VER2/tools/platform/linux64x86/bin cargo buid --release --examples
@@ -32,5 +32,5 @@ jobs:
           MOSEK_INST_BASE: ${{ env.HOME }}
           LD_LIBRARY_PATH: ${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
-            echo $MOSEKLIC  $MOSEKLM_LICENSE_FILE
+            echo "$MOSEKLIC" > $MOSEKLM_LICENSE_FILE
             cargo test --release --examples
