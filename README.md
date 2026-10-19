@@ -1,3 +1,7 @@
+[![doc](https://img.shields.io/badge/docs-stable-blue.svg)](https://docs.rs/mosek/latest/mosek/) 
+[![crate](https://img.shields.io/badge/docs-stable-blue.svg)](https://crates.io/crates/MOSEK/)
+[![Build Status](https://github.com/MOSEK/mosek.rs/actions/workflows/ci.yml/badge.svg?branch=release-1.0)](https://github.com/MOSEK/mosek.rs/actions?query=workflow%3ACI)
+
 # Mosek 12.0 Rust interface
 
 - Mosek optimization software: https://mosek.com/
