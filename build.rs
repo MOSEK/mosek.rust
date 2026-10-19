@@ -286,6 +286,10 @@ fn main() {
         if let Some(libdir) = &libdir {
             println!("cargo:rustc-link-search={}",libdir);
         }
+        else {
+            println!("cargo:warning=No MOSEK installation found" );
+
+        }
         println!("cargo:rustc-link-lib={}",libname);
 
         println!("cargo:warning=TARGET OS={}, arch={}",std::env::consts::OS,std::env::consts::ARCH );
