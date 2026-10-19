@@ -1,6 +1,6 @@
 [![doc](https://img.shields.io/badge/docs-stable-blue.svg)](https://docs.rs/mosek/latest/mosek/) 
 [![crate](https://img.shields.io/badge/docs-stable-blue.svg)](https://crates.io/crates/MOSEK/)
-[![Build Status](https://github.com/MOSEK/mosek.rust/actions/workflows/ci.yml/badge.svg](https://github.com/MOSEK/mosek.rust/actions/workflows/ci.yml)
+[![Build Status](https://github.com/MOSEK/mosek.rust/actions/workflows/ci.yml/badge.svg)](https://github.com/MOSEK/mosek.rust/actions/workflows/ci.yml)
 
 # Mosek 12.0 Rust interface
 
