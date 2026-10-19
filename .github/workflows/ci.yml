@@ -11,14 +11,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-clang@v2
-      - name: "Cargo Test"
+      - name: "Install MOSEK"
+        run: |
+            VER2=$(cat MOSEKVERSION)
+            curl -o LATESTVER --silent -L -s https://download.mosek.com/stable/$VER2/version
+            VERSION=$(cat LATESTVER)
+            curl -L --no-progress-bar -v -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
+            tar -C $HOME/ xf mosektoolslinux64x86.tar.bz2
+      - name: Build MOSEK/Rust API
+        env:
+          MOSEK_INST_BASE=${{ env.HOME }}
+          LD_LIBRARY_PATH=${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
+        run: |
+            VER2=$(cat MOSEKVERSION)
+            MOSEK_INST_BASE=$HOME LD_LIBRARY_PATH=$HOME/mosek/$VER2/tools/platform/linux64x86/bin cargo buid --release --examples
+      - name: Test MOSEK/Rust API
         env:
           MOSEKLIC: ${{ secrets.mosek_lic }}
           MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
+          MOSEK_INST_BASE=${{ env.HOME }}
+          LD_LIBRARY_PATH=${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
-            VER2=$(cat MOSEKVERSION)
-            VERSION=$(curl --silent -L -s https://download.mosek.com/stable/$VER2/version)
-            curl -L --no-progress-bar -v -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
-            tar xf mosektoolslinux64x86.tar.bz2
-            echo $MOSEKLIC > /tmp/mosek.lic
-            MOSEK_INST_BASE=$(pwd) LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin cargo test --examples
+            echo $MOSEKLIC  $MOSEKLM_LICENSE_FILE
+            cargo test --release --examples
