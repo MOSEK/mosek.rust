@@ -28,16 +28,20 @@ jobs:
             . .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release
+
+      - name: Build MOSEK/Rust API examples
+        run: |
+            . .env
+            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release --examples
             cargo build --release --doc
       - name: Test MOSEK/Rust API
         env:
-          MOSEKLIC: ${{ secrets.mosek_lic }}
           MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
         run: |
             . .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            echo "$MOSEKLIC" > $MOSEKLM_LICENSE_FILE
+            echo ${{ secrets.mosek_lic }} > $MOSEKLM_LICENSE_FILE
 
             cargo test --release
             cargo test --release --examples
