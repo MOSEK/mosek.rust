@@ -24,9 +24,9 @@ jobs:
             echo MOSEK_INST_BASE=$(pwd) >> .env
             echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
       - name: Build MOSEK/Rust API
-        env:
-          LD_LIBRARY_PATH:  mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
+            env --help
+            which env
             env --file .env cargo build --release
             env --file .env cargo build --release --examples
             env --file .env cargo build --release --doc
