@@ -31,12 +31,11 @@ jobs:
             source .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release
-      - name: Build MOSEK/Rust API examples
+      - name: Build MOSEK/Rust API Examples
         run: |
             source .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release --examples
-            cargo build --release --doc
       - name: Test MOSEK/Rust API
         run: |
             source .env
