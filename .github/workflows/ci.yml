@@ -16,9 +16,10 @@ jobs:
             VERSION=$(cat LATESTVER)
             curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
             echo Extract to $(pwd)
-            tar  xf mosektoolslinux64x86.tar.bz2
+            tar xf mosektoolslinux64x86.tar.bz2
 
             echo "${{ secrets.mosek_lic }}" > /tmp/mosek.lic
+            cat /tmp/mosek.lic
 
             echo VER2=$VER2 > .env
             echo MOSEKLM_LICENSE_FILE=/tmp/mosek.lic >> .env
