@@ -16,7 +16,7 @@ jobs:
             VERSION=$(cat LATESTVER)
             curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
             echo Extract to $(pwd)
-            tar  xf mosektoolslinux64x86.tar.bz2 -C $HOME/
+            tar  xf mosektoolslinux64x86.tar.bz2
 
             echo VER2=$VER2 > .env
             echo MOSEK_INST_BASE=$(pwd) >> .env
