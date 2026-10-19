@@ -33,7 +33,7 @@ jobs:
         run: |
             . .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            cargo build --release --examples -v
+            cargo build --release --examples -v --verbose
             cargo build --release --doc -v
       - name: Test MOSEK/Rust API
         env:
