@@ -17,23 +17,26 @@ jobs:
             curl -o LATESTVER --silent -L -s https://download.mosek.com/stable/$VER2/version
             VERSION=$(cat LATESTVER)
             curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
+            echo Extract to $(pwd)
             tar  xf mosektoolslinux64x86.tar.bz2 -C $HOME/
+
+            echo VER2=$VER2 > .env
+            echo MOSEK_INST_BASE=$(pwd) >> .env
+            echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
       - name: Build MOSEK/Rust API
         env:
-          MOSEK_INST_BASE: ${{ env.HOME }}
-          LD_LIBRARY_PATH:  ${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
+          LD_LIBRARY_PATH:  mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
-            cargo build --release
-            cargo build --release --examples
-            cargo build --release --doc
+            env -f .env cargo build --release
+            env -f .env cargo build --release --examples
+            env -f .env cargo build --release --doc
       - name: Test MOSEK/Rust API
         env:
           MOSEKLIC: ${{ secrets.mosek_lic }}
           MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
-          MOSEK_INST_BASE: ${{ env.HOME }}
-          LD_LIBRARY_PATH: ${{ env.HOME }}/mosek/$(cat MOSEKVERSION)/tools/platform/linux64x86/bin
         run: |
             echo "$MOSEKLIC" > $MOSEKLM_LICENSE_FILE
-            cargo test --release
-            cargo test --release --examples
-            cargo test --release --doc
+
+            env -f .env cargo test --release
+            env -f .env cargo test --release --examples
+            env -f .env cargo test --release --doc
