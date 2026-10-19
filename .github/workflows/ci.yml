@@ -32,6 +32,7 @@ jobs:
       - name: Build MOSEK/Rust API example LO1
         run: |
             . .env
+            echo LIB PATH : $LD_LIBRARY_PATH
             ls -l $LD_LIBRARY_PATH/
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release --example lo1 -v --verbose
