@@ -91,7 +91,7 @@ fn main() -> Result<(),String> {
     task.solution_summary(Streamtype::MSG)?;
 
     // Get status information about the solution
-    let sta = task.get_sol_sta(Soltype::ITG)?;
+    let _sta = task.get_sol_sta(Soltype::ITG)?;
 
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITG,xx.as_mut_slice())?;
