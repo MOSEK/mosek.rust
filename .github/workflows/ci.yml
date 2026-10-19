@@ -17,43 +17,35 @@ jobs:
             curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
             echo Extract to $(pwd)
             tar  xf mosektoolslinux64x86.tar.bz2
+            echo "${{ secrets.mosek_lic }}" > /tmp/mosek.lic
 
             echo VER2=$VER2 > .env
+            echo MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
             echo MOSEK_INST_BASE=$(pwd) >> .env
             echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
-
-            echo Environment:
-            cat .env
+            echo export VER2 MOSEKLM_LICENSE_FILE MOSEK_INST_BASE LD_LIBRARY_PATH >> .env
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
         run: |
-            . .env
+            source .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            cargo build --release -v
-
-      - name: Build MOSEK/Rust API example LO1
-        run: |
-            . .env
-            echo LIB PATH : $LD_LIBRARY_PATH
-            ls -l $LD_LIBRARY_PATH/
-            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            cargo build --release --example lo1 -v --verbose
+            cargo build --release
       - name: Build MOSEK/Rust API examples
         run: |
-            . .env
+            source .env
             export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            cargo build --release --example lo1 -v --verbose
             cargo build --release --examples
             cargo build --release --doc
       - name: Test MOSEK/Rust API
-        env:
-          MOSEKLM_LICENSE_FILE: /tmp/mosek.lic
         run: |
-            . .env
-            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
-            echo "${{ secrets.mosek_lic }}" > $MOSEKLM_LICENSE_FILE
-
+            source .env
             cargo test --release
+      - name: Test MOSEK/Rust API Examples
+        run: |
+            source .env
             cargo test --release --examples
+      - name: Test MOSEK/Rust API Doc strings
+        run: |
+            source .env
             cargo test --release --doc
