@@ -11,13 +11,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-clang@v2
-      - name: "Install MOSEK"
+      - name: "Fetch and install MOSEK"
         run: |
             VER2=$(cat MOSEKVERSION)
             curl -o LATESTVER --silent -L -s https://download.mosek.com/stable/$VER2/version
             VERSION=$(cat LATESTVER)
-            curl -L --no-progress-bar -v -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
-            tar -C $HOME/ xf mosektoolslinux64x86.tar.bz2
+            curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
+            tar  xf mosektoolslinux64x86.tar.bz2 -C $HOME/
       - name: Build MOSEK/Rust API
         env:
           MOSEK_INST_BASE: ${{ env.HOME }}
