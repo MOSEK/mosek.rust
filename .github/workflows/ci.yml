@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: egor-tensin/setup-gcc@v2
       - name: "Fetch and install MOSEK"
         run: |
             VER2=$(cat MOSEKVERSION)
@@ -23,6 +21,11 @@ jobs:
             echo VER2=$VER2 > .env
             echo MOSEK_INST_BASE=$(pwd) >> .env
             echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
+
+            echo Environment:
+            cat .env
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
         run: |
             . .env
