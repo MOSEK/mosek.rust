@@ -288,6 +288,8 @@ fn main() {
         }
         println!("cargo:rustc-link-lib={}",libname);
 
+        println!("cargo:warning=TARGET OS={}, arch={}",std::env::consts::OS,std::env::consts::ARCH );
+
         if let Some(libdir) = &libdir {
             if cfg!(target_os = "linux") {
                 println!("cargo:rustc-link-arg=-Wl,-rpath={}",libdir);
