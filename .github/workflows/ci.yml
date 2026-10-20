@@ -23,14 +23,12 @@ jobs:
       - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
         env:
-            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbasedir }}
-            #LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
+            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbasedir }}
         run: |
             cargo build --release
       - name: Build MOSEK/Rust API Examples
         env:
-            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbasedir }}
-            #LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
+            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbasedir }}
         run: |
             cargo build --release --examples
       - name: Test MOSEK/Rust API
