@@ -18,41 +18,37 @@ jobs:
         with:
           version: "${{ steps.version.outputs.ver2 }}"
       - name: "Store License"
-        run:
-          echo "MOSEK:"
-          echo "  BASE:${{steps.distro.outputs.mosekbasedir}}"
-          echo "  BINDIR:${{steps.distro.outputs.mosekbindir}}"
-          echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
+        run: echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
         env:
-            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbasedir }}
+            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbase }}
         run: |
             cargo build --release
       - name: Build MOSEK/Rust API Examples
         env:
-            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbasedir }}
+            MOSEK_INST_BASE: ${{ steps.distro.outputs.mosekbase }}
         run: |
             cargo build --release --examples
       - name: Test MOSEK/Rust API
         env:
             MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
-            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbasedir }}
+            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbase }}
             LD_LIBRARY_PATH=${{ steps.distro.outputs.mosekbindir }}
         run: |
             cargo test --release
       - name: Test MOSEK/Rust API Examples
         env:
             MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
-            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbasedir }}
+            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbase }}
             LD_LIBRARY_PATH=${{ steps.distro.outputs.mosekbindir }}
         run: |
             cargo test --release --examples
       - name: Test MOSEK/Rust API Doc strings
         env:
             MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
-            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbasedir }}
+            MOSEK_INST_BASE=${{ steps.distro.outputs.mosekbase }}
             LD_LIBRARY_PATH=${{ steps.distro.outputs.mosekbindir }}
         run: |
             cargo test --release --doc
