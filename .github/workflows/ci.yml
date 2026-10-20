@@ -9,44 +9,46 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v4
-      - name: "Fetch and install MOSEK"
+      - name: Get version
+        id: version
         run: |
-            VER2=$(cat MOSEKVERSION)
-            curl -o LATESTVER --silent -L -s https://download.mosek.com/stable/$VER2/version
-            VERSION=$(cat LATESTVER)
-            curl -L --silent -o mosektoolslinux64x86.tar.bz2 https://download.mosek.com/stable/$VERSION/mosektoolslinux64x86.tar.bz2
-            echo Extract to $(pwd)
-            tar xf mosektoolslinux64x86.tar.bz2
-
-            echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
-
-            echo VER2=$VER2 > .env
-            echo MOSEKLM_LICENSE_FILE=/tmp/mosek.lic >> .env
-            echo MOSEK_INST_BASE=$(pwd) >> .env
-            echo LD_LIBRARY_PATH=$(pwd)/mosek/$VER2/tools/platform/linux64x86/bin >> .env
-            echo export VER2 MOSEKLM_LICENSE_FILE MOSEK_INST_BASE LD_LIBRARY_PATH >> .env
-
-            cat .env
+            echo "ver2=$(cat MOSEKVERSION)" > $GITHUB_OUTPUT
+      - uses: mosek/installmosekaction@v1
+        id: distro
+      - name: "Store License"
+        run: echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
+        env:
+            MOSEK_INST_BASE=$${{steps.distro.outputs.mosekbase}}
+            #LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
         run: |
-            source .env
-            export VER2 MOSEK_INST_BASE LD_LIBRARY_PATH
             cargo build --release
       - name: Build MOSEK/Rust API Examples
+        env:
+            MOSEK_INST_BASE=$${{steps.distro.outputs.mosekbase}}
+            #LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
         run: |
-            source .env
             cargo build --release --examples
       - name: Test MOSEK/Rust API
+        env:
+            MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
+            MOSEK_INST_BASE=$${{steps.distro.outputs.mosekbase}}
+            LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
         run: |
-            source .env
             cargo test --release
       - name: Test MOSEK/Rust API Examples
+        env:
+            MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
+            MOSEK_INST_BASE=$${{steps.distro.outputs.mosekbase}}
+            LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
         run: |
-            source .env
             cargo test --release --examples
       - name: Test MOSEK/Rust API Doc strings
+        env:
+            MOSEKLM_LICENSE_FILE=/tmp/mosek.lic
+            MOSEK_INST_BASE=$${{steps.distro.outputs.mosekbase}}
+            LD_LIBRARY_PATH=${{steps.distro.outputs.mosekbindir}}
         run: |
-            source .env
             cargo test --release --doc
