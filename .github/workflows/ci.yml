@@ -18,7 +18,11 @@ jobs:
         with:
           version: "${{ steps.version.outputs.ver2 }}"
       - name: "Store License"
-        run: echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
+        run:
+          echo "MOSEK:"
+          echo "  BASE:${{steps.distro.outputs.mosekbasedir}}"
+          echo "  BINDIR:${{steps.distro.outputs.mosekbindir}}"
+          echo '${{ secrets.mosek_lic }}' > /tmp/mosek.lic
       - uses: dtolnay/rust-toolchain@stable
       - uses: egor-tensin/setup-gcc@v2
       - name: Build MOSEK/Rust API
