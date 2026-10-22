@@ -9,9 +9,15 @@
 
 #ifdef _WIN32
     #include <windows.h>
+    #include <stdatomic.h>
     #include <libloaderapi.h>
+
     #define libname "mosek64_" MSK_MAJORVER "_" MSK_MINORVER ".dll"
     typedef HMODULE libhandle_t;
+
+    #ifdef __STDC_NO_ATOMICS__
+    #error No atomics available
+    #endif
 
     libhandle_t __dlopen(const char * filename, const char ** errmsg) {
         libhandle_t h = LoadLibraryA(filename);
@@ -31,8 +37,17 @@
         return symaddr;
     }
     static const char PATH_SEP = '\\';
+
+    HANDLE libhandle_mux;
+    __attribute__((constructor)) void _initialize_libhandle_mux() {
+        libhandle_mux = CreateMutex(NULL,FALSE,NULL);
+    }
+
+    #define acquire_handle() WaitForSingleObject(libhandle_mux, INFINITE)
+    #define release_handle() ReleaseMutex(libhandle_mux)
 #else
     #include <dlfcn.h>
+    #include <pthread.h>
     typedef void * libhandle_t;
     #if defined(__APPLE__)
         #define libname "libmosek64." MSK_MAJORVER "." MSK_MINORVER ".dylib"
@@ -59,23 +74,11 @@
         return symaddr;
     }
     static const char PATH_SEP = '/';
+
+    pthread_mutex_t libhandle_mux = PTHREAD_MUTEX_INITIALIZER;
+    #define acquire_handle() pthread_mutex_lock(&libhandle_mux)
+    #define release_handle() pthread_mutex_unlock(&libhandle_mux)
 #endif
-
-
-
-#ifdef _WIN32
-HANDLE libhandle_mux = CreateMutex(NULL,FALSE,NULL);
-#define acquire_handle() WaitForSingleObject(libhandle_mux, INFINITE)
-#define release_handle() ReleaseMutex(libhandle_mux)
-#else
-#include <pthread.h>
-pthread_mutex_t libhandle_mux = PTHREAD_MUTEX_INITIALIZER;
-#define acquire_handle() pthread_mutex_lock(&libhandle_mux)
-#define release_handle() pthread_mutex_unlock(&libhandle_mux)
-#endif
-
-static libhandle_t libmosek_handle = NULL;
-
 
 
 static MSKrescodee default_ret_0i32() { return MSK_RES_ERR_UNKNOWN; }
@@ -2800,9 +2803,13 @@ MSKrescodee MSKAPI MSK_shutdownglobalthreadpool() {
 } /* MSKshutdownglobalthreadpool */
 
 
+
+static libhandle_t libmosek_handle = NULL;
+
 int MSK_isinitialized() {
     return libmosek_handle != NULL;
 }
+
 MSKrescodee MSK_initializedynamicwithpaths(int num_paths, const char * paths[]) {
     const char * errmsg = NULL;
     char * buf = NULL;
@@ -3938,4 +3945,85 @@ EXIT_OK:
     if (buf) free(buf);
     release_handle();
     return 0;
+}
+
+
+MSKrescodee MSK_initializedynamicwithdefaults() {
+#ifdef _WIN64
+    const char * globaldir = getenv("PROGRAMFILES")
+    const char * homedir = getenv("USERPROFILE");
+    const char * localappdata = getenv("LOCALAPPDATA");
+    const char pathsep = '\\';
+#else
+    const char * globaldir = "/opt";
+    const char * homedir = getenv("HOME");
+    const char * localappdata = NULL;
+    const char pathsep = '/';
+#endif
+
+#ifdef _WIN64
+    const char * relpath = "mosek\\" MSK_MAJORVER "." MSK_MINORVER "\\tools\\platform\\win64x86\\bin";
+#elif defined(__linux__) & __linux__ && (defined(__amd64__) || defined(__x86_64__)) && (__amd64__ || __x86_64__)
+    const char * relpath = "mosek/" MSK_MAJORVER "." MSK_MINORVER "/tools/platform/linux64x86/bin";
+#elif defined(__linux__) & __linux__ && (defined(__aarch64__) || defined(__arm64__)) && (__aarch64__ || __arm64__)
+    const char * relpath = "mosek/" MSK_MAJORVER "." MSK_MINORVER "/tools/platform/linuxaarch64/bin";
+#elif defined(__APPLE__) & __APPLE__ && (defined(__aarch64__) || defined(__arm64__)) && (__aarch64__ || __arm64__)
+    const char * relpath = "mosek/" MSK_MAJORVER "." MSK_MINORVER "/tools/platform/osxaarch64/bin";
+#else
+    const char * relpath = NULL;
+#error Invalid platform
+#endif
+    size_t relpath_len = strlen(relpath);
+
+
+    char * candidates[4] = {NULL,NULL,NULL,NULL};
+    int ncandidates = 0;
+    if (globaldir) {
+        size_t globaldir_len = strlen(globaldir);
+        size_t len = globaldir_len+1+relpath_len;
+        candidates[ncandidates] = calloc(len+1,sizeof(char));
+        strcpy(candidates[ncandidates],globaldir);
+        candidates[ncandidates][globaldir_len] = pathsep;
+        strcpy(candidates[ncandidates]+globaldir_len+1,relpath);
+        ++ncandidates;
+    }
+
+    if (homedir) {
+        size_t homedir_len = strlen(homedir);
+        size_t len = homedir_len+1+relpath_len;
+        candidates[ncandidates] = calloc(len+1,sizeof(char));
+        strcpy(candidates[ncandidates],homedir);
+        candidates[ncandidates][homedir_len] = pathsep;
+        strcpy(candidates[ncandidates]+homedir_len+1,relpath);
+        ++ncandidates;
+
+        len = homedir_len+8/*'/.local/'*/+relpath_len;
+        candidates[ncandidates] = calloc(len+1,sizeof(char));
+        strcpy(candidates[ncandidates],homedir);
+        candidates[ncandidates][homedir_len] = pathsep;
+        strcpy(candidates[ncandidates]+homedir_len+1,".local");
+        candidates[ncandidates][homedir_len+7] = pathsep;
+        strcpy(candidates[ncandidates]+homedir_len+8,relpath);
+        ++ncandidates;
+    }
+
+    if (localappdata) {
+        size_t localappdata_len = strlen(localappdata);
+        size_t len = localappdata_len+1+relpath_len;
+        candidates[ncandidates] = calloc(len+1,sizeof(char));
+        strcpy(candidates[ncandidates],localappdata);
+        candidates[ncandidates][localappdata_len] = pathsep;
+        strcpy(candidates[ncandidates]+localappdata_len+1,relpath);
+        ++ncandidates;
+    }
+
+    /* to avoid semi-invalid type conversion warning */
+    const char * cands[] = {candidates[0],candidates[1],candidates[2],candidates[3]};
+    MSKrescodee res = MSK_initializedynamicwithpaths(ncandidates, cands);
+
+    /* cleanup */
+    for (int i = 0; candidates[i]; ++i)
+        free(candidates[i]);
+
+    return res;
 }

@@ -85,6 +85,8 @@ unsafe extern "C" {
     fn MSK_isinitialized() -> i32;
     #[cfg(feature = "dynamic")]
     fn MSK_initializedynamicwithpaths(num_paths : i32, paths : * const * const c_char) -> i32;
+    #[cfg(feature = "dynamic")]
+    fn MSK_initializedynamicwithdefaults() -> i32;
 
     #[allow(dead_code)]
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
@@ -4653,7 +4655,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `feature_` Feature to check in to the license system.
-    ///   
+    ///
     ///   See [Feature]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
@@ -4667,7 +4669,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `feature_` Feature to check out from the license system.
-    ///   
+    ///
     ///   See [Feature]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
@@ -4804,10 +4806,10 @@ impl Env {
     /// # Arguments
     ///
     /// - `transa_` Indicates whether the matrix A must be transposed.
-    ///   
+    ///
     ///   See [Transpose]
     /// - `transb_` Indicates whether the matrix B must be transposed.
-    ///   
+    ///
     ///   See [Transpose]
     /// - `m_` Indicates the number of rows of matrix C.
     /// - `n_` Indicates the number of columns of matrix C.
@@ -4838,7 +4840,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `transa_` Indicates whether the matrix A must be transposed.
-    ///   
+    ///
     ///   See [Transpose]
     /// - `m_` Specifies the number of rows of the matrix A.
     /// - `n_` Specifies the number of columns of the matrix A.
@@ -4880,7 +4882,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
@@ -4900,10 +4902,10 @@ impl Env {
     /// - `maxtime_` Time limit for the function.
     /// - `numthreads_` Number of threads to be employed.
     /// - `trmcode_` The termination code for each task.
-    ///   
+    ///
     ///   See [Rescode]
     /// - `rcode_` The response code for each task.
-    ///   
+    ///
     ///   See [Rescode]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
@@ -4925,7 +4927,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part of the matrix is stored.
-    ///   
+    ///
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric matrix.
     /// - `a_` A symmetric matrix stored in column-major order.
@@ -5004,7 +5006,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `transposed_` Controls whether the solve is with L or the transposed L.
-    ///   
+    ///
     ///   See [Transpose]
     /// - `lnzc_` lnzc\[j\] is the number of nonzeros in column j.
     /// - `lptrc_` lptrc\[j\] is a pointer to the first row index and value in column j.
@@ -5040,7 +5042,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-    ///   
+    ///
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric input matrix.
     /// - `a_` Input matrix A.
@@ -5063,7 +5065,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-    ///   
+    ///
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric input matrix.
     /// - `a_` Input matrix A.
@@ -5086,10 +5088,10 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part of C is used.
-    ///   
+    ///
     ///   See [Uplo]
     /// - `trans_` Indicates whether the matrix A must be transposed.
-    ///   
+    ///
     ///   See [Transpose]
     /// - `n_` Specifies the order of C.
     /// - `k_` Indicates the number of rows or columns of A, and its rank.
@@ -5311,10 +5313,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `nametype_` The type of names e.g. valid in MPS or LP files.
-    ///   
+    ///
     ///   See [Nametype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzenames>
@@ -5324,7 +5326,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzeproblem>
@@ -5334,10 +5336,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzesolution>
@@ -5404,7 +5406,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -5416,7 +5418,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -5429,7 +5431,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Numbers of member variables in the cones.
@@ -5679,10 +5681,10 @@ impl TaskCB {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///   
+    ///
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///   
+    ///
     ///   See [Rescode]
     ///
     /// # Returns
@@ -5712,10 +5714,10 @@ impl TaskCB {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///   
+    ///
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///   
+    ///
     ///   See [Rescode]
     ///
     /// # Returns
@@ -5783,7 +5785,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.deletesolution>
@@ -5853,7 +5855,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `activity_` The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -5865,7 +5867,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `activity_` The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -6008,7 +6010,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -6020,7 +6022,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `doty_` The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -6524,7 +6526,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th dual variable of barx.
@@ -6536,7 +6538,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -6587,7 +6589,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -6599,7 +6601,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -6651,7 +6653,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -6665,7 +6667,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -6678,7 +6680,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -6692,7 +6694,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -6980,7 +6982,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichdinf_` Specifies a double information item.
-    ///   
+    ///
     ///   See [Dinfitem]
     ///
     /// # Returns
@@ -6994,7 +6996,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// # Returns
@@ -7008,7 +7010,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7022,7 +7024,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `nrmy_` The norm of the y vector.
     /// - `nrmslc_` The norm of the slc vector.
@@ -7039,7 +7041,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7051,7 +7053,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barx variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7063,7 +7065,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7075,7 +7077,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7087,7 +7089,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7099,7 +7101,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `infname_` Name of the information item.
     ///
@@ -7114,7 +7116,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `infmax_` The maximum index (plus 1) requested.
     ///
@@ -7125,7 +7127,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `whichinf_` An information item.
     ///
@@ -7140,7 +7142,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichiinf_` Specifies an integer information item.
-    ///   
+    ///
     ///   See [Iinfitem]
     ///
     /// # Returns
@@ -7154,7 +7156,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// # Returns
@@ -7180,7 +7182,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichliinf_` Specifies a long information item.
-    ///   
+    ///
     ///   See [Liinfitem]
     ///
     /// # Returns
@@ -7194,7 +7196,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// # Returns
@@ -7444,7 +7446,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -7518,7 +7520,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -7532,7 +7534,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -7566,7 +7568,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7580,7 +7582,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `nrmxc_` The norm of the xc vector.
     /// - `nrmxx_` The norm of the xx vector.
@@ -7601,7 +7603,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7615,7 +7617,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7627,7 +7629,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barX variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7639,7 +7641,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7651,7 +7653,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7663,7 +7665,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `djcidxlist_` An array of indexes of disjunctive constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7675,7 +7677,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7726,7 +7728,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` The index of the first variable in the sequence.
     /// - `last_` The index of the last variable in the sequence plus 1.
@@ -7739,10 +7741,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskc>
@@ -7752,12 +7754,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskcslice>
@@ -7767,10 +7769,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskn>
@@ -7780,10 +7782,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskx>
@@ -7793,12 +7795,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskxslice>
@@ -7808,7 +7810,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -7819,7 +7821,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7832,7 +7834,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -7843,7 +7845,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7856,7 +7858,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
@@ -7867,7 +7869,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7880,7 +7882,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7894,22 +7896,22 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///   
+    ///
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///   
+    ///
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -7927,7 +7929,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -7948,7 +7950,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -7972,22 +7974,22 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///   
+    ///
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///   
+    ///
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -8006,10 +8008,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `solitem_` Which part of the solution is required.
-    ///   
+    ///
     ///   See [Solitem]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8033,7 +8035,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     /// - `len_` The length of the parameter value.
     ///
@@ -8048,7 +8050,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// # Returns
@@ -8062,7 +8064,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -8073,7 +8075,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8086,7 +8088,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -8097,7 +8099,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8126,7 +8128,7 @@ impl TaskCB {
     /// - `dim_` Returns the dimension of the requested matrix.
     /// - `nz_` Returns the number of non-zeros in the requested matrix.
     /// - `mattype_` Returns the type of the requested matrix.
-    ///   
+    ///
     ///   See [Symmattype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymmatinfo>
@@ -8153,7 +8155,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the variable for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -8167,7 +8169,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -8229,7 +8231,7 @@ impl TaskCB {
     ///
     /// - `subj_` A list of variable indexes.
     /// - `vartype_` Returns the variables types corresponding the variable indexes requested.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartypelist>
@@ -8239,7 +8241,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -8250,7 +8252,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8263,7 +8265,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -8274,7 +8276,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8287,7 +8289,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -8298,7 +8300,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8311,10 +8313,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.infeasibilityreport>
@@ -8340,12 +8342,12 @@ impl TaskCB {
     /// - `asub_` Coefficient subscripts.
     /// - `aval_` Coefficient values.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -8358,7 +8360,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isdouparname>
@@ -8369,7 +8371,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isintparname>
@@ -8380,7 +8382,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isstrparname>
@@ -8390,7 +8392,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
@@ -8402,10 +8404,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.onesolutionsummary>
@@ -8428,7 +8430,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizersummary>
@@ -8458,11 +8460,11 @@ impl TaskCB {
     ///
     /// - `subi_` Indexes of constraints to analyze.
     /// - `marki_` Mark which constraint bounds to analyze.
-    ///   
+    ///
     ///   See [Mark]
     /// - `subj_` Indexes of variables to analyze.
     /// - `markj_` Mark which variable bounds to analyze.
-    ///   
+    ///
     ///   See [Mark]
     /// - `leftpricei_` Left shadow price for constraints.
     /// - `rightpricei_` Right shadow price for constraints.
@@ -8514,7 +8516,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -8844,7 +8846,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th variable of barx.
@@ -8865,7 +8867,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -8904,7 +8906,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint.
     /// - `bkc_` New bound key.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound.
     /// - `buc_` New upper bound.
@@ -8917,7 +8919,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -8930,7 +8932,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` New bound key for all constraints in the list.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the list.
     /// - `buc_` New upper bound for all constraints in the list.
@@ -8944,7 +8946,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -8958,7 +8960,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` New bound key for all constraints in the slice.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the slice.
     /// - `buc_` New upper bound for all constraints in the slice.
@@ -8971,7 +8973,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -9002,10 +9004,10 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sk_` Status key of the constraint.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `x_` Primal solution value of the constraint.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -9072,7 +9074,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9083,7 +9085,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9094,7 +9096,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9236,7 +9238,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `sense_` The objective sense of the task
-    ///   
+    ///
     ///   See [Objsense]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjsense>
@@ -9305,10 +9307,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskc>
@@ -9318,12 +9320,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskcslice>
@@ -9333,10 +9335,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskx>
@@ -9346,12 +9348,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskxslice>
@@ -9361,7 +9363,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -9372,7 +9374,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9385,7 +9387,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -9396,7 +9398,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9409,7 +9411,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -9420,7 +9422,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9433,16 +9435,16 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -9460,16 +9462,16 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -9489,7 +9491,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the dual variable.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Solution value of the dual variable.
     ///
@@ -9500,7 +9502,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9511,7 +9513,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -9522,7 +9524,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9535,7 +9537,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -9546,7 +9548,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9568,7 +9570,7 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `bkx_` New bound key.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound.
     /// - `bux_` New upper bound.
@@ -9581,7 +9583,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -9594,7 +9596,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` New bound key for all variables in the list.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the list.
     /// - `bux_` New upper bound for all variables in the list.
@@ -9608,7 +9610,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -9622,7 +9624,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` New bound key for all variables in the slice.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the slice.
     /// - `bux_` New upper bound for all variables in the slice.
@@ -9644,10 +9646,10 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sk_` Status key of the variable.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `x_` Primal solution value of the variable.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -9662,7 +9664,7 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `vartype_` The new variable type.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartype>
@@ -9673,7 +9675,7 @@ impl TaskCB {
     ///
     /// - `subj_` A list of variable indexes for which the variable type should be changed.
     /// - `vartype_` A list of variable types.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
@@ -9683,7 +9685,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -9694,7 +9696,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9707,7 +9709,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -9718,7 +9720,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9731,7 +9733,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -9742,7 +9744,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9756,7 +9758,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbsolution>
@@ -9767,7 +9769,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbupdate>
@@ -9786,10 +9788,10 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `format_` File data format.
-    ///   
+    ///
     ///   See [Dataformat]
     /// - `compress_` File compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataformat>
@@ -9847,7 +9849,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -9866,7 +9868,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsummary>
@@ -9916,7 +9918,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetdouparam>
@@ -9926,7 +9928,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetintparam>
@@ -9940,7 +9942,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetstrparam>
@@ -9962,7 +9964,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sensitivityreport>
@@ -9972,7 +9974,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -9986,7 +9988,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutionsummary>
@@ -10012,7 +10014,7 @@ impl TaskCB {
     ///
     /// - `str_` String corresponding to the cone type code.
     /// - `conetype_` The cone type corresponding to str.
-    ///   
+    ///
     ///   See [Conetype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtoconetype>
@@ -10023,7 +10025,7 @@ impl TaskCB {
     ///
     /// - `str_` A status key abbreviation string.
     /// - `sk_` Status key corresponding to the string.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtosk>
@@ -10041,7 +10043,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.unlinkfuncfromtaskstream>
@@ -10051,7 +10053,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.updatesolutioninfo>
@@ -10062,7 +10064,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -10074,7 +10076,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writeb>
@@ -10085,7 +10087,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writebsolution>
@@ -10119,7 +10121,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -10163,7 +10165,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetasksolverresult_file>
@@ -10522,10 +10524,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `nametype_` The type of names e.g. valid in MPS or LP files.
-    ///   
+    ///
     ///   See [Nametype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzenames>
@@ -10539,7 +10541,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzeproblem>
@@ -10553,10 +10555,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzesolution>
@@ -10671,7 +10673,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -10688,7 +10690,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -10705,7 +10707,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Numbers of member variables in the cones.
@@ -11102,10 +11104,10 @@ impl Task {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///   
+    ///
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///   
+    ///
     ///   See [Rescode]
     ///
     /// # Returns
@@ -11150,10 +11152,10 @@ impl Task {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///   
+    ///
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///   
+    ///
     ///   See [Rescode]
     ///
     /// # Returns
@@ -11257,7 +11259,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.deletesolution>
@@ -11375,7 +11377,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `activity_` The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -11396,7 +11398,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `activity_` The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -11683,7 +11685,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -11704,7 +11706,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `doty_` The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -12678,7 +12680,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th dual variable of barx.
@@ -12699,7 +12701,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -12776,7 +12778,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -12797,7 +12799,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -12883,7 +12885,7 @@ impl Task {
     ///
     /// - `i_` Index of the constraint for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -12901,7 +12903,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -12927,7 +12929,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -12952,7 +12954,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -13425,7 +13427,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichdinf_` Specifies a double information item.
-    ///   
+    ///
     ///   See [Dinfitem]
     ///
     /// # Returns
@@ -13444,7 +13446,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// # Returns
@@ -13463,7 +13465,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -13482,7 +13484,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `nrmy_` The norm of the y vector.
     /// - `nrmslc_` The norm of the slc vector.
@@ -13503,7 +13505,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13523,7 +13525,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barx variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -13543,7 +13545,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13563,7 +13565,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13583,7 +13585,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -13603,7 +13605,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `infname_` Name of the information item.
     ///
@@ -13624,7 +13626,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `infmax_` The maximum index (plus 1) requested.
     ///
@@ -13642,7 +13644,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///   
+    ///
     ///   See [Inftype]
     /// - `whichinf_` An information item.
     ///
@@ -13662,7 +13664,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichiinf_` Specifies an integer information item.
-    ///   
+    ///
     ///   See [Iinfitem]
     ///
     /// # Returns
@@ -13681,7 +13683,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// # Returns
@@ -13717,7 +13719,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichliinf_` Specifies a long information item.
-    ///   
+    ///
     ///   See [Liinfitem]
     ///
     /// # Returns
@@ -13736,7 +13738,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// # Returns
@@ -14127,7 +14129,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -14244,7 +14246,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -14263,7 +14265,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -14316,7 +14318,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14335,7 +14337,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `nrmxc_` The norm of the xc vector.
     /// - `nrmxx_` The norm of the xx vector.
@@ -14365,7 +14367,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14384,7 +14386,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14404,7 +14406,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barX variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -14424,7 +14426,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14444,7 +14446,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14464,7 +14466,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `djcidxlist_` An array of indexes of disjunctive constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14484,7 +14486,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -14587,7 +14589,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` The index of the first variable in the sequence.
     /// - `last_` The index of the last variable in the sequence plus 1.
@@ -14607,10 +14609,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskc>
@@ -14629,12 +14631,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskcslice>
@@ -14651,10 +14653,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskn>
@@ -14673,10 +14675,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskx>
@@ -14695,12 +14697,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskxslice>
@@ -14717,7 +14719,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -14737,7 +14739,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14757,7 +14759,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -14777,7 +14779,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14797,7 +14799,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
@@ -14817,7 +14819,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14837,7 +14839,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14856,22 +14858,22 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///   
+    ///
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///   
+    ///
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -14948,7 +14950,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -14973,7 +14975,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -15001,22 +15003,22 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///   
+    ///
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///   
+    ///
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -15099,10 +15101,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `solitem_` Which part of the solution is required.
-    ///   
+    ///
     ///   See [Solitem]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15151,7 +15153,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     /// - `len_` The length of the parameter value.
     ///
@@ -15174,7 +15176,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// # Returns
@@ -15193,7 +15195,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -15213,7 +15215,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15233,7 +15235,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -15253,7 +15255,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15295,7 +15297,7 @@ impl Task {
     /// - `dim_` Returns the dimension of the requested matrix.
     /// - `nz_` Returns the number of non-zeros in the requested matrix.
     /// - `mattype_` Returns the type of the requested matrix.
-    ///   
+    ///
     ///   See [Symmattype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymmatinfo>
@@ -15339,7 +15341,7 @@ impl Task {
     ///
     /// - `i_` Index of the variable for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -15357,7 +15359,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -15456,7 +15458,7 @@ impl Task {
     ///
     /// - `subj_` A list of variable indexes.
     /// - `vartype_` Returns the variables types corresponding the variable indexes requested.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartypelist>
@@ -15474,7 +15476,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -15494,7 +15496,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15514,7 +15516,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -15534,7 +15536,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15554,7 +15556,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -15574,7 +15576,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15594,10 +15596,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.infeasibilityreport>
@@ -15636,12 +15638,12 @@ impl Task {
     /// - `asub_` Coefficient subscripts.
     /// - `aval_` Coefficient values.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -15651,11 +15653,11 @@ impl Task {
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
       let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),bkc_.len()) as i32;
       let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(c_.len(),bux_.len()),blx_.len()),bkx_.len()),aptrb_.len()),aptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
-      if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
-      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
+      if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); }
+      if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); }
+      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); }
       if let Some(v) = aptrb_.iter().min() { if *v < 0 { return Err("input_data: Invalid aptrb construction".to_string()); } }
-      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } } 
+      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,if c_.len() == 0 { std::ptr::null() } else { c_.as_ptr() },cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
@@ -15665,7 +15667,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isdouparname>
@@ -15681,7 +15683,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isintparname>
@@ -15697,7 +15699,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isstrparname>
@@ -15712,7 +15714,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
@@ -15729,10 +15731,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.onesolutionsummary>
@@ -15766,7 +15768,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizersummary>
@@ -15829,11 +15831,11 @@ impl Task {
     ///
     /// - `subi_` Indexes of constraints to analyze.
     /// - `marki_` Mark which constraint bounds to analyze.
-    ///   
+    ///
     ///   See [Mark]
     /// - `subj_` Indexes of variables to analyze.
     /// - `markj_` Mark which variable bounds to analyze.
-    ///   
+    ///
     ///   See [Mark]
     /// - `leftpricei_` Left shadow price for constraints.
     /// - `rightpricei_` Right shadow price for constraints.
@@ -15936,7 +15938,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -16015,11 +16017,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
+      if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); }
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); }
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); }
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_list: Invalid ptre construction".to_string()); } } 
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_list: Invalid ptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putacollist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_list")?;
       return Result::Ok(());
     } // putacollist64
@@ -16037,11 +16039,11 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacolslice64>
     #[allow(unused_parens)]
     pub fn put_a_col_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      if asub_.len() != aval_.len() { return Err("put_a_col_slice: Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("put_a_col_slice: Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_slice: Invalid ptrb/ptre construction".to_string()); } 
+      if asub_.len() != aval_.len() { return Err("put_a_col_slice: Mismatching asub/aval lengths".to_string()); }
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_slice: Mismatching ptrb/ptre lengths".to_string()); }
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_slice: Invalid ptrb/ptre construction".to_string()); }
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_slice: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_slice: Invalid ptre construction".to_string()); } } 
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_slice: Invalid ptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putacolslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_slice")?;
       return Result::Ok(());
     } // putacolslice64
@@ -16205,7 +16207,7 @@ impl Task {
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
       let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
-      if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
+      if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); }
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().zip(numnzrow_.iter()).map(|(a,b)| *a as usize + *b as usize).max() { if v > varidx_.len() { return Err("put_afe_f_row_list: Invalid ptrrow/numnzrow construction".to_string()); } }
@@ -16314,11 +16316,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
+      if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); }
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); }
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); }
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_list: Invalid ptre construction".to_string()); } } 
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_list: Invalid ptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putarowlist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_list")?;
       return Result::Ok(());
     } // putarowlist64
@@ -16342,11 +16344,11 @@ impl Task {
       if ptre_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("put_a_row_slice: Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
       }
-      if asub_.len() != aval_.len() { return Err("put_a_row_slice: Mismatching asub/aval lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("put_a_row_slice: Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_slice: Invalid ptrb/ptre construction".to_string()); } 
+      if asub_.len() != aval_.len() { return Err("put_a_row_slice: Mismatching asub/aval lengths".to_string()); }
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_slice: Mismatching ptrb/ptre lengths".to_string()); }
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_slice: Invalid ptrb/ptre construction".to_string()); }
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_slice: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_slice: Invalid ptre construction".to_string()); } } 
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_slice: Invalid ptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putarowslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_slice")?;
       return Result::Ok(());
     } // putarowslice64
@@ -16425,11 +16427,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),subj_.len()),alphaptrb_.len()),alphaptre_.len()) as i32;
-      if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
-      if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
-      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
+      if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); }
+      if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); }
+      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); }
       if let Some(v) = alphaptrb_.iter().min() { if *v < 0 { return Err("put_bara_ij_list: Invalid alphaptrb construction".to_string()); } }
-      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("put_bara_ij_list: Invalid alphaptre construction".to_string()); } } 
+      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("put_bara_ij_list: Invalid alphaptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putbaraijlist(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_ij_list")?;
       return Result::Ok(());
     } // putbaraijlist
@@ -16462,11 +16464,11 @@ impl Task {
       if weights_.len() != (__tmp_2).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'weights' has the wrong length, expected __tmp_2".to_string());
       }
-      if subj_.len() != nummat_.len() { return Err("put_bara_row_list: Mismatching subj/nummat lengths".to_string()); } 
-      if ptrb_.len() != ptre_.len() { return Err("put_bara_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_row_list: Invalid ptrb/ptre construction".to_string()); } 
+      if subj_.len() != nummat_.len() { return Err("put_bara_row_list: Mismatching subj/nummat lengths".to_string()); }
+      if ptrb_.len() != ptre_.len() { return Err("put_bara_row_list: Mismatching ptrb/ptre lengths".to_string()); }
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_row_list: Invalid ptrb/ptre construction".to_string()); }
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_bara_row_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("put_bara_row_list: Invalid ptre construction".to_string()); } } 
+      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("put_bara_row_list: Invalid ptre construction".to_string()); } }
       self.handle_res(unsafe { MSK_putbararowlist(self.ptr,num_,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_row_list")?;
       return Result::Ok(());
     } // putbararowlist
@@ -16518,7 +16520,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th variable of barx.
@@ -16553,7 +16555,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -16614,7 +16616,7 @@ impl Task {
     ///
     /// - `i_` Index of the constraint.
     /// - `bkc_` New bound key.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound.
     /// - `buc_` New upper bound.
@@ -16631,7 +16633,7 @@ impl Task {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -16649,7 +16651,7 @@ impl Task {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` New bound key for all constraints in the list.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the list.
     /// - `buc_` New upper bound for all constraints in the list.
@@ -16668,7 +16670,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` Bound keys for the constraints.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -16695,7 +16697,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` New bound key for all constraints in the slice.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the slice.
     /// - `buc_` New upper bound for all constraints in the slice.
@@ -16712,7 +16714,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///   
+    ///
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -16758,10 +16760,10 @@ impl Task {
     ///
     /// - `i_` Index of the constraint.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sk_` Status key of the constraint.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `x_` Primal solution value of the constraint.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -16872,7 +16874,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -16887,7 +16889,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -16902,7 +16904,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -17117,7 +17119,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `sense_` The objective sense of the task
-    ///   
+    ///
     ///   See [Objsense]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjsense>
@@ -17222,10 +17224,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskc>
@@ -17244,12 +17246,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskcslice>
@@ -17266,10 +17268,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskx>
@@ -17288,12 +17290,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskxslice>
@@ -17310,7 +17312,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -17330,7 +17332,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17350,7 +17352,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -17370,7 +17372,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17390,7 +17392,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -17410,7 +17412,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17430,16 +17432,16 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -17461,16 +17463,16 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -17494,7 +17496,7 @@ impl Task {
     ///
     /// - `i_` Index of the dual variable.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Solution value of the dual variable.
     ///
@@ -17509,7 +17511,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -17525,7 +17527,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -17545,7 +17547,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17565,7 +17567,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -17585,7 +17587,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17619,7 +17621,7 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `bkx_` New bound key.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound.
     /// - `bux_` New upper bound.
@@ -17636,7 +17638,7 @@ impl Task {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -17654,7 +17656,7 @@ impl Task {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` New bound key for all variables in the list.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the list.
     /// - `bux_` New upper bound for all variables in the list.
@@ -17673,7 +17675,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` Bound keys for the variables.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -17700,7 +17702,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` New bound key for all variables in the slice.
-    ///   
+    ///
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the slice.
     /// - `bux_` New upper bound for all variables in the slice.
@@ -17731,10 +17733,10 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `sk_` Status key of the variable.
-    ///   
+    ///
     ///   See [Stakey]
     /// - `x_` Primal solution value of the variable.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -17753,7 +17755,7 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `vartype_` The new variable type.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartype>
@@ -17768,7 +17770,7 @@ impl Task {
     ///
     /// - `subj_` A list of variable indexes for which the variable type should be changed.
     /// - `vartype_` A list of variable types.
-    ///   
+    ///
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
@@ -17783,7 +17785,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -17803,7 +17805,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17823,7 +17825,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -17843,7 +17845,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17863,7 +17865,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -17883,7 +17885,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17904,7 +17906,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbsolution>
@@ -17920,7 +17922,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbupdate>
@@ -17949,10 +17951,10 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `format_` File data format.
-    ///   
+    ///
     ///   See [Dataformat]
     /// - `compress_` File compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataformat>
@@ -18045,7 +18047,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -18074,7 +18076,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsummary>
@@ -18153,7 +18155,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetdouparam>
@@ -18167,7 +18169,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetintparam>
@@ -18189,7 +18191,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///   
+    ///
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetstrparam>
@@ -18219,7 +18221,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sensitivityreport>
@@ -18233,7 +18235,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// # Returns
@@ -18252,7 +18254,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutionsummary>
@@ -18297,7 +18299,7 @@ impl Task {
     ///
     /// - `str_` String corresponding to the cone type code.
     /// - `conetype_` The cone type corresponding to str.
-    ///   
+    ///
     ///   See [Conetype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtoconetype>
@@ -18313,7 +18315,7 @@ impl Task {
     ///
     /// - `str_` A status key abbreviation string.
     /// - `sk_` Status key corresponding to the string.
-    ///   
+    ///
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtosk>
@@ -18344,7 +18346,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///   
+    ///
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.unlinkfuncfromtaskstream>
@@ -18358,7 +18360,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.updatesolutioninfo>
@@ -18373,7 +18375,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `partype_` Parameter type.
-    ///   
+    ///
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -18390,7 +18392,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writeb>
@@ -18406,7 +18408,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writebsolution>
@@ -18460,7 +18462,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///   
+    ///
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -18529,7 +18531,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///   
+    ///
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetasksolverresult_file>
@@ -18597,7 +18599,7 @@ pub fn check_in_all() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `feature_` Feature to check in to the license system.
-///   
+///
 ///   See [Feature]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
@@ -18611,7 +18613,7 @@ pub fn check_in_license(feature_ : i32) -> Result<(),String> {
 /// # Arguments
 ///
 /// - `feature_` Feature to check out from the license system.
-///   
+///
 ///   See [Feature]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
@@ -18748,10 +18750,10 @@ pub fn expirylicenses(expiry_ : &mut i64) -> Result<(),String> {
 /// # Arguments
 ///
 /// - `transa_` Indicates whether the matrix A must be transposed.
-///   
+///
 ///   See [Transpose]
 /// - `transb_` Indicates whether the matrix B must be transposed.
-///   
+///
 ///   See [Transpose]
 /// - `m_` Indicates the number of rows of matrix C.
 /// - `n_` Indicates the number of columns of matrix C.
@@ -18782,7 +18784,7 @@ pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,
 /// # Arguments
 ///
 /// - `transa_` Indicates whether the matrix A must be transposed.
-///   
+///
 ///   See [Transpose]
 /// - `m_` Specifies the number of rows of the matrix A.
 /// - `n_` Specifies the number of columns of the matrix A.
@@ -18839,7 +18841,7 @@ pub fn get_build_info() -> Result<(String,String),String> {
 /// # Arguments
 ///
 /// - `code_` A valid response code.
-///   
+///
 ///   See [Rescode]
 ///
 /// # Returns
@@ -18860,10 +18862,10 @@ pub fn get_code_desc(code_ : i32) -> Result<(String,String),String> {
 /// # Arguments
 ///
 /// - `r_` A response code indicating the result of function call.
-///   
+///
 ///   See [Rescode]
 /// - `rc_` The response class.
-///   
+///
 ///   See [Rescodetype]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getresponseclass>
@@ -18933,7 +18935,7 @@ pub fn license_cleanup() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `whichstream_` Index of the stream.
-///   
+///
 ///   See [Streamtype]
 /// - `filename_` A valid file name.
 /// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
@@ -18953,10 +18955,10 @@ pub fn link_file_to_stream(whichstream_ : i32,filename_ : &str,append_ : i32) ->
 /// - `maxtime_` Time limit for the function.
 /// - `numthreads_` Number of threads to be employed.
 /// - `trmcode_` The termination code for each task.
-///   
+///
 ///   See [Rescode]
 /// - `rcode_` The response code for each task.
-///   
+///
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
@@ -18978,7 +18980,7 @@ pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part of the matrix is stored.
-///   
+///
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric matrix.
 /// - `a_` A symmetric matrix stored in column-major order.
@@ -19065,7 +19067,7 @@ pub fn shutdown_global_threadpool() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `transposed_` Controls whether the solve is with L or the transposed L.
-///   
+///
 ///   See [Transpose]
 /// - `lnzc_` lnzc\[j\] is the number of nonzeros in column j.
 /// - `lptrc_` lptrc\[j\] is a pointer to the first row index and value in column j.
@@ -19101,7 +19103,7 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-///   
+///
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric input matrix.
 /// - `a_` Input matrix A.
@@ -19124,7 +19126,7 @@ pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),Strin
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-///   
+///
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric input matrix.
 /// - `a_` Input matrix A.
@@ -19165,10 +19167,10 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part of C is used.
-///   
+///
 ///   See [Uplo]
 /// - `trans_` Indicates whether the matrix A must be transposed.
-///   
+///
 ///   See [Transpose]
 /// - `n_` Specifies the order of C.
 /// - `k_` Indicates the number of rows or columns of A, and its rank.
@@ -19211,7 +19213,7 @@ pub fn initialize(paths : Option<&[&std::path::Path]>) -> Result<(),String> {
             unsafe { MSK_initializedynamicwithpaths(pathptr.len().min(i32::MAX as usize) as i32, pathptr.as_ptr()) }
         }
         else {
-            unsafe { MSK_initializedynamicwithpaths(0,std::ptr::null()) }
+            unsafe { MSK_initializedynamicwithdefaults() }
         };
     if 0 != r {
         if let Some(paths) = paths {
@@ -19223,5 +19225,6 @@ pub fn initialize(paths : Option<&[&std::path::Path]>) -> Result<(),String> {
     }
     else { Ok(()) }
 }
+
 #[cfg(not(feature = "dynamic"))]
 pub fn initialize(_paths : Option<&[&std::path::Path]>) -> Result<(),String> { Ok(()) }
