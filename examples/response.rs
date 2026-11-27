@@ -8,7 +8,7 @@
 //!
 extern crate mosek;
 
-use mosek::{Task,Streamtype,Solsta,Soltype};
+use mosek::{Task,Streamtype,Solsta,Soltype,Iparam,Onoffkey};
 use std::env;
 
 const CQO1_PTF : &str = "Task 'CQO1 EXAMPLE'
@@ -29,7 +29,6 @@ Variables
 
 
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     let args: Vec<String> = env::args().collect();
 
     let mut task = Task::new().unwrap().with_callbacks();
@@ -40,6 +39,8 @@ fn main() -> Result<(),String> {
         task.read_data(args[1].as_str())?;
     }
 
+    // Ensure interior-point solution is always present
+    task.put_int_param(Iparam::REQUEST_INTPNT, Onoffkey::ON)?;
     // Perform optimization.
     let trm = task.optimize()?;
     task.solution_summary(Streamtype::LOG)?;

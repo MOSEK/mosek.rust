@@ -18,7 +18,6 @@ use mosek::{Task,Objsense,Streamtype,Solsta,Soltype,Boundkey};
 
 #[allow(non_upper_case_globals)]
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     // Define problem data
     const n : i32 = 3;
     const k : i64 = 2;
@@ -94,6 +93,12 @@ fn main() -> Result<(),String> {
     Ok(())
 }
 
+fn maxgap(a : &[f64], b : &[f64]) -> f64 {
+    a.iter().zip(b.iter()).map(|(&a,&b)| (a - b).abs()).max_by(|a,b| if a < b { std::cmp::Ordering::Less } else if b < a { std::cmp::Ordering::Greater } else {std::cmp::Ordering::Equal} ).unwrap()
+}
+fn dot(a : &[f64], b : &[f64]) -> f64 {
+    a.iter().zip(b.iter()).map(|(&a,&b)| (a * b)).sum()
+}
 
 #[cfg(test)]
 mod tests {

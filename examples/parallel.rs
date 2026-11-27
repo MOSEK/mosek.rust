@@ -15,7 +15,6 @@ use itertools::{izip,Either::{self,*}};
 /// Example of how to use env.optimize_batch().
 /// Optimizes tasks whose names were read from command line.
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 3 {
         println!("Syntax: parallel FILENAME FILENAME [ FILENAME ... ]");
@@ -111,7 +110,6 @@ Integers
 ";
     #[test]
     fn test() {
-        mosek::initialize(None).unwrap();
         super::parallel(vec![Left(DFLT_FILE1.to_string()),
                              Left(DFLT_FILE2.to_string())]).unwrap();
     }

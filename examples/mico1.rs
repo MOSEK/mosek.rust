@@ -14,7 +14,6 @@ extern crate mosek;
 use mosek::{Task,Boundkey,Objsense,Streamtype,Soltype,Variabletype};
 
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(t) => t,

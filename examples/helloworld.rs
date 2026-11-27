@@ -11,7 +11,6 @@ extern crate mosek;
 use mosek::{Task,Boundkey,Objsense,Soltype};
 
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     /* Create the optimization task. */
     let mut task = match Task::new() {
         Some(e) => e,
@@ -26,8 +25,7 @@ fn main() -> Result<(),String> {
     task.optimize()?;                               // Optimize
 
     let mut x = vec![0.0; 1];
-    task.get_xx(Soltype::ITR, x.as_mut_slice())     // Get solution
-        .or_else(|_| task.get_xx(Soltype::BAS, x.as_mut_slice()))?;
+    task.get_xx(Soltype::BAS, x.as_mut_slice())?;   // Get solution
     println!("Solution x = {}", x[0]);              // Print solution
     return Result::Ok(());
 }

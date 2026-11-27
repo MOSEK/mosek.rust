@@ -13,7 +13,6 @@ use std::env;
 use itertools::Either::{self,*};
 
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     let mut args = env::args();
     if args.len() < 2 {
         println!("Syntax: solutionquality FILENAME");
@@ -39,7 +38,10 @@ fn solutionquality(filename : Either<String,String>) -> Result<(),String> {
 
     task.solution_summary(Streamtype::LOG)?;
 
-    let solsta = task.get_sol_sta(Soltype::BAS)?;
+    // Which solution to analyze
+    let whichsol = Soltype::BAS;
+
+    let solsta = task.get_sol_sta(whichsol)?;
 
     let mut pobj        : f64 = 0.0;
     let mut pviolcon    : f64 = 0.0;
@@ -53,7 +55,7 @@ fn solutionquality(filename : Either<String,String>) -> Result<(),String> {
     let mut dviolbarvar : f64 = 0.0;
     let mut dviolcones  : f64 = 0.0;
 
-    task.get_solution_info(Soltype::BAS,
+    task.get_solution_info(whichsol,
                            & mut pobj, & mut pviolcon, & mut pviolvar, & mut pviolbarvar, & mut pviolcones, & mut pviolitg,
                            & mut dobj, & mut dviolcon, & mut dviolvar, & mut dviolbarvar, & mut dviolcones)?;
     match solsta {
@@ -102,13 +104,13 @@ fn solutionquality(filename : Either<String,String>) -> Result<(),String> {
                 let numvar = task.get_num_var()?;
                 println!("Optimal primal solution");
                 let mut xx = vec![0.0; numvar as usize];
-                task.get_xx(Soltype::BAS,xx.as_mut_slice())?;
+                task.get_xx(whichsol,xx.as_mut_slice())?;
                 for (j,&xj) in (0..numvar).zip(xx.iter()) {
                     println!("x[{}]: {}",j,xj);
                 }
             } else {
                 // print etailed information about the solution
-                task.analyze_solution(Streamtype::LOG, Soltype::BAS)?;
+                task.analyze_solution(Streamtype::LOG, whichsol)?;
             }
         },
         Solsta::DUAL_INFEAS_CER => println!("Primal or dual infeasibility certificate found."),
@@ -138,7 +140,6 @@ Variables
 
     #[test]
     fn test() {
-        mosek::initialize(None).unwrap();
         super::solutionquality(itertools::Either::Left(DFLT_FILE.to_string())).unwrap();
     }
 }
