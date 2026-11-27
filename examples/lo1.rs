@@ -25,8 +25,6 @@ use mosek::{Task,Boundkey,Objsense,Streamtype,Solsta,Soltype};
 const INF : f64 = 0.0;
 
 fn main() -> Result<(),String> {
-    // Initialize: if feature `dynamic` is enabled, this doesn't do anything, otherwise it loads and initialized MOSEK.
-    mosek::initialize(None)?;
     let numvar = 4;
     let numcon = 3;
 

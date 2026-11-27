@@ -37,7 +37,7 @@ DAMAGE.
 /// Most functionality is provided through the [Task] object and it's
 /// member functions.
 
-// Generted for MOSEK v[12, 0, 0]
+// Generted for MOSEK v[12, 0, 1]
 
 extern crate libc;
 use std::ffi::CString;
@@ -85,8 +85,6 @@ unsafe extern "C" {
     fn MSK_isinitialized() -> i32;
     #[cfg(feature = "dynamic")]
     fn MSK_initializedynamicwithpaths(num_paths : i32, paths : * const * const c_char) -> i32;
-    #[cfg(feature = "dynamic")]
-    fn MSK_initializedynamicwithdefaults() -> i32;
 
     #[allow(dead_code)]
     fn MSK_analyzenames(task_ : * const u8,whichstream_ : i32,nametype_ : i32) -> i32;
@@ -1017,6 +1015,8 @@ unsafe extern "C" {
     #[allow(dead_code)]
     fn MSK_writetasksolverresult_file(task_ : * const u8,filename_ : * const libc::c_char,compress_ : i32) -> i32;
     #[allow(dead_code)]
+    fn MSK_writetermination(task_ : * const u8,filename_ : * const libc::c_char,termination_ : i32) -> i32;
+    #[allow(dead_code)]
     fn MSK_axpy(env_ : * const u8,n_ : i32,alpha_ : f64,x_ : * const f64,y_ : * mut f64) -> i32;
     #[allow(dead_code)]
     fn MSK_callbackcodetostr(code_ : i32,callbackcodestr : * mut u8) -> i32;
@@ -1126,6 +1126,24 @@ impl Basindtype {
   pub const NO_ERROR : i32 = 2;
   /// Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible.
   pub const IF_FEASIBLE : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NEVER"),
+      1 => Some("ALWAYS"),
+      2 => Some("NO_ERROR"),
+      3 => Some("IF_FEASIBLE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NEVER" => Some(0),
+      "ALWAYS" => Some(1),
+      "NO_ERROR" => Some(2),
+      "IF_FEASIBLE" => Some(3),
+      _ => None
+    }
+  }
 } // impl Basindtype
 
 /// Bound keys
@@ -1142,6 +1160,26 @@ impl Boundkey {
   pub const FR : i32 = 3;
   /// The constraint or variable is ranged.
   pub const RA : i32 = 4;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("LO"),
+      1 => Some("UP"),
+      2 => Some("FX"),
+      3 => Some("FR"),
+      4 => Some("RA"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LO" => Some(0),
+      "UP" => Some(1),
+      "FX" => Some(2),
+      "FR" => Some(3),
+      "RA" => Some(4),
+      _ => None
+    }
+  }
 } // impl Boundkey
 
 /// Mark
@@ -1152,6 +1190,20 @@ impl Mark {
   pub const LO : i32 = 0;
   /// The upper bound is selected for sensitivity analysis.
   pub const UP : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("LO"),
+      1 => Some("UP"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LO" => Some(0),
+      "UP" => Some(1),
+      _ => None
+    }
+  }
 } // impl Mark
 
 /// Experimental. Usage not recommended.
@@ -1162,6 +1214,20 @@ impl Simprecision {
   pub const NORMAL : i32 = 0;
   /// Experimental. Usage not recommended.
   pub const EXTENDED : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NORMAL"),
+      1 => Some("EXTENDED"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NORMAL" => Some(0),
+      "EXTENDED" => Some(1),
+      _ => None
+    }
+  }
 } // impl Simprecision
 
 /// Degeneracy strategies
@@ -1178,6 +1244,26 @@ impl Simdegen {
   pub const MODERATE : i32 = 3;
   /// The simplex optimizer should use a minimum degeneration strategy.
   pub const MINIMUM : i32 = 4;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("FREE"),
+      2 => Some("AGGRESSIVE"),
+      3 => Some("MODERATE"),
+      4 => Some("MINIMUM"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "FREE" => Some(1),
+      "AGGRESSIVE" => Some(2),
+      "MODERATE" => Some(3),
+      "MINIMUM" => Some(4),
+      _ => None
+    }
+  }
 } // impl Simdegen
 
 /// Transposed matrix.
@@ -1188,6 +1274,20 @@ impl Transpose {
   pub const NO : i32 = 0;
   /// A transpose is applied.
   pub const YES : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NO"),
+      1 => Some("YES"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NO" => Some(0),
+      "YES" => Some(1),
+      _ => None
+    }
+  }
 } // impl Transpose
 
 /// Triangular part of a symmetric matrix.
@@ -1198,6 +1298,20 @@ impl Uplo {
   pub const LO : i32 = 0;
   /// Upper part.
   pub const UP : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("LO"),
+      1 => Some("UP"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LO" => Some(0),
+      "UP" => Some(1),
+      _ => None
+    }
+  }
 } // impl Uplo
 
 /// Problem reformulation.
@@ -1212,6 +1326,24 @@ impl Simreform {
   pub const FREE : i32 = 2;
   /// The simplex optimizer should use an aggressive reformulation strategy.
   pub const AGGRESSIVE : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OFF"),
+      1 => Some("ON"),
+      2 => Some("FREE"),
+      3 => Some("AGGRESSIVE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OFF" => Some(0),
+      "ON" => Some(1),
+      "FREE" => Some(2),
+      "AGGRESSIVE" => Some(3),
+      _ => None
+    }
+  }
 } // impl Simreform
 
 /// Exploit duplicate columns.
@@ -1224,6 +1356,22 @@ impl Simdupvec {
   pub const ON : i32 = 1;
   /// The simplex optimizer can choose freely.
   pub const FREE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OFF"),
+      1 => Some("ON"),
+      2 => Some("FREE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OFF" => Some(0),
+      "ON" => Some(1),
+      "FREE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Simdupvec
 
 /// Hot-start type employed by the simplex optimizer
@@ -1236,6 +1384,22 @@ impl Simhotstart {
   pub const FREE : i32 = 1;
   /// Only the status keys of the constraints and variables are used to choose the type of hot-start.
   pub const STATUS_KEYS : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("FREE"),
+      2 => Some("STATUS_KEYS"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "FREE" => Some(1),
+      "STATUS_KEYS" => Some(2),
+      _ => None
+    }
+  }
 } // impl Simhotstart
 
 /// Hot-start type employed by the interior-point optimizers.
@@ -1250,6 +1414,24 @@ impl Intpnthotstart {
   pub const DUAL : i32 = 2;
   /// The interior-point optimizer exploits both the primal and dual solution.
   pub const PRIMAL_DUAL : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("PRIMAL"),
+      2 => Some("DUAL"),
+      3 => Some("PRIMAL_DUAL"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "PRIMAL" => Some(1),
+      "DUAL" => Some(2),
+      "PRIMAL_DUAL" => Some(3),
+      _ => None
+    }
+  }
 } // impl Intpnthotstart
 
 /// Progress callback codes
@@ -1339,7 +1521,7 @@ impl Callbackcode {
   /// Basis identification initialization after undualizing is started.
   pub const BEGIN_UNDUALIZE_BI_INITIALIZE : i32 = 40;
   /// Basis identification optimizer after undualizing is started.
-  pub const BEGIN_UNDUALIZE_BI_OPTIMIZE : i32 = 41;
+  pub const BEGIN_UNDUALIZE_BI_OPTIMIZER : i32 = 41;
   /// Basis identification primal-dual simplex after undualizing is started.
   pub const BEGIN_UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 42;
   /// Basis identification primal phase after undualizing is started.
@@ -1457,115 +1639,431 @@ impl Callbackcode {
   /// Basis identification primal-dual simplex after undualizing is terminated
   pub const END_UNDUALIZE_BI_OPIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 99;
   /// Basis identification optimizer after undualizing is terminated.
-  pub const END_UNDUALIZE_BI_OPTIMIZE : i32 = 100;
-  /// Basis identification optimizer after undualizing is terminated.
-  pub const END_UNDUALIZE_BI_OPTIMIZE_128BIT : i32 = 101;
+  pub const END_UNDUALIZE_BI_OPTIMIZER : i32 = 100;
   /// Basis identification primal phase after undualizing is terminated.
-  pub const END_UNDUALIZE_BI_PRIMAL : i32 = 102;
+  pub const END_UNDUALIZE_BI_PRIMAL : i32 = 101;
   /// The callback function is called when undualizing is terminated.
-  pub const END_UNDUALIZING : i32 = 103;
+  pub const END_UNDUALIZING : i32 = 102;
   /// Basis identification after unfolding is terminated.
-  pub const END_UNFOLD_BI : i32 = 104;
+  pub const END_UNFOLD_BI : i32 = 103;
   /// Basis identification dual phase after unfolding is started.
-  pub const END_UNFOLD_BI_DUAL : i32 = 105;
+  pub const END_UNFOLD_BI_DUAL : i32 = 104;
   /// Basis identification initialization after unfolding is terminated.
-  pub const END_UNFOLD_BI_INITIALIZE : i32 = 106;
+  pub const END_UNFOLD_BI_INITIALIZE : i32 = 105;
   /// Basis identification optimizer phase after unfolding is terminated.
-  pub const END_UNFOLD_BI_OPTIMIZER : i32 = 107;
+  pub const END_UNFOLD_BI_OPTIMIZER : i32 = 106;
   /// Basis identification primal-dual simplex phase after unfolding is terminated.
-  pub const END_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 108;
+  pub const END_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 107;
   /// Basis identification primal phase after unfolding is terminated.
-  pub const END_UNFOLD_BI_PRIMAL : i32 = 109;
+  pub const END_UNFOLD_BI_PRIMAL : i32 = 108;
   /// The calback function is called at the end of unfolding.
-  pub const END_UNFOLDING : i32 = 110;
+  pub const END_UNFOLDING : i32 = 109;
   /// MOSEK has finished writing a problem file.
-  pub const END_WRITE : i32 = 111;
+  pub const END_WRITE : i32 = 110;
   /// The callback function is called from within the matrix ordering procedure at an intermediate point.
-  pub const GP_ORDER : i32 = 112;
+  pub const GP_ORDER : i32 = 111;
   /// A heartbeat callback.
-  pub const HEARTBEAT : i32 = 113;
+  pub const HEARTBEAT : i32 = 112;
   /// The callback function is called at an intermediate stage of the dual sensitivity analysis.
-  pub const IM_DUAL_SENSIVITY : i32 = 114;
+  pub const IM_DUAL_SENSIVITY : i32 = 113;
   /// The callback function is called at an intermediate point in the dual simplex optimizer.
-  pub const IM_DUAL_SIMPLEX : i32 = 115;
+  pub const IM_DUAL_SIMPLEX : i32 = 114;
   /// MOSEK is waiting for a license.
-  pub const IM_LICENSE_WAIT : i32 = 116;
+  pub const IM_LICENSE_WAIT : i32 = 115;
   /// The callback function is called from within the LU factorization procedure at an intermediate point.
-  pub const IM_LU : i32 = 117;
+  pub const IM_LU : i32 = 116;
   /// The callback function is called at an intermediate point in the mixed-integer optimizer.
-  pub const IM_MIO : i32 = 118;
+  pub const IM_MIO : i32 = 117;
   /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer.
-  pub const IM_MIO_DUAL_SIMPLEX : i32 = 119;
+  pub const IM_MIO_DUAL_SIMPLEX : i32 = 118;
   /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer.
-  pub const IM_MIO_INTPNT : i32 = 120;
+  pub const IM_MIO_INTPNT : i32 = 119;
   /// The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer.
-  pub const IM_MIO_PRIMAL_SIMPLEX : i32 = 121;
+  pub const IM_MIO_PRIMAL_SIMPLEX : i32 = 120;
   /// The callback function is called at an intermediate stage of the primal sensitivity analysis.
-  pub const IM_PRIMAL_SENSIVITY : i32 = 122;
+  pub const IM_PRIMAL_SENSIVITY : i32 = 121;
   /// The callback function is called at an intermediate point in the primal simplex optimizer.
-  pub const IM_PRIMAL_SIMPLEX : i32 = 123;
+  pub const IM_PRIMAL_SIMPLEX : i32 = 122;
   /// Intermediate stage in reading.
-  pub const IM_READ : i32 = 124;
+  pub const IM_READ : i32 = 123;
   /// The callback is called from within root cut generation at an intermediate stage.
-  pub const IM_ROOT_CUTGEN : i32 = 125;
+  pub const IM_ROOT_CUTGEN : i32 = 124;
   /// The callback function is called from within the simplex optimizer at an intermediate point.
-  pub const IM_SIMPLEX : i32 = 126;
+  pub const IM_SIMPLEX : i32 = 125;
   /// The callback function is called from within the interior-point optimizer after the information database has been updated.
-  pub const INTPNT : i32 = 127;
+  pub const INTPNT : i32 = 126;
   /// TBD
-  pub const ITERATING_SIMPLEX : i32 = 128;
+  pub const ITERATING_SIMPLEX : i32 = 127;
   /// The callback function is called from within the matrix ordering procedure at an intermediate point.
-  pub const LOCAL_ORDER : i32 = 129;
+  pub const LOCAL_ORDER : i32 = 128;
   /// The callback function is called after a new integer solution has been located by the mixed-integer optimizer.
-  pub const NEW_INT_MIO : i32 = 130;
+  pub const NEW_INT_MIO : i32 = 129;
   /// The callback function is called from within the matrix ordering procedure at an intermediate point.
-  pub const ORDER : i32 = 131;
+  pub const ORDER : i32 = 130;
   /// The simplex optimizer has changed floating precision.
-  pub const PRECISION_SIMPLEX : i32 = 132;
+  pub const PRECISION_SIMPLEX : i32 = 131;
   /// The callback function is called in the primal-dual simplex optimizer.
-  pub const PRIMAL_DUAL_SIMPLEX : i32 = 133;
+  pub const PRIMAL_DUAL_SIMPLEX : i32 = 132;
   /// The callback function is called from within the primal simplex optimizer.
-  pub const PRIMAL_SIMPLEX : i32 = 134;
+  pub const PRIMAL_SIMPLEX : i32 = 133;
   /// The callback function is called at an intermediate stage of the conic quadratic reformulation.
-  pub const QO_REFORMULATE : i32 = 135;
+  pub const QO_REFORMULATE : i32 = 134;
   /// The callback function is called from the OPF reader.
-  pub const READ_OPF : i32 = 136;
+  pub const READ_OPF : i32 = 135;
   /// A chunk of Q non-zeros has been read from a problem file.
-  pub const READ_OPF_SECTION : i32 = 137;
+  pub const READ_OPF_SECTION : i32 = 136;
   /// The callback function is called when the mixed-integer optimizer is restarted.
-  pub const RESTART_MIO : i32 = 138;
+  pub const RESTART_MIO : i32 = 137;
   /// The callback function is called from simplex optimizer.
-  pub const SIMPLEX : i32 = 139;
+  pub const SIMPLEX : i32 = 138;
   /// The callback function is called while the task is being solved on a remote server.
-  pub const SOLVING_REMOTE : i32 = 140;
+  pub const SOLVING_REMOTE : i32 = 139;
   /// Basis identification primal phase after undualizing.
-  pub const UNDUALIZE_BI_DUAL : i32 = 141;
+  pub const UNDUALIZE_BI_DUAL : i32 = 140;
   /// Basis identification primal-dual simplex after undualizing.
-  pub const UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 142;
+  pub const UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 141;
   /// Basis identification primal phase after undualizing.
-  pub const UNDUALIZE_BI_PRIMAL : i32 = 143;
+  pub const UNDUALIZE_BI_PRIMAL : i32 = 142;
   /// Basis identification dual phase after unfolding.
-  pub const UNFOLD_BI_DUAL : i32 = 144;
+  pub const UNFOLD_BI_DUAL : i32 = 143;
   /// Reoptimizing the basic solution.
-  pub const UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 145;
+  pub const UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX : i32 = 144;
   /// Basis identification primal phase after unfolding.
-  pub const UNFOLD_BI_PRIMAL : i32 = 146;
+  pub const UNFOLD_BI_PRIMAL : i32 = 145;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the dual phase.
-  pub const UPDATE_BI_DUAL : i32 = 147;
+  pub const UPDATE_BI_DUAL : i32 = 146;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the primal phase.
-  pub const UPDATE_BI_PRIMAL : i32 = 148;
+  pub const UPDATE_BI_PRIMAL : i32 = 147;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the primal simplex clean-up phase.
-  pub const UPDATE_BI_PRIMAL_SIMPLEX : i32 = 149;
+  pub const UPDATE_BI_PRIMAL_SIMPLEX : i32 = 148;
   /// The callback function is called in the dual simplex optimizer.
-  pub const UPDATE_DUAL_SIMPLEX : i32 = 150;
+  pub const UPDATE_DUAL_SIMPLEX : i32 = 149;
   /// The callback function is called from within the basis identification procedure at an intermediate point in the dual simplex clean-up phase.
-  pub const UPDATE_DUAL_SIMPLEX_BI : i32 = 151;
+  pub const UPDATE_DUAL_SIMPLEX_BI : i32 = 150;
   /// The callback function is called from within the presolve procedure.
-  pub const UPDATE_PRESOLVE : i32 = 152;
+  pub const UPDATE_PRESOLVE : i32 = 151;
   /// The callback function is called  in the primal simplex optimizer.
-  pub const UPDATE_PRIMAL_SIMPLEX : i32 = 153;
+  pub const UPDATE_PRIMAL_SIMPLEX : i32 = 152;
   /// The callback function is called from the OPF writer.
-  pub const WRITE_OPF : i32 = 154;
+  pub const WRITE_OPF : i32 = 153;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("BEGIN_BI"),
+      1 => Some("BEGIN_BI_DUAL"),
+      2 => Some("BEGIN_BI_INITIALIZE"),
+      3 => Some("BEGIN_BI_OPTIMIZER"),
+      4 => Some("BEGIN_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      5 => Some("BEGIN_BI_PRIMAL"),
+      6 => Some("BEGIN_BI_PRIMAL_SIMPLEX"),
+      7 => Some("BEGIN_CONCURRENT"),
+      8 => Some("BEGIN_CONIC"),
+      9 => Some("BEGIN_DUAL_SENSITIVITY"),
+      10 => Some("BEGIN_DUAL_SETUP_BI"),
+      11 => Some("BEGIN_DUAL_SIMPLEX"),
+      12 => Some("BEGIN_DUAL_SIMPLEX_BI"),
+      13 => Some("BEGIN_DUALIZER"),
+      14 => Some("BEGIN_FOLDING"),
+      15 => Some("BEGIN_GP_ORDER"),
+      16 => Some("BEGIN_INFEAS_ANA"),
+      17 => Some("BEGIN_INTPNT"),
+      18 => Some("BEGIN_INTPNT_SETUP"),
+      19 => Some("BEGIN_LICENSE_WAIT"),
+      20 => Some("BEGIN_LOCAL_ORDER"),
+      21 => Some("BEGIN_MIO"),
+      22 => Some("BEGIN_OPTIMIZER"),
+      23 => Some("BEGIN_ORDER"),
+      24 => Some("BEGIN_PRESOLVE"),
+      25 => Some("BEGIN_PRESOLVE_ELIMINATOR"),
+      26 => Some("BEGIN_PRESOLVE_LINEAR_DEPENDENCIES"),
+      27 => Some("BEGIN_PRIMAL_DUAL_SIMPLEX"),
+      28 => Some("BEGIN_PRIMAL_REPAIR"),
+      29 => Some("BEGIN_PRIMAL_SENSITIVITY"),
+      30 => Some("BEGIN_PRIMAL_SETUP_BI"),
+      31 => Some("BEGIN_PRIMAL_SIMPLEX"),
+      32 => Some("BEGIN_QCQO_REFORMULATE"),
+      33 => Some("BEGIN_READ"),
+      34 => Some("BEGIN_ROOT_CUTGEN"),
+      35 => Some("BEGIN_SIMPLEX"),
+      36 => Some("BEGIN_SOLVE_ROOT_RELAX"),
+      37 => Some("BEGIN_TO_CONIC"),
+      38 => Some("BEGIN_UNDUALIZE_BI"),
+      39 => Some("BEGIN_UNDUALIZE_BI_DUAL"),
+      40 => Some("BEGIN_UNDUALIZE_BI_INITIALIZE"),
+      41 => Some("BEGIN_UNDUALIZE_BI_OPTIMIZER"),
+      42 => Some("BEGIN_UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      43 => Some("BEGIN_UNDUALIZE_BI_PRIMAL"),
+      44 => Some("BEGIN_UNDUALIZING"),
+      45 => Some("BEGIN_UNFOLD_BI"),
+      46 => Some("BEGIN_UNFOLD_BI_DUAL"),
+      47 => Some("BEGIN_UNFOLD_BI_INITIALIZE"),
+      48 => Some("BEGIN_UNFOLD_BI_OPTIMIZER"),
+      49 => Some("BEGIN_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      50 => Some("BEGIN_UNFOLD_BI_PRIMAL"),
+      51 => Some("BEGIN_UNFOLDING"),
+      52 => Some("BEGIN_WRITE"),
+      53 => Some("BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      54 => Some("CONIC"),
+      55 => Some("DECOMP_MIO"),
+      56 => Some("DUAL_SIMPLEX"),
+      57 => Some("END_BI"),
+      58 => Some("END_BI_DUAL"),
+      59 => Some("END_BI_INITIALIZE"),
+      60 => Some("END_BI_OPTIMIZER"),
+      61 => Some("END_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      62 => Some("END_BI_PRIMAL"),
+      63 => Some("END_CONCURRENT"),
+      64 => Some("END_CONIC"),
+      65 => Some("END_DUAL_SENSITIVITY"),
+      66 => Some("END_DUAL_SETUP_BI"),
+      67 => Some("END_DUAL_SIMPLEX"),
+      68 => Some("END_DUAL_SIMPLEX_BI"),
+      69 => Some("END_DUALIZER"),
+      70 => Some("END_FOLDING"),
+      71 => Some("END_GP_ORDER"),
+      72 => Some("END_INFEAS_ANA"),
+      73 => Some("END_INTPNT"),
+      74 => Some("END_INTPNT_SETUP"),
+      75 => Some("END_LICENSE_WAIT"),
+      76 => Some("END_LOCAL_ORDER"),
+      77 => Some("END_MIO"),
+      78 => Some("END_OPTIMIZER"),
+      79 => Some("END_ORDER"),
+      80 => Some("END_PRESOLVE"),
+      81 => Some("END_PRESOLVE_ELIMINATOR"),
+      82 => Some("END_PRESOLVE_LINEAR_DEPENDENCIES"),
+      83 => Some("END_PRIMAL_DUAL_SIMPLEX"),
+      84 => Some("END_PRIMAL_REPAIR"),
+      85 => Some("END_PRIMAL_SENSITIVITY"),
+      86 => Some("END_PRIMAL_SETUP_BI"),
+      87 => Some("END_PRIMAL_SIMPLEX"),
+      88 => Some("END_PRIMAL_SIMPLEX_BI"),
+      89 => Some("END_QCQO_REFORMULATE"),
+      90 => Some("END_READ"),
+      91 => Some("END_ROOT_CUTGEN"),
+      92 => Some("END_SIMPLEX"),
+      93 => Some("END_SIMPLEX_BI"),
+      94 => Some("END_SOLVE_ROOT_RELAX"),
+      95 => Some("END_TO_CONIC"),
+      96 => Some("END_UNDUALIZE_BI"),
+      97 => Some("END_UNDUALIZE_BI_DUAL"),
+      98 => Some("END_UNDUALIZE_BI_INITIALIZE"),
+      99 => Some("END_UNDUALIZE_BI_OPIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      100 => Some("END_UNDUALIZE_BI_OPTIMIZER"),
+      101 => Some("END_UNDUALIZE_BI_PRIMAL"),
+      102 => Some("END_UNDUALIZING"),
+      103 => Some("END_UNFOLD_BI"),
+      104 => Some("END_UNFOLD_BI_DUAL"),
+      105 => Some("END_UNFOLD_BI_INITIALIZE"),
+      106 => Some("END_UNFOLD_BI_OPTIMIZER"),
+      107 => Some("END_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      108 => Some("END_UNFOLD_BI_PRIMAL"),
+      109 => Some("END_UNFOLDING"),
+      110 => Some("END_WRITE"),
+      111 => Some("GP_ORDER"),
+      112 => Some("HEARTBEAT"),
+      113 => Some("IM_DUAL_SENSIVITY"),
+      114 => Some("IM_DUAL_SIMPLEX"),
+      115 => Some("IM_LICENSE_WAIT"),
+      116 => Some("IM_LU"),
+      117 => Some("IM_MIO"),
+      118 => Some("IM_MIO_DUAL_SIMPLEX"),
+      119 => Some("IM_MIO_INTPNT"),
+      120 => Some("IM_MIO_PRIMAL_SIMPLEX"),
+      121 => Some("IM_PRIMAL_SENSIVITY"),
+      122 => Some("IM_PRIMAL_SIMPLEX"),
+      123 => Some("IM_READ"),
+      124 => Some("IM_ROOT_CUTGEN"),
+      125 => Some("IM_SIMPLEX"),
+      126 => Some("INTPNT"),
+      127 => Some("ITERATING_SIMPLEX"),
+      128 => Some("LOCAL_ORDER"),
+      129 => Some("NEW_INT_MIO"),
+      130 => Some("ORDER"),
+      131 => Some("PRECISION_SIMPLEX"),
+      132 => Some("PRIMAL_DUAL_SIMPLEX"),
+      133 => Some("PRIMAL_SIMPLEX"),
+      134 => Some("QO_REFORMULATE"),
+      135 => Some("READ_OPF"),
+      136 => Some("READ_OPF_SECTION"),
+      137 => Some("RESTART_MIO"),
+      138 => Some("SIMPLEX"),
+      139 => Some("SOLVING_REMOTE"),
+      140 => Some("UNDUALIZE_BI_DUAL"),
+      141 => Some("UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      142 => Some("UNDUALIZE_BI_PRIMAL"),
+      143 => Some("UNFOLD_BI_DUAL"),
+      144 => Some("UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"),
+      145 => Some("UNFOLD_BI_PRIMAL"),
+      146 => Some("UPDATE_BI_DUAL"),
+      147 => Some("UPDATE_BI_PRIMAL"),
+      148 => Some("UPDATE_BI_PRIMAL_SIMPLEX"),
+      149 => Some("UPDATE_DUAL_SIMPLEX"),
+      150 => Some("UPDATE_DUAL_SIMPLEX_BI"),
+      151 => Some("UPDATE_PRESOLVE"),
+      152 => Some("UPDATE_PRIMAL_SIMPLEX"),
+      153 => Some("WRITE_OPF"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "BEGIN_BI" => Some(0),
+      "BEGIN_BI_DUAL" => Some(1),
+      "BEGIN_BI_INITIALIZE" => Some(2),
+      "BEGIN_BI_OPTIMIZER" => Some(3),
+      "BEGIN_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(4),
+      "BEGIN_BI_PRIMAL" => Some(5),
+      "BEGIN_BI_PRIMAL_SIMPLEX" => Some(6),
+      "BEGIN_CONCURRENT" => Some(7),
+      "BEGIN_CONIC" => Some(8),
+      "BEGIN_DUAL_SENSITIVITY" => Some(9),
+      "BEGIN_DUAL_SETUP_BI" => Some(10),
+      "BEGIN_DUAL_SIMPLEX" => Some(11),
+      "BEGIN_DUAL_SIMPLEX_BI" => Some(12),
+      "BEGIN_DUALIZER" => Some(13),
+      "BEGIN_FOLDING" => Some(14),
+      "BEGIN_GP_ORDER" => Some(15),
+      "BEGIN_INFEAS_ANA" => Some(16),
+      "BEGIN_INTPNT" => Some(17),
+      "BEGIN_INTPNT_SETUP" => Some(18),
+      "BEGIN_LICENSE_WAIT" => Some(19),
+      "BEGIN_LOCAL_ORDER" => Some(20),
+      "BEGIN_MIO" => Some(21),
+      "BEGIN_OPTIMIZER" => Some(22),
+      "BEGIN_ORDER" => Some(23),
+      "BEGIN_PRESOLVE" => Some(24),
+      "BEGIN_PRESOLVE_ELIMINATOR" => Some(25),
+      "BEGIN_PRESOLVE_LINEAR_DEPENDENCIES" => Some(26),
+      "BEGIN_PRIMAL_DUAL_SIMPLEX" => Some(27),
+      "BEGIN_PRIMAL_REPAIR" => Some(28),
+      "BEGIN_PRIMAL_SENSITIVITY" => Some(29),
+      "BEGIN_PRIMAL_SETUP_BI" => Some(30),
+      "BEGIN_PRIMAL_SIMPLEX" => Some(31),
+      "BEGIN_QCQO_REFORMULATE" => Some(32),
+      "BEGIN_READ" => Some(33),
+      "BEGIN_ROOT_CUTGEN" => Some(34),
+      "BEGIN_SIMPLEX" => Some(35),
+      "BEGIN_SOLVE_ROOT_RELAX" => Some(36),
+      "BEGIN_TO_CONIC" => Some(37),
+      "BEGIN_UNDUALIZE_BI" => Some(38),
+      "BEGIN_UNDUALIZE_BI_DUAL" => Some(39),
+      "BEGIN_UNDUALIZE_BI_INITIALIZE" => Some(40),
+      "BEGIN_UNDUALIZE_BI_OPTIMIZER" => Some(41),
+      "BEGIN_UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(42),
+      "BEGIN_UNDUALIZE_BI_PRIMAL" => Some(43),
+      "BEGIN_UNDUALIZING" => Some(44),
+      "BEGIN_UNFOLD_BI" => Some(45),
+      "BEGIN_UNFOLD_BI_DUAL" => Some(46),
+      "BEGIN_UNFOLD_BI_INITIALIZE" => Some(47),
+      "BEGIN_UNFOLD_BI_OPTIMIZER" => Some(48),
+      "BEGIN_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(49),
+      "BEGIN_UNFOLD_BI_PRIMAL" => Some(50),
+      "BEGIN_UNFOLDING" => Some(51),
+      "BEGIN_WRITE" => Some(52),
+      "BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(53),
+      "CONIC" => Some(54),
+      "DECOMP_MIO" => Some(55),
+      "DUAL_SIMPLEX" => Some(56),
+      "END_BI" => Some(57),
+      "END_BI_DUAL" => Some(58),
+      "END_BI_INITIALIZE" => Some(59),
+      "END_BI_OPTIMIZER" => Some(60),
+      "END_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(61),
+      "END_BI_PRIMAL" => Some(62),
+      "END_CONCURRENT" => Some(63),
+      "END_CONIC" => Some(64),
+      "END_DUAL_SENSITIVITY" => Some(65),
+      "END_DUAL_SETUP_BI" => Some(66),
+      "END_DUAL_SIMPLEX" => Some(67),
+      "END_DUAL_SIMPLEX_BI" => Some(68),
+      "END_DUALIZER" => Some(69),
+      "END_FOLDING" => Some(70),
+      "END_GP_ORDER" => Some(71),
+      "END_INFEAS_ANA" => Some(72),
+      "END_INTPNT" => Some(73),
+      "END_INTPNT_SETUP" => Some(74),
+      "END_LICENSE_WAIT" => Some(75),
+      "END_LOCAL_ORDER" => Some(76),
+      "END_MIO" => Some(77),
+      "END_OPTIMIZER" => Some(78),
+      "END_ORDER" => Some(79),
+      "END_PRESOLVE" => Some(80),
+      "END_PRESOLVE_ELIMINATOR" => Some(81),
+      "END_PRESOLVE_LINEAR_DEPENDENCIES" => Some(82),
+      "END_PRIMAL_DUAL_SIMPLEX" => Some(83),
+      "END_PRIMAL_REPAIR" => Some(84),
+      "END_PRIMAL_SENSITIVITY" => Some(85),
+      "END_PRIMAL_SETUP_BI" => Some(86),
+      "END_PRIMAL_SIMPLEX" => Some(87),
+      "END_PRIMAL_SIMPLEX_BI" => Some(88),
+      "END_QCQO_REFORMULATE" => Some(89),
+      "END_READ" => Some(90),
+      "END_ROOT_CUTGEN" => Some(91),
+      "END_SIMPLEX" => Some(92),
+      "END_SIMPLEX_BI" => Some(93),
+      "END_SOLVE_ROOT_RELAX" => Some(94),
+      "END_TO_CONIC" => Some(95),
+      "END_UNDUALIZE_BI" => Some(96),
+      "END_UNDUALIZE_BI_DUAL" => Some(97),
+      "END_UNDUALIZE_BI_INITIALIZE" => Some(98),
+      "END_UNDUALIZE_BI_OPIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(99),
+      "END_UNDUALIZE_BI_OPTIMIZER" => Some(100),
+      "END_UNDUALIZE_BI_PRIMAL" => Some(101),
+      "END_UNDUALIZING" => Some(102),
+      "END_UNFOLD_BI" => Some(103),
+      "END_UNFOLD_BI_DUAL" => Some(104),
+      "END_UNFOLD_BI_INITIALIZE" => Some(105),
+      "END_UNFOLD_BI_OPTIMIZER" => Some(106),
+      "END_UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(107),
+      "END_UNFOLD_BI_PRIMAL" => Some(108),
+      "END_UNFOLDING" => Some(109),
+      "END_WRITE" => Some(110),
+      "GP_ORDER" => Some(111),
+      "HEARTBEAT" => Some(112),
+      "IM_DUAL_SENSIVITY" => Some(113),
+      "IM_DUAL_SIMPLEX" => Some(114),
+      "IM_LICENSE_WAIT" => Some(115),
+      "IM_LU" => Some(116),
+      "IM_MIO" => Some(117),
+      "IM_MIO_DUAL_SIMPLEX" => Some(118),
+      "IM_MIO_INTPNT" => Some(119),
+      "IM_MIO_PRIMAL_SIMPLEX" => Some(120),
+      "IM_PRIMAL_SENSIVITY" => Some(121),
+      "IM_PRIMAL_SIMPLEX" => Some(122),
+      "IM_READ" => Some(123),
+      "IM_ROOT_CUTGEN" => Some(124),
+      "IM_SIMPLEX" => Some(125),
+      "INTPNT" => Some(126),
+      "ITERATING_SIMPLEX" => Some(127),
+      "LOCAL_ORDER" => Some(128),
+      "NEW_INT_MIO" => Some(129),
+      "ORDER" => Some(130),
+      "PRECISION_SIMPLEX" => Some(131),
+      "PRIMAL_DUAL_SIMPLEX" => Some(132),
+      "PRIMAL_SIMPLEX" => Some(133),
+      "QO_REFORMULATE" => Some(134),
+      "READ_OPF" => Some(135),
+      "READ_OPF_SECTION" => Some(136),
+      "RESTART_MIO" => Some(137),
+      "SIMPLEX" => Some(138),
+      "SOLVING_REMOTE" => Some(139),
+      "UNDUALIZE_BI_DUAL" => Some(140),
+      "UNDUALIZE_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(141),
+      "UNDUALIZE_BI_PRIMAL" => Some(142),
+      "UNFOLD_BI_DUAL" => Some(143),
+      "UNFOLD_BI_OPTIMIZER_PRIMAL_DUAL_SIMPLEX" => Some(144),
+      "UNFOLD_BI_PRIMAL" => Some(145),
+      "UPDATE_BI_DUAL" => Some(146),
+      "UPDATE_BI_PRIMAL" => Some(147),
+      "UPDATE_BI_PRIMAL_SIMPLEX" => Some(148),
+      "UPDATE_DUAL_SIMPLEX" => Some(149),
+      "UPDATE_DUAL_SIMPLEX_BI" => Some(150),
+      "UPDATE_PRESOLVE" => Some(151),
+      "UPDATE_PRIMAL_SIMPLEX" => Some(152),
+      "WRITE_OPF" => Some(153),
+      _ => None
+    }
+  }
 } // impl Callbackcode
 
 /// Compression types
@@ -1580,6 +2078,24 @@ impl Compresstype {
   pub const GZIP : i32 = 2;
   /// The type of compression used is zstd compatible.
   pub const ZSTD : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("FREE"),
+      2 => Some("GZIP"),
+      3 => Some("ZSTD"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "FREE" => Some(1),
+      "GZIP" => Some(2),
+      "ZSTD" => Some(3),
+      _ => None
+    }
+  }
 } // impl Compresstype
 
 /// Cone types
@@ -1600,6 +2116,30 @@ impl Conetype {
   pub const DPOW : i32 = 5;
   /// The zero cone.
   pub const ZERO : i32 = 6;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("QUAD"),
+      1 => Some("RQUAD"),
+      2 => Some("PEXP"),
+      3 => Some("DEXP"),
+      4 => Some("PPOW"),
+      5 => Some("DPOW"),
+      6 => Some("ZERO"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "QUAD" => Some(0),
+      "RQUAD" => Some(1),
+      "PEXP" => Some(2),
+      "DEXP" => Some(3),
+      "PPOW" => Some(4),
+      "DPOW" => Some(5),
+      "ZERO" => Some(6),
+      _ => None
+    }
+  }
 } // impl Conetype
 
 /// Cone types
@@ -1632,6 +2172,42 @@ impl Domaintype {
   pub const DUAL_GEO_MEAN_CONE : i32 = 11;
   /// The vectorized positive semidefinite cone.
   pub const SVEC_PSD_CONE : i32 = 12;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("R"),
+      1 => Some("RZERO"),
+      2 => Some("RPLUS"),
+      3 => Some("RMINUS"),
+      4 => Some("QUADRATIC_CONE"),
+      5 => Some("RQUADRATIC_CONE"),
+      6 => Some("PRIMAL_EXP_CONE"),
+      7 => Some("DUAL_EXP_CONE"),
+      8 => Some("PRIMAL_POWER_CONE"),
+      9 => Some("DUAL_POWER_CONE"),
+      10 => Some("PRIMAL_GEO_MEAN_CONE"),
+      11 => Some("DUAL_GEO_MEAN_CONE"),
+      12 => Some("SVEC_PSD_CONE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "R" => Some(0),
+      "RZERO" => Some(1),
+      "RPLUS" => Some(2),
+      "RMINUS" => Some(3),
+      "QUADRATIC_CONE" => Some(4),
+      "RQUADRATIC_CONE" => Some(5),
+      "PRIMAL_EXP_CONE" => Some(6),
+      "DUAL_EXP_CONE" => Some(7),
+      "PRIMAL_POWER_CONE" => Some(8),
+      "DUAL_POWER_CONE" => Some(9),
+      "PRIMAL_GEO_MEAN_CONE" => Some(10),
+      "DUAL_GEO_MEAN_CONE" => Some(11),
+      "SVEC_PSD_CONE" => Some(12),
+      _ => None
+    }
+  }
 } // impl Domaintype
 
 /// Name types
@@ -1644,6 +2220,22 @@ impl Nametype {
   pub const MPS : i32 = 1;
   /// LP type names.
   pub const LP : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("GEN"),
+      1 => Some("MPS"),
+      2 => Some("LP"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "GEN" => Some(0),
+      "MPS" => Some(1),
+      "LP" => Some(2),
+      _ => None
+    }
+  }
 } // impl Nametype
 
 /// Cone types
@@ -1652,6 +2244,18 @@ pub struct Symmattype;
 impl Symmattype {
   /// Sparse symmetric matrix.
   pub const SPARSE : i32 = 0;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("SPARSE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "SPARSE" => Some(0),
+      _ => None
+    }
+  }
 } // impl Symmattype
 
 /// Data format types
@@ -1676,6 +2280,34 @@ impl Dataformat {
   pub const CB : i32 = 7;
   /// JSON based task format.
   pub const JSON_TASK : i32 = 8;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("EXTENSION"),
+      1 => Some("MPS"),
+      2 => Some("LP"),
+      3 => Some("OP"),
+      4 => Some("FREE_MPS"),
+      5 => Some("TASK"),
+      6 => Some("PTF"),
+      7 => Some("CB"),
+      8 => Some("JSON_TASK"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "EXTENSION" => Some(0),
+      "MPS" => Some(1),
+      "LP" => Some(2),
+      "OP" => Some(3),
+      "FREE_MPS" => Some(4),
+      "TASK" => Some(5),
+      "PTF" => Some(6),
+      "CB" => Some(7),
+      "JSON_TASK" => Some(8),
+      _ => None
+    }
+  }
 } // impl Dataformat
 
 /// Data format types
@@ -1690,6 +2322,24 @@ impl Solformat {
   pub const TASK : i32 = 2;
   /// JSON based format.
   pub const JSON_TASK : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("EXTENSION"),
+      1 => Some("B"),
+      2 => Some("TASK"),
+      3 => Some("JSON_TASK"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "EXTENSION" => Some(0),
+      "B" => Some(1),
+      "TASK" => Some(2),
+      "JSON_TASK" => Some(3),
+      _ => None
+    }
+  }
 } // impl Solformat
 
 /// Double information items
@@ -1703,258 +2353,546 @@ impl Dinfitem {
   /// Time spent within the dual phase basis identification procedure since its invocation (in seconds).
   pub const BI_DUAL_TIME : i32 = 2;
   /// Time spent reoptimizing in the BI procedure using 128 bit precision.
-  pub const BI_OPTIMIZE_128BIT_TIME : i32 = 3;
+  pub const BI_OPTIMIZER_128BIT_TIME : i32 = 3;
   /// Time spent reoptimizing in the BI procedure using 64 bit precision.
-  pub const BI_OPTIMIZE_TIME : i32 = 4;
+  pub const BI_OPTIMIZER_64BIT_TIME : i32 = 4;
+  /// Time spent reoptimizing in the BI procedure.
+  pub const BI_OPTIMIZER_TIME : i32 = 5;
   /// Time spent within the primal phase of the basis identification procedure since its invocation (in seconds).
-  pub const BI_PRIMAL_TIME : i32 = 5;
+  pub const BI_PRIMAL_TIME : i32 = 6;
   /// Time spent within the basis identification procedure since its invocation (in seconds).
-  pub const BI_TIME : i32 = 6;
+  pub const BI_TIME : i32 = 7;
   /// Time spent within the concurrent optimizer.
-  pub const CONCURRENT_TIME : i32 = 7;
+  pub const CONCURRENT_TIME : i32 = 8;
   /// Maximal individual perturbation when fixing a mixed-integer problem.
-  pub const FIXING_MAX_PERTURBATION : i32 = 8;
+  pub const FIXING_MAX_PERTURBATION : i32 = 9;
   /// Sum of perturbations when fixing a mixed-integer problem.
-  pub const FIXING_TOTAL_PERTURBATION : i32 = 9;
+  pub const FIXING_TOTAL_PERTURBATION : i32 = 10;
   /// Problem size after folding as a fraction of the original size.
-  pub const FOLDING_FACTOR : i32 = 10;
+  pub const FOLDING_FACTOR : i32 = 11;
   /// Total time spent in folding for continuous problems (in seconds).
-  pub const FOLDING_TIME : i32 = 11;
+  pub const FOLDING_TIME : i32 = 12;
   /// Dual feasibility measure reported by the interior-point optimizer.
-  pub const INTPNT_DUAL_FEAS : i32 = 12;
+  pub const INTPNT_DUAL_FEAS : i32 = 13;
   /// Dual objective value reported by the interior-point optimizer.
-  pub const INTPNT_DUAL_OBJ : i32 = 13;
+  pub const INTPNT_DUAL_OBJ : i32 = 14;
   /// An estimate of the number of flops used in the factorization.
-  pub const INTPNT_FACTOR_NUM_FLOPS : i32 = 14;
+  pub const INTPNT_FACTOR_NUM_FLOPS : i32 = 15;
   /// A measure of optimality of the solution.
-  pub const INTPNT_OPT_STATUS : i32 = 15;
+  pub const INTPNT_OPT_STATUS : i32 = 16;
   /// Order time (in seconds).
-  pub const INTPNT_ORDER_TIME : i32 = 16;
+  pub const INTPNT_ORDER_TIME : i32 = 17;
   /// Primal feasibility measure reported by the interior-point optimizer.
-  pub const INTPNT_PRIMAL_FEAS : i32 = 17;
+  pub const INTPNT_PRIMAL_FEAS : i32 = 18;
   /// Primal objective value reported by the interior-point optimizer.
-  pub const INTPNT_PRIMAL_OBJ : i32 = 18;
+  pub const INTPNT_PRIMAL_OBJ : i32 = 19;
   /// Interior-point optimizer setup time.
-  pub const INTPNT_SETUP_TIME : i32 = 19;
+  pub const INTPNT_SETUP_TIME : i32 = 20;
   /// Time spent within the interior-point optimizer since its invocation (in seconds).
-  pub const INTPNT_TIME : i32 = 20;
+  pub const INTPNT_TIME : i32 = 21;
   /// Selection time for clique cuts (in seconds).
-  pub const MIO_CLIQUE_SELECTION_TIME : i32 = 21;
+  pub const MIO_CLIQUE_SELECTION_TIME : i32 = 22;
   /// Separation time for clique cuts (in seconds).
-  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 22;
+  pub const MIO_CLIQUE_SEPARATION_TIME : i32 = 23;
   /// Selection time for CMIR cuts (in seconds).
-  pub const MIO_CMIR_SELECTION_TIME : i32 = 23;
+  pub const MIO_CMIR_SELECTION_TIME : i32 = 24;
   /// Separation time for CMIR cuts (in seconds).
-  pub const MIO_CMIR_SEPARATION_TIME : i32 = 24;
+  pub const MIO_CMIR_SEPARATION_TIME : i32 = 25;
   /// Optimal objective value corresponding to the feasible solution.
-  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 25;
+  pub const MIO_CONSTRUCT_SOLUTION_OBJ : i32 = 26;
   /// Value of the dual bound after presolve but before cut generation.
-  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 26;
+  pub const MIO_DUAL_BOUND_AFTER_PRESOLVE : i32 = 27;
   /// Selection time for GMI cuts (in seconds).
-  pub const MIO_GMI_SELECTION_TIME : i32 = 27;
+  pub const MIO_GMI_SELECTION_TIME : i32 = 28;
   /// Separation time for GMI cuts (in seconds).
-  pub const MIO_GMI_SEPARATION_TIME : i32 = 28;
+  pub const MIO_GMI_SEPARATION_TIME : i32 = 29;
   /// Selection time for implied bound cuts (in seconds).
-  pub const MIO_IMPLIED_BOUND_SELECTION_TIME : i32 = 29;
+  pub const MIO_IMPLIED_BOUND_SELECTION_TIME : i32 = 30;
   /// Separation time for implied bound cuts (in seconds).
-  pub const MIO_IMPLIED_BOUND_SEPARATION_TIME : i32 = 30;
+  pub const MIO_IMPLIED_BOUND_SEPARATION_TIME : i32 = 31;
   /// Optimal objective value corresponding to the user provided initial solution.
-  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 31;
+  pub const MIO_INITIAL_FEASIBLE_SOLUTION_OBJ : i32 = 32;
   /// Selection time for knapsack cover (in seconds).
-  pub const MIO_KNAPSACK_COVER_SELECTION_TIME : i32 = 32;
+  pub const MIO_KNAPSACK_COVER_SELECTION_TIME : i32 = 33;
   /// Separation time for knapsack cover (in seconds).
-  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 33;
+  pub const MIO_KNAPSACK_COVER_SEPARATION_TIME : i32 = 34;
   /// Selection time for lift-and-project cuts (in seconds).
-  pub const MIO_LIPRO_SELECTION_TIME : i32 = 34;
+  pub const MIO_LIPRO_SELECTION_TIME : i32 = 35;
   /// Separation time for lift-and-project cuts (in seconds).
-  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 35;
+  pub const MIO_LIPRO_SEPARATION_TIME : i32 = 36;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
-  pub const MIO_OBJ_ABS_GAP : i32 = 36;
+  pub const MIO_OBJ_ABS_GAP : i32 = 37;
   /// The best bound on the objective value known.
-  pub const MIO_OBJ_BOUND : i32 = 37;
+  pub const MIO_OBJ_BOUND : i32 = 38;
   /// The primal objective value corresponding to the best integer feasible solution.
-  pub const MIO_OBJ_INT : i32 = 38;
+  pub const MIO_OBJ_INT : i32 = 39;
   /// If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap.
-  pub const MIO_OBJ_REL_GAP : i32 = 39;
+  pub const MIO_OBJ_REL_GAP : i32 = 40;
   /// Total time for probing (in seconds).
-  pub const MIO_PROBING_TIME : i32 = 40;
+  pub const MIO_PROBING_TIME : i32 = 41;
   /// Total time for cut selection (in seconds).
-  pub const MIO_ROOT_CUT_SELECTION_TIME : i32 = 41;
+  pub const MIO_ROOT_CUT_SELECTION_TIME : i32 = 42;
   /// Total time for cut separation (in seconds).
-  pub const MIO_ROOT_CUT_SEPARATION_TIME : i32 = 42;
+  pub const MIO_ROOT_CUT_SEPARATION_TIME : i32 = 43;
   /// Time spent in the contiuous optimizer while processing the root node relaxation (in seconds).
-  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 43;
+  pub const MIO_ROOT_OPTIMIZER_TIME : i32 = 44;
   /// Time spent presolving the problem at the root node (in seconds).
-  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 44;
+  pub const MIO_ROOT_PRESOLVE_TIME : i32 = 45;
   /// Time spent processing the root node (in seconds).
-  pub const MIO_ROOT_TIME : i32 = 45;
+  pub const MIO_ROOT_TIME : i32 = 46;
   /// Total time for symmetry detection (in seconds).
-  pub const MIO_SYMMETRY_DETECTION_TIME : i32 = 46;
+  pub const MIO_SYMMETRY_DETECTION_TIME : i32 = 47;
   /// Degree to which the problem is affected by detected symmetry.
-  pub const MIO_SYMMETRY_FACTOR : i32 = 47;
+  pub const MIO_SYMMETRY_FACTOR : i32 = 48;
   /// Time spent in the mixed-integer optimizer (in seconds).
-  pub const MIO_TIME : i32 = 48;
+  pub const MIO_TIME : i32 = 49;
   /// If the objective cut is used, then this information item has the value of the cut.
-  pub const MIO_USER_OBJ_CUT : i32 = 49;
+  pub const MIO_USER_OBJ_CUT : i32 = 50;
   /// Total number of ticks spent in the optimizer since it was invoked. It is strictly negative if it is not available.
-  pub const OPTIMIZER_TICKS : i32 = 50;
+  pub const OPTIMIZER_TICKS : i32 = 51;
   /// Total time spent in the optimizer since it was invoked (in seconds).
-  pub const OPTIMIZER_TIME : i32 = 51;
+  pub const OPTIMIZER_TIME : i32 = 52;
   /// Total time spent in the eliminator since the presolve was invoked (in seconds).
-  pub const PRESOLVE_ELI_TIME : i32 = 52;
+  pub const PRESOLVE_ELI_TIME : i32 = 53;
   /// Total time spent  in the linear dependency checker since the presolve was invoked (in seconds).
-  pub const PRESOLVE_LINDEP_TIME : i32 = 53;
+  pub const PRESOLVE_LINDEP_TIME : i32 = 54;
   /// Total time spent in the presolve since it was invoked (in seconds).
-  pub const PRESOLVE_TIME : i32 = 54;
+  pub const PRESOLVE_TIME : i32 = 55;
   /// Total perturbation of the bounds of the primal problem.
-  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 55;
+  pub const PRESOLVE_TOTAL_PRIMAL_PERTURBATION : i32 = 56;
   /// The optimal objective value of the penalty function.
-  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 56;
+  pub const PRIMAL_REPAIR_PENALTY_OBJ : i32 = 57;
   /// Maximum absolute diagonal perturbation occurring during the QCQO reformulation.
-  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 57;
+  pub const QCQO_REFORMULATE_MAX_PERTURBATION : i32 = 58;
   /// Time spent with conic quadratic reformulation (in seconds).
-  pub const QCQO_REFORMULATE_TIME : i32 = 58;
+  pub const QCQO_REFORMULATE_TIME : i32 = 59;
   /// Worst Cholesky column scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 59;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING : i32 = 60;
   /// Worst Cholesky diagonal scaling.
-  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 60;
+  pub const QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING : i32 = 61;
   /// Time spent reading the data file (in seconds).
-  pub const READ_DATA_TIME : i32 = 61;
+  pub const READ_DATA_TIME : i32 = 62;
   /// The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server (in seconds).
-  pub const REMOTE_TIME : i32 = 62;
-  /// Time spent in the dual simplex optimizer since invoking it (in seconds).
-  pub const SIM_DUAL_TIME : i32 = 63;
+  pub const REMOTE_TIME : i32 = 63;
   /// Feasibility measure reported by the simplex optimizer.
-  pub const SIM_FEAS : i32 = 64;
+  pub const SIM_DUAL_FEAS : i32 = 64;
   /// Objective value reported by the simplex optimizer.
-  pub const SIM_OBJ : i32 = 65;
+  pub const SIM_DUAL_OBJ : i32 = 65;
+  /// Time spent in the dual simplex optimizer since invoking it (in seconds).
+  pub const SIM_DUAL_TIME : i32 = 66;
+  /// Feasibility measure reported by the simplex optimizer.
+  pub const SIM_PRIMAL_FEAS : i32 = 67;
+  /// Objective value reported by the simplex optimizer.
+  pub const SIM_PRIMAL_OBJ : i32 = 68;
   /// Time spent in the primal simplex optimizer since invoking it (in seconds).
-  pub const SIM_PRIMAL_TIME : i32 = 66;
+  pub const SIM_PRIMAL_TIME : i32 = 69;
   /// Time spent in the simplex optimizer since invoking it (in seconds).
-  pub const SIM_TIME : i32 = 67;
+  pub const SIM_TIME : i32 = 70;
   /// Dual objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DUAL_OBJ : i32 = 68;
+  pub const SOL_BAS_DUAL_OBJ : i32 = 71;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLCON : i32 = 69;
+  pub const SOL_BAS_DVIOLCON : i32 = 72;
   /// Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_DVIOLVAR : i32 = 70;
+  pub const SOL_BAS_DVIOLVAR : i32 = 73;
   /// Infinity norm of barx in the basic solution.
-  pub const SOL_BAS_NRM_BARX : i32 = 71;
+  pub const SOL_BAS_NRM_BARX : i32 = 74;
   /// Infinity norm of slc in the basic solution.
-  pub const SOL_BAS_NRM_SLC : i32 = 72;
+  pub const SOL_BAS_NRM_SLC : i32 = 75;
   /// Infinity norm of slx in the basic solution.
-  pub const SOL_BAS_NRM_SLX : i32 = 73;
+  pub const SOL_BAS_NRM_SLX : i32 = 76;
   /// Infinity norm of suc in the basic solution.
-  pub const SOL_BAS_NRM_SUC : i32 = 74;
+  pub const SOL_BAS_NRM_SUC : i32 = 77;
   /// Infinity norm of sux in the basic solution.
-  pub const SOL_BAS_NRM_SUX : i32 = 75;
+  pub const SOL_BAS_NRM_SUX : i32 = 78;
   /// Infinity norm of xc in the basic solution.
-  pub const SOL_BAS_NRM_XC : i32 = 76;
+  pub const SOL_BAS_NRM_XC : i32 = 79;
   /// Infinity norm of xx in the basic solution.
-  pub const SOL_BAS_NRM_XX : i32 = 77;
+  pub const SOL_BAS_NRM_XX : i32 = 80;
   /// Infinity norm of Y in the basic solution.
-  pub const SOL_BAS_NRM_Y : i32 = 78;
+  pub const SOL_BAS_NRM_Y : i32 = 81;
   /// Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PRIMAL_OBJ : i32 = 79;
+  pub const SOL_BAS_PRIMAL_OBJ : i32 = 82;
   /// Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLCON : i32 = 80;
+  pub const SOL_BAS_PVIOLCON : i32 = 83;
   /// Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
-  pub const SOL_BAS_PVIOLVAR : i32 = 81;
+  pub const SOL_BAS_PVIOLVAR : i32 = 84;
   /// Infinity norm of barx in the integer solution.
-  pub const SOL_ITG_NRM_BARX : i32 = 82;
+  pub const SOL_ITG_NRM_BARX : i32 = 85;
   /// Infinity norm of xc in the integer solution.
-  pub const SOL_ITG_NRM_XC : i32 = 83;
+  pub const SOL_ITG_NRM_XC : i32 = 86;
   /// Infinity norm of xx in the integer solution.
-  pub const SOL_ITG_NRM_XX : i32 = 84;
+  pub const SOL_ITG_NRM_XX : i32 = 87;
   /// Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PRIMAL_OBJ : i32 = 85;
+  pub const SOL_ITG_PRIMAL_OBJ : i32 = 88;
   /// Maximal primal violation for affine conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLACC : i32 = 86;
+  pub const SOL_ITG_PVIOLACC : i32 = 89;
   /// Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLBARVAR : i32 = 87;
+  pub const SOL_ITG_PVIOLBARVAR : i32 = 90;
   /// Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCON : i32 = 88;
+  pub const SOL_ITG_PVIOLCON : i32 = 91;
   /// Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLCONES : i32 = 89;
+  pub const SOL_ITG_PVIOLCONES : i32 = 92;
   /// Maximal primal violation for disjunctive constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLDJC : i32 = 90;
+  pub const SOL_ITG_PVIOLDJC : i32 = 93;
   /// Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLITG : i32 = 91;
+  pub const SOL_ITG_PVIOLITG : i32 = 94;
   /// Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITG_PVIOLVAR : i32 = 92;
+  pub const SOL_ITG_PVIOLVAR : i32 = 95;
   /// Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DUAL_OBJ : i32 = 93;
+  pub const SOL_ITR_DUAL_OBJ : i32 = 96;
   /// Maximal dual violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLACC : i32 = 94;
+  pub const SOL_ITR_DVIOLACC : i32 = 97;
   /// Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLBARVAR : i32 = 95;
+  pub const SOL_ITR_DVIOLBARVAR : i32 = 98;
   /// Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCON : i32 = 96;
+  pub const SOL_ITR_DVIOLCON : i32 = 99;
   /// Maximal dual violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLCONES : i32 = 97;
+  pub const SOL_ITR_DVIOLCONES : i32 = 100;
   /// Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_DVIOLVAR : i32 = 98;
+  pub const SOL_ITR_DVIOLVAR : i32 = 101;
   /// Infinity norm of bars in the interior-point solution.
-  pub const SOL_ITR_NRM_BARS : i32 = 99;
+  pub const SOL_ITR_NRM_BARS : i32 = 102;
   /// Infinity norm of barx in the interior-point solution.
-  pub const SOL_ITR_NRM_BARX : i32 = 100;
+  pub const SOL_ITR_NRM_BARX : i32 = 103;
   /// Infinity norm of slc in the interior-point solution.
-  pub const SOL_ITR_NRM_SLC : i32 = 101;
+  pub const SOL_ITR_NRM_SLC : i32 = 104;
   /// Infinity norm of slx in the interior-point solution.
-  pub const SOL_ITR_NRM_SLX : i32 = 102;
+  pub const SOL_ITR_NRM_SLX : i32 = 105;
   /// Infinity norm of snx in the interior-point solution.
-  pub const SOL_ITR_NRM_SNX : i32 = 103;
+  pub const SOL_ITR_NRM_SNX : i32 = 106;
   /// Infinity norm of suc in the interior-point solution.
-  pub const SOL_ITR_NRM_SUC : i32 = 104;
+  pub const SOL_ITR_NRM_SUC : i32 = 107;
   /// Infinity norm of sux in the interior-point solution.
-  pub const SOL_ITR_NRM_SUX : i32 = 105;
+  pub const SOL_ITR_NRM_SUX : i32 = 108;
   /// Infinity norm of xc in the interior-point solution.
-  pub const SOL_ITR_NRM_XC : i32 = 106;
+  pub const SOL_ITR_NRM_XC : i32 = 109;
   /// Infinity norm of xx in the interior-point solution.
-  pub const SOL_ITR_NRM_XX : i32 = 107;
+  pub const SOL_ITR_NRM_XX : i32 = 110;
   /// Infinity norm of Y in the interior-point solution.
-  pub const SOL_ITR_NRM_Y : i32 = 108;
+  pub const SOL_ITR_NRM_Y : i32 = 111;
   /// Primal objective value of the interior-point solution.
-  pub const SOL_ITR_PRIMAL_OBJ : i32 = 109;
+  pub const SOL_ITR_PRIMAL_OBJ : i32 = 112;
   /// Maximal primal violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLACC : i32 = 110;
+  pub const SOL_ITR_PVIOLACC : i32 = 113;
   /// Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLBARVAR : i32 = 111;
+  pub const SOL_ITR_PVIOLBARVAR : i32 = 114;
   /// Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCON : i32 = 112;
+  pub const SOL_ITR_PVIOLCON : i32 = 115;
   /// Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLCONES : i32 = 113;
+  pub const SOL_ITR_PVIOLCONES : i32 = 116;
   /// Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
-  pub const SOL_ITR_PVIOLVAR : i32 = 114;
+  pub const SOL_ITR_PVIOLVAR : i32 = 117;
   /// Time spent in the last to conic reformulation (in seconds).
-  pub const TO_CONIC_TIME : i32 = 115;
+  pub const TO_CONIC_TIME : i32 = 118;
   /// Time spent in basis identification dual phase after undualizing.
-  pub const UNDUALIZE_BI_DUAL_TIME : i32 = 116;
+  pub const UNDUALIZE_BI_DUAL_TIME : i32 = 119;
   /// Time spent in basis identification initialization after undualizing.
-  pub const UNDUALIZE_BI_INITIALIZE_TIME : i32 = 117;
+  pub const UNDUALIZE_BI_INITIALIZE_TIME : i32 = 120;
   /// ime spent in basis identification optimizer using 128bit floating point precision undualizing.
-  pub const UNDUALIZE_BI_OPTIMIZE_128BIT_TIME : i32 = 118;
+  pub const UNDUALIZE_BI_OPTIMIZER_128BIT_TIME : i32 = 121;
   /// Time spent in basis identification optimizer using 64bit floating point precision undualizing.
-  pub const UNDUALIZE_BI_OPTIMIZE_TIME : i32 = 119;
+  pub const UNDUALIZE_BI_OPTIMIZER_64BIT_TIME : i32 = 122;
+  /// ime spent in basis identification optimizer using 128bit floating point precision undualizing.
+  pub const UNDUALIZE_BI_OPTIMIZER_TIME : i32 = 123;
   /// Time spent in basis identification primal phase after undualizing.
-  pub const UNDUALIZE_BI_PRIMAL_TIME : i32 = 120;
+  pub const UNDUALIZE_BI_PRIMAL_TIME : i32 = 124;
   /// Time spent in basis identification after undualizing.
-  pub const UNDUALIZE_BI_TIME : i32 = 121;
+  pub const UNDUALIZE_BI_TIME : i32 = 125;
   /// Time spent in basis identification dual phase after unfolding.
-  pub const UNFOLD_BI_DUAL_TIME : i32 = 122;
+  pub const UNFOLD_BI_DUAL_TIME : i32 = 126;
   /// Time spent in basis identification initialization after unfolding.
-  pub const UNFOLD_BI_INITIALIZE_TIME : i32 = 123;
+  pub const UNFOLD_BI_INITIALIZE_TIME : i32 = 127;
   /// Time spent in basis identification optimizer phase using 128bit floating point precision after unfolding.
-  pub const UNFOLD_BI_OPTIMIZE_128BIT_TIME : i32 = 124;
+  pub const UNFOLD_BI_OPTIMIZER_128BIT_TIME : i32 = 128;
   /// Time spent in basis identification optimizer phase using 64bit floating point precision after unfolding.
-  pub const UNFOLD_BI_OPTIMIZE_TIME : i32 = 125;
+  pub const UNFOLD_BI_OPTIMIZER_64BIT_TIME : i32 = 129;
+  /// Time spent in basis identification optimizer after unfolding.
+  pub const UNFOLD_BI_OPTIMIZER_TIME : i32 = 130;
   /// Time spent in basis identification primal phase after unfolding.
-  pub const UNFOLD_BI_PRIMAL_TIME : i32 = 126;
+  pub const UNFOLD_BI_PRIMAL_TIME : i32 = 131;
   /// Time spent in basis identification after unfolding.
-  pub const UNFOLD_BI_TIME : i32 = 127;
+  pub const UNFOLD_BI_TIME : i32 = 132;
   /// Time spent writing the data file (in seconds).
-  pub const WRITE_DATA_TIME : i32 = 128;
-  pub const END : i32 = 128;
+  pub const WRITE_DATA_TIME : i32 = 133;
+  pub const END : i32 = 133;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY"),
+      1 => Some("BI_CLEAN_TIME"),
+      2 => Some("BI_DUAL_TIME"),
+      3 => Some("BI_OPTIMIZER_128BIT_TIME"),
+      4 => Some("BI_OPTIMIZER_64BIT_TIME"),
+      5 => Some("BI_OPTIMIZER_TIME"),
+      6 => Some("BI_PRIMAL_TIME"),
+      7 => Some("BI_TIME"),
+      8 => Some("CONCURRENT_TIME"),
+      9 => Some("FIXING_MAX_PERTURBATION"),
+      10 => Some("FIXING_TOTAL_PERTURBATION"),
+      11 => Some("FOLDING_FACTOR"),
+      12 => Some("FOLDING_TIME"),
+      13 => Some("INTPNT_DUAL_FEAS"),
+      14 => Some("INTPNT_DUAL_OBJ"),
+      15 => Some("INTPNT_FACTOR_NUM_FLOPS"),
+      16 => Some("INTPNT_OPT_STATUS"),
+      17 => Some("INTPNT_ORDER_TIME"),
+      18 => Some("INTPNT_PRIMAL_FEAS"),
+      19 => Some("INTPNT_PRIMAL_OBJ"),
+      20 => Some("INTPNT_SETUP_TIME"),
+      21 => Some("INTPNT_TIME"),
+      22 => Some("MIO_CLIQUE_SELECTION_TIME"),
+      23 => Some("MIO_CLIQUE_SEPARATION_TIME"),
+      24 => Some("MIO_CMIR_SELECTION_TIME"),
+      25 => Some("MIO_CMIR_SEPARATION_TIME"),
+      26 => Some("MIO_CONSTRUCT_SOLUTION_OBJ"),
+      27 => Some("MIO_DUAL_BOUND_AFTER_PRESOLVE"),
+      28 => Some("MIO_GMI_SELECTION_TIME"),
+      29 => Some("MIO_GMI_SEPARATION_TIME"),
+      30 => Some("MIO_IMPLIED_BOUND_SELECTION_TIME"),
+      31 => Some("MIO_IMPLIED_BOUND_SEPARATION_TIME"),
+      32 => Some("MIO_INITIAL_FEASIBLE_SOLUTION_OBJ"),
+      33 => Some("MIO_KNAPSACK_COVER_SELECTION_TIME"),
+      34 => Some("MIO_KNAPSACK_COVER_SEPARATION_TIME"),
+      35 => Some("MIO_LIPRO_SELECTION_TIME"),
+      36 => Some("MIO_LIPRO_SEPARATION_TIME"),
+      37 => Some("MIO_OBJ_ABS_GAP"),
+      38 => Some("MIO_OBJ_BOUND"),
+      39 => Some("MIO_OBJ_INT"),
+      40 => Some("MIO_OBJ_REL_GAP"),
+      41 => Some("MIO_PROBING_TIME"),
+      42 => Some("MIO_ROOT_CUT_SELECTION_TIME"),
+      43 => Some("MIO_ROOT_CUT_SEPARATION_TIME"),
+      44 => Some("MIO_ROOT_OPTIMIZER_TIME"),
+      45 => Some("MIO_ROOT_PRESOLVE_TIME"),
+      46 => Some("MIO_ROOT_TIME"),
+      47 => Some("MIO_SYMMETRY_DETECTION_TIME"),
+      48 => Some("MIO_SYMMETRY_FACTOR"),
+      49 => Some("MIO_TIME"),
+      50 => Some("MIO_USER_OBJ_CUT"),
+      51 => Some("OPTIMIZER_TICKS"),
+      52 => Some("OPTIMIZER_TIME"),
+      53 => Some("PRESOLVE_ELI_TIME"),
+      54 => Some("PRESOLVE_LINDEP_TIME"),
+      55 => Some("PRESOLVE_TIME"),
+      56 => Some("PRESOLVE_TOTAL_PRIMAL_PERTURBATION"),
+      57 => Some("PRIMAL_REPAIR_PENALTY_OBJ"),
+      58 => Some("QCQO_REFORMULATE_MAX_PERTURBATION"),
+      59 => Some("QCQO_REFORMULATE_TIME"),
+      60 => Some("QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"),
+      61 => Some("QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"),
+      62 => Some("READ_DATA_TIME"),
+      63 => Some("REMOTE_TIME"),
+      64 => Some("SIM_DUAL_FEAS"),
+      65 => Some("SIM_DUAL_OBJ"),
+      66 => Some("SIM_DUAL_TIME"),
+      67 => Some("SIM_PRIMAL_FEAS"),
+      68 => Some("SIM_PRIMAL_OBJ"),
+      69 => Some("SIM_PRIMAL_TIME"),
+      70 => Some("SIM_TIME"),
+      71 => Some("SOL_BAS_DUAL_OBJ"),
+      72 => Some("SOL_BAS_DVIOLCON"),
+      73 => Some("SOL_BAS_DVIOLVAR"),
+      74 => Some("SOL_BAS_NRM_BARX"),
+      75 => Some("SOL_BAS_NRM_SLC"),
+      76 => Some("SOL_BAS_NRM_SLX"),
+      77 => Some("SOL_BAS_NRM_SUC"),
+      78 => Some("SOL_BAS_NRM_SUX"),
+      79 => Some("SOL_BAS_NRM_XC"),
+      80 => Some("SOL_BAS_NRM_XX"),
+      81 => Some("SOL_BAS_NRM_Y"),
+      82 => Some("SOL_BAS_PRIMAL_OBJ"),
+      83 => Some("SOL_BAS_PVIOLCON"),
+      84 => Some("SOL_BAS_PVIOLVAR"),
+      85 => Some("SOL_ITG_NRM_BARX"),
+      86 => Some("SOL_ITG_NRM_XC"),
+      87 => Some("SOL_ITG_NRM_XX"),
+      88 => Some("SOL_ITG_PRIMAL_OBJ"),
+      89 => Some("SOL_ITG_PVIOLACC"),
+      90 => Some("SOL_ITG_PVIOLBARVAR"),
+      91 => Some("SOL_ITG_PVIOLCON"),
+      92 => Some("SOL_ITG_PVIOLCONES"),
+      93 => Some("SOL_ITG_PVIOLDJC"),
+      94 => Some("SOL_ITG_PVIOLITG"),
+      95 => Some("SOL_ITG_PVIOLVAR"),
+      96 => Some("SOL_ITR_DUAL_OBJ"),
+      97 => Some("SOL_ITR_DVIOLACC"),
+      98 => Some("SOL_ITR_DVIOLBARVAR"),
+      99 => Some("SOL_ITR_DVIOLCON"),
+      100 => Some("SOL_ITR_DVIOLCONES"),
+      101 => Some("SOL_ITR_DVIOLVAR"),
+      102 => Some("SOL_ITR_NRM_BARS"),
+      103 => Some("SOL_ITR_NRM_BARX"),
+      104 => Some("SOL_ITR_NRM_SLC"),
+      105 => Some("SOL_ITR_NRM_SLX"),
+      106 => Some("SOL_ITR_NRM_SNX"),
+      107 => Some("SOL_ITR_NRM_SUC"),
+      108 => Some("SOL_ITR_NRM_SUX"),
+      109 => Some("SOL_ITR_NRM_XC"),
+      110 => Some("SOL_ITR_NRM_XX"),
+      111 => Some("SOL_ITR_NRM_Y"),
+      112 => Some("SOL_ITR_PRIMAL_OBJ"),
+      113 => Some("SOL_ITR_PVIOLACC"),
+      114 => Some("SOL_ITR_PVIOLBARVAR"),
+      115 => Some("SOL_ITR_PVIOLCON"),
+      116 => Some("SOL_ITR_PVIOLCONES"),
+      117 => Some("SOL_ITR_PVIOLVAR"),
+      118 => Some("TO_CONIC_TIME"),
+      119 => Some("UNDUALIZE_BI_DUAL_TIME"),
+      120 => Some("UNDUALIZE_BI_INITIALIZE_TIME"),
+      121 => Some("UNDUALIZE_BI_OPTIMIZER_128BIT_TIME"),
+      122 => Some("UNDUALIZE_BI_OPTIMIZER_64BIT_TIME"),
+      123 => Some("UNDUALIZE_BI_OPTIMIZER_TIME"),
+      124 => Some("UNDUALIZE_BI_PRIMAL_TIME"),
+      125 => Some("UNDUALIZE_BI_TIME"),
+      126 => Some("UNFOLD_BI_DUAL_TIME"),
+      127 => Some("UNFOLD_BI_INITIALIZE_TIME"),
+      128 => Some("UNFOLD_BI_OPTIMIZER_128BIT_TIME"),
+      129 => Some("UNFOLD_BI_OPTIMIZER_64BIT_TIME"),
+      130 => Some("UNFOLD_BI_OPTIMIZER_TIME"),
+      131 => Some("UNFOLD_BI_PRIMAL_TIME"),
+      132 => Some("UNFOLD_BI_TIME"),
+      133 => Some("WRITE_DATA_TIME"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY" => Some(0),
+      "BI_CLEAN_TIME" => Some(1),
+      "BI_DUAL_TIME" => Some(2),
+      "BI_OPTIMIZER_128BIT_TIME" => Some(3),
+      "BI_OPTIMIZER_64BIT_TIME" => Some(4),
+      "BI_OPTIMIZER_TIME" => Some(5),
+      "BI_PRIMAL_TIME" => Some(6),
+      "BI_TIME" => Some(7),
+      "CONCURRENT_TIME" => Some(8),
+      "FIXING_MAX_PERTURBATION" => Some(9),
+      "FIXING_TOTAL_PERTURBATION" => Some(10),
+      "FOLDING_FACTOR" => Some(11),
+      "FOLDING_TIME" => Some(12),
+      "INTPNT_DUAL_FEAS" => Some(13),
+      "INTPNT_DUAL_OBJ" => Some(14),
+      "INTPNT_FACTOR_NUM_FLOPS" => Some(15),
+      "INTPNT_OPT_STATUS" => Some(16),
+      "INTPNT_ORDER_TIME" => Some(17),
+      "INTPNT_PRIMAL_FEAS" => Some(18),
+      "INTPNT_PRIMAL_OBJ" => Some(19),
+      "INTPNT_SETUP_TIME" => Some(20),
+      "INTPNT_TIME" => Some(21),
+      "MIO_CLIQUE_SELECTION_TIME" => Some(22),
+      "MIO_CLIQUE_SEPARATION_TIME" => Some(23),
+      "MIO_CMIR_SELECTION_TIME" => Some(24),
+      "MIO_CMIR_SEPARATION_TIME" => Some(25),
+      "MIO_CONSTRUCT_SOLUTION_OBJ" => Some(26),
+      "MIO_DUAL_BOUND_AFTER_PRESOLVE" => Some(27),
+      "MIO_GMI_SELECTION_TIME" => Some(28),
+      "MIO_GMI_SEPARATION_TIME" => Some(29),
+      "MIO_IMPLIED_BOUND_SELECTION_TIME" => Some(30),
+      "MIO_IMPLIED_BOUND_SEPARATION_TIME" => Some(31),
+      "MIO_INITIAL_FEASIBLE_SOLUTION_OBJ" => Some(32),
+      "MIO_KNAPSACK_COVER_SELECTION_TIME" => Some(33),
+      "MIO_KNAPSACK_COVER_SEPARATION_TIME" => Some(34),
+      "MIO_LIPRO_SELECTION_TIME" => Some(35),
+      "MIO_LIPRO_SEPARATION_TIME" => Some(36),
+      "MIO_OBJ_ABS_GAP" => Some(37),
+      "MIO_OBJ_BOUND" => Some(38),
+      "MIO_OBJ_INT" => Some(39),
+      "MIO_OBJ_REL_GAP" => Some(40),
+      "MIO_PROBING_TIME" => Some(41),
+      "MIO_ROOT_CUT_SELECTION_TIME" => Some(42),
+      "MIO_ROOT_CUT_SEPARATION_TIME" => Some(43),
+      "MIO_ROOT_OPTIMIZER_TIME" => Some(44),
+      "MIO_ROOT_PRESOLVE_TIME" => Some(45),
+      "MIO_ROOT_TIME" => Some(46),
+      "MIO_SYMMETRY_DETECTION_TIME" => Some(47),
+      "MIO_SYMMETRY_FACTOR" => Some(48),
+      "MIO_TIME" => Some(49),
+      "MIO_USER_OBJ_CUT" => Some(50),
+      "OPTIMIZER_TICKS" => Some(51),
+      "OPTIMIZER_TIME" => Some(52),
+      "PRESOLVE_ELI_TIME" => Some(53),
+      "PRESOLVE_LINDEP_TIME" => Some(54),
+      "PRESOLVE_TIME" => Some(55),
+      "PRESOLVE_TOTAL_PRIMAL_PERTURBATION" => Some(56),
+      "PRIMAL_REPAIR_PENALTY_OBJ" => Some(57),
+      "QCQO_REFORMULATE_MAX_PERTURBATION" => Some(58),
+      "QCQO_REFORMULATE_TIME" => Some(59),
+      "QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING" => Some(60),
+      "QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING" => Some(61),
+      "READ_DATA_TIME" => Some(62),
+      "REMOTE_TIME" => Some(63),
+      "SIM_DUAL_FEAS" => Some(64),
+      "SIM_DUAL_OBJ" => Some(65),
+      "SIM_DUAL_TIME" => Some(66),
+      "SIM_PRIMAL_FEAS" => Some(67),
+      "SIM_PRIMAL_OBJ" => Some(68),
+      "SIM_PRIMAL_TIME" => Some(69),
+      "SIM_TIME" => Some(70),
+      "SOL_BAS_DUAL_OBJ" => Some(71),
+      "SOL_BAS_DVIOLCON" => Some(72),
+      "SOL_BAS_DVIOLVAR" => Some(73),
+      "SOL_BAS_NRM_BARX" => Some(74),
+      "SOL_BAS_NRM_SLC" => Some(75),
+      "SOL_BAS_NRM_SLX" => Some(76),
+      "SOL_BAS_NRM_SUC" => Some(77),
+      "SOL_BAS_NRM_SUX" => Some(78),
+      "SOL_BAS_NRM_XC" => Some(79),
+      "SOL_BAS_NRM_XX" => Some(80),
+      "SOL_BAS_NRM_Y" => Some(81),
+      "SOL_BAS_PRIMAL_OBJ" => Some(82),
+      "SOL_BAS_PVIOLCON" => Some(83),
+      "SOL_BAS_PVIOLVAR" => Some(84),
+      "SOL_ITG_NRM_BARX" => Some(85),
+      "SOL_ITG_NRM_XC" => Some(86),
+      "SOL_ITG_NRM_XX" => Some(87),
+      "SOL_ITG_PRIMAL_OBJ" => Some(88),
+      "SOL_ITG_PVIOLACC" => Some(89),
+      "SOL_ITG_PVIOLBARVAR" => Some(90),
+      "SOL_ITG_PVIOLCON" => Some(91),
+      "SOL_ITG_PVIOLCONES" => Some(92),
+      "SOL_ITG_PVIOLDJC" => Some(93),
+      "SOL_ITG_PVIOLITG" => Some(94),
+      "SOL_ITG_PVIOLVAR" => Some(95),
+      "SOL_ITR_DUAL_OBJ" => Some(96),
+      "SOL_ITR_DVIOLACC" => Some(97),
+      "SOL_ITR_DVIOLBARVAR" => Some(98),
+      "SOL_ITR_DVIOLCON" => Some(99),
+      "SOL_ITR_DVIOLCONES" => Some(100),
+      "SOL_ITR_DVIOLVAR" => Some(101),
+      "SOL_ITR_NRM_BARS" => Some(102),
+      "SOL_ITR_NRM_BARX" => Some(103),
+      "SOL_ITR_NRM_SLC" => Some(104),
+      "SOL_ITR_NRM_SLX" => Some(105),
+      "SOL_ITR_NRM_SNX" => Some(106),
+      "SOL_ITR_NRM_SUC" => Some(107),
+      "SOL_ITR_NRM_SUX" => Some(108),
+      "SOL_ITR_NRM_XC" => Some(109),
+      "SOL_ITR_NRM_XX" => Some(110),
+      "SOL_ITR_NRM_Y" => Some(111),
+      "SOL_ITR_PRIMAL_OBJ" => Some(112),
+      "SOL_ITR_PVIOLACC" => Some(113),
+      "SOL_ITR_PVIOLBARVAR" => Some(114),
+      "SOL_ITR_PVIOLCON" => Some(115),
+      "SOL_ITR_PVIOLCONES" => Some(116),
+      "SOL_ITR_PVIOLVAR" => Some(117),
+      "TO_CONIC_TIME" => Some(118),
+      "UNDUALIZE_BI_DUAL_TIME" => Some(119),
+      "UNDUALIZE_BI_INITIALIZE_TIME" => Some(120),
+      "UNDUALIZE_BI_OPTIMIZER_128BIT_TIME" => Some(121),
+      "UNDUALIZE_BI_OPTIMIZER_64BIT_TIME" => Some(122),
+      "UNDUALIZE_BI_OPTIMIZER_TIME" => Some(123),
+      "UNDUALIZE_BI_PRIMAL_TIME" => Some(124),
+      "UNDUALIZE_BI_TIME" => Some(125),
+      "UNFOLD_BI_DUAL_TIME" => Some(126),
+      "UNFOLD_BI_INITIALIZE_TIME" => Some(127),
+      "UNFOLD_BI_OPTIMIZER_128BIT_TIME" => Some(128),
+      "UNFOLD_BI_OPTIMIZER_64BIT_TIME" => Some(129),
+      "UNFOLD_BI_OPTIMIZER_TIME" => Some(130),
+      "UNFOLD_BI_PRIMAL_TIME" => Some(131),
+      "UNFOLD_BI_TIME" => Some(132),
+      "WRITE_DATA_TIME" => Some(133),
+      _ => None
+    }
+  }
 } // impl Dinfitem
 
 /// License feature
@@ -1965,6 +2903,20 @@ impl Feature {
   pub const PTS : i32 = 0;
   /// Conic extension.
   pub const PTON : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("PTS"),
+      1 => Some("PTON"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "PTS" => Some(0),
+      "PTON" => Some(1),
+      _ => None
+    }
+  }
 } // impl Feature
 
 /// Double parameters
@@ -2107,6 +3059,152 @@ impl Dparam {
   pub const UPPER_OBJ_CUT : i32 = 66;
   /// Objective bound.
   pub const UPPER_OBJ_CUT_FINITE_TRH : i32 = 67;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ANA_SOL_INFEAS_TOL"),
+      1 => Some("BASIS_REL_TOL_S"),
+      2 => Some("BASIS_TOL_S"),
+      3 => Some("BASIS_TOL_X"),
+      4 => Some("DATA_SYM_MAT_TOL"),
+      5 => Some("DATA_SYM_MAT_TOL_HUGE"),
+      6 => Some("DATA_SYM_MAT_TOL_LARGE"),
+      7 => Some("DATA_TOL_AIJ_HUGE"),
+      8 => Some("DATA_TOL_AIJ_LARGE"),
+      9 => Some("DATA_TOL_BOUND_INF"),
+      10 => Some("DATA_TOL_BOUND_WRN"),
+      11 => Some("DATA_TOL_C_HUGE"),
+      12 => Some("DATA_TOL_CJ_LARGE"),
+      13 => Some("DATA_TOL_QIJ"),
+      14 => Some("DATA_TOL_X"),
+      15 => Some("FOLDING_TOL_EQ"),
+      16 => Some("HEARTBEAT_SIM_FREQ_TICKS"),
+      17 => Some("INTPNT_CO_TOL_DFEAS"),
+      18 => Some("INTPNT_CO_TOL_INFEAS"),
+      19 => Some("INTPNT_CO_TOL_MU_RED"),
+      20 => Some("INTPNT_CO_TOL_NEAR_REL"),
+      21 => Some("INTPNT_CO_TOL_PFEAS"),
+      22 => Some("INTPNT_CO_TOL_REL_GAP"),
+      23 => Some("INTPNT_QO_TOL_DFEAS"),
+      24 => Some("INTPNT_QO_TOL_INFEAS"),
+      25 => Some("INTPNT_QO_TOL_MU_RED"),
+      26 => Some("INTPNT_QO_TOL_NEAR_REL"),
+      27 => Some("INTPNT_QO_TOL_PFEAS"),
+      28 => Some("INTPNT_QO_TOL_REL_GAP"),
+      29 => Some("INTPNT_TOL_DFEAS"),
+      30 => Some("INTPNT_TOL_DSAFE"),
+      31 => Some("INTPNT_TOL_INFEAS"),
+      32 => Some("INTPNT_TOL_MU_RED"),
+      33 => Some("INTPNT_TOL_NEAR_REL"),
+      34 => Some("INTPNT_TOL_PATH"),
+      35 => Some("INTPNT_TOL_PFEAS"),
+      36 => Some("INTPNT_TOL_PSAFE"),
+      37 => Some("INTPNT_TOL_REL_GAP"),
+      38 => Some("INTPNT_TOL_REL_STEP"),
+      39 => Some("INTPNT_TOL_STEP_SIZE"),
+      40 => Some("LOG_SIM_FREQ_TICKS"),
+      41 => Some("LOWER_OBJ_CUT"),
+      42 => Some("LOWER_OBJ_CUT_FINITE_TRH"),
+      43 => Some("MIO_CLIQUE_TABLE_SIZE_FACTOR"),
+      44 => Some("MIO_DJC_MAX_BIGM"),
+      45 => Some("MIO_MAX_TIME"),
+      46 => Some("MIO_REL_GAP_CONST"),
+      47 => Some("MIO_TOL_ABS_GAP"),
+      48 => Some("MIO_TOL_ABS_RELAX_INT"),
+      49 => Some("MIO_TOL_FEAS"),
+      50 => Some("MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"),
+      51 => Some("MIO_TOL_REL_GAP"),
+      52 => Some("OPTIMIZER_MAX_TICKS"),
+      53 => Some("OPTIMIZER_MAX_TIME"),
+      54 => Some("PRESOLVE_TOL_ABS_LINDEP"),
+      55 => Some("PRESOLVE_TOL_DUAL_INFEAS_PERTURBATION"),
+      56 => Some("PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION"),
+      57 => Some("PRESOLVE_TOL_REL_LINDEP"),
+      58 => Some("PRESOLVE_TOL_S"),
+      59 => Some("PRESOLVE_TOL_X"),
+      60 => Some("QCQO_REFORMULATE_REL_DROP_TOL"),
+      61 => Some("SEMIDEFINITE_TOL_APPROX"),
+      62 => Some("SIM_LU_TOL_REL_PIV"),
+      63 => Some("SIM_PRECISION_SCALING_EXTENDED"),
+      64 => Some("SIM_PRECISION_SCALING_NORMAL"),
+      65 => Some("SIMPLEX_ABS_TOL_PIV"),
+      66 => Some("UPPER_OBJ_CUT"),
+      67 => Some("UPPER_OBJ_CUT_FINITE_TRH"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ANA_SOL_INFEAS_TOL" => Some(0),
+      "BASIS_REL_TOL_S" => Some(1),
+      "BASIS_TOL_S" => Some(2),
+      "BASIS_TOL_X" => Some(3),
+      "DATA_SYM_MAT_TOL" => Some(4),
+      "DATA_SYM_MAT_TOL_HUGE" => Some(5),
+      "DATA_SYM_MAT_TOL_LARGE" => Some(6),
+      "DATA_TOL_AIJ_HUGE" => Some(7),
+      "DATA_TOL_AIJ_LARGE" => Some(8),
+      "DATA_TOL_BOUND_INF" => Some(9),
+      "DATA_TOL_BOUND_WRN" => Some(10),
+      "DATA_TOL_C_HUGE" => Some(11),
+      "DATA_TOL_CJ_LARGE" => Some(12),
+      "DATA_TOL_QIJ" => Some(13),
+      "DATA_TOL_X" => Some(14),
+      "FOLDING_TOL_EQ" => Some(15),
+      "HEARTBEAT_SIM_FREQ_TICKS" => Some(16),
+      "INTPNT_CO_TOL_DFEAS" => Some(17),
+      "INTPNT_CO_TOL_INFEAS" => Some(18),
+      "INTPNT_CO_TOL_MU_RED" => Some(19),
+      "INTPNT_CO_TOL_NEAR_REL" => Some(20),
+      "INTPNT_CO_TOL_PFEAS" => Some(21),
+      "INTPNT_CO_TOL_REL_GAP" => Some(22),
+      "INTPNT_QO_TOL_DFEAS" => Some(23),
+      "INTPNT_QO_TOL_INFEAS" => Some(24),
+      "INTPNT_QO_TOL_MU_RED" => Some(25),
+      "INTPNT_QO_TOL_NEAR_REL" => Some(26),
+      "INTPNT_QO_TOL_PFEAS" => Some(27),
+      "INTPNT_QO_TOL_REL_GAP" => Some(28),
+      "INTPNT_TOL_DFEAS" => Some(29),
+      "INTPNT_TOL_DSAFE" => Some(30),
+      "INTPNT_TOL_INFEAS" => Some(31),
+      "INTPNT_TOL_MU_RED" => Some(32),
+      "INTPNT_TOL_NEAR_REL" => Some(33),
+      "INTPNT_TOL_PATH" => Some(34),
+      "INTPNT_TOL_PFEAS" => Some(35),
+      "INTPNT_TOL_PSAFE" => Some(36),
+      "INTPNT_TOL_REL_GAP" => Some(37),
+      "INTPNT_TOL_REL_STEP" => Some(38),
+      "INTPNT_TOL_STEP_SIZE" => Some(39),
+      "LOG_SIM_FREQ_TICKS" => Some(40),
+      "LOWER_OBJ_CUT" => Some(41),
+      "LOWER_OBJ_CUT_FINITE_TRH" => Some(42),
+      "MIO_CLIQUE_TABLE_SIZE_FACTOR" => Some(43),
+      "MIO_DJC_MAX_BIGM" => Some(44),
+      "MIO_MAX_TIME" => Some(45),
+      "MIO_REL_GAP_CONST" => Some(46),
+      "MIO_TOL_ABS_GAP" => Some(47),
+      "MIO_TOL_ABS_RELAX_INT" => Some(48),
+      "MIO_TOL_FEAS" => Some(49),
+      "MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT" => Some(50),
+      "MIO_TOL_REL_GAP" => Some(51),
+      "OPTIMIZER_MAX_TICKS" => Some(52),
+      "OPTIMIZER_MAX_TIME" => Some(53),
+      "PRESOLVE_TOL_ABS_LINDEP" => Some(54),
+      "PRESOLVE_TOL_DUAL_INFEAS_PERTURBATION" => Some(55),
+      "PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION" => Some(56),
+      "PRESOLVE_TOL_REL_LINDEP" => Some(57),
+      "PRESOLVE_TOL_S" => Some(58),
+      "PRESOLVE_TOL_X" => Some(59),
+      "QCQO_REFORMULATE_REL_DROP_TOL" => Some(60),
+      "SEMIDEFINITE_TOL_APPROX" => Some(61),
+      "SIM_LU_TOL_REL_PIV" => Some(62),
+      "SIM_PRECISION_SCALING_EXTENDED" => Some(63),
+      "SIM_PRECISION_SCALING_NORMAL" => Some(64),
+      "SIMPLEX_ABS_TOL_PIV" => Some(65),
+      "UPPER_OBJ_CUT" => Some(66),
+      "UPPER_OBJ_CUT_FINITE_TRH" => Some(67),
+      _ => None
+    }
+  }
 } // impl Dparam
 
 /// Long integer information items.
@@ -2154,22 +3252,88 @@ impl Liinfitem {
   /// Number of dual pivots performed in the basis identification.
   pub const UNDUALIZE_BI_DUAL_ITER : i32 = 19;
   /// Number of clean iterations performed in the basis identification.
-  pub const UNDUALIZE_BI_OPTIMIZE_ITER : i32 = 20;
+  pub const UNDUALIZE_BI_OPTIMIZE_64BIT_ITER : i32 = 20;
   /// Number of clean iterations performed in the basis identification.
-  pub const UNDUALIZE_BI_OPTIMIZE_ITER_128BIT : i32 = 21;
+  pub const UNDUALIZE_BI_OPTIMIZER_128BIT_ITER : i32 = 21;
   /// Number of primal pivots performed in the basis identification.
   pub const UNDUALIZE_BI_PRIMAL_ITER : i32 = 22;
   /// Number of dual iterations pivots performed in the basis identification after unfolding.
   pub const UNFOLD_BI_DUAL_ITER : i32 = 23;
   /// Number of clean iterations performed in the basis identification.
-  pub const UNFOLD_BI_OPTIMIZE_128BIT_ITER : i32 = 24;
+  pub const UNFOLD_BI_OPTIMIZER_128BIT_ITER : i32 = 24;
   /// Number of clean iterations performed in the basis identification.
-  pub const UNFOLD_BI_OPTIMIZE_ITER : i32 = 25;
+  pub const UNFOLD_BI_OPTIMIZER_64BIT_ITER : i32 = 25;
   /// Number of reoptimization iterations performed in the basis identification after unfolding.
   pub const UNFOLD_BI_OPTIMIZER_ITER : i32 = 26;
   /// Number of primal iterations performed in the basis identification after unfolding.
   pub const UNFOLD_BI_PRIMAL_ITER : i32 = 27;
   pub const END : i32 = 27;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_COLUMNS"),
+      1 => Some("ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_NZ"),
+      2 => Some("ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_ROWS"),
+      3 => Some("BI_CLEAN_ITER"),
+      4 => Some("BI_DUAL_ITER"),
+      5 => Some("BI_PRIMAL_ITER"),
+      6 => Some("INTPNT_FACTOR_NUM_NZ"),
+      7 => Some("MIO_ANZ"),
+      8 => Some("MIO_FINAL_ANZ"),
+      9 => Some("MIO_INTPNT_ITER"),
+      10 => Some("MIO_NUM_DUAL_ILLPOSED_CER"),
+      11 => Some("MIO_NUM_PRIM_ILLPOSED_CER"),
+      12 => Some("MIO_PRESOLVED_ANZ"),
+      13 => Some("MIO_SIMPLEX_ITER"),
+      14 => Some("RD_NUMACC"),
+      15 => Some("RD_NUMANZ"),
+      16 => Some("RD_NUMDJC"),
+      17 => Some("RD_NUMQNZ"),
+      18 => Some("SIMPLEX_ITER"),
+      19 => Some("UNDUALIZE_BI_DUAL_ITER"),
+      20 => Some("UNDUALIZE_BI_OPTIMIZE_64BIT_ITER"),
+      21 => Some("UNDUALIZE_BI_OPTIMIZER_128BIT_ITER"),
+      22 => Some("UNDUALIZE_BI_PRIMAL_ITER"),
+      23 => Some("UNFOLD_BI_DUAL_ITER"),
+      24 => Some("UNFOLD_BI_OPTIMIZER_128BIT_ITER"),
+      25 => Some("UNFOLD_BI_OPTIMIZER_64BIT_ITER"),
+      26 => Some("UNFOLD_BI_OPTIMIZER_ITER"),
+      27 => Some("UNFOLD_BI_PRIMAL_ITER"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_COLUMNS" => Some(0),
+      "ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_NZ" => Some(1),
+      "ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_ROWS" => Some(2),
+      "BI_CLEAN_ITER" => Some(3),
+      "BI_DUAL_ITER" => Some(4),
+      "BI_PRIMAL_ITER" => Some(5),
+      "INTPNT_FACTOR_NUM_NZ" => Some(6),
+      "MIO_ANZ" => Some(7),
+      "MIO_FINAL_ANZ" => Some(8),
+      "MIO_INTPNT_ITER" => Some(9),
+      "MIO_NUM_DUAL_ILLPOSED_CER" => Some(10),
+      "MIO_NUM_PRIM_ILLPOSED_CER" => Some(11),
+      "MIO_PRESOLVED_ANZ" => Some(12),
+      "MIO_SIMPLEX_ITER" => Some(13),
+      "RD_NUMACC" => Some(14),
+      "RD_NUMANZ" => Some(15),
+      "RD_NUMDJC" => Some(16),
+      "RD_NUMQNZ" => Some(17),
+      "SIMPLEX_ITER" => Some(18),
+      "UNDUALIZE_BI_DUAL_ITER" => Some(19),
+      "UNDUALIZE_BI_OPTIMIZE_64BIT_ITER" => Some(20),
+      "UNDUALIZE_BI_OPTIMIZER_128BIT_ITER" => Some(21),
+      "UNDUALIZE_BI_PRIMAL_ITER" => Some(22),
+      "UNFOLD_BI_DUAL_ITER" => Some(23),
+      "UNFOLD_BI_OPTIMIZER_128BIT_ITER" => Some(24),
+      "UNFOLD_BI_OPTIMIZER_64BIT_ITER" => Some(25),
+      "UNFOLD_BI_OPTIMIZER_ITER" => Some(26),
+      "UNFOLD_BI_PRIMAL_ITER" => Some(27),
+      _ => None
+    }
+  }
 } // impl Liinfitem
 
 /// Integer information items.
@@ -2453,6 +3617,292 @@ impl Iinfitem {
   /// Number of times the storage for storing the linear coefficient matrix has been changed.
   pub const STO_NUM_A_REALLOC : i32 = 137;
   pub const END : i32 = 137;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ANA_PRO_NUM_CON"),
+      1 => Some("ANA_PRO_NUM_CON_EQ"),
+      2 => Some("ANA_PRO_NUM_CON_FR"),
+      3 => Some("ANA_PRO_NUM_CON_LO"),
+      4 => Some("ANA_PRO_NUM_CON_RA"),
+      5 => Some("ANA_PRO_NUM_CON_UP"),
+      6 => Some("ANA_PRO_NUM_VAR"),
+      7 => Some("ANA_PRO_NUM_VAR_BIN"),
+      8 => Some("ANA_PRO_NUM_VAR_CONT"),
+      9 => Some("ANA_PRO_NUM_VAR_EQ"),
+      10 => Some("ANA_PRO_NUM_VAR_FR"),
+      11 => Some("ANA_PRO_NUM_VAR_INT"),
+      12 => Some("ANA_PRO_NUM_VAR_LO"),
+      13 => Some("ANA_PRO_NUM_VAR_RA"),
+      14 => Some("ANA_PRO_NUM_VAR_UP"),
+      15 => Some("CONCURRENT_WINNING_OPTIMIZER"),
+      16 => Some("FOLDING_APPLIED"),
+      17 => Some("INTPNT_FACTOR_DIM_DENSE"),
+      18 => Some("INTPNT_ITER"),
+      19 => Some("INTPNT_NUM_THREADS"),
+      20 => Some("INTPNT_SOLVE_DUAL"),
+      21 => Some("MIO_ABSGAP_SATISFIED"),
+      22 => Some("MIO_CLIQUE_TABLE_SIZE"),
+      23 => Some("MIO_CONSTRUCT_SOLUTION"),
+      24 => Some("MIO_FINAL_NUMBIN"),
+      25 => Some("MIO_FINAL_NUMBINCONEVAR"),
+      26 => Some("MIO_FINAL_NUMCON"),
+      27 => Some("MIO_FINAL_NUMCONE"),
+      28 => Some("MIO_FINAL_NUMCONEVAR"),
+      29 => Some("MIO_FINAL_NUMCONT"),
+      30 => Some("MIO_FINAL_NUMCONTCONEVAR"),
+      31 => Some("MIO_FINAL_NUMDEXPCONES"),
+      32 => Some("MIO_FINAL_NUMDJC"),
+      33 => Some("MIO_FINAL_NUMDPOWCONES"),
+      34 => Some("MIO_FINAL_NUMINT"),
+      35 => Some("MIO_FINAL_NUMINTCONEVAR"),
+      36 => Some("MIO_FINAL_NUMPEXPCONES"),
+      37 => Some("MIO_FINAL_NUMPPOWCONES"),
+      38 => Some("MIO_FINAL_NUMQCONES"),
+      39 => Some("MIO_FINAL_NUMRQCONES"),
+      40 => Some("MIO_FINAL_NUMVAR"),
+      41 => Some("MIO_INITIAL_FEASIBLE_SOLUTION"),
+      42 => Some("MIO_NODE_DEPTH"),
+      43 => Some("MIO_NUM_ACTIVE_NODES"),
+      44 => Some("MIO_NUM_ACTIVE_ROOT_CUTS"),
+      45 => Some("MIO_NUM_BLOCKS_SOLVED_IN_BB"),
+      46 => Some("MIO_NUM_BLOCKS_SOLVED_IN_PRESOLVE"),
+      47 => Some("MIO_NUM_BRANCH"),
+      48 => Some("MIO_NUM_INT_SOLUTIONS"),
+      49 => Some("MIO_NUM_RELAX"),
+      50 => Some("MIO_NUM_REPEATED_PRESOLVE"),
+      51 => Some("MIO_NUM_RESTARTS"),
+      52 => Some("MIO_NUM_ROOT_CUT_ROUNDS"),
+      53 => Some("MIO_NUM_SELECTED_CLIQUE_CUTS"),
+      54 => Some("MIO_NUM_SELECTED_CMIR_CUTS"),
+      55 => Some("MIO_NUM_SELECTED_GOMORY_CUTS"),
+      56 => Some("MIO_NUM_SELECTED_IMPLIED_BOUND_CUTS"),
+      57 => Some("MIO_NUM_SELECTED_KNAPSACK_COVER_CUTS"),
+      58 => Some("MIO_NUM_SELECTED_LIPRO_CUTS"),
+      59 => Some("MIO_NUM_SEPARATED_CLIQUE_CUTS"),
+      60 => Some("MIO_NUM_SEPARATED_CMIR_CUTS"),
+      61 => Some("MIO_NUM_SEPARATED_GOMORY_CUTS"),
+      62 => Some("MIO_NUM_SEPARATED_IMPLIED_BOUND_CUTS"),
+      63 => Some("MIO_NUM_SEPARATED_KNAPSACK_COVER_CUTS"),
+      64 => Some("MIO_NUM_SEPARATED_LIPRO_CUTS"),
+      65 => Some("MIO_NUM_SOLVED_NODES"),
+      66 => Some("MIO_NUMBIN"),
+      67 => Some("MIO_NUMBINCONEVAR"),
+      68 => Some("MIO_NUMCON"),
+      69 => Some("MIO_NUMCONE"),
+      70 => Some("MIO_NUMCONEVAR"),
+      71 => Some("MIO_NUMCONT"),
+      72 => Some("MIO_NUMCONTCONEVAR"),
+      73 => Some("MIO_NUMDEXPCONES"),
+      74 => Some("MIO_NUMDJC"),
+      75 => Some("MIO_NUMDPOWCONES"),
+      76 => Some("MIO_NUMINT"),
+      77 => Some("MIO_NUMINTCONEVAR"),
+      78 => Some("MIO_NUMPEXPCONES"),
+      79 => Some("MIO_NUMPPOWCONES"),
+      80 => Some("MIO_NUMQCONES"),
+      81 => Some("MIO_NUMRQCONES"),
+      82 => Some("MIO_NUMVAR"),
+      83 => Some("MIO_OBJ_BOUND_DEFINED"),
+      84 => Some("MIO_PRESOLVED_NUMBIN"),
+      85 => Some("MIO_PRESOLVED_NUMBINCONEVAR"),
+      86 => Some("MIO_PRESOLVED_NUMCON"),
+      87 => Some("MIO_PRESOLVED_NUMCONE"),
+      88 => Some("MIO_PRESOLVED_NUMCONEVAR"),
+      89 => Some("MIO_PRESOLVED_NUMCONT"),
+      90 => Some("MIO_PRESOLVED_NUMCONTCONEVAR"),
+      91 => Some("MIO_PRESOLVED_NUMDEXPCONES"),
+      92 => Some("MIO_PRESOLVED_NUMDJC"),
+      93 => Some("MIO_PRESOLVED_NUMDPOWCONES"),
+      94 => Some("MIO_PRESOLVED_NUMINT"),
+      95 => Some("MIO_PRESOLVED_NUMINTCONEVAR"),
+      96 => Some("MIO_PRESOLVED_NUMPEXPCONES"),
+      97 => Some("MIO_PRESOLVED_NUMPPOWCONES"),
+      98 => Some("MIO_PRESOLVED_NUMQCONES"),
+      99 => Some("MIO_PRESOLVED_NUMRQCONES"),
+      100 => Some("MIO_PRESOLVED_NUMVAR"),
+      101 => Some("MIO_RELGAP_SATISFIED"),
+      102 => Some("MIO_TOTAL_NUM_SELECTED_CUTS"),
+      103 => Some("MIO_TOTAL_NUM_SEPARATED_CUTS"),
+      104 => Some("MIO_USER_OBJ_CUT"),
+      105 => Some("OPT_NUMCON"),
+      106 => Some("OPT_NUMVAR"),
+      107 => Some("OPTIMIZE_RESPONSE"),
+      108 => Some("PRESOLVE_NUM_PRIMAL_PERTURBATIONS"),
+      109 => Some("PURIFY_DUAL_SUCCESS"),
+      110 => Some("PURIFY_PRIMAL_SUCCESS"),
+      111 => Some("RD_NUMBARVAR"),
+      112 => Some("RD_NUMCON"),
+      113 => Some("RD_NUMCONE"),
+      114 => Some("RD_NUMINTVAR"),
+      115 => Some("RD_NUMQ"),
+      116 => Some("RD_NUMVAR"),
+      117 => Some("RD_PROTYPE"),
+      118 => Some("SIM_DUAL_DEG_ITER"),
+      119 => Some("SIM_DUAL_HOTSTART"),
+      120 => Some("SIM_DUAL_HOTSTART_LU"),
+      121 => Some("SIM_DUAL_INF_ITER"),
+      122 => Some("SIM_DUAL_ITER"),
+      123 => Some("SIM_NUMCON"),
+      124 => Some("SIM_NUMVAR"),
+      125 => Some("SIM_PRIMAL_DEG_ITER"),
+      126 => Some("SIM_PRIMAL_HOTSTART"),
+      127 => Some("SIM_PRIMAL_HOTSTART_LU"),
+      128 => Some("SIM_PRIMAL_INF_ITER"),
+      129 => Some("SIM_PRIMAL_ITER"),
+      130 => Some("SIM_SOLVE_DUAL"),
+      131 => Some("SOL_BAS_PROSTA"),
+      132 => Some("SOL_BAS_SOLSTA"),
+      133 => Some("SOL_ITG_PROSTA"),
+      134 => Some("SOL_ITG_SOLSTA"),
+      135 => Some("SOL_ITR_PROSTA"),
+      136 => Some("SOL_ITR_SOLSTA"),
+      137 => Some("STO_NUM_A_REALLOC"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ANA_PRO_NUM_CON" => Some(0),
+      "ANA_PRO_NUM_CON_EQ" => Some(1),
+      "ANA_PRO_NUM_CON_FR" => Some(2),
+      "ANA_PRO_NUM_CON_LO" => Some(3),
+      "ANA_PRO_NUM_CON_RA" => Some(4),
+      "ANA_PRO_NUM_CON_UP" => Some(5),
+      "ANA_PRO_NUM_VAR" => Some(6),
+      "ANA_PRO_NUM_VAR_BIN" => Some(7),
+      "ANA_PRO_NUM_VAR_CONT" => Some(8),
+      "ANA_PRO_NUM_VAR_EQ" => Some(9),
+      "ANA_PRO_NUM_VAR_FR" => Some(10),
+      "ANA_PRO_NUM_VAR_INT" => Some(11),
+      "ANA_PRO_NUM_VAR_LO" => Some(12),
+      "ANA_PRO_NUM_VAR_RA" => Some(13),
+      "ANA_PRO_NUM_VAR_UP" => Some(14),
+      "CONCURRENT_WINNING_OPTIMIZER" => Some(15),
+      "FOLDING_APPLIED" => Some(16),
+      "INTPNT_FACTOR_DIM_DENSE" => Some(17),
+      "INTPNT_ITER" => Some(18),
+      "INTPNT_NUM_THREADS" => Some(19),
+      "INTPNT_SOLVE_DUAL" => Some(20),
+      "MIO_ABSGAP_SATISFIED" => Some(21),
+      "MIO_CLIQUE_TABLE_SIZE" => Some(22),
+      "MIO_CONSTRUCT_SOLUTION" => Some(23),
+      "MIO_FINAL_NUMBIN" => Some(24),
+      "MIO_FINAL_NUMBINCONEVAR" => Some(25),
+      "MIO_FINAL_NUMCON" => Some(26),
+      "MIO_FINAL_NUMCONE" => Some(27),
+      "MIO_FINAL_NUMCONEVAR" => Some(28),
+      "MIO_FINAL_NUMCONT" => Some(29),
+      "MIO_FINAL_NUMCONTCONEVAR" => Some(30),
+      "MIO_FINAL_NUMDEXPCONES" => Some(31),
+      "MIO_FINAL_NUMDJC" => Some(32),
+      "MIO_FINAL_NUMDPOWCONES" => Some(33),
+      "MIO_FINAL_NUMINT" => Some(34),
+      "MIO_FINAL_NUMINTCONEVAR" => Some(35),
+      "MIO_FINAL_NUMPEXPCONES" => Some(36),
+      "MIO_FINAL_NUMPPOWCONES" => Some(37),
+      "MIO_FINAL_NUMQCONES" => Some(38),
+      "MIO_FINAL_NUMRQCONES" => Some(39),
+      "MIO_FINAL_NUMVAR" => Some(40),
+      "MIO_INITIAL_FEASIBLE_SOLUTION" => Some(41),
+      "MIO_NODE_DEPTH" => Some(42),
+      "MIO_NUM_ACTIVE_NODES" => Some(43),
+      "MIO_NUM_ACTIVE_ROOT_CUTS" => Some(44),
+      "MIO_NUM_BLOCKS_SOLVED_IN_BB" => Some(45),
+      "MIO_NUM_BLOCKS_SOLVED_IN_PRESOLVE" => Some(46),
+      "MIO_NUM_BRANCH" => Some(47),
+      "MIO_NUM_INT_SOLUTIONS" => Some(48),
+      "MIO_NUM_RELAX" => Some(49),
+      "MIO_NUM_REPEATED_PRESOLVE" => Some(50),
+      "MIO_NUM_RESTARTS" => Some(51),
+      "MIO_NUM_ROOT_CUT_ROUNDS" => Some(52),
+      "MIO_NUM_SELECTED_CLIQUE_CUTS" => Some(53),
+      "MIO_NUM_SELECTED_CMIR_CUTS" => Some(54),
+      "MIO_NUM_SELECTED_GOMORY_CUTS" => Some(55),
+      "MIO_NUM_SELECTED_IMPLIED_BOUND_CUTS" => Some(56),
+      "MIO_NUM_SELECTED_KNAPSACK_COVER_CUTS" => Some(57),
+      "MIO_NUM_SELECTED_LIPRO_CUTS" => Some(58),
+      "MIO_NUM_SEPARATED_CLIQUE_CUTS" => Some(59),
+      "MIO_NUM_SEPARATED_CMIR_CUTS" => Some(60),
+      "MIO_NUM_SEPARATED_GOMORY_CUTS" => Some(61),
+      "MIO_NUM_SEPARATED_IMPLIED_BOUND_CUTS" => Some(62),
+      "MIO_NUM_SEPARATED_KNAPSACK_COVER_CUTS" => Some(63),
+      "MIO_NUM_SEPARATED_LIPRO_CUTS" => Some(64),
+      "MIO_NUM_SOLVED_NODES" => Some(65),
+      "MIO_NUMBIN" => Some(66),
+      "MIO_NUMBINCONEVAR" => Some(67),
+      "MIO_NUMCON" => Some(68),
+      "MIO_NUMCONE" => Some(69),
+      "MIO_NUMCONEVAR" => Some(70),
+      "MIO_NUMCONT" => Some(71),
+      "MIO_NUMCONTCONEVAR" => Some(72),
+      "MIO_NUMDEXPCONES" => Some(73),
+      "MIO_NUMDJC" => Some(74),
+      "MIO_NUMDPOWCONES" => Some(75),
+      "MIO_NUMINT" => Some(76),
+      "MIO_NUMINTCONEVAR" => Some(77),
+      "MIO_NUMPEXPCONES" => Some(78),
+      "MIO_NUMPPOWCONES" => Some(79),
+      "MIO_NUMQCONES" => Some(80),
+      "MIO_NUMRQCONES" => Some(81),
+      "MIO_NUMVAR" => Some(82),
+      "MIO_OBJ_BOUND_DEFINED" => Some(83),
+      "MIO_PRESOLVED_NUMBIN" => Some(84),
+      "MIO_PRESOLVED_NUMBINCONEVAR" => Some(85),
+      "MIO_PRESOLVED_NUMCON" => Some(86),
+      "MIO_PRESOLVED_NUMCONE" => Some(87),
+      "MIO_PRESOLVED_NUMCONEVAR" => Some(88),
+      "MIO_PRESOLVED_NUMCONT" => Some(89),
+      "MIO_PRESOLVED_NUMCONTCONEVAR" => Some(90),
+      "MIO_PRESOLVED_NUMDEXPCONES" => Some(91),
+      "MIO_PRESOLVED_NUMDJC" => Some(92),
+      "MIO_PRESOLVED_NUMDPOWCONES" => Some(93),
+      "MIO_PRESOLVED_NUMINT" => Some(94),
+      "MIO_PRESOLVED_NUMINTCONEVAR" => Some(95),
+      "MIO_PRESOLVED_NUMPEXPCONES" => Some(96),
+      "MIO_PRESOLVED_NUMPPOWCONES" => Some(97),
+      "MIO_PRESOLVED_NUMQCONES" => Some(98),
+      "MIO_PRESOLVED_NUMRQCONES" => Some(99),
+      "MIO_PRESOLVED_NUMVAR" => Some(100),
+      "MIO_RELGAP_SATISFIED" => Some(101),
+      "MIO_TOTAL_NUM_SELECTED_CUTS" => Some(102),
+      "MIO_TOTAL_NUM_SEPARATED_CUTS" => Some(103),
+      "MIO_USER_OBJ_CUT" => Some(104),
+      "OPT_NUMCON" => Some(105),
+      "OPT_NUMVAR" => Some(106),
+      "OPTIMIZE_RESPONSE" => Some(107),
+      "PRESOLVE_NUM_PRIMAL_PERTURBATIONS" => Some(108),
+      "PURIFY_DUAL_SUCCESS" => Some(109),
+      "PURIFY_PRIMAL_SUCCESS" => Some(110),
+      "RD_NUMBARVAR" => Some(111),
+      "RD_NUMCON" => Some(112),
+      "RD_NUMCONE" => Some(113),
+      "RD_NUMINTVAR" => Some(114),
+      "RD_NUMQ" => Some(115),
+      "RD_NUMVAR" => Some(116),
+      "RD_PROTYPE" => Some(117),
+      "SIM_DUAL_DEG_ITER" => Some(118),
+      "SIM_DUAL_HOTSTART" => Some(119),
+      "SIM_DUAL_HOTSTART_LU" => Some(120),
+      "SIM_DUAL_INF_ITER" => Some(121),
+      "SIM_DUAL_ITER" => Some(122),
+      "SIM_NUMCON" => Some(123),
+      "SIM_NUMVAR" => Some(124),
+      "SIM_PRIMAL_DEG_ITER" => Some(125),
+      "SIM_PRIMAL_HOTSTART" => Some(126),
+      "SIM_PRIMAL_HOTSTART_LU" => Some(127),
+      "SIM_PRIMAL_INF_ITER" => Some(128),
+      "SIM_PRIMAL_ITER" => Some(129),
+      "SIM_SOLVE_DUAL" => Some(130),
+      "SOL_BAS_PROSTA" => Some(131),
+      "SOL_BAS_SOLSTA" => Some(132),
+      "SOL_ITG_PROSTA" => Some(133),
+      "SOL_ITG_SOLSTA" => Some(134),
+      "SOL_ITR_PROSTA" => Some(135),
+      "SOL_ITR_SOLSTA" => Some(136),
+      "STO_NUM_A_REALLOC" => Some(137),
+      _ => None
+    }
+  }
 } // impl Iinfitem
 
 /// Information item types
@@ -2465,6 +3915,22 @@ impl Inftype {
   pub const INT_TYPE : i32 = 1;
   /// Is a long integer.
   pub const LINT_TYPE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("DOU_TYPE"),
+      1 => Some("INT_TYPE"),
+      2 => Some("LINT_TYPE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "DOU_TYPE" => Some(0),
+      "INT_TYPE" => Some(1),
+      "LINT_TYPE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Inftype
 
 /// Input/output modes
@@ -2477,6 +3943,22 @@ impl Iomode {
   pub const WRITE : i32 = 1;
   /// The file is to read and write.
   pub const READWRITE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("READ"),
+      1 => Some("WRITE"),
+      2 => Some("READWRITE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "READ" => Some(0),
+      "WRITE" => Some(1),
+      "READWRITE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Iomode
 
 /// Integer parameters
@@ -2499,366 +3981,748 @@ impl Iparam {
   pub const BI_IGNORE_NUM_ERROR : i32 = 6;
   /// Maximum number of simplex (like) iterations basis identification allowed to optimize the basis.
   pub const BI_MAX_ITERATIONS : i32 = 7;
-  /// Controls which simplex optimizer is used in the clean-up phase.
-  pub const BI_OPTIMIZER : i32 = 8;
   /// Control license caching.
-  pub const CACHE_LICENSE : i32 = 9;
+  pub const CACHE_LICENSE : i32 = 8;
   /// Control compression of stat files.
-  pub const COMPRESS_STATFILE : i32 = 10;
+  pub const COMPRESS_STATFILE : i32 = 9;
   /// Controls whether the concurrent optimizer is deterministic.
-  pub const CONCURRENT_DETERMINISTIC : i32 = 11;
+  pub const CONCURRENT_DETERMINISTIC : i32 = 10;
   /// Controls how to construct the fixed model.
-  pub const FIXING_METHOD : i32 = 12;
+  pub const FIXING_METHOD : i32 = 11;
   /// Whether integer variable fixing requires feasible status.
-  pub const FIXING_REQUIRE_FEAS : i32 = 13;
+  pub const FIXING_REQUIRE_FEAS : i32 = 12;
   /// Controls how to use folding.
-  pub const FOLDING_USE : i32 = 14;
+  pub const FOLDING_USE : i32 = 13;
   /// Detect LMIs and optimize their dualization.
-  pub const GETDUAL_CONVERT_LMIS : i32 = 15;
+  pub const GETDUAL_CONVERT_LMIS : i32 = 14;
   /// Controls the contents of the infeasibility report.
-  pub const INFEAS_GENERIC_NAMES : i32 = 16;
+  pub const INFEAS_GENERIC_NAMES : i32 = 15;
   /// Turns the feasibility report on or off.
-  pub const INFEAS_REPORT_AUTO : i32 = 17;
+  pub const INFEAS_REPORT_AUTO : i32 = 16;
   /// Controls the contents of the infeasibility report.
-  pub const INFEAS_REPORT_LEVEL : i32 = 18;
+  pub const INFEAS_REPORT_LEVEL : i32 = 17;
   /// Controls whether basis identification is performed.
-  pub const INTPNT_BASIS : i32 = 19;
+  pub const INTPNT_BASIS : i32 = 18;
   /// Currently not in use.
-  pub const INTPNT_HOTSTART : i32 = 20;
+  pub const INTPNT_HOTSTART : i32 = 19;
   /// Controls the maximum number of iterations allowed in the interior-point optimizer.
-  pub const INTPNT_MAX_ITERATIONS : i32 = 21;
+  pub const INTPNT_MAX_ITERATIONS : i32 = 20;
   /// Maximum number of correction steps.
-  pub const INTPNT_MAX_NUM_COR : i32 = 22;
+  pub const INTPNT_MAX_NUM_COR : i32 = 21;
   /// Currently not in use.
-  pub const INTPNT_NOT_IN_USE : i32 = 23;
+  pub const INTPNT_NOT_IN_USE : i32 = 22;
   /// Controls the aggressiveness of the offending column detection.
-  pub const INTPNT_OFF_COL_TRH : i32 = 24;
+  pub const INTPNT_OFF_COL_TRH : i32 = 23;
   /// This parameter controls the number of random seeds tried.
-  pub const INTPNT_ORDER_GP_NUM_SEEDS : i32 = 25;
+  pub const INTPNT_ORDER_GP_NUM_SEEDS : i32 = 24;
   /// Controls the ordering strategy.
-  pub const INTPNT_ORDER_METHOD : i32 = 26;
+  pub const INTPNT_ORDER_METHOD : i32 = 25;
   /// Controls whether regularization is allowed.
-  pub const INTPNT_REGULARIZATION_USE : i32 = 27;
+  pub const INTPNT_REGULARIZATION_USE : i32 = 26;
   /// Controls how the problem is scaled before the interior-point optimizer is used.
-  pub const INTPNT_SCALING : i32 = 28;
+  pub const INTPNT_SCALING : i32 = 27;
   /// Starting point used by the interior-point optimizer.
-  pub const INTPNT_STARTING_POINT : i32 = 29;
+  pub const INTPNT_STARTING_POINT : i32 = 28;
   /// Controls the license manager client debugging behavior.
-  pub const LICENSE_DEBUG : i32 = 30;
+  pub const LICENSE_DEBUG : i32 = 29;
   /// Controls license manager client behavior.
-  pub const LICENSE_PAUSE_TIME : i32 = 31;
+  pub const LICENSE_PAUSE_TIME : i32 = 30;
   /// Controls license manager client behavior.
-  pub const LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 32;
+  pub const LICENSE_SUPPRESS_EXPIRE_WRNS : i32 = 31;
   /// Controls when expiry warnings are issued.
-  pub const LICENSE_TRH_EXPIRY_WRN : i32 = 33;
+  pub const LICENSE_TRH_EXPIRY_WRN : i32 = 32;
   /// Controls if MOSEK should queue for a license if none is available.
-  pub const LICENSE_WAIT : i32 = 34;
+  pub const LICENSE_WAIT : i32 = 33;
   /// Controls the amount of log information.
-  pub const LOG : i32 = 35;
+  pub const LOG : i32 = 34;
   /// Controls amount of output from the problem analyzer.
-  pub const LOG_ANA_PRO : i32 = 36;
+  pub const LOG_ANA_PRO : i32 = 35;
   /// Controls the amount of output printed by the basis identification procedure. A higher level implies that more information is logged.
-  pub const LOG_BI : i32 = 37;
+  pub const LOG_BI : i32 = 36;
   /// Controls the logging frequency.
-  pub const LOG_BI_FREQ : i32 = 38;
+  pub const LOG_BI_FREQ : i32 = 37;
   /// Controls the amount of log information from the concurrent optimizer.
-  pub const LOG_CONCURRENT : i32 = 39;
+  pub const LOG_CONCURRENT : i32 = 38;
   /// Controls the reduction in the log levels for the second and any subsequent optimizations.
-  pub const LOG_CUT_SECOND_OPT : i32 = 40;
+  pub const LOG_CUT_SECOND_OPT : i32 = 39;
   /// Controls the amount of logging when a data item such as the maximum number constrains is expanded.
-  pub const LOG_EXPAND : i32 = 41;
+  pub const LOG_EXPAND : i32 = 40;
   /// Controls the amount of output printed when performing feasibility repair. A value higher than one means extensive logging.
-  pub const LOG_FEAS_REPAIR : i32 = 42;
+  pub const LOG_FEAS_REPAIR : i32 = 41;
   /// If turned on, then some log info is printed when a file is written or read.
-  pub const LOG_FILE : i32 = 43;
+  pub const LOG_FILE : i32 = 42;
   /// Controls whether solution summary should be printed by the optimizer.
-  pub const LOG_INCLUDE_SUMMARY : i32 = 44;
+  pub const LOG_INCLUDE_SUMMARY : i32 = 43;
   /// Controls log level for the infeasibility analyzer.
-  pub const LOG_INFEAS_ANA : i32 = 45;
+  pub const LOG_INFEAS_ANA : i32 = 44;
   /// Controls the amount of log information from the interior-point optimizers.
-  pub const LOG_INTPNT : i32 = 46;
+  pub const LOG_INTPNT : i32 = 45;
   /// Control whether local identifying information is printed to the log.
-  pub const LOG_LOCAL_INFO : i32 = 47;
+  pub const LOG_LOCAL_INFO : i32 = 46;
   /// Controls the amount of log information from the mixed-integer optimizers.
-  pub const LOG_MIO : i32 = 48;
+  pub const LOG_MIO : i32 = 47;
   /// The mixed-integer optimizer logging frequency.
-  pub const LOG_MIO_FREQ : i32 = 49;
+  pub const LOG_MIO_FREQ : i32 = 48;
   /// If turned on, then factor lines are added to the log.
-  pub const LOG_ORDER : i32 = 50;
+  pub const LOG_ORDER : i32 = 49;
   /// Controls amount of output printed by the presolve procedure. A higher level implies that more information is logged.
-  pub const LOG_PRESOLVE : i32 = 51;
+  pub const LOG_PRESOLVE : i32 = 50;
   /// Control logging in sensitivity analyzer.
-  pub const LOG_SENSITIVITY : i32 = 52;
+  pub const LOG_SENSITIVITY : i32 = 51;
   /// Control logging in sensitivity analyzer.
-  pub const LOG_SENSITIVITY_OPT : i32 = 53;
+  pub const LOG_SENSITIVITY_OPT : i32 = 52;
   /// Controls the amount of log information from the simplex optimizers.
-  pub const LOG_SIM : i32 = 54;
+  pub const LOG_SIM : i32 = 53;
   /// Controls simplex logging frequency.
-  pub const LOG_SIM_FREQ : i32 = 55;
+  pub const LOG_SIM_FREQ : i32 = 54;
   /// Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
-  pub const MAX_NUM_WARNINGS : i32 = 56;
+  pub const MAX_NUM_WARNINGS : i32 = 55;
   /// Controls whether the mixed-integer optimizer is branching up or down by default.
-  pub const MIO_BRANCH_DIR : i32 = 57;
+  pub const MIO_BRANCH_DIR : i32 = 56;
   /// Controls the amount of conflict analysis employed by the mixed-integer optimizer.
-  pub const MIO_CONFLICT_ANALYSIS_LEVEL : i32 = 58;
+  pub const MIO_CONFLICT_ANALYSIS_LEVEL : i32 = 57;
   /// Toggles outer approximation for conic problems.
-  pub const MIO_CONIC_OUTER_APPROXIMATION : i32 = 59;
+  pub const MIO_CONIC_OUTER_APPROXIMATION : i32 = 58;
   /// Controls if an initial mixed integer solution should be constructed from the values of the integer variables.
-  pub const MIO_CONSTRUCT_SOL : i32 = 60;
+  pub const MIO_CONSTRUCT_SOL : i32 = 59;
   /// Maximum number of nodes in each call to Crossover.
-  pub const MIO_CROSSOVER_MAX_NODES : i32 = 61;
+  pub const MIO_CROSSOVER_MAX_NODES : i32 = 60;
   /// Controls whether clique cuts should be generated.
-  pub const MIO_CUT_CLIQUE : i32 = 62;
+  pub const MIO_CUT_CLIQUE : i32 = 61;
   /// Controls whether mixed integer rounding cuts should be generated.
-  pub const MIO_CUT_CMIR : i32 = 63;
+  pub const MIO_CUT_CMIR : i32 = 62;
   /// Controls whether GMI cuts should be generated.
-  pub const MIO_CUT_GMI : i32 = 64;
+  pub const MIO_CUT_GMI : i32 = 63;
   /// Controls whether implied bound cuts should be generated.
-  pub const MIO_CUT_IMPLIED_BOUND : i32 = 65;
+  pub const MIO_CUT_IMPLIED_BOUND : i32 = 64;
   /// Controls whether knapsack cover cuts should be generated.
-  pub const MIO_CUT_KNAPSACK_COVER : i32 = 66;
+  pub const MIO_CUT_KNAPSACK_COVER : i32 = 65;
   /// Controls whether lift-and-project cuts should be generated.
-  pub const MIO_CUT_LIPRO : i32 = 67;
+  pub const MIO_CUT_LIPRO : i32 = 66;
   /// Controls how aggressively generated cuts are selected to be included in the relaxation.
-  pub const MIO_CUT_SELECTION_LEVEL : i32 = 68;
+  pub const MIO_CUT_SELECTION_LEVEL : i32 = 67;
   /// Controls what problem data permutation method is appplied to mixed-integer problems.
-  pub const MIO_DATA_PERMUTATION_METHOD : i32 = 69;
+  pub const MIO_DATA_PERMUTATION_METHOD : i32 = 68;
   /// Controls the amount of dual ray analysis employed by the mixed-integer optimizer.
-  pub const MIO_DUAL_RAY_ANALYSIS_LEVEL : i32 = 70;
+  pub const MIO_DUAL_RAY_ANALYSIS_LEVEL : i32 = 69;
   /// Controls the way the Feasibility Pump heuristic is employed by the mixed-integer optimizer.
-  pub const MIO_FEASPUMP_LEVEL : i32 = 71;
+  pub const MIO_FEASPUMP_LEVEL : i32 = 70;
   /// Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution.
-  pub const MIO_HEURISTIC_LEVEL : i32 = 72;
+  pub const MIO_HEURISTIC_LEVEL : i32 = 71;
   /// Controls the way the mixed-integer optimizer exploits independent-block structure in the problem.
-  pub const MIO_INDEPENDENT_BLOCK_LEVEL : i32 = 73;
+  pub const MIO_INDEPENDENT_BLOCK_LEVEL : i32 = 72;
   /// Maximum number of branches allowed during the branch and bound search.
-  pub const MIO_MAX_NUM_BRANCHES : i32 = 74;
+  pub const MIO_MAX_NUM_BRANCHES : i32 = 73;
   /// Maximum number of relaxations in branch and bound search.
-  pub const MIO_MAX_NUM_RELAXS : i32 = 75;
+  pub const MIO_MAX_NUM_RELAXS : i32 = 74;
   /// Maximum number of restarts allowed during the branch and bound search.
-  pub const MIO_MAX_NUM_RESTARTS : i32 = 76;
+  pub const MIO_MAX_NUM_RESTARTS : i32 = 75;
   /// Maximum number of cut separation rounds at the root node.
-  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 77;
+  pub const MIO_MAX_NUM_ROOT_CUT_ROUNDS : i32 = 76;
   /// Controls how many feasible solutions the mixed-integer optimizer investigates.
-  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 78;
+  pub const MIO_MAX_NUM_SOLUTIONS : i32 = 77;
   /// Controls how much emphasis is put on reducing memory usage.
-  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 79;
+  pub const MIO_MEMORY_EMPHASIS_LEVEL : i32 = 78;
   /// Number of times a variable must have been branched on for its pseudocost to be considered reliable.
-  pub const MIO_MIN_REL : i32 = 80;
+  pub const MIO_MIN_REL : i32 = 79;
   /// Turns on/off the mixed-integer mode.
-  pub const MIO_MODE : i32 = 81;
+  pub const MIO_MODE : i32 = 80;
   /// Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
-  pub const MIO_NODE_OPTIMIZER : i32 = 82;
+  pub const MIO_NODE_OPTIMIZER : i32 = 81;
   /// Controls the node selection strategy employed by the mixed-integer optimizer.
-  pub const MIO_NODE_SELECTION : i32 = 83;
+  pub const MIO_NODE_SELECTION : i32 = 82;
   /// Controls how much emphasis is put on reducing numerical problems
-  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 84;
+  pub const MIO_NUMERICAL_EMPHASIS_LEVEL : i32 = 83;
   /// Maximum number of nodes in each call to RINS.
-  pub const MIO_OPT_FACE_MAX_NODES : i32 = 85;
+  pub const MIO_OPT_FACE_MAX_NODES : i32 = 84;
   /// Enables or disables perspective reformulation in presolve.
-  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 86;
+  pub const MIO_PERSPECTIVE_REFORMULATE : i32 = 85;
   /// Controls if the aggregator should be used.
-  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 87;
+  pub const MIO_PRESOLVE_AGGREGATOR_USE : i32 = 86;
   /// Controls the amount of probing employed by the mixed-integer optimizer in presolve.
-  pub const MIO_PROBING_LEVEL : i32 = 88;
+  pub const MIO_PROBING_LEVEL : i32 = 87;
   /// Use objective domain propagation.
-  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 89;
+  pub const MIO_PROPAGATE_OBJECTIVE_CONSTRAINT : i32 = 88;
   /// Controls what reformulation method is applied to mixed-integer quadratic problems.
-  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 90;
+  pub const MIO_QCQO_REFORMULATION_METHOD : i32 = 89;
   /// Maximum number of nodes in each call to RENS.
-  pub const MIO_RENS_MAX_NODES : i32 = 91;
+  pub const MIO_RENS_MAX_NODES : i32 = 90;
   /// Maximum number of nodes in each call to RINS.
-  pub const MIO_RINS_MAX_NODES : i32 = 92;
+  pub const MIO_RINS_MAX_NODES : i32 = 91;
   /// Controls which optimizer is employed at the root node in the mixed-integer optimizer.
-  pub const MIO_ROOT_OPTIMIZER : i32 = 93;
+  pub const MIO_ROOT_OPTIMIZER : i32 = 92;
   /// Sets the random seed used for randomization in the mixed integer optimizer.
-  pub const MIO_SEED : i32 = 94;
+  pub const MIO_SEED : i32 = 93;
   /// Controls the amount of symmetry detection and handling employed by the mixed-integer optimizer in presolve.
-  pub const MIO_SYMMETRY_LEVEL : i32 = 95;
+  pub const MIO_SYMMETRY_LEVEL : i32 = 94;
   /// Controls the variable selection strategy employed by the mixed-integer optimizer.
-  pub const MIO_VAR_SELECTION : i32 = 96;
+  pub const MIO_VAR_SELECTION : i32 = 95;
   /// Controls how much effort is put into detecting variable bounds.
-  pub const MIO_VB_DETECTION_LEVEL : i32 = 97;
+  pub const MIO_VB_DETECTION_LEVEL : i32 = 96;
   /// Set the number of iterations to spin before sleeping.
-  pub const MT_SPINCOUNT : i32 = 98;
+  pub const MT_SPINCOUNT : i32 = 97;
   /// Not in use
-  pub const NG : i32 = 99;
+  pub const NG : i32 = 98;
   /// The number of threads employed by the optimizer.
-  pub const NUM_THREADS : i32 = 100;
+  pub const NUM_THREADS : i32 = 99;
   /// Write a text header with date and MOSEK version in an OPF file.
-  pub const OPF_WRITE_HEADER : i32 = 101;
+  pub const OPF_WRITE_HEADER : i32 = 100;
   /// Write a hint section with problem dimensions in the beginning of an OPF file.
-  pub const OPF_WRITE_HINTS : i32 = 102;
+  pub const OPF_WRITE_HINTS : i32 = 101;
   /// Aim to keep lines in OPF files not much longer than this.
-  pub const OPF_WRITE_LINE_LENGTH : i32 = 103;
+  pub const OPF_WRITE_LINE_LENGTH : i32 = 102;
   /// Write a parameter section in an OPF file.
-  pub const OPF_WRITE_PARAMETERS : i32 = 104;
+  pub const OPF_WRITE_PARAMETERS : i32 = 103;
   /// Write objective, constraints, bounds etc. to an OPF file.
-  pub const OPF_WRITE_PROBLEM : i32 = 105;
+  pub const OPF_WRITE_PROBLEM : i32 = 104;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_BAS : i32 = 106;
+  pub const OPF_WRITE_SOL_BAS : i32 = 105;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITG : i32 = 107;
+  pub const OPF_WRITE_SOL_ITG : i32 = 106;
   /// Controls what is written to the OPF files.
-  pub const OPF_WRITE_SOL_ITR : i32 = 108;
+  pub const OPF_WRITE_SOL_ITR : i32 = 107;
   /// Enable inclusion of solutions in the OPF files.
-  pub const OPF_WRITE_SOLUTIONS : i32 = 109;
+  pub const OPF_WRITE_SOLUTIONS : i32 = 108;
   /// Controls which optimizer is used to optimize the task.
-  pub const OPTIMIZER : i32 = 110;
+  pub const OPTIMIZER : i32 = 109;
   /// If turned on, then names in the parameter file are case sensitive.
-  pub const PARAM_READ_CASE_NAME : i32 = 111;
+  pub const PARAM_READ_CASE_NAME : i32 = 110;
   /// If turned on, then errors in parameter settings is ignored.
-  pub const PARAM_READ_IGN_ERROR : i32 = 112;
+  pub const PARAM_READ_IGN_ERROR : i32 = 111;
   /// Maximum amount of fill-in created in one pivot during the elimination phase.
-  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 113;
+  pub const PRESOLVE_ELIMINATOR_MAX_FILL : i32 = 112;
   /// Control the maximum number of times the eliminator is tried.
-  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 114;
+  pub const PRESOLVE_ELIMINATOR_MAX_NUM_TRIES : i32 = 113;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 115;
+  pub const PRESOLVE_LINDEP_ABS_WORK_TRH : i32 = 114;
   /// Controls whether a new experimental linear dependency checker is employed.
-  pub const PRESOLVE_LINDEP_NEW : i32 = 116;
+  pub const PRESOLVE_LINDEP_NEW : i32 = 115;
   /// Controls linear dependency check in presolve.
-  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 117;
+  pub const PRESOLVE_LINDEP_REL_WORK_TRH : i32 = 116;
   /// Controls whether the linear constraints are checked for linear dependencies.
-  pub const PRESOLVE_LINDEP_USE : i32 = 118;
+  pub const PRESOLVE_LINDEP_USE : i32 = 117;
   /// Control the maximum number of times presolve passes over the problem.
-  pub const PRESOLVE_MAX_NUM_PASS : i32 = 119;
+  pub const PRESOLVE_MAX_NUM_PASS : i32 = 118;
   /// Controls the maximum number of reductions performed by the presolve.
-  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 120;
+  pub const PRESOLVE_MAX_NUM_REDUCTIONS : i32 = 119;
   /// Controls whether the presolve is applied to a problem before it is optimized.
-  pub const PRESOLVE_USE : i32 = 121;
+  pub const PRESOLVE_USE : i32 = 120;
   /// Controls which optimizer that is used to find the optimal repair.
-  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 122;
+  pub const PRIMAL_REPAIR_OPTIMIZER : i32 = 121;
   /// Controls whether parameters section is written in PTF files.
-  pub const PTF_WRITE_PARAMETERS : i32 = 123;
+  pub const PTF_WRITE_PARAMETERS : i32 = 122;
   /// Controls whether PSD terms with a coefficient matrix of just one non-zero are written as a single term instead of as a matrix term.
-  pub const PTF_WRITE_SINGLE_PSD_TERMS : i32 = 124;
+  pub const PTF_WRITE_SINGLE_PSD_TERMS : i32 = 123;
   /// Controls whether solution section is written in PTF files.
-  pub const PTF_WRITE_SOLUTIONS : i32 = 125;
+  pub const PTF_WRITE_SOLUTIONS : i32 = 124;
   /// Controls whether files are read using synchronous or asynchronous reader.
-  pub const READ_ASYNC : i32 = 126;
+  pub const READ_ASYNC : i32 = 125;
   /// Turns on additional debugging information when reading files.
-  pub const READ_DEBUG : i32 = 127;
+  pub const READ_DEBUG : i32 = 126;
   /// Controls whether the free constraints are included in the problem. Applies to MPS files.
-  pub const READ_KEEP_FREE_CON : i32 = 128;
+  pub const READ_KEEP_FREE_CON : i32 = 127;
   /// Controls how strictly the MPS file reader interprets the MPS format.
-  pub const READ_MPS_FORMAT : i32 = 129;
+  pub const READ_MPS_FORMAT : i32 = 128;
   /// Controls the maximal number of characters allowed in one line of the MPS file.
-  pub const READ_MPS_WIDTH : i32 = 130;
+  pub const READ_MPS_WIDTH : i32 = 129;
   /// Controls what information is used from the task files.
-  pub const READ_TASK_IGNORE_PARAM : i32 = 131;
+  pub const READ_TASK_IGNORE_PARAM : i32 = 130;
   /// Use compression when sending data to an optimization server
-  pub const REMOTE_USE_COMPRESSION : i32 = 132;
+  pub const REMOTE_USE_COMPRESSION : i32 = 131;
   /// Removes unused solutions before the optimization is performed.
-  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 133;
+  pub const REMOVE_UNUSED_SOLUTIONS : i32 = 132;
   /// If turned on, then an interior-point solution is available even if a basic solution is available.
-  pub const REQUEST_INTPNT : i32 = 134;
+  pub const REQUEST_INTPNT : i32 = 133;
   /// Controls sensitivity report behavior.
-  pub const SENSITIVITY_ALL : i32 = 135;
+  pub const SENSITIVITY_ALL : i32 = 134;
   /// Controls which type of sensitivity analysis is to be performed.
-  pub const SENSITIVITY_TYPE : i32 = 136;
+  pub const SENSITIVITY_TYPE : i32 = 135;
   /// Controls whether an LU factorization of the basis is used in a hot-start.
-  pub const SIM_BASIS_FACTOR_USE : i32 = 137;
+  pub const SIM_BASIS_FACTOR_USE : i32 = 136;
   /// Not in use.
-  pub const SIM_CACHE : i32 = 138;
+  pub const SIM_CACHE : i32 = 137;
   /// Controls how aggressively degeneration is handled.
-  pub const SIM_DEGEN : i32 = 139;
+  pub const SIM_DEGEN : i32 = 138;
   /// Not in use.
-  pub const SIM_DETECT_PWL : i32 = 140;
+  pub const SIM_DETECT_PWL : i32 = 139;
   /// Controls whether crashing is performed in the dual simplex optimizer.
-  pub const SIM_DUAL_CRASH : i32 = 141;
+  pub const SIM_DUAL_CRASH : i32 = 140;
   /// An experimental feature.
-  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 142;
+  pub const SIM_DUAL_PHASEONE_METHOD : i32 = 141;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 143;
+  pub const SIM_DUAL_RESTRICT_SELECTION : i32 = 142;
   /// Controls the dual simplex strategy.
-  pub const SIM_DUAL_SELECTION : i32 = 144;
+  pub const SIM_DUAL_SELECTION : i32 = 143;
   /// Controls the type of hot-start that the simplex optimizer perform.
-  pub const SIM_HOTSTART : i32 = 145;
+  pub const SIM_HOTSTART : i32 = 144;
   /// Determines if the simplex optimizer should exploit the initial factorization.
-  pub const SIM_HOTSTART_LU : i32 = 146;
+  pub const SIM_HOTSTART_LU : i32 = 145;
   /// Maximum number of iterations that can be used by a simplex optimizer.
-  pub const SIM_MAX_ITERATIONS : i32 = 147;
+  pub const SIM_MAX_ITERATIONS : i32 = 146;
   /// Controls how many set-backs that are allowed within a simplex optimizer.
-  pub const SIM_MAX_NUM_SETBACKS : i32 = 148;
+  pub const SIM_MAX_NUM_SETBACKS : i32 = 147;
   /// Experimental. Usage not recommended.
-  pub const SIM_PRECISION : i32 = 149;
+  pub const SIM_PRECISION : i32 = 148;
   /// Controls whether the simplex optimizer is allowed to boost the precision.
-  pub const SIM_PRECISION_BOOST : i32 = 150;
+  pub const SIM_PRECISION_BOOST : i32 = 149;
   /// Controls the simplex crash.
-  pub const SIM_PRIMAL_CRASH : i32 = 151;
+  pub const SIM_PRIMAL_CRASH : i32 = 150;
   /// An experimental feature.
-  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 152;
+  pub const SIM_PRIMAL_PHASEONE_METHOD : i32 = 151;
   /// Controls how aggressively restricted selection is used.
-  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 153;
+  pub const SIM_PRIMAL_RESTRICT_SELECTION : i32 = 152;
   /// Controls the primal simplex strategy.
-  pub const SIM_PRIMAL_SELECTION : i32 = 154;
+  pub const SIM_PRIMAL_SELECTION : i32 = 153;
   /// Controls the basis refactoring frequency.
-  pub const SIM_REFACTOR_FREQ : i32 = 155;
+  pub const SIM_REFACTOR_FREQ : i32 = 154;
   /// Controls how much effort is used in scaling the problem before a simplex optimizer is used.
-  pub const SIM_SCALING : i32 = 156;
+  pub const SIM_SCALING : i32 = 155;
   /// Controls how the problem is scaled before a simplex optimizer is used.
-  pub const SIM_SCALING_METHOD : i32 = 157;
+  pub const SIM_SCALING_METHOD : i32 = 156;
   /// Sets the random seed used for randomization in the simplex optimizers.
-  pub const SIM_SEED : i32 = 158;
+  pub const SIM_SEED : i32 = 157;
   /// Experimental. Usage not recommended.
-  pub const SIM_SOLUTION_REFINEMENT : i32 = 159;
+  pub const SIM_SOLUTION_REFINEMENT : i32 = 158;
   /// Controls the simplex behavior.
-  pub const SIM_SWITCH_OPTIMIZER : i32 = 160;
+  pub const SIM_SWITCH_OPTIMIZER : i32 = 159;
   /// Control the contents of the solution files.
-  pub const SOL_FILTER_KEEP_BASIC : i32 = 161;
+  pub const SOL_FILTER_KEEP_BASIC : i32 = 160;
   /// Controls the input solution file format.
-  pub const SOL_READ_NAME_WIDTH : i32 = 162;
+  pub const SOL_READ_NAME_WIDTH : i32 = 161;
   /// Controls the input solution file format.
-  pub const SOL_READ_WIDTH : i32 = 163;
+  pub const SOL_READ_WIDTH : i32 = 162;
   /// Controls whether the primal or the dual problem is solved by the continous optimizers.
-  pub const SOLVE_FORM : i32 = 164;
+  pub const SOLVE_FORM : i32 = 163;
   /// Controls the amount of timing performed inside MOSEK.
-  pub const TIMING_LEVEL : i32 = 165;
+  pub const TIMING_LEVEL : i32 = 164;
   /// Controls whether files are read using synchronous or asynchronous writer.
-  pub const WRITE_ASYNC : i32 = 166;
+  pub const WRITE_ASYNC : i32 = 165;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_CONSTRAINTS : i32 = 167;
+  pub const WRITE_BAS_CONSTRAINTS : i32 = 166;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_HEAD : i32 = 168;
+  pub const WRITE_BAS_HEAD : i32 = 167;
   /// Controls the basic solution file format.
-  pub const WRITE_BAS_VARIABLES : i32 = 169;
+  pub const WRITE_BAS_VARIABLES : i32 = 168;
   /// Controls output file compression.
-  pub const WRITE_COMPRESSION : i32 = 170;
+  pub const WRITE_COMPRESSION : i32 = 169;
   /// Controls the output file data.
-  pub const WRITE_FREE_CON : i32 = 171;
+  pub const WRITE_FREE_CON : i32 = 170;
   /// Controls the output file data.
-  pub const WRITE_GENERIC_NAMES : i32 = 172;
+  pub const WRITE_GENERIC_NAMES : i32 = 171;
   /// Controls if the writer ignores incompatible problem items when writing files.
-  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 173;
+  pub const WRITE_IGNORE_INCOMPATIBLE_ITEMS : i32 = 172;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_CONSTRAINTS : i32 = 174;
+  pub const WRITE_INT_CONSTRAINTS : i32 = 173;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_HEAD : i32 = 175;
+  pub const WRITE_INT_HEAD : i32 = 174;
   /// Controls the integer solution file format.
-  pub const WRITE_INT_VARIABLES : i32 = 176;
+  pub const WRITE_INT_VARIABLES : i32 = 175;
   /// When set, the JSON task and solution files are written with indentation for better readability.
-  pub const WRITE_JSON_INDENTATION : i32 = 177;
+  pub const WRITE_JSON_INDENTATION : i32 = 176;
   /// Write full linear objective.
-  pub const WRITE_LP_FULL_OBJ : i32 = 178;
+  pub const WRITE_LP_FULL_OBJ : i32 = 177;
   /// Ignore free constraints while writing a LP formatted file.
-  pub const WRITE_LP_IGNORE_FREE_CONSTRAINTS : i32 = 179;
+  pub const WRITE_LP_IGNORE_FREE_CONSTRAINTS : i32 = 178;
   /// Controls the LP output file format.
-  pub const WRITE_LP_LINE_WIDTH : i32 = 180;
+  pub const WRITE_LP_LINE_WIDTH : i32 = 179;
   /// Controls in which format the MPS file is written.
-  pub const WRITE_MPS_FORMAT : i32 = 181;
+  pub const WRITE_MPS_FORMAT : i32 = 180;
   /// Controls the output file data.
-  pub const WRITE_MPS_INT : i32 = 182;
+  pub const WRITE_MPS_INT : i32 = 181;
   /// Controls the solution file format.
-  pub const WRITE_SOL_BARVARIABLES : i32 = 183;
+  pub const WRITE_SOL_BARVARIABLES : i32 = 182;
   /// Controls the solution file format.
-  pub const WRITE_SOL_CONSTRAINTS : i32 = 184;
+  pub const WRITE_SOL_CONSTRAINTS : i32 = 183;
   /// Controls solution file format.
-  pub const WRITE_SOL_HEAD : i32 = 185;
+  pub const WRITE_SOL_HEAD : i32 = 184;
   /// Controls whether the user specified names are employed even if they are invalid names.
-  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 186;
+  pub const WRITE_SOL_IGNORE_INVALID_NAMES : i32 = 185;
   /// Controls the solution file format.
-  pub const WRITE_SOL_VARIABLES : i32 = 187;
+  pub const WRITE_SOL_VARIABLES : i32 = 186;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ANA_SOL_BASIS"),
+      1 => Some("ANA_SOL_PRINT_VIOLATED"),
+      2 => Some("AUTO_SORT_A_BEFORE_OPT"),
+      3 => Some("AUTO_UPDATE_SOL_INFO"),
+      4 => Some("BASIS_SOLVE_USE_PLUS_ONE"),
+      5 => Some("BI_IGNORE_MAX_ITER"),
+      6 => Some("BI_IGNORE_NUM_ERROR"),
+      7 => Some("BI_MAX_ITERATIONS"),
+      8 => Some("CACHE_LICENSE"),
+      9 => Some("COMPRESS_STATFILE"),
+      10 => Some("CONCURRENT_DETERMINISTIC"),
+      11 => Some("FIXING_METHOD"),
+      12 => Some("FIXING_REQUIRE_FEAS"),
+      13 => Some("FOLDING_USE"),
+      14 => Some("GETDUAL_CONVERT_LMIS"),
+      15 => Some("INFEAS_GENERIC_NAMES"),
+      16 => Some("INFEAS_REPORT_AUTO"),
+      17 => Some("INFEAS_REPORT_LEVEL"),
+      18 => Some("INTPNT_BASIS"),
+      19 => Some("INTPNT_HOTSTART"),
+      20 => Some("INTPNT_MAX_ITERATIONS"),
+      21 => Some("INTPNT_MAX_NUM_COR"),
+      22 => Some("INTPNT_NOT_IN_USE"),
+      23 => Some("INTPNT_OFF_COL_TRH"),
+      24 => Some("INTPNT_ORDER_GP_NUM_SEEDS"),
+      25 => Some("INTPNT_ORDER_METHOD"),
+      26 => Some("INTPNT_REGULARIZATION_USE"),
+      27 => Some("INTPNT_SCALING"),
+      28 => Some("INTPNT_STARTING_POINT"),
+      29 => Some("LICENSE_DEBUG"),
+      30 => Some("LICENSE_PAUSE_TIME"),
+      31 => Some("LICENSE_SUPPRESS_EXPIRE_WRNS"),
+      32 => Some("LICENSE_TRH_EXPIRY_WRN"),
+      33 => Some("LICENSE_WAIT"),
+      34 => Some("LOG"),
+      35 => Some("LOG_ANA_PRO"),
+      36 => Some("LOG_BI"),
+      37 => Some("LOG_BI_FREQ"),
+      38 => Some("LOG_CONCURRENT"),
+      39 => Some("LOG_CUT_SECOND_OPT"),
+      40 => Some("LOG_EXPAND"),
+      41 => Some("LOG_FEAS_REPAIR"),
+      42 => Some("LOG_FILE"),
+      43 => Some("LOG_INCLUDE_SUMMARY"),
+      44 => Some("LOG_INFEAS_ANA"),
+      45 => Some("LOG_INTPNT"),
+      46 => Some("LOG_LOCAL_INFO"),
+      47 => Some("LOG_MIO"),
+      48 => Some("LOG_MIO_FREQ"),
+      49 => Some("LOG_ORDER"),
+      50 => Some("LOG_PRESOLVE"),
+      51 => Some("LOG_SENSITIVITY"),
+      52 => Some("LOG_SENSITIVITY_OPT"),
+      53 => Some("LOG_SIM"),
+      54 => Some("LOG_SIM_FREQ"),
+      55 => Some("MAX_NUM_WARNINGS"),
+      56 => Some("MIO_BRANCH_DIR"),
+      57 => Some("MIO_CONFLICT_ANALYSIS_LEVEL"),
+      58 => Some("MIO_CONIC_OUTER_APPROXIMATION"),
+      59 => Some("MIO_CONSTRUCT_SOL"),
+      60 => Some("MIO_CROSSOVER_MAX_NODES"),
+      61 => Some("MIO_CUT_CLIQUE"),
+      62 => Some("MIO_CUT_CMIR"),
+      63 => Some("MIO_CUT_GMI"),
+      64 => Some("MIO_CUT_IMPLIED_BOUND"),
+      65 => Some("MIO_CUT_KNAPSACK_COVER"),
+      66 => Some("MIO_CUT_LIPRO"),
+      67 => Some("MIO_CUT_SELECTION_LEVEL"),
+      68 => Some("MIO_DATA_PERMUTATION_METHOD"),
+      69 => Some("MIO_DUAL_RAY_ANALYSIS_LEVEL"),
+      70 => Some("MIO_FEASPUMP_LEVEL"),
+      71 => Some("MIO_HEURISTIC_LEVEL"),
+      72 => Some("MIO_INDEPENDENT_BLOCK_LEVEL"),
+      73 => Some("MIO_MAX_NUM_BRANCHES"),
+      74 => Some("MIO_MAX_NUM_RELAXS"),
+      75 => Some("MIO_MAX_NUM_RESTARTS"),
+      76 => Some("MIO_MAX_NUM_ROOT_CUT_ROUNDS"),
+      77 => Some("MIO_MAX_NUM_SOLUTIONS"),
+      78 => Some("MIO_MEMORY_EMPHASIS_LEVEL"),
+      79 => Some("MIO_MIN_REL"),
+      80 => Some("MIO_MODE"),
+      81 => Some("MIO_NODE_OPTIMIZER"),
+      82 => Some("MIO_NODE_SELECTION"),
+      83 => Some("MIO_NUMERICAL_EMPHASIS_LEVEL"),
+      84 => Some("MIO_OPT_FACE_MAX_NODES"),
+      85 => Some("MIO_PERSPECTIVE_REFORMULATE"),
+      86 => Some("MIO_PRESOLVE_AGGREGATOR_USE"),
+      87 => Some("MIO_PROBING_LEVEL"),
+      88 => Some("MIO_PROPAGATE_OBJECTIVE_CONSTRAINT"),
+      89 => Some("MIO_QCQO_REFORMULATION_METHOD"),
+      90 => Some("MIO_RENS_MAX_NODES"),
+      91 => Some("MIO_RINS_MAX_NODES"),
+      92 => Some("MIO_ROOT_OPTIMIZER"),
+      93 => Some("MIO_SEED"),
+      94 => Some("MIO_SYMMETRY_LEVEL"),
+      95 => Some("MIO_VAR_SELECTION"),
+      96 => Some("MIO_VB_DETECTION_LEVEL"),
+      97 => Some("MT_SPINCOUNT"),
+      98 => Some("NG"),
+      99 => Some("NUM_THREADS"),
+      100 => Some("OPF_WRITE_HEADER"),
+      101 => Some("OPF_WRITE_HINTS"),
+      102 => Some("OPF_WRITE_LINE_LENGTH"),
+      103 => Some("OPF_WRITE_PARAMETERS"),
+      104 => Some("OPF_WRITE_PROBLEM"),
+      105 => Some("OPF_WRITE_SOL_BAS"),
+      106 => Some("OPF_WRITE_SOL_ITG"),
+      107 => Some("OPF_WRITE_SOL_ITR"),
+      108 => Some("OPF_WRITE_SOLUTIONS"),
+      109 => Some("OPTIMIZER"),
+      110 => Some("PARAM_READ_CASE_NAME"),
+      111 => Some("PARAM_READ_IGN_ERROR"),
+      112 => Some("PRESOLVE_ELIMINATOR_MAX_FILL"),
+      113 => Some("PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"),
+      114 => Some("PRESOLVE_LINDEP_ABS_WORK_TRH"),
+      115 => Some("PRESOLVE_LINDEP_NEW"),
+      116 => Some("PRESOLVE_LINDEP_REL_WORK_TRH"),
+      117 => Some("PRESOLVE_LINDEP_USE"),
+      118 => Some("PRESOLVE_MAX_NUM_PASS"),
+      119 => Some("PRESOLVE_MAX_NUM_REDUCTIONS"),
+      120 => Some("PRESOLVE_USE"),
+      121 => Some("PRIMAL_REPAIR_OPTIMIZER"),
+      122 => Some("PTF_WRITE_PARAMETERS"),
+      123 => Some("PTF_WRITE_SINGLE_PSD_TERMS"),
+      124 => Some("PTF_WRITE_SOLUTIONS"),
+      125 => Some("READ_ASYNC"),
+      126 => Some("READ_DEBUG"),
+      127 => Some("READ_KEEP_FREE_CON"),
+      128 => Some("READ_MPS_FORMAT"),
+      129 => Some("READ_MPS_WIDTH"),
+      130 => Some("READ_TASK_IGNORE_PARAM"),
+      131 => Some("REMOTE_USE_COMPRESSION"),
+      132 => Some("REMOVE_UNUSED_SOLUTIONS"),
+      133 => Some("REQUEST_INTPNT"),
+      134 => Some("SENSITIVITY_ALL"),
+      135 => Some("SENSITIVITY_TYPE"),
+      136 => Some("SIM_BASIS_FACTOR_USE"),
+      137 => Some("SIM_CACHE"),
+      138 => Some("SIM_DEGEN"),
+      139 => Some("SIM_DETECT_PWL"),
+      140 => Some("SIM_DUAL_CRASH"),
+      141 => Some("SIM_DUAL_PHASEONE_METHOD"),
+      142 => Some("SIM_DUAL_RESTRICT_SELECTION"),
+      143 => Some("SIM_DUAL_SELECTION"),
+      144 => Some("SIM_HOTSTART"),
+      145 => Some("SIM_HOTSTART_LU"),
+      146 => Some("SIM_MAX_ITERATIONS"),
+      147 => Some("SIM_MAX_NUM_SETBACKS"),
+      148 => Some("SIM_PRECISION"),
+      149 => Some("SIM_PRECISION_BOOST"),
+      150 => Some("SIM_PRIMAL_CRASH"),
+      151 => Some("SIM_PRIMAL_PHASEONE_METHOD"),
+      152 => Some("SIM_PRIMAL_RESTRICT_SELECTION"),
+      153 => Some("SIM_PRIMAL_SELECTION"),
+      154 => Some("SIM_REFACTOR_FREQ"),
+      155 => Some("SIM_SCALING"),
+      156 => Some("SIM_SCALING_METHOD"),
+      157 => Some("SIM_SEED"),
+      158 => Some("SIM_SOLUTION_REFINEMENT"),
+      159 => Some("SIM_SWITCH_OPTIMIZER"),
+      160 => Some("SOL_FILTER_KEEP_BASIC"),
+      161 => Some("SOL_READ_NAME_WIDTH"),
+      162 => Some("SOL_READ_WIDTH"),
+      163 => Some("SOLVE_FORM"),
+      164 => Some("TIMING_LEVEL"),
+      165 => Some("WRITE_ASYNC"),
+      166 => Some("WRITE_BAS_CONSTRAINTS"),
+      167 => Some("WRITE_BAS_HEAD"),
+      168 => Some("WRITE_BAS_VARIABLES"),
+      169 => Some("WRITE_COMPRESSION"),
+      170 => Some("WRITE_FREE_CON"),
+      171 => Some("WRITE_GENERIC_NAMES"),
+      172 => Some("WRITE_IGNORE_INCOMPATIBLE_ITEMS"),
+      173 => Some("WRITE_INT_CONSTRAINTS"),
+      174 => Some("WRITE_INT_HEAD"),
+      175 => Some("WRITE_INT_VARIABLES"),
+      176 => Some("WRITE_JSON_INDENTATION"),
+      177 => Some("WRITE_LP_FULL_OBJ"),
+      178 => Some("WRITE_LP_IGNORE_FREE_CONSTRAINTS"),
+      179 => Some("WRITE_LP_LINE_WIDTH"),
+      180 => Some("WRITE_MPS_FORMAT"),
+      181 => Some("WRITE_MPS_INT"),
+      182 => Some("WRITE_SOL_BARVARIABLES"),
+      183 => Some("WRITE_SOL_CONSTRAINTS"),
+      184 => Some("WRITE_SOL_HEAD"),
+      185 => Some("WRITE_SOL_IGNORE_INVALID_NAMES"),
+      186 => Some("WRITE_SOL_VARIABLES"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ANA_SOL_BASIS" => Some(0),
+      "ANA_SOL_PRINT_VIOLATED" => Some(1),
+      "AUTO_SORT_A_BEFORE_OPT" => Some(2),
+      "AUTO_UPDATE_SOL_INFO" => Some(3),
+      "BASIS_SOLVE_USE_PLUS_ONE" => Some(4),
+      "BI_IGNORE_MAX_ITER" => Some(5),
+      "BI_IGNORE_NUM_ERROR" => Some(6),
+      "BI_MAX_ITERATIONS" => Some(7),
+      "CACHE_LICENSE" => Some(8),
+      "COMPRESS_STATFILE" => Some(9),
+      "CONCURRENT_DETERMINISTIC" => Some(10),
+      "FIXING_METHOD" => Some(11),
+      "FIXING_REQUIRE_FEAS" => Some(12),
+      "FOLDING_USE" => Some(13),
+      "GETDUAL_CONVERT_LMIS" => Some(14),
+      "INFEAS_GENERIC_NAMES" => Some(15),
+      "INFEAS_REPORT_AUTO" => Some(16),
+      "INFEAS_REPORT_LEVEL" => Some(17),
+      "INTPNT_BASIS" => Some(18),
+      "INTPNT_HOTSTART" => Some(19),
+      "INTPNT_MAX_ITERATIONS" => Some(20),
+      "INTPNT_MAX_NUM_COR" => Some(21),
+      "INTPNT_NOT_IN_USE" => Some(22),
+      "INTPNT_OFF_COL_TRH" => Some(23),
+      "INTPNT_ORDER_GP_NUM_SEEDS" => Some(24),
+      "INTPNT_ORDER_METHOD" => Some(25),
+      "INTPNT_REGULARIZATION_USE" => Some(26),
+      "INTPNT_SCALING" => Some(27),
+      "INTPNT_STARTING_POINT" => Some(28),
+      "LICENSE_DEBUG" => Some(29),
+      "LICENSE_PAUSE_TIME" => Some(30),
+      "LICENSE_SUPPRESS_EXPIRE_WRNS" => Some(31),
+      "LICENSE_TRH_EXPIRY_WRN" => Some(32),
+      "LICENSE_WAIT" => Some(33),
+      "LOG" => Some(34),
+      "LOG_ANA_PRO" => Some(35),
+      "LOG_BI" => Some(36),
+      "LOG_BI_FREQ" => Some(37),
+      "LOG_CONCURRENT" => Some(38),
+      "LOG_CUT_SECOND_OPT" => Some(39),
+      "LOG_EXPAND" => Some(40),
+      "LOG_FEAS_REPAIR" => Some(41),
+      "LOG_FILE" => Some(42),
+      "LOG_INCLUDE_SUMMARY" => Some(43),
+      "LOG_INFEAS_ANA" => Some(44),
+      "LOG_INTPNT" => Some(45),
+      "LOG_LOCAL_INFO" => Some(46),
+      "LOG_MIO" => Some(47),
+      "LOG_MIO_FREQ" => Some(48),
+      "LOG_ORDER" => Some(49),
+      "LOG_PRESOLVE" => Some(50),
+      "LOG_SENSITIVITY" => Some(51),
+      "LOG_SENSITIVITY_OPT" => Some(52),
+      "LOG_SIM" => Some(53),
+      "LOG_SIM_FREQ" => Some(54),
+      "MAX_NUM_WARNINGS" => Some(55),
+      "MIO_BRANCH_DIR" => Some(56),
+      "MIO_CONFLICT_ANALYSIS_LEVEL" => Some(57),
+      "MIO_CONIC_OUTER_APPROXIMATION" => Some(58),
+      "MIO_CONSTRUCT_SOL" => Some(59),
+      "MIO_CROSSOVER_MAX_NODES" => Some(60),
+      "MIO_CUT_CLIQUE" => Some(61),
+      "MIO_CUT_CMIR" => Some(62),
+      "MIO_CUT_GMI" => Some(63),
+      "MIO_CUT_IMPLIED_BOUND" => Some(64),
+      "MIO_CUT_KNAPSACK_COVER" => Some(65),
+      "MIO_CUT_LIPRO" => Some(66),
+      "MIO_CUT_SELECTION_LEVEL" => Some(67),
+      "MIO_DATA_PERMUTATION_METHOD" => Some(68),
+      "MIO_DUAL_RAY_ANALYSIS_LEVEL" => Some(69),
+      "MIO_FEASPUMP_LEVEL" => Some(70),
+      "MIO_HEURISTIC_LEVEL" => Some(71),
+      "MIO_INDEPENDENT_BLOCK_LEVEL" => Some(72),
+      "MIO_MAX_NUM_BRANCHES" => Some(73),
+      "MIO_MAX_NUM_RELAXS" => Some(74),
+      "MIO_MAX_NUM_RESTARTS" => Some(75),
+      "MIO_MAX_NUM_ROOT_CUT_ROUNDS" => Some(76),
+      "MIO_MAX_NUM_SOLUTIONS" => Some(77),
+      "MIO_MEMORY_EMPHASIS_LEVEL" => Some(78),
+      "MIO_MIN_REL" => Some(79),
+      "MIO_MODE" => Some(80),
+      "MIO_NODE_OPTIMIZER" => Some(81),
+      "MIO_NODE_SELECTION" => Some(82),
+      "MIO_NUMERICAL_EMPHASIS_LEVEL" => Some(83),
+      "MIO_OPT_FACE_MAX_NODES" => Some(84),
+      "MIO_PERSPECTIVE_REFORMULATE" => Some(85),
+      "MIO_PRESOLVE_AGGREGATOR_USE" => Some(86),
+      "MIO_PROBING_LEVEL" => Some(87),
+      "MIO_PROPAGATE_OBJECTIVE_CONSTRAINT" => Some(88),
+      "MIO_QCQO_REFORMULATION_METHOD" => Some(89),
+      "MIO_RENS_MAX_NODES" => Some(90),
+      "MIO_RINS_MAX_NODES" => Some(91),
+      "MIO_ROOT_OPTIMIZER" => Some(92),
+      "MIO_SEED" => Some(93),
+      "MIO_SYMMETRY_LEVEL" => Some(94),
+      "MIO_VAR_SELECTION" => Some(95),
+      "MIO_VB_DETECTION_LEVEL" => Some(96),
+      "MT_SPINCOUNT" => Some(97),
+      "NG" => Some(98),
+      "NUM_THREADS" => Some(99),
+      "OPF_WRITE_HEADER" => Some(100),
+      "OPF_WRITE_HINTS" => Some(101),
+      "OPF_WRITE_LINE_LENGTH" => Some(102),
+      "OPF_WRITE_PARAMETERS" => Some(103),
+      "OPF_WRITE_PROBLEM" => Some(104),
+      "OPF_WRITE_SOL_BAS" => Some(105),
+      "OPF_WRITE_SOL_ITG" => Some(106),
+      "OPF_WRITE_SOL_ITR" => Some(107),
+      "OPF_WRITE_SOLUTIONS" => Some(108),
+      "OPTIMIZER" => Some(109),
+      "PARAM_READ_CASE_NAME" => Some(110),
+      "PARAM_READ_IGN_ERROR" => Some(111),
+      "PRESOLVE_ELIMINATOR_MAX_FILL" => Some(112),
+      "PRESOLVE_ELIMINATOR_MAX_NUM_TRIES" => Some(113),
+      "PRESOLVE_LINDEP_ABS_WORK_TRH" => Some(114),
+      "PRESOLVE_LINDEP_NEW" => Some(115),
+      "PRESOLVE_LINDEP_REL_WORK_TRH" => Some(116),
+      "PRESOLVE_LINDEP_USE" => Some(117),
+      "PRESOLVE_MAX_NUM_PASS" => Some(118),
+      "PRESOLVE_MAX_NUM_REDUCTIONS" => Some(119),
+      "PRESOLVE_USE" => Some(120),
+      "PRIMAL_REPAIR_OPTIMIZER" => Some(121),
+      "PTF_WRITE_PARAMETERS" => Some(122),
+      "PTF_WRITE_SINGLE_PSD_TERMS" => Some(123),
+      "PTF_WRITE_SOLUTIONS" => Some(124),
+      "READ_ASYNC" => Some(125),
+      "READ_DEBUG" => Some(126),
+      "READ_KEEP_FREE_CON" => Some(127),
+      "READ_MPS_FORMAT" => Some(128),
+      "READ_MPS_WIDTH" => Some(129),
+      "READ_TASK_IGNORE_PARAM" => Some(130),
+      "REMOTE_USE_COMPRESSION" => Some(131),
+      "REMOVE_UNUSED_SOLUTIONS" => Some(132),
+      "REQUEST_INTPNT" => Some(133),
+      "SENSITIVITY_ALL" => Some(134),
+      "SENSITIVITY_TYPE" => Some(135),
+      "SIM_BASIS_FACTOR_USE" => Some(136),
+      "SIM_CACHE" => Some(137),
+      "SIM_DEGEN" => Some(138),
+      "SIM_DETECT_PWL" => Some(139),
+      "SIM_DUAL_CRASH" => Some(140),
+      "SIM_DUAL_PHASEONE_METHOD" => Some(141),
+      "SIM_DUAL_RESTRICT_SELECTION" => Some(142),
+      "SIM_DUAL_SELECTION" => Some(143),
+      "SIM_HOTSTART" => Some(144),
+      "SIM_HOTSTART_LU" => Some(145),
+      "SIM_MAX_ITERATIONS" => Some(146),
+      "SIM_MAX_NUM_SETBACKS" => Some(147),
+      "SIM_PRECISION" => Some(148),
+      "SIM_PRECISION_BOOST" => Some(149),
+      "SIM_PRIMAL_CRASH" => Some(150),
+      "SIM_PRIMAL_PHASEONE_METHOD" => Some(151),
+      "SIM_PRIMAL_RESTRICT_SELECTION" => Some(152),
+      "SIM_PRIMAL_SELECTION" => Some(153),
+      "SIM_REFACTOR_FREQ" => Some(154),
+      "SIM_SCALING" => Some(155),
+      "SIM_SCALING_METHOD" => Some(156),
+      "SIM_SEED" => Some(157),
+      "SIM_SOLUTION_REFINEMENT" => Some(158),
+      "SIM_SWITCH_OPTIMIZER" => Some(159),
+      "SOL_FILTER_KEEP_BASIC" => Some(160),
+      "SOL_READ_NAME_WIDTH" => Some(161),
+      "SOL_READ_WIDTH" => Some(162),
+      "SOLVE_FORM" => Some(163),
+      "TIMING_LEVEL" => Some(164),
+      "WRITE_ASYNC" => Some(165),
+      "WRITE_BAS_CONSTRAINTS" => Some(166),
+      "WRITE_BAS_HEAD" => Some(167),
+      "WRITE_BAS_VARIABLES" => Some(168),
+      "WRITE_COMPRESSION" => Some(169),
+      "WRITE_FREE_CON" => Some(170),
+      "WRITE_GENERIC_NAMES" => Some(171),
+      "WRITE_IGNORE_INCOMPATIBLE_ITEMS" => Some(172),
+      "WRITE_INT_CONSTRAINTS" => Some(173),
+      "WRITE_INT_HEAD" => Some(174),
+      "WRITE_INT_VARIABLES" => Some(175),
+      "WRITE_JSON_INDENTATION" => Some(176),
+      "WRITE_LP_FULL_OBJ" => Some(177),
+      "WRITE_LP_IGNORE_FREE_CONSTRAINTS" => Some(178),
+      "WRITE_LP_LINE_WIDTH" => Some(179),
+      "WRITE_MPS_FORMAT" => Some(180),
+      "WRITE_MPS_INT" => Some(181),
+      "WRITE_SOL_BARVARIABLES" => Some(182),
+      "WRITE_SOL_CONSTRAINTS" => Some(183),
+      "WRITE_SOL_HEAD" => Some(184),
+      "WRITE_SOL_IGNORE_INVALID_NAMES" => Some(185),
+      "WRITE_SOL_VARIABLES" => Some(186),
+      _ => None
+    }
+  }
 } // impl Iparam
 
 /// Specifies the branching direction.
@@ -2881,6 +4745,32 @@ impl Branchdir {
   pub const GUIDED : i32 = 6;
   /// Branch based on the pseudocost of the variable.
   pub const PSEUDOCOST : i32 = 7;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("UP"),
+      2 => Some("DOWN"),
+      3 => Some("NEAR"),
+      4 => Some("FAR"),
+      5 => Some("ROOT_LP"),
+      6 => Some("GUIDED"),
+      7 => Some("PSEUDOCOST"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "UP" => Some(1),
+      "DOWN" => Some(2),
+      "NEAR" => Some(3),
+      "FAR" => Some(4),
+      "ROOT_LP" => Some(5),
+      "GUIDED" => Some(6),
+      "PSEUDOCOST" => Some(7),
+      _ => None
+    }
+  }
 } // impl Branchdir
 
 /// Specifies the reformulation method for mixed-integer quadratic problems.
@@ -2899,6 +4789,28 @@ impl Miqcqoreformmethod {
   pub const DIAG_SDP : i32 = 4;
   /// A Reformulation based on the solution of an SDP-relaxation of the problem is applied.
   pub const RELAX_SDP : i32 = 5;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("NONE"),
+      2 => Some("LINEARIZATION"),
+      3 => Some("EIGEN_VAL_METHOD"),
+      4 => Some("DIAG_SDP"),
+      5 => Some("RELAX_SDP"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "NONE" => Some(1),
+      "LINEARIZATION" => Some(2),
+      "EIGEN_VAL_METHOD" => Some(3),
+      "DIAG_SDP" => Some(4),
+      "RELAX_SDP" => Some(5),
+      _ => None
+    }
+  }
 } // impl Miqcqoreformmethod
 
 /// Specifies the problem data permutation method for mixed-integer problems.
@@ -2911,6 +4823,22 @@ impl Miodatapermmethod {
   pub const CYCLIC_SHIFT : i32 = 1;
   /// A random permutation is applied to the problem data.
   pub const RANDOM : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("CYCLIC_SHIFT"),
+      2 => Some("RANDOM"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "CYCLIC_SHIFT" => Some(1),
+      "RANDOM" => Some(2),
+      _ => None
+    }
+  }
 } // impl Miodatapermmethod
 
 /// Continuous mixed-integer solution type
@@ -2925,6 +4853,24 @@ impl Miocontsoltype {
   pub const ITG : i32 = 2;
   /// A feasible primal solution or a root node solution if the problem is infeasible.
   pub const ITG_REL : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("NONE"),
+      1 => Some("ROOT"),
+      2 => Some("ITG"),
+      3 => Some("ITG_REL"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "NONE" => Some(0),
+      "ROOT" => Some(1),
+      "ITG" => Some(2),
+      "ITG_REL" => Some(3),
+      _ => None
+    }
+  }
 } // impl Miocontsoltype
 
 /// Integer restrictions
@@ -2935,6 +4881,20 @@ impl Miomode {
   pub const IGNORED : i32 = 0;
   /// Integer restrictions should be satisfied.
   pub const SATISFIED : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("IGNORED"),
+      1 => Some("SATISFIED"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "IGNORED" => Some(0),
+      "SATISFIED" => Some(1),
+      _ => None
+    }
+  }
 } // impl Miomode
 
 /// Mixed-integer node selection types
@@ -2949,6 +4909,24 @@ impl Mionodeseltype {
   pub const BEST : i32 = 2;
   /// The optimizer employs selects the node based on a pseudo cost estimate.
   pub const PSEUDO : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("FIRST"),
+      2 => Some("BEST"),
+      3 => Some("PSEUDO"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "FIRST" => Some(1),
+      "BEST" => Some(2),
+      "PSEUDO" => Some(3),
+      _ => None
+    }
+  }
 } // impl Mionodeseltype
 
 /// Mixed-integer variable selection types
@@ -2961,6 +4939,22 @@ impl Miovarseltype {
   pub const PSEUDOCOST : i32 = 1;
   /// The optimizer employs strong branching varfiable selection
   pub const STRONG : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("PSEUDOCOST"),
+      2 => Some("STRONG"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "PSEUDOCOST" => Some(1),
+      "STRONG" => Some(2),
+      _ => None
+    }
+  }
 } // impl Miovarseltype
 
 /// MPS file format type
@@ -2975,6 +4969,24 @@ impl Mpsformat {
   pub const FREE : i32 = 2;
   /// The CPLEX compatible version of the MPS format is employed.
   pub const CPLEX : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("STRICT"),
+      1 => Some("RELAXED"),
+      2 => Some("FREE"),
+      3 => Some("CPLEX"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "STRICT" => Some(0),
+      "RELAXED" => Some(1),
+      "FREE" => Some(2),
+      "CPLEX" => Some(3),
+      _ => None
+    }
+  }
 } // impl Mpsformat
 
 /// Objective sense types
@@ -2985,6 +4997,20 @@ impl Objsense {
   pub const MINIMIZE : i32 = 0;
   /// The problem should be maximized.
   pub const MAXIMIZE : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("MINIMIZE"),
+      1 => Some("MAXIMIZE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "MINIMIZE" => Some(0),
+      "MAXIMIZE" => Some(1),
+      _ => None
+    }
+  }
 } // impl Objsense
 
 /// On/off
@@ -2995,6 +5021,20 @@ impl Onoffkey {
   pub const OFF : i32 = 0;
   /// Switch the option on.
   pub const ON : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OFF"),
+      1 => Some("ON"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OFF" => Some(0),
+      "ON" => Some(1),
+      _ => None
+    }
+  }
 } // impl Onoffkey
 
 /// Optimizer types
@@ -3011,7 +5051,7 @@ impl Optimizertype {
   pub const DUAL_SIMPLEX : i32 = 3;
   /// The optimizer is chosen automatically.
   pub const FREE : i32 = 4;
-  /// The primal and dual simplex optimizer ran concurrently or a simplex optimizer chosen automatically.
+  /// If multiple threads are available then the primal and dual simplex optimizer are executed concurrently.
   pub const FREE_SIMPLEX : i32 = 5;
   /// The interior-point optimizer.
   pub const INTPNT : i32 = 6;
@@ -3021,6 +5061,36 @@ impl Optimizertype {
   pub const PRIMAL_DUAL_SIMPLEX : i32 = 8;
   /// The primal simplex optimizer.
   pub const PRIMAL_SIMPLEX : i32 = 9;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("CONCURRENT"),
+      1 => Some("CONIC"),
+      2 => Some("DEPRECATED_INTPNT"),
+      3 => Some("DUAL_SIMPLEX"),
+      4 => Some("FREE"),
+      5 => Some("FREE_SIMPLEX"),
+      6 => Some("INTPNT"),
+      7 => Some("MIXED_INT"),
+      8 => Some("PRIMAL_DUAL_SIMPLEX"),
+      9 => Some("PRIMAL_SIMPLEX"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "CONCURRENT" => Some(0),
+      "CONIC" => Some(1),
+      "DEPRECATED_INTPNT" => Some(2),
+      "DUAL_SIMPLEX" => Some(3),
+      "FREE" => Some(4),
+      "FREE_SIMPLEX" => Some(5),
+      "INTPNT" => Some(6),
+      "MIXED_INT" => Some(7),
+      "PRIMAL_DUAL_SIMPLEX" => Some(8),
+      "PRIMAL_SIMPLEX" => Some(9),
+      _ => None
+    }
+  }
 } // impl Optimizertype
 
 /// Ordering strategies
@@ -3039,6 +5109,28 @@ impl Orderingtype {
   pub const FORCE_GRAPHPAR : i32 = 4;
   /// No ordering is used. Note using this value almost always leads to a significantly slow down.
   pub const NONE : i32 = 5;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("APPMINLOC"),
+      2 => Some("EXPERIMENTAL"),
+      3 => Some("TRY_GRAPHPAR"),
+      4 => Some("FORCE_GRAPHPAR"),
+      5 => Some("NONE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "APPMINLOC" => Some(1),
+      "EXPERIMENTAL" => Some(2),
+      "TRY_GRAPHPAR" => Some(3),
+      "FORCE_GRAPHPAR" => Some(4),
+      "NONE" => Some(5),
+      _ => None
+    }
+  }
 } // impl Orderingtype
 
 /// Presolve method.
@@ -3051,6 +5143,22 @@ impl Presolvemode {
   pub const ON : i32 = 1;
   /// It is decided automatically whether to presolve before the problem is optimized.
   pub const FREE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OFF"),
+      1 => Some("ON"),
+      2 => Some("FREE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OFF" => Some(0),
+      "ON" => Some(1),
+      "FREE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Presolvemode
 
 /// Method of folding (symmetry detection for continuous problems).
@@ -3063,6 +5171,22 @@ impl Foldingmode {
   pub const FREE : i32 = 1;
   /// Full folding is always performed regardless of workload.
   pub const FORCE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OFF"),
+      1 => Some("FREE"),
+      2 => Some("FORCE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OFF" => Some(0),
+      "FREE" => Some(1),
+      "FORCE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Foldingmode
 
 /// Method of constructing the problem with fixed integer variables.
@@ -3077,6 +5201,24 @@ impl Fixingmethod {
   pub const ROUND_AND_PERTURB : i32 = 2;
   /// Only fix the variables to the solution values with neither rounding nor perturbation.
   pub const DIRECT : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("PERTURB"),
+      1 => Some("ROUND"),
+      2 => Some("ROUND_AND_PERTURB"),
+      3 => Some("DIRECT"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "PERTURB" => Some(0),
+      "ROUND" => Some(1),
+      "ROUND_AND_PERTURB" => Some(2),
+      "DIRECT" => Some(3),
+      _ => None
+    }
+  }
 } // impl Fixingmethod
 
 /// Parameter type
@@ -3091,6 +5233,24 @@ impl Parametertype {
   pub const INT_TYPE : i32 = 2;
   /// Is a string parameter.
   pub const STR_TYPE : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("INVALID_TYPE"),
+      1 => Some("DOU_TYPE"),
+      2 => Some("INT_TYPE"),
+      3 => Some("STR_TYPE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "INVALID_TYPE" => Some(0),
+      "DOU_TYPE" => Some(1),
+      "INT_TYPE" => Some(2),
+      "STR_TYPE" => Some(3),
+      _ => None
+    }
+  }
 } // impl Parametertype
 
 /// Problem data items
@@ -3103,6 +5263,22 @@ impl Problemitem {
   pub const CON : i32 = 1;
   /// Item is a cone.
   pub const CONE : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("VAR"),
+      1 => Some("CON"),
+      2 => Some("CONE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "VAR" => Some(0),
+      "CON" => Some(1),
+      "CONE" => Some(2),
+      _ => None
+    }
+  }
 } // impl Problemitem
 
 /// Problem types
@@ -3119,6 +5295,26 @@ impl Problemtype {
   pub const CONIC : i32 = 3;
   /// General nonlinear constraints and conic constraints. This combination can not be solved by MOSEK.
   pub const MIXED : i32 = 4;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("LO"),
+      1 => Some("QO"),
+      2 => Some("QCQO"),
+      3 => Some("CONIC"),
+      4 => Some("MIXED"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LO" => Some(0),
+      "QO" => Some(1),
+      "QCQO" => Some(2),
+      "CONIC" => Some(3),
+      "MIXED" => Some(4),
+      _ => None
+    }
+  }
 } // impl Problemtype
 
 /// Problem status keys
@@ -3143,6 +5339,34 @@ impl Prosta {
   pub const ILL_POSED : i32 = 7;
   /// The problem is either primal infeasible or unbounded. This may occur for mixed-integer problems.
   pub const PRIM_INFEAS_OR_UNBOUNDED : i32 = 8;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("UNKNOWN"),
+      1 => Some("PRIM_AND_DUAL_FEAS"),
+      2 => Some("PRIM_FEAS"),
+      3 => Some("DUAL_FEAS"),
+      4 => Some("PRIM_INFEAS"),
+      5 => Some("DUAL_INFEAS"),
+      6 => Some("PRIM_AND_DUAL_INFEAS"),
+      7 => Some("ILL_POSED"),
+      8 => Some("PRIM_INFEAS_OR_UNBOUNDED"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "UNKNOWN" => Some(0),
+      "PRIM_AND_DUAL_FEAS" => Some(1),
+      "PRIM_FEAS" => Some(2),
+      "DUAL_FEAS" => Some(3),
+      "PRIM_INFEAS" => Some(4),
+      "DUAL_INFEAS" => Some(5),
+      "PRIM_AND_DUAL_INFEAS" => Some(6),
+      "ILL_POSED" => Some(7),
+      "PRIM_INFEAS_OR_UNBOUNDED" => Some(8),
+      _ => None
+    }
+  }
 } // impl Prosta
 
 /// Response codes
@@ -4281,6 +6505,1148 @@ impl Rescode {
   pub const TRM_SERVER_MAX_TIME : i32 = 100032;
   /// remote server terminated mosek on memory limit criteria.
   pub const TRM_SERVER_MAX_MEMORY : i32 = 100033;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OK"),
+      40 => Some("WRN_SIM_PRECISION_BOOSTING_IS_UNVAILABLE"),
+      50 => Some("WRN_OPEN_PARAM_FILE"),
+      51 => Some("WRN_LARGE_BOUND"),
+      52 => Some("WRN_LARGE_LO_BOUND"),
+      53 => Some("WRN_LARGE_UP_BOUND"),
+      54 => Some("WRN_LARGE_CON_FX"),
+      57 => Some("WRN_LARGE_CJ"),
+      62 => Some("WRN_LARGE_AIJ"),
+      63 => Some("WRN_ZERO_AIJ"),
+      65 => Some("WRN_NAME_MAX_LEN"),
+      66 => Some("WRN_SPAR_MAX_LEN"),
+      70 => Some("WRN_MPS_SPLIT_RHS_VECTOR"),
+      71 => Some("WRN_MPS_SPLIT_RAN_VECTOR"),
+      72 => Some("WRN_MPS_SPLIT_BOU_VECTOR"),
+      80 => Some("WRN_LP_OLD_QUAD_FORMAT"),
+      85 => Some("WRN_LP_DROP_VARIABLE"),
+      200 => Some("WRN_NZ_IN_UPR_TRI"),
+      201 => Some("WRN_DROPPED_NZ_QOBJ"),
+      250 => Some("WRN_IGNORE_INTEGER"),
+      270 => Some("WRN_MIO_INFEASIBLE_FINAL"),
+      300 => Some("WRN_SOL_FILTER"),
+      350 => Some("WRN_UNDEF_SOL_FILE_NAME"),
+      351 => Some("WRN_SOL_FILE_IGNORED_CON"),
+      352 => Some("WRN_SOL_FILE_IGNORED_VAR"),
+      400 => Some("WRN_TOO_FEW_BASIS_VARS"),
+      405 => Some("WRN_TOO_MANY_BASIS_VARS"),
+      500 => Some("WRN_LICENSE_EXPIRE"),
+      501 => Some("WRN_LICENSE_SERVER"),
+      502 => Some("WRN_EMPTY_NAME"),
+      503 => Some("WRN_USING_GENERIC_NAMES"),
+      504 => Some("WRN_INVALID_MPS_NAME"),
+      505 => Some("WRN_INVALID_MPS_OBJ_NAME"),
+      509 => Some("WRN_LICENSE_FEATURE_EXPIRE"),
+      510 => Some("WRN_PARAM_NAME_DOU"),
+      511 => Some("WRN_PARAM_NAME_INT"),
+      512 => Some("WRN_PARAM_NAME_STR"),
+      515 => Some("WRN_PARAM_STR_VALUE"),
+      516 => Some("WRN_PARAM_IGNORED_CMIO"),
+      705 => Some("WRN_ZEROS_IN_SPARSE_ROW"),
+      710 => Some("WRN_ZEROS_IN_SPARSE_COL"),
+      800 => Some("WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"),
+      801 => Some("WRN_ELIMINATOR_SPACE"),
+      802 => Some("WRN_PRESOLVE_OUTOFSPACE"),
+      803 => Some("WRN_PRESOLVE_PRIMAL_PERTURBATIONS"),
+      830 => Some("WRN_WRITE_CHANGED_NAMES"),
+      831 => Some("WRN_WRITE_DISCARDED_CFIX"),
+      850 => Some("WRN_DUPLICATE_CONSTRAINT_NAMES"),
+      851 => Some("WRN_DUPLICATE_VARIABLE_NAMES"),
+      852 => Some("WRN_DUPLICATE_BARVARIABLE_NAMES"),
+      853 => Some("WRN_DUPLICATE_CONE_NAMES"),
+      900 => Some("WRN_ANA_LARGE_BOUNDS"),
+      901 => Some("WRN_ANA_C_ZERO"),
+      902 => Some("WRN_ANA_EMPTY_COLS"),
+      903 => Some("WRN_ANA_CLOSE_BOUNDS"),
+      904 => Some("WRN_ANA_ALMOST_INT_BOUNDS"),
+      930 => Some("WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES"),
+      940 => Some("WRN_GETDUAL_IGNORES_INTEGRALITY"),
+      950 => Some("WRN_NO_DUALIZER"),
+      960 => Some("WRN_SYM_MAT_LARGE"),
+      970 => Some("WRN_MODIFIED_DOUBLE_PARAMETER"),
+      980 => Some("WRN_LARGE_FIJ"),
+      981 => Some("WRN_PTF_UNKNOWN_SECTION"),
+      1000 => Some("ERR_LICENSE"),
+      1001 => Some("ERR_LICENSE_EXPIRED"),
+      1002 => Some("ERR_LICENSE_VERSION"),
+      1003 => Some("ERR_LICENSE_OLD_SERVER_VERSION"),
+      1005 => Some("ERR_SIZE_LICENSE"),
+      1006 => Some("ERR_PROB_LICENSE"),
+      1007 => Some("ERR_FILE_LICENSE"),
+      1008 => Some("ERR_MISSING_LICENSE_FILE"),
+      1010 => Some("ERR_SIZE_LICENSE_CON"),
+      1011 => Some("ERR_SIZE_LICENSE_VAR"),
+      1012 => Some("ERR_SIZE_LICENSE_INTVAR"),
+      1013 => Some("ERR_OPTIMIZER_LICENSE"),
+      1014 => Some("ERR_FLEXLM"),
+      1015 => Some("ERR_LICENSE_SERVER"),
+      1016 => Some("ERR_LICENSE_MAX"),
+      1017 => Some("ERR_LICENSE_MOSEKLM_DAEMON"),
+      1018 => Some("ERR_LICENSE_FEATURE"),
+      1019 => Some("ERR_PLATFORM_NOT_LICENSED"),
+      1020 => Some("ERR_LICENSE_CANNOT_ALLOCATE"),
+      1021 => Some("ERR_LICENSE_CANNOT_CONNECT"),
+      1025 => Some("ERR_LICENSE_INVALID_HOSTID"),
+      1026 => Some("ERR_LICENSE_SERVER_VERSION"),
+      1027 => Some("ERR_LICENSE_NO_SERVER_SUPPORT"),
+      1028 => Some("ERR_LICENSE_NO_SERVER_LINE"),
+      1035 => Some("ERR_OLDER_DLL"),
+      1036 => Some("ERR_NEWER_DLL"),
+      1040 => Some("ERR_LINK_FILE_DLL"),
+      1045 => Some("ERR_THREAD_MUTEX_INIT"),
+      1046 => Some("ERR_THREAD_MUTEX_LOCK"),
+      1047 => Some("ERR_THREAD_MUTEX_UNLOCK"),
+      1048 => Some("ERR_THREAD_CREATE"),
+      1049 => Some("ERR_THREAD_COND_INIT"),
+      1050 => Some("ERR_UNKNOWN"),
+      1051 => Some("ERR_SPACE"),
+      1052 => Some("ERR_FILE_OPEN"),
+      1053 => Some("ERR_FILE_READ"),
+      1054 => Some("ERR_FILE_WRITE"),
+      1055 => Some("ERR_DATA_FILE_EXT"),
+      1056 => Some("ERR_INVALID_FILE_NAME"),
+      1057 => Some("ERR_INVALID_SOL_FILE_NAME"),
+      1059 => Some("ERR_END_OF_FILE"),
+      1060 => Some("ERR_NULL_ENV"),
+      1061 => Some("ERR_NULL_TASK"),
+      1062 => Some("ERR_INVALID_STREAM"),
+      1063 => Some("ERR_NO_INIT_ENV"),
+      1064 => Some("ERR_INVALID_TASK"),
+      1065 => Some("ERR_NULL_POINTER"),
+      1066 => Some("ERR_LIVING_TASKS"),
+      1067 => Some("ERR_READ_GZIP"),
+      1068 => Some("ERR_READ_ZSTD"),
+      1069 => Some("ERR_READ_ASYNC"),
+      1070 => Some("ERR_BLANK_NAME"),
+      1071 => Some("ERR_DUP_NAME"),
+      1072 => Some("ERR_FORMAT_STRING"),
+      1073 => Some("ERR_SPARSITY_SPECIFICATION"),
+      1074 => Some("ERR_MISMATCHING_DIMENSION"),
+      1075 => Some("ERR_INVALID_OBJ_NAME"),
+      1076 => Some("ERR_INVALID_CON_NAME"),
+      1077 => Some("ERR_INVALID_VAR_NAME"),
+      1078 => Some("ERR_INVALID_CONE_NAME"),
+      1079 => Some("ERR_INVALID_BARVAR_NAME"),
+      1080 => Some("ERR_SPACE_LEAKING"),
+      1081 => Some("ERR_SPACE_NO_INFO"),
+      1082 => Some("ERR_DIMENSION_SPECIFICATION"),
+      1083 => Some("ERR_AXIS_NAME_SPECIFICATION"),
+      1089 => Some("ERR_READ_PREMATURE_EOF"),
+      1090 => Some("ERR_READ_FORMAT"),
+      1091 => Some("ERR_WRITE_LP_INVALID_VAR_NAMES"),
+      1092 => Some("ERR_WRITE_LP_DUPLICATE_VAR_NAMES"),
+      1093 => Some("ERR_WRITE_LP_INVALID_CON_NAMES"),
+      1094 => Some("ERR_WRITE_LP_DUPLICATE_CON_NAMES"),
+      1100 => Some("ERR_MPS_FILE"),
+      1101 => Some("ERR_MPS_INV_FIELD"),
+      1102 => Some("ERR_MPS_INV_MARKER"),
+      1103 => Some("ERR_MPS_NULL_CON_NAME"),
+      1104 => Some("ERR_MPS_NULL_VAR_NAME"),
+      1105 => Some("ERR_MPS_UNDEF_CON_NAME"),
+      1106 => Some("ERR_MPS_UNDEF_VAR_NAME"),
+      1107 => Some("ERR_MPS_INVALID_CON_KEY"),
+      1108 => Some("ERR_MPS_INVALID_BOUND_KEY"),
+      1109 => Some("ERR_MPS_INVALID_SEC_NAME"),
+      1110 => Some("ERR_MPS_NO_OBJECTIVE"),
+      1111 => Some("ERR_MPS_SPLITTED_VAR"),
+      1112 => Some("ERR_MPS_MUL_CON_NAME"),
+      1113 => Some("ERR_MPS_MUL_QSEC"),
+      1114 => Some("ERR_MPS_MUL_QOBJ"),
+      1115 => Some("ERR_MPS_INV_SEC_ORDER"),
+      1116 => Some("ERR_MPS_MUL_CSEC"),
+      1117 => Some("ERR_MPS_CONE_TYPE"),
+      1118 => Some("ERR_MPS_CONE_OVERLAP"),
+      1119 => Some("ERR_MPS_CONE_REPEAT"),
+      1120 => Some("ERR_MPS_NON_SYMMETRIC_Q"),
+      1121 => Some("ERR_MPS_DUPLICATE_Q_ELEMENT"),
+      1122 => Some("ERR_MPS_INVALID_OBJSENSE"),
+      1125 => Some("ERR_MPS_TAB_IN_FIELD2"),
+      1126 => Some("ERR_MPS_TAB_IN_FIELD3"),
+      1127 => Some("ERR_MPS_TAB_IN_FIELD5"),
+      1128 => Some("ERR_MPS_INVALID_OBJ_NAME"),
+      1129 => Some("ERR_MPS_INVALID_KEY"),
+      1130 => Some("ERR_MPS_INVALID_INDICATOR_CONSTRAINT"),
+      1131 => Some("ERR_MPS_INVALID_INDICATOR_VARIABLE"),
+      1132 => Some("ERR_MPS_INVALID_INDICATOR_VALUE"),
+      1133 => Some("ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT"),
+      1134 => Some("ERR_OPF_SYNTAX"),
+      1136 => Some("ERR_OPF_PREMATURE_EOF"),
+      1137 => Some("ERR_OPF_MISMATCHED_TAG"),
+      1138 => Some("ERR_OPF_DUPLICATE_BOUND"),
+      1139 => Some("ERR_OPF_DUPLICATE_CONSTRAINT_NAME"),
+      1140 => Some("ERR_OPF_INVALID_CONE_TYPE"),
+      1141 => Some("ERR_OPF_INCORRECT_TAG_PARAM"),
+      1142 => Some("ERR_OPF_INVALID_TAG"),
+      1143 => Some("ERR_OPF_DUPLICATE_CONE_ENTRY"),
+      1144 => Some("ERR_OPF_TOO_LARGE"),
+      1146 => Some("ERR_OPF_DUAL_INTEGER_SOLUTION"),
+      1151 => Some("ERR_LP_EMPTY"),
+      1153 => Some("ERR_WRITE_MPS_INVALID_NAME"),
+      1154 => Some("ERR_LP_INVALID_VAR_NAME"),
+      1156 => Some("ERR_WRITE_OPF_INVALID_VAR_NAME"),
+      1157 => Some("ERR_LP_FILE_FORMAT"),
+      1158 => Some("ERR_LP_EXPECTED_NUMBER"),
+      1159 => Some("ERR_READ_LP_MISSING_END_TAG"),
+      1160 => Some("ERR_LP_INDICATOR_VAR"),
+      1161 => Some("ERR_LP_EXPECTED_OBJECTIVE"),
+      1162 => Some("ERR_LP_EXPECTED_CONSTRAINT_RELATION"),
+      1163 => Some("ERR_LP_AMBIGUOUS_CONSTRAINT_BOUND"),
+      1164 => Some("ERR_LP_DUPLICATE_SECTION"),
+      1165 => Some("ERR_READ_LP_DELAYED_ROWS_NOT_SUPPORTED"),
+      1166 => Some("ERR_WRITING_FILE"),
+      1167 => Some("ERR_WRITE_ASYNC"),
+      1170 => Some("ERR_INVALID_NAME_IN_SOL_FILE"),
+      1175 => Some("ERR_JSON_SYNTAX"),
+      1176 => Some("ERR_JSON_STRING"),
+      1177 => Some("ERR_JSON_NUMBER_OVERFLOW"),
+      1178 => Some("ERR_JSON_FORMAT"),
+      1179 => Some("ERR_JSON_DATA"),
+      1180 => Some("ERR_JSON_MISSING_DATA"),
+      1181 => Some("ERR_PTF_INCOMPATIBILITY"),
+      1182 => Some("ERR_PTF_UNDEFINED_ITEM"),
+      1183 => Some("ERR_PTF_INCONSISTENCY"),
+      1184 => Some("ERR_PTF_FORMAT"),
+      1189 => Some("ERR_INCONSISTENT_UPDATE"),
+      1190 => Some("ERR_B_FORMAT"),
+      1197 => Some("ERR_ARGUMENT_LENNEQ"),
+      1198 => Some("ERR_ARGUMENT_TYPE"),
+      1199 => Some("ERR_NUM_ARGUMENTS"),
+      1200 => Some("ERR_IN_ARGUMENT"),
+      1201 => Some("ERR_ARGUMENT_DIMENSION"),
+      1202 => Some("ERR_SHAPE_IS_TOO_LARGE"),
+      1203 => Some("ERR_INDEX_IS_TOO_SMALL"),
+      1204 => Some("ERR_INDEX_IS_TOO_LARGE"),
+      1205 => Some("ERR_INDEX_IS_NOT_UNIQUE"),
+      1206 => Some("ERR_PARAM_NAME"),
+      1207 => Some("ERR_PARAM_NAME_DOU"),
+      1208 => Some("ERR_PARAM_NAME_INT"),
+      1209 => Some("ERR_PARAM_NAME_STR"),
+      1210 => Some("ERR_PARAM_INDEX"),
+      1215 => Some("ERR_PARAM_IS_TOO_LARGE"),
+      1216 => Some("ERR_PARAM_IS_TOO_SMALL"),
+      1217 => Some("ERR_PARAM_VALUE_STR"),
+      1218 => Some("ERR_PARAM_TYPE"),
+      1219 => Some("ERR_INF_DOU_INDEX"),
+      1220 => Some("ERR_INF_INT_INDEX"),
+      1221 => Some("ERR_INDEX_ARR_IS_TOO_SMALL"),
+      1222 => Some("ERR_INDEX_ARR_IS_TOO_LARGE"),
+      1225 => Some("ERR_INF_LINT_INDEX"),
+      1226 => Some("ERR_ARG_IS_TOO_SMALL"),
+      1227 => Some("ERR_ARG_IS_TOO_LARGE"),
+      1228 => Some("ERR_INVALID_WHICHSOL"),
+      1230 => Some("ERR_INF_DOU_NAME"),
+      1231 => Some("ERR_INF_INT_NAME"),
+      1232 => Some("ERR_INF_TYPE"),
+      1234 => Some("ERR_INF_LINT_NAME"),
+      1235 => Some("ERR_INDEX"),
+      1236 => Some("ERR_WHICHSOL"),
+      1237 => Some("ERR_SOLITEM"),
+      1238 => Some("ERR_WHICHITEM_NOT_ALLOWED"),
+      1240 => Some("ERR_MAXNUMCON"),
+      1241 => Some("ERR_MAXNUMVAR"),
+      1242 => Some("ERR_MAXNUMBARVAR"),
+      1243 => Some("ERR_MAXNUMQNZ"),
+      1245 => Some("ERR_TOO_SMALL_MAX_NUM_NZ"),
+      1246 => Some("ERR_INVALID_IDX"),
+      1247 => Some("ERR_INVALID_MAX_NUM"),
+      1248 => Some("ERR_UNALLOWED_WHICHSOL"),
+      1250 => Some("ERR_MAX_NUM_CON_EXCEEDED"),
+      1251 => Some("ERR_MAX_NUM_VAR_EXCEEDED"),
+      1252 => Some("ERR_TOO_SMALL_MAXNUMANZ"),
+      1253 => Some("ERR_INV_APTRE"),
+      1254 => Some("ERR_MUL_A_ELEMENT"),
+      1255 => Some("ERR_INV_BK"),
+      1256 => Some("ERR_INV_BKC"),
+      1257 => Some("ERR_INV_BKX"),
+      1258 => Some("ERR_INV_VAR_TYPE"),
+      1259 => Some("ERR_SOLVER_PROBTYPE"),
+      1260 => Some("ERR_OBJECTIVE_RANGE"),
+      1261 => Some("ERR_INV_RESCODE"),
+      1262 => Some("ERR_INV_IINF"),
+      1263 => Some("ERR_INV_LIINF"),
+      1264 => Some("ERR_INV_DINF"),
+      1266 => Some("ERR_BASIS"),
+      1267 => Some("ERR_INV_SKC"),
+      1268 => Some("ERR_INV_SKX"),
+      1269 => Some("ERR_INV_SK_STR"),
+      1270 => Some("ERR_INV_SK"),
+      1271 => Some("ERR_INV_CONE_TYPE_STR"),
+      1272 => Some("ERR_INV_CONE_TYPE"),
+      1274 => Some("ERR_INV_SKN"),
+      1275 => Some("ERR_INVALID_SURPLUS"),
+      1280 => Some("ERR_INV_NAME_ITEM"),
+      1281 => Some("ERR_PRO_ITEM"),
+      1283 => Some("ERR_INVALID_FORMAT_TYPE"),
+      1285 => Some("ERR_FIRSTI"),
+      1286 => Some("ERR_LASTI"),
+      1287 => Some("ERR_FIRSTJ"),
+      1288 => Some("ERR_LASTJ"),
+      1289 => Some("ERR_MAX_LEN_IS_TOO_SMALL"),
+      1290 => Some("ERR_NONLINEAR_EQUALITY"),
+      1291 => Some("ERR_NONCONVEX"),
+      1292 => Some("ERR_NONLINEAR_RANGED"),
+      1293 => Some("ERR_CON_Q_NOT_PSD"),
+      1294 => Some("ERR_CON_Q_NOT_NSD"),
+      1295 => Some("ERR_OBJ_Q_NOT_PSD"),
+      1296 => Some("ERR_OBJ_Q_NOT_NSD"),
+      1299 => Some("ERR_ARGUMENT_PERM_ARRAY"),
+      1300 => Some("ERR_CONE_INDEX"),
+      1301 => Some("ERR_CONE_SIZE"),
+      1302 => Some("ERR_CONE_OVERLAP"),
+      1303 => Some("ERR_CONE_REP_VAR"),
+      1304 => Some("ERR_MAXNUMCONE"),
+      1305 => Some("ERR_CONE_TYPE"),
+      1306 => Some("ERR_CONE_TYPE_STR"),
+      1307 => Some("ERR_CONE_OVERLAP_APPEND"),
+      1310 => Some("ERR_REMOVE_CONE_VARIABLE"),
+      1311 => Some("ERR_APPENDING_TOO_BIG_CONE"),
+      1320 => Some("ERR_CONE_PARAMETER"),
+      1350 => Some("ERR_SOL_FILE_INVALID_NUMBER"),
+      1375 => Some("ERR_HUGE_C"),
+      1380 => Some("ERR_HUGE_AIJ"),
+      1385 => Some("ERR_DUPLICATE_AIJ"),
+      1390 => Some("ERR_LOWER_BOUND_IS_A_NAN"),
+      1391 => Some("ERR_UPPER_BOUND_IS_A_NAN"),
+      1400 => Some("ERR_INFINITE_BOUND"),
+      1401 => Some("ERR_INV_QOBJ_SUBI"),
+      1402 => Some("ERR_INV_QOBJ_SUBJ"),
+      1403 => Some("ERR_INV_QOBJ_VAL"),
+      1404 => Some("ERR_INV_QCON_SUBK"),
+      1405 => Some("ERR_INV_QCON_SUBI"),
+      1406 => Some("ERR_INV_QCON_SUBJ"),
+      1407 => Some("ERR_INV_QCON_VAL"),
+      1408 => Some("ERR_QCON_SUBI_TOO_SMALL"),
+      1409 => Some("ERR_QCON_SUBI_TOO_LARGE"),
+      1415 => Some("ERR_QOBJ_UPPER_TRIANGLE"),
+      1417 => Some("ERR_QCON_UPPER_TRIANGLE"),
+      1420 => Some("ERR_FIXED_BOUND_VALUES"),
+      1421 => Some("ERR_TOO_SMALL_A_TRUNCATION_VALUE"),
+      1445 => Some("ERR_INVALID_OBJECTIVE_SENSE"),
+      1446 => Some("ERR_UNDEFINED_OBJECTIVE_SENSE"),
+      1449 => Some("ERR_Y_IS_UNDEFINED"),
+      1450 => Some("ERR_NAN_IN_DOUBLE_DATA"),
+      1451 => Some("ERR_INF_IN_DOUBLE_DATA"),
+      1461 => Some("ERR_NAN_IN_BLC"),
+      1462 => Some("ERR_NAN_IN_BUC"),
+      1469 => Some("ERR_INVALID_CFIX"),
+      1470 => Some("ERR_NAN_IN_C"),
+      1471 => Some("ERR_NAN_IN_BLX"),
+      1472 => Some("ERR_NAN_IN_BUX"),
+      1473 => Some("ERR_INVALID_AIJ"),
+      1474 => Some("ERR_INVALID_CJ"),
+      1480 => Some("ERR_SYM_MAT_INVALID"),
+      1482 => Some("ERR_SYM_MAT_HUGE"),
+      1500 => Some("ERR_INV_PROBLEM"),
+      1501 => Some("ERR_MIXED_CONIC_AND_NL"),
+      1503 => Some("ERR_GLOBAL_INV_CONIC_PROBLEM"),
+      1550 => Some("ERR_INV_OPTIMIZER"),
+      1551 => Some("ERR_MIO_NO_OPTIMIZER"),
+      1552 => Some("ERR_NO_OPTIMIZER_VAR_TYPE"),
+      1560 => Some("ERR_FINAL_SOLUTION"),
+      1570 => Some("ERR_FIRST"),
+      1571 => Some("ERR_LAST"),
+      1572 => Some("ERR_SLICE_SIZE"),
+      1573 => Some("ERR_NEGATIVE_SURPLUS"),
+      1578 => Some("ERR_NEGATIVE_APPEND"),
+      1580 => Some("ERR_POSTSOLVE"),
+      1590 => Some("ERR_OVERFLOW"),
+      1600 => Some("ERR_NO_BASIS_SOL"),
+      1610 => Some("ERR_BASIS_FACTOR"),
+      1615 => Some("ERR_BASIS_SINGULAR"),
+      1650 => Some("ERR_FACTOR"),
+      1700 => Some("ERR_FEASREPAIR_CANNOT_RELAX"),
+      1701 => Some("ERR_FEASREPAIR_SOLVING_RELAXED"),
+      1702 => Some("ERR_FEASREPAIR_INCONSISTENT_BOUND"),
+      1710 => Some("ERR_REPAIR_INVALID_PROBLEM"),
+      1711 => Some("ERR_REPAIR_OPTIMIZATION_FAILED"),
+      1750 => Some("ERR_NAME_MAX_LEN"),
+      1760 => Some("ERR_NAME_IS_NULL"),
+      1800 => Some("ERR_INVALID_COMPRESSION"),
+      1801 => Some("ERR_INVALID_IOMODE"),
+      2000 => Some("ERR_NO_PRIMAL_INFEAS_CER"),
+      2001 => Some("ERR_NO_DUAL_INFEAS_CER"),
+      2500 => Some("ERR_NO_SOLUTION_IN_CALLBACK"),
+      2501 => Some("ERR_INV_MARKI"),
+      2502 => Some("ERR_INV_MARKJ"),
+      2503 => Some("ERR_INV_NUMI"),
+      2504 => Some("ERR_INV_NUMJ"),
+      2560 => Some("ERR_TASK_INCOMPATIBLE"),
+      2561 => Some("ERR_TASK_INVALID"),
+      2562 => Some("ERR_TASK_WRITE"),
+      2563 => Some("ERR_READ_WRITE"),
+      2564 => Some("ERR_TASK_PREMATURE_EOF"),
+      2800 => Some("ERR_LU_MAX_NUM_TRIES"),
+      2900 => Some("ERR_INVALID_UTF8"),
+      2901 => Some("ERR_INVALID_WCHAR"),
+      2950 => Some("ERR_NO_DUAL_FOR_ITG_SOL"),
+      2953 => Some("ERR_NO_SNX_FOR_BAS_SOL"),
+      3000 => Some("ERR_INTERNAL"),
+      3001 => Some("ERR_API_ARRAY_TOO_SMALL"),
+      3002 => Some("ERR_API_CB_CONNECT"),
+      3005 => Some("ERR_API_FATAL_ERROR"),
+      3040 => Some("ERR_NUMERICAL_FAILURE"),
+      3050 => Some("ERR_SEN_FORMAT"),
+      3051 => Some("ERR_SEN_UNDEF_NAME"),
+      3052 => Some("ERR_SEN_INDEX_RANGE"),
+      3053 => Some("ERR_SEN_BOUND_INVALID_UP"),
+      3054 => Some("ERR_SEN_BOUND_INVALID_LO"),
+      3055 => Some("ERR_SEN_INDEX_INVALID"),
+      3056 => Some("ERR_SEN_INVALID_REGEXP"),
+      3057 => Some("ERR_SEN_SOLUTION_STATUS"),
+      3058 => Some("ERR_SEN_NUMERICAL"),
+      3080 => Some("ERR_SEN_UNHANDLED_PROBLEM_TYPE"),
+      3100 => Some("ERR_UNB_STEP_SIZE"),
+      3101 => Some("ERR_IDENTICAL_TASKS"),
+      3102 => Some("ERR_AD_INVALID_CODELIST"),
+      3500 => Some("ERR_INTERNAL_TEST_FAILED"),
+      3800 => Some("ERR_INT64_TO_INT32_CAST"),
+      3910 => Some("ERR_INFEAS_UNDEFINED"),
+      3915 => Some("ERR_NO_BARX_FOR_SOLUTION"),
+      3916 => Some("ERR_NO_BARS_FOR_SOLUTION"),
+      3920 => Some("ERR_BAR_VAR_DIM"),
+      3940 => Some("ERR_SYM_MAT_INVALID_ROW_INDEX"),
+      3941 => Some("ERR_SYM_MAT_INVALID_COL_INDEX"),
+      3942 => Some("ERR_SYM_MAT_NOT_LOWER_TRINGULAR"),
+      3943 => Some("ERR_SYM_MAT_INVALID_VALUE"),
+      3944 => Some("ERR_SYM_MAT_DUPLICATE"),
+      3950 => Some("ERR_INVALID_SYM_MAT_DIM"),
+      3999 => Some("ERR_API_INTERNAL"),
+      4000 => Some("ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"),
+      4001 => Some("ERR_INVALID_FILE_FORMAT_FOR_CFIX"),
+      4002 => Some("ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS"),
+      4003 => Some("ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS"),
+      4005 => Some("ERR_INVALID_FILE_FORMAT_FOR_CONES"),
+      4006 => Some("ERR_INVALID_FILE_FORMAT_FOR_QUADRATIC_TERMS"),
+      4010 => Some("ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR"),
+      4011 => Some("ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS"),
+      4012 => Some("ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS"),
+      4500 => Some("ERR_DUPLICATE_CONSTRAINT_NAMES"),
+      4501 => Some("ERR_DUPLICATE_VARIABLE_NAMES"),
+      4502 => Some("ERR_DUPLICATE_BARVARIABLE_NAMES"),
+      4503 => Some("ERR_DUPLICATE_CONE_NAMES"),
+      4504 => Some("ERR_DUPLICATE_DOMAIN_NAMES"),
+      4505 => Some("ERR_DUPLICATE_DJC_NAMES"),
+      5000 => Some("ERR_NON_UNIQUE_ARRAY"),
+      5004 => Some("ERR_ARGUMENT_IS_TOO_SMALL"),
+      5005 => Some("ERR_ARGUMENT_IS_TOO_LARGE"),
+      5010 => Some("ERR_MIO_INTERNAL"),
+      6000 => Some("ERR_INVALID_PROBLEM_TYPE"),
+      6010 => Some("ERR_UNHANDLED_SOLUTION_STATUS"),
+      6020 => Some("ERR_UPPER_TRIANGLE"),
+      7000 => Some("ERR_LAU_SINGULAR_MATRIX"),
+      7001 => Some("ERR_LAU_NOT_POSITIVE_DEFINITE"),
+      7002 => Some("ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX"),
+      7005 => Some("ERR_LAU_UNKNOWN"),
+      7010 => Some("ERR_LAU_ARG_M"),
+      7011 => Some("ERR_LAU_ARG_N"),
+      7012 => Some("ERR_LAU_ARG_K"),
+      7015 => Some("ERR_LAU_ARG_TRANSA"),
+      7016 => Some("ERR_LAU_ARG_TRANSB"),
+      7017 => Some("ERR_LAU_ARG_UPLO"),
+      7018 => Some("ERR_LAU_ARG_TRANS"),
+      7019 => Some("ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX"),
+      7100 => Some("ERR_CBF_PARSE"),
+      7101 => Some("ERR_CBF_OBJ_SENSE"),
+      7102 => Some("ERR_CBF_NO_VARIABLES"),
+      7103 => Some("ERR_CBF_TOO_MANY_CONSTRAINTS"),
+      7104 => Some("ERR_CBF_TOO_MANY_VARIABLES"),
+      7105 => Some("ERR_CBF_NO_VERSION_SPECIFIED"),
+      7106 => Some("ERR_CBF_SYNTAX"),
+      7107 => Some("ERR_CBF_DUPLICATE_OBJ"),
+      7108 => Some("ERR_CBF_DUPLICATE_CON"),
+      7110 => Some("ERR_CBF_DUPLICATE_VAR"),
+      7111 => Some("ERR_CBF_DUPLICATE_INT"),
+      7112 => Some("ERR_CBF_INVALID_VAR_TYPE"),
+      7113 => Some("ERR_CBF_INVALID_CON_TYPE"),
+      7114 => Some("ERR_CBF_INVALID_DOMAIN_DIMENSION"),
+      7115 => Some("ERR_CBF_DUPLICATE_OBJACOORD"),
+      7116 => Some("ERR_CBF_DUPLICATE_BCOORD"),
+      7117 => Some("ERR_CBF_DUPLICATE_ACOORD"),
+      7118 => Some("ERR_CBF_TOO_FEW_VARIABLES"),
+      7119 => Some("ERR_CBF_TOO_FEW_CONSTRAINTS"),
+      7120 => Some("ERR_CBF_TOO_FEW_INTS"),
+      7121 => Some("ERR_CBF_TOO_MANY_INTS"),
+      7122 => Some("ERR_CBF_INVALID_INT_INDEX"),
+      7123 => Some("ERR_CBF_UNSUPPORTED"),
+      7124 => Some("ERR_CBF_DUPLICATE_PSDVAR"),
+      7125 => Some("ERR_CBF_INVALID_PSDVAR_DIMENSION"),
+      7126 => Some("ERR_CBF_TOO_FEW_PSDVAR"),
+      7127 => Some("ERR_CBF_INVALID_EXP_DIMENSION"),
+      7130 => Some("ERR_CBF_DUPLICATE_POW_CONES"),
+      7131 => Some("ERR_CBF_DUPLICATE_POW_STAR_CONES"),
+      7132 => Some("ERR_CBF_INVALID_POWER"),
+      7133 => Some("ERR_CBF_POWER_CONE_IS_TOO_LONG"),
+      7134 => Some("ERR_CBF_INVALID_POWER_CONE_INDEX"),
+      7135 => Some("ERR_CBF_INVALID_POWER_STAR_CONE_INDEX"),
+      7136 => Some("ERR_CBF_UNHANDLED_POWER_CONE_TYPE"),
+      7137 => Some("ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE"),
+      7138 => Some("ERR_CBF_POWER_CONE_MISMATCH"),
+      7139 => Some("ERR_CBF_POWER_STAR_CONE_MISMATCH"),
+      7140 => Some("ERR_CBF_INVALID_NUMBER_OF_CONES"),
+      7141 => Some("ERR_CBF_INVALID_DIMENSION_OF_CONES"),
+      7150 => Some("ERR_CBF_INVALID_NUM_OBJACOORD"),
+      7151 => Some("ERR_CBF_INVALID_NUM_OBJFCOORD"),
+      7152 => Some("ERR_CBF_INVALID_NUM_ACOORD"),
+      7153 => Some("ERR_CBF_INVALID_NUM_BCOORD"),
+      7155 => Some("ERR_CBF_INVALID_NUM_FCOORD"),
+      7156 => Some("ERR_CBF_INVALID_NUM_HCOORD"),
+      7157 => Some("ERR_CBF_INVALID_NUM_DCOORD"),
+      7158 => Some("ERR_CBF_EXPECTED_A_KEYWORD"),
+      7200 => Some("ERR_CBF_INVALID_NUM_PSDCON"),
+      7201 => Some("ERR_CBF_DUPLICATE_PSDCON"),
+      7202 => Some("ERR_CBF_INVALID_DIMENSION_OF_PSDCON"),
+      7203 => Some("ERR_CBF_INVALID_PSDCON_INDEX"),
+      7204 => Some("ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX"),
+      7205 => Some("ERR_CBF_INVALID_PSDCON_BLOCK_INDEX"),
+      7206 => Some("ERR_CBF_INVALID_INDEX"),
+      7210 => Some("ERR_CBF_UNSUPPORTED_CHANGE"),
+      7700 => Some("ERR_MIO_INVALID_ROOT_OPTIMIZER"),
+      7701 => Some("ERR_MIO_INVALID_NODE_OPTIMIZER"),
+      7750 => Some("ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE"),
+      7800 => Some("ERR_TOCONIC_CONSTR_Q_NOT_PSD"),
+      7801 => Some("ERR_TOCONIC_CONSTRAINT_FX"),
+      7802 => Some("ERR_TOCONIC_CONSTRAINT_RA"),
+      7803 => Some("ERR_TOCONIC_CONSTR_NOT_CONIC"),
+      7804 => Some("ERR_TOCONIC_OBJECTIVE_NOT_PSD"),
+      7820 => Some("ERR_GETDUAL_NOT_AVAILABLE"),
+      7821 => Some("ERR_FIXING_NOT_POSSIBLE"),
+      8000 => Some("ERR_SERVER_CONNECT"),
+      8001 => Some("ERR_SERVER_PROTOCOL"),
+      8002 => Some("ERR_SERVER_STATUS"),
+      8003 => Some("ERR_SERVER_TOKEN"),
+      8004 => Some("ERR_SERVER_ADDRESS"),
+      8005 => Some("ERR_SERVER_CERTIFICATE"),
+      8006 => Some("ERR_SERVER_TLS_CLIENT"),
+      8007 => Some("ERR_TLS_FAIL"),
+      8008 => Some("ERR_TLS_CONFIGURATION"),
+      8009 => Some("ERR_SERVER_TLS_HANDSHAKE"),
+      8020 => Some("ERR_SERVER_ACCESS_TOKEN"),
+      8021 => Some("ERR_SERVER_PROBLEM_SIZE"),
+      8022 => Some("ERR_SERVER_HARD_TIMEOUT"),
+      8023 => Some("ERR_SERVER_VERSION_MISMATCH"),
+      20050 => Some("ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX"),
+      20060 => Some("ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST"),
+      20100 => Some("ERR_DUPLICATE_FIJ"),
+      20101 => Some("ERR_INVALID_FIJ"),
+      20102 => Some("ERR_HUGE_FIJ"),
+      20103 => Some("ERR_INVALID_G"),
+      20150 => Some("ERR_INVALID_B"),
+      20400 => Some("ERR_DOMAIN_INVALID_INDEX"),
+      20401 => Some("ERR_DOMAIN_DIMENSION"),
+      20402 => Some("ERR_DOMAIN_DIMENSION_PSD"),
+      20403 => Some("ERR_NOT_POWER_DOMAIN"),
+      20404 => Some("ERR_DOMAIN_POWER_INVALID_ALPHA"),
+      20405 => Some("ERR_DOMAIN_POWER_NEGATIVE_ALPHA"),
+      20406 => Some("ERR_DOMAIN_POWER_NLEFT"),
+      20500 => Some("ERR_AFE_INVALID_INDEX"),
+      20600 => Some("ERR_ACC_INVALID_INDEX"),
+      20601 => Some("ERR_ACC_INVALID_ENTRY_INDEX"),
+      20602 => Some("ERR_ACC_AFE_DOMAIN_MISMATCH"),
+      20700 => Some("ERR_DJC_INVALID_INDEX"),
+      20701 => Some("ERR_DJC_UNSUPPORTED_DOMAIN_TYPE"),
+      20702 => Some("ERR_DJC_AFE_DOMAIN_MISMATCH"),
+      20703 => Some("ERR_DJC_INVALID_TERM_SIZE"),
+      20704 => Some("ERR_DJC_DOMAIN_TERMSIZE_MISMATCH"),
+      20705 => Some("ERR_DJC_TOTAL_NUM_TERMS_MISMATCH"),
+      22000 => Some("ERR_UNDEF_SOLUTION"),
+      22010 => Some("ERR_NO_DOTY"),
+      30000 => Some("ERR_SIM_PRECISION_BOOSTING_IS_UNVAILABLE"),
+      30001 => Some("ERR_PRECISION_UNVAILABLE"),
+      100000 => Some("TRM_MAX_ITERATIONS"),
+      100001 => Some("TRM_MAX_TIME"),
+      100002 => Some("TRM_OBJECTIVE_RANGE"),
+      100006 => Some("TRM_STALL"),
+      100007 => Some("TRM_USER_CALLBACK"),
+      100008 => Some("TRM_MIO_NUM_RELAXS"),
+      100009 => Some("TRM_MIO_NUM_BRANCHES"),
+      100015 => Some("TRM_NUM_MAX_NUM_INT_SOLUTIONS"),
+      100020 => Some("TRM_MAX_NUM_SETBACKS"),
+      100025 => Some("TRM_NUMERICAL_PROBLEM"),
+      100026 => Some("TRM_ILL_CONDITIONED_BASIS"),
+      100027 => Some("TRM_LOST_RACE"),
+      100028 => Some("TRM_MAX_TICKS"),
+      100030 => Some("TRM_INTERNAL"),
+      100031 => Some("TRM_INTERNAL_STOP"),
+      100032 => Some("TRM_SERVER_MAX_TIME"),
+      100033 => Some("TRM_SERVER_MAX_MEMORY"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OK" => Some(0),
+      "WRN_SIM_PRECISION_BOOSTING_IS_UNVAILABLE" => Some(40),
+      "WRN_OPEN_PARAM_FILE" => Some(50),
+      "WRN_LARGE_BOUND" => Some(51),
+      "WRN_LARGE_LO_BOUND" => Some(52),
+      "WRN_LARGE_UP_BOUND" => Some(53),
+      "WRN_LARGE_CON_FX" => Some(54),
+      "WRN_LARGE_CJ" => Some(57),
+      "WRN_LARGE_AIJ" => Some(62),
+      "WRN_ZERO_AIJ" => Some(63),
+      "WRN_NAME_MAX_LEN" => Some(65),
+      "WRN_SPAR_MAX_LEN" => Some(66),
+      "WRN_MPS_SPLIT_RHS_VECTOR" => Some(70),
+      "WRN_MPS_SPLIT_RAN_VECTOR" => Some(71),
+      "WRN_MPS_SPLIT_BOU_VECTOR" => Some(72),
+      "WRN_LP_OLD_QUAD_FORMAT" => Some(80),
+      "WRN_LP_DROP_VARIABLE" => Some(85),
+      "WRN_NZ_IN_UPR_TRI" => Some(200),
+      "WRN_DROPPED_NZ_QOBJ" => Some(201),
+      "WRN_IGNORE_INTEGER" => Some(250),
+      "WRN_MIO_INFEASIBLE_FINAL" => Some(270),
+      "WRN_SOL_FILTER" => Some(300),
+      "WRN_UNDEF_SOL_FILE_NAME" => Some(350),
+      "WRN_SOL_FILE_IGNORED_CON" => Some(351),
+      "WRN_SOL_FILE_IGNORED_VAR" => Some(352),
+      "WRN_TOO_FEW_BASIS_VARS" => Some(400),
+      "WRN_TOO_MANY_BASIS_VARS" => Some(405),
+      "WRN_LICENSE_EXPIRE" => Some(500),
+      "WRN_LICENSE_SERVER" => Some(501),
+      "WRN_EMPTY_NAME" => Some(502),
+      "WRN_USING_GENERIC_NAMES" => Some(503),
+      "WRN_INVALID_MPS_NAME" => Some(504),
+      "WRN_INVALID_MPS_OBJ_NAME" => Some(505),
+      "WRN_LICENSE_FEATURE_EXPIRE" => Some(509),
+      "WRN_PARAM_NAME_DOU" => Some(510),
+      "WRN_PARAM_NAME_INT" => Some(511),
+      "WRN_PARAM_NAME_STR" => Some(512),
+      "WRN_PARAM_STR_VALUE" => Some(515),
+      "WRN_PARAM_IGNORED_CMIO" => Some(516),
+      "WRN_ZEROS_IN_SPARSE_ROW" => Some(705),
+      "WRN_ZEROS_IN_SPARSE_COL" => Some(710),
+      "WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK" => Some(800),
+      "WRN_ELIMINATOR_SPACE" => Some(801),
+      "WRN_PRESOLVE_OUTOFSPACE" => Some(802),
+      "WRN_PRESOLVE_PRIMAL_PERTURBATIONS" => Some(803),
+      "WRN_WRITE_CHANGED_NAMES" => Some(830),
+      "WRN_WRITE_DISCARDED_CFIX" => Some(831),
+      "WRN_DUPLICATE_CONSTRAINT_NAMES" => Some(850),
+      "WRN_DUPLICATE_VARIABLE_NAMES" => Some(851),
+      "WRN_DUPLICATE_BARVARIABLE_NAMES" => Some(852),
+      "WRN_DUPLICATE_CONE_NAMES" => Some(853),
+      "WRN_ANA_LARGE_BOUNDS" => Some(900),
+      "WRN_ANA_C_ZERO" => Some(901),
+      "WRN_ANA_EMPTY_COLS" => Some(902),
+      "WRN_ANA_CLOSE_BOUNDS" => Some(903),
+      "WRN_ANA_ALMOST_INT_BOUNDS" => Some(904),
+      "WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES" => Some(930),
+      "WRN_GETDUAL_IGNORES_INTEGRALITY" => Some(940),
+      "WRN_NO_DUALIZER" => Some(950),
+      "WRN_SYM_MAT_LARGE" => Some(960),
+      "WRN_MODIFIED_DOUBLE_PARAMETER" => Some(970),
+      "WRN_LARGE_FIJ" => Some(980),
+      "WRN_PTF_UNKNOWN_SECTION" => Some(981),
+      "ERR_LICENSE" => Some(1000),
+      "ERR_LICENSE_EXPIRED" => Some(1001),
+      "ERR_LICENSE_VERSION" => Some(1002),
+      "ERR_LICENSE_OLD_SERVER_VERSION" => Some(1003),
+      "ERR_SIZE_LICENSE" => Some(1005),
+      "ERR_PROB_LICENSE" => Some(1006),
+      "ERR_FILE_LICENSE" => Some(1007),
+      "ERR_MISSING_LICENSE_FILE" => Some(1008),
+      "ERR_SIZE_LICENSE_CON" => Some(1010),
+      "ERR_SIZE_LICENSE_VAR" => Some(1011),
+      "ERR_SIZE_LICENSE_INTVAR" => Some(1012),
+      "ERR_OPTIMIZER_LICENSE" => Some(1013),
+      "ERR_FLEXLM" => Some(1014),
+      "ERR_LICENSE_SERVER" => Some(1015),
+      "ERR_LICENSE_MAX" => Some(1016),
+      "ERR_LICENSE_MOSEKLM_DAEMON" => Some(1017),
+      "ERR_LICENSE_FEATURE" => Some(1018),
+      "ERR_PLATFORM_NOT_LICENSED" => Some(1019),
+      "ERR_LICENSE_CANNOT_ALLOCATE" => Some(1020),
+      "ERR_LICENSE_CANNOT_CONNECT" => Some(1021),
+      "ERR_LICENSE_INVALID_HOSTID" => Some(1025),
+      "ERR_LICENSE_SERVER_VERSION" => Some(1026),
+      "ERR_LICENSE_NO_SERVER_SUPPORT" => Some(1027),
+      "ERR_LICENSE_NO_SERVER_LINE" => Some(1028),
+      "ERR_OLDER_DLL" => Some(1035),
+      "ERR_NEWER_DLL" => Some(1036),
+      "ERR_LINK_FILE_DLL" => Some(1040),
+      "ERR_THREAD_MUTEX_INIT" => Some(1045),
+      "ERR_THREAD_MUTEX_LOCK" => Some(1046),
+      "ERR_THREAD_MUTEX_UNLOCK" => Some(1047),
+      "ERR_THREAD_CREATE" => Some(1048),
+      "ERR_THREAD_COND_INIT" => Some(1049),
+      "ERR_UNKNOWN" => Some(1050),
+      "ERR_SPACE" => Some(1051),
+      "ERR_FILE_OPEN" => Some(1052),
+      "ERR_FILE_READ" => Some(1053),
+      "ERR_FILE_WRITE" => Some(1054),
+      "ERR_DATA_FILE_EXT" => Some(1055),
+      "ERR_INVALID_FILE_NAME" => Some(1056),
+      "ERR_INVALID_SOL_FILE_NAME" => Some(1057),
+      "ERR_END_OF_FILE" => Some(1059),
+      "ERR_NULL_ENV" => Some(1060),
+      "ERR_NULL_TASK" => Some(1061),
+      "ERR_INVALID_STREAM" => Some(1062),
+      "ERR_NO_INIT_ENV" => Some(1063),
+      "ERR_INVALID_TASK" => Some(1064),
+      "ERR_NULL_POINTER" => Some(1065),
+      "ERR_LIVING_TASKS" => Some(1066),
+      "ERR_READ_GZIP" => Some(1067),
+      "ERR_READ_ZSTD" => Some(1068),
+      "ERR_READ_ASYNC" => Some(1069),
+      "ERR_BLANK_NAME" => Some(1070),
+      "ERR_DUP_NAME" => Some(1071),
+      "ERR_FORMAT_STRING" => Some(1072),
+      "ERR_SPARSITY_SPECIFICATION" => Some(1073),
+      "ERR_MISMATCHING_DIMENSION" => Some(1074),
+      "ERR_INVALID_OBJ_NAME" => Some(1075),
+      "ERR_INVALID_CON_NAME" => Some(1076),
+      "ERR_INVALID_VAR_NAME" => Some(1077),
+      "ERR_INVALID_CONE_NAME" => Some(1078),
+      "ERR_INVALID_BARVAR_NAME" => Some(1079),
+      "ERR_SPACE_LEAKING" => Some(1080),
+      "ERR_SPACE_NO_INFO" => Some(1081),
+      "ERR_DIMENSION_SPECIFICATION" => Some(1082),
+      "ERR_AXIS_NAME_SPECIFICATION" => Some(1083),
+      "ERR_READ_PREMATURE_EOF" => Some(1089),
+      "ERR_READ_FORMAT" => Some(1090),
+      "ERR_WRITE_LP_INVALID_VAR_NAMES" => Some(1091),
+      "ERR_WRITE_LP_DUPLICATE_VAR_NAMES" => Some(1092),
+      "ERR_WRITE_LP_INVALID_CON_NAMES" => Some(1093),
+      "ERR_WRITE_LP_DUPLICATE_CON_NAMES" => Some(1094),
+      "ERR_MPS_FILE" => Some(1100),
+      "ERR_MPS_INV_FIELD" => Some(1101),
+      "ERR_MPS_INV_MARKER" => Some(1102),
+      "ERR_MPS_NULL_CON_NAME" => Some(1103),
+      "ERR_MPS_NULL_VAR_NAME" => Some(1104),
+      "ERR_MPS_UNDEF_CON_NAME" => Some(1105),
+      "ERR_MPS_UNDEF_VAR_NAME" => Some(1106),
+      "ERR_MPS_INVALID_CON_KEY" => Some(1107),
+      "ERR_MPS_INVALID_BOUND_KEY" => Some(1108),
+      "ERR_MPS_INVALID_SEC_NAME" => Some(1109),
+      "ERR_MPS_NO_OBJECTIVE" => Some(1110),
+      "ERR_MPS_SPLITTED_VAR" => Some(1111),
+      "ERR_MPS_MUL_CON_NAME" => Some(1112),
+      "ERR_MPS_MUL_QSEC" => Some(1113),
+      "ERR_MPS_MUL_QOBJ" => Some(1114),
+      "ERR_MPS_INV_SEC_ORDER" => Some(1115),
+      "ERR_MPS_MUL_CSEC" => Some(1116),
+      "ERR_MPS_CONE_TYPE" => Some(1117),
+      "ERR_MPS_CONE_OVERLAP" => Some(1118),
+      "ERR_MPS_CONE_REPEAT" => Some(1119),
+      "ERR_MPS_NON_SYMMETRIC_Q" => Some(1120),
+      "ERR_MPS_DUPLICATE_Q_ELEMENT" => Some(1121),
+      "ERR_MPS_INVALID_OBJSENSE" => Some(1122),
+      "ERR_MPS_TAB_IN_FIELD2" => Some(1125),
+      "ERR_MPS_TAB_IN_FIELD3" => Some(1126),
+      "ERR_MPS_TAB_IN_FIELD5" => Some(1127),
+      "ERR_MPS_INVALID_OBJ_NAME" => Some(1128),
+      "ERR_MPS_INVALID_KEY" => Some(1129),
+      "ERR_MPS_INVALID_INDICATOR_CONSTRAINT" => Some(1130),
+      "ERR_MPS_INVALID_INDICATOR_VARIABLE" => Some(1131),
+      "ERR_MPS_INVALID_INDICATOR_VALUE" => Some(1132),
+      "ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT" => Some(1133),
+      "ERR_OPF_SYNTAX" => Some(1134),
+      "ERR_OPF_PREMATURE_EOF" => Some(1136),
+      "ERR_OPF_MISMATCHED_TAG" => Some(1137),
+      "ERR_OPF_DUPLICATE_BOUND" => Some(1138),
+      "ERR_OPF_DUPLICATE_CONSTRAINT_NAME" => Some(1139),
+      "ERR_OPF_INVALID_CONE_TYPE" => Some(1140),
+      "ERR_OPF_INCORRECT_TAG_PARAM" => Some(1141),
+      "ERR_OPF_INVALID_TAG" => Some(1142),
+      "ERR_OPF_DUPLICATE_CONE_ENTRY" => Some(1143),
+      "ERR_OPF_TOO_LARGE" => Some(1144),
+      "ERR_OPF_DUAL_INTEGER_SOLUTION" => Some(1146),
+      "ERR_LP_EMPTY" => Some(1151),
+      "ERR_WRITE_MPS_INVALID_NAME" => Some(1153),
+      "ERR_LP_INVALID_VAR_NAME" => Some(1154),
+      "ERR_WRITE_OPF_INVALID_VAR_NAME" => Some(1156),
+      "ERR_LP_FILE_FORMAT" => Some(1157),
+      "ERR_LP_EXPECTED_NUMBER" => Some(1158),
+      "ERR_READ_LP_MISSING_END_TAG" => Some(1159),
+      "ERR_LP_INDICATOR_VAR" => Some(1160),
+      "ERR_LP_EXPECTED_OBJECTIVE" => Some(1161),
+      "ERR_LP_EXPECTED_CONSTRAINT_RELATION" => Some(1162),
+      "ERR_LP_AMBIGUOUS_CONSTRAINT_BOUND" => Some(1163),
+      "ERR_LP_DUPLICATE_SECTION" => Some(1164),
+      "ERR_READ_LP_DELAYED_ROWS_NOT_SUPPORTED" => Some(1165),
+      "ERR_WRITING_FILE" => Some(1166),
+      "ERR_WRITE_ASYNC" => Some(1167),
+      "ERR_INVALID_NAME_IN_SOL_FILE" => Some(1170),
+      "ERR_JSON_SYNTAX" => Some(1175),
+      "ERR_JSON_STRING" => Some(1176),
+      "ERR_JSON_NUMBER_OVERFLOW" => Some(1177),
+      "ERR_JSON_FORMAT" => Some(1178),
+      "ERR_JSON_DATA" => Some(1179),
+      "ERR_JSON_MISSING_DATA" => Some(1180),
+      "ERR_PTF_INCOMPATIBILITY" => Some(1181),
+      "ERR_PTF_UNDEFINED_ITEM" => Some(1182),
+      "ERR_PTF_INCONSISTENCY" => Some(1183),
+      "ERR_PTF_FORMAT" => Some(1184),
+      "ERR_INCONSISTENT_UPDATE" => Some(1189),
+      "ERR_B_FORMAT" => Some(1190),
+      "ERR_ARGUMENT_LENNEQ" => Some(1197),
+      "ERR_ARGUMENT_TYPE" => Some(1198),
+      "ERR_NUM_ARGUMENTS" => Some(1199),
+      "ERR_IN_ARGUMENT" => Some(1200),
+      "ERR_ARGUMENT_DIMENSION" => Some(1201),
+      "ERR_SHAPE_IS_TOO_LARGE" => Some(1202),
+      "ERR_INDEX_IS_TOO_SMALL" => Some(1203),
+      "ERR_INDEX_IS_TOO_LARGE" => Some(1204),
+      "ERR_INDEX_IS_NOT_UNIQUE" => Some(1205),
+      "ERR_PARAM_NAME" => Some(1206),
+      "ERR_PARAM_NAME_DOU" => Some(1207),
+      "ERR_PARAM_NAME_INT" => Some(1208),
+      "ERR_PARAM_NAME_STR" => Some(1209),
+      "ERR_PARAM_INDEX" => Some(1210),
+      "ERR_PARAM_IS_TOO_LARGE" => Some(1215),
+      "ERR_PARAM_IS_TOO_SMALL" => Some(1216),
+      "ERR_PARAM_VALUE_STR" => Some(1217),
+      "ERR_PARAM_TYPE" => Some(1218),
+      "ERR_INF_DOU_INDEX" => Some(1219),
+      "ERR_INF_INT_INDEX" => Some(1220),
+      "ERR_INDEX_ARR_IS_TOO_SMALL" => Some(1221),
+      "ERR_INDEX_ARR_IS_TOO_LARGE" => Some(1222),
+      "ERR_INF_LINT_INDEX" => Some(1225),
+      "ERR_ARG_IS_TOO_SMALL" => Some(1226),
+      "ERR_ARG_IS_TOO_LARGE" => Some(1227),
+      "ERR_INVALID_WHICHSOL" => Some(1228),
+      "ERR_INF_DOU_NAME" => Some(1230),
+      "ERR_INF_INT_NAME" => Some(1231),
+      "ERR_INF_TYPE" => Some(1232),
+      "ERR_INF_LINT_NAME" => Some(1234),
+      "ERR_INDEX" => Some(1235),
+      "ERR_WHICHSOL" => Some(1236),
+      "ERR_SOLITEM" => Some(1237),
+      "ERR_WHICHITEM_NOT_ALLOWED" => Some(1238),
+      "ERR_MAXNUMCON" => Some(1240),
+      "ERR_MAXNUMVAR" => Some(1241),
+      "ERR_MAXNUMBARVAR" => Some(1242),
+      "ERR_MAXNUMQNZ" => Some(1243),
+      "ERR_TOO_SMALL_MAX_NUM_NZ" => Some(1245),
+      "ERR_INVALID_IDX" => Some(1246),
+      "ERR_INVALID_MAX_NUM" => Some(1247),
+      "ERR_UNALLOWED_WHICHSOL" => Some(1248),
+      "ERR_MAX_NUM_CON_EXCEEDED" => Some(1250),
+      "ERR_MAX_NUM_VAR_EXCEEDED" => Some(1251),
+      "ERR_TOO_SMALL_MAXNUMANZ" => Some(1252),
+      "ERR_INV_APTRE" => Some(1253),
+      "ERR_MUL_A_ELEMENT" => Some(1254),
+      "ERR_INV_BK" => Some(1255),
+      "ERR_INV_BKC" => Some(1256),
+      "ERR_INV_BKX" => Some(1257),
+      "ERR_INV_VAR_TYPE" => Some(1258),
+      "ERR_SOLVER_PROBTYPE" => Some(1259),
+      "ERR_OBJECTIVE_RANGE" => Some(1260),
+      "ERR_INV_RESCODE" => Some(1261),
+      "ERR_INV_IINF" => Some(1262),
+      "ERR_INV_LIINF" => Some(1263),
+      "ERR_INV_DINF" => Some(1264),
+      "ERR_BASIS" => Some(1266),
+      "ERR_INV_SKC" => Some(1267),
+      "ERR_INV_SKX" => Some(1268),
+      "ERR_INV_SK_STR" => Some(1269),
+      "ERR_INV_SK" => Some(1270),
+      "ERR_INV_CONE_TYPE_STR" => Some(1271),
+      "ERR_INV_CONE_TYPE" => Some(1272),
+      "ERR_INV_SKN" => Some(1274),
+      "ERR_INVALID_SURPLUS" => Some(1275),
+      "ERR_INV_NAME_ITEM" => Some(1280),
+      "ERR_PRO_ITEM" => Some(1281),
+      "ERR_INVALID_FORMAT_TYPE" => Some(1283),
+      "ERR_FIRSTI" => Some(1285),
+      "ERR_LASTI" => Some(1286),
+      "ERR_FIRSTJ" => Some(1287),
+      "ERR_LASTJ" => Some(1288),
+      "ERR_MAX_LEN_IS_TOO_SMALL" => Some(1289),
+      "ERR_NONLINEAR_EQUALITY" => Some(1290),
+      "ERR_NONCONVEX" => Some(1291),
+      "ERR_NONLINEAR_RANGED" => Some(1292),
+      "ERR_CON_Q_NOT_PSD" => Some(1293),
+      "ERR_CON_Q_NOT_NSD" => Some(1294),
+      "ERR_OBJ_Q_NOT_PSD" => Some(1295),
+      "ERR_OBJ_Q_NOT_NSD" => Some(1296),
+      "ERR_ARGUMENT_PERM_ARRAY" => Some(1299),
+      "ERR_CONE_INDEX" => Some(1300),
+      "ERR_CONE_SIZE" => Some(1301),
+      "ERR_CONE_OVERLAP" => Some(1302),
+      "ERR_CONE_REP_VAR" => Some(1303),
+      "ERR_MAXNUMCONE" => Some(1304),
+      "ERR_CONE_TYPE" => Some(1305),
+      "ERR_CONE_TYPE_STR" => Some(1306),
+      "ERR_CONE_OVERLAP_APPEND" => Some(1307),
+      "ERR_REMOVE_CONE_VARIABLE" => Some(1310),
+      "ERR_APPENDING_TOO_BIG_CONE" => Some(1311),
+      "ERR_CONE_PARAMETER" => Some(1320),
+      "ERR_SOL_FILE_INVALID_NUMBER" => Some(1350),
+      "ERR_HUGE_C" => Some(1375),
+      "ERR_HUGE_AIJ" => Some(1380),
+      "ERR_DUPLICATE_AIJ" => Some(1385),
+      "ERR_LOWER_BOUND_IS_A_NAN" => Some(1390),
+      "ERR_UPPER_BOUND_IS_A_NAN" => Some(1391),
+      "ERR_INFINITE_BOUND" => Some(1400),
+      "ERR_INV_QOBJ_SUBI" => Some(1401),
+      "ERR_INV_QOBJ_SUBJ" => Some(1402),
+      "ERR_INV_QOBJ_VAL" => Some(1403),
+      "ERR_INV_QCON_SUBK" => Some(1404),
+      "ERR_INV_QCON_SUBI" => Some(1405),
+      "ERR_INV_QCON_SUBJ" => Some(1406),
+      "ERR_INV_QCON_VAL" => Some(1407),
+      "ERR_QCON_SUBI_TOO_SMALL" => Some(1408),
+      "ERR_QCON_SUBI_TOO_LARGE" => Some(1409),
+      "ERR_QOBJ_UPPER_TRIANGLE" => Some(1415),
+      "ERR_QCON_UPPER_TRIANGLE" => Some(1417),
+      "ERR_FIXED_BOUND_VALUES" => Some(1420),
+      "ERR_TOO_SMALL_A_TRUNCATION_VALUE" => Some(1421),
+      "ERR_INVALID_OBJECTIVE_SENSE" => Some(1445),
+      "ERR_UNDEFINED_OBJECTIVE_SENSE" => Some(1446),
+      "ERR_Y_IS_UNDEFINED" => Some(1449),
+      "ERR_NAN_IN_DOUBLE_DATA" => Some(1450),
+      "ERR_INF_IN_DOUBLE_DATA" => Some(1451),
+      "ERR_NAN_IN_BLC" => Some(1461),
+      "ERR_NAN_IN_BUC" => Some(1462),
+      "ERR_INVALID_CFIX" => Some(1469),
+      "ERR_NAN_IN_C" => Some(1470),
+      "ERR_NAN_IN_BLX" => Some(1471),
+      "ERR_NAN_IN_BUX" => Some(1472),
+      "ERR_INVALID_AIJ" => Some(1473),
+      "ERR_INVALID_CJ" => Some(1474),
+      "ERR_SYM_MAT_INVALID" => Some(1480),
+      "ERR_SYM_MAT_HUGE" => Some(1482),
+      "ERR_INV_PROBLEM" => Some(1500),
+      "ERR_MIXED_CONIC_AND_NL" => Some(1501),
+      "ERR_GLOBAL_INV_CONIC_PROBLEM" => Some(1503),
+      "ERR_INV_OPTIMIZER" => Some(1550),
+      "ERR_MIO_NO_OPTIMIZER" => Some(1551),
+      "ERR_NO_OPTIMIZER_VAR_TYPE" => Some(1552),
+      "ERR_FINAL_SOLUTION" => Some(1560),
+      "ERR_FIRST" => Some(1570),
+      "ERR_LAST" => Some(1571),
+      "ERR_SLICE_SIZE" => Some(1572),
+      "ERR_NEGATIVE_SURPLUS" => Some(1573),
+      "ERR_NEGATIVE_APPEND" => Some(1578),
+      "ERR_POSTSOLVE" => Some(1580),
+      "ERR_OVERFLOW" => Some(1590),
+      "ERR_NO_BASIS_SOL" => Some(1600),
+      "ERR_BASIS_FACTOR" => Some(1610),
+      "ERR_BASIS_SINGULAR" => Some(1615),
+      "ERR_FACTOR" => Some(1650),
+      "ERR_FEASREPAIR_CANNOT_RELAX" => Some(1700),
+      "ERR_FEASREPAIR_SOLVING_RELAXED" => Some(1701),
+      "ERR_FEASREPAIR_INCONSISTENT_BOUND" => Some(1702),
+      "ERR_REPAIR_INVALID_PROBLEM" => Some(1710),
+      "ERR_REPAIR_OPTIMIZATION_FAILED" => Some(1711),
+      "ERR_NAME_MAX_LEN" => Some(1750),
+      "ERR_NAME_IS_NULL" => Some(1760),
+      "ERR_INVALID_COMPRESSION" => Some(1800),
+      "ERR_INVALID_IOMODE" => Some(1801),
+      "ERR_NO_PRIMAL_INFEAS_CER" => Some(2000),
+      "ERR_NO_DUAL_INFEAS_CER" => Some(2001),
+      "ERR_NO_SOLUTION_IN_CALLBACK" => Some(2500),
+      "ERR_INV_MARKI" => Some(2501),
+      "ERR_INV_MARKJ" => Some(2502),
+      "ERR_INV_NUMI" => Some(2503),
+      "ERR_INV_NUMJ" => Some(2504),
+      "ERR_TASK_INCOMPATIBLE" => Some(2560),
+      "ERR_TASK_INVALID" => Some(2561),
+      "ERR_TASK_WRITE" => Some(2562),
+      "ERR_READ_WRITE" => Some(2563),
+      "ERR_TASK_PREMATURE_EOF" => Some(2564),
+      "ERR_LU_MAX_NUM_TRIES" => Some(2800),
+      "ERR_INVALID_UTF8" => Some(2900),
+      "ERR_INVALID_WCHAR" => Some(2901),
+      "ERR_NO_DUAL_FOR_ITG_SOL" => Some(2950),
+      "ERR_NO_SNX_FOR_BAS_SOL" => Some(2953),
+      "ERR_INTERNAL" => Some(3000),
+      "ERR_API_ARRAY_TOO_SMALL" => Some(3001),
+      "ERR_API_CB_CONNECT" => Some(3002),
+      "ERR_API_FATAL_ERROR" => Some(3005),
+      "ERR_NUMERICAL_FAILURE" => Some(3040),
+      "ERR_SEN_FORMAT" => Some(3050),
+      "ERR_SEN_UNDEF_NAME" => Some(3051),
+      "ERR_SEN_INDEX_RANGE" => Some(3052),
+      "ERR_SEN_BOUND_INVALID_UP" => Some(3053),
+      "ERR_SEN_BOUND_INVALID_LO" => Some(3054),
+      "ERR_SEN_INDEX_INVALID" => Some(3055),
+      "ERR_SEN_INVALID_REGEXP" => Some(3056),
+      "ERR_SEN_SOLUTION_STATUS" => Some(3057),
+      "ERR_SEN_NUMERICAL" => Some(3058),
+      "ERR_SEN_UNHANDLED_PROBLEM_TYPE" => Some(3080),
+      "ERR_UNB_STEP_SIZE" => Some(3100),
+      "ERR_IDENTICAL_TASKS" => Some(3101),
+      "ERR_AD_INVALID_CODELIST" => Some(3102),
+      "ERR_INTERNAL_TEST_FAILED" => Some(3500),
+      "ERR_INT64_TO_INT32_CAST" => Some(3800),
+      "ERR_INFEAS_UNDEFINED" => Some(3910),
+      "ERR_NO_BARX_FOR_SOLUTION" => Some(3915),
+      "ERR_NO_BARS_FOR_SOLUTION" => Some(3916),
+      "ERR_BAR_VAR_DIM" => Some(3920),
+      "ERR_SYM_MAT_INVALID_ROW_INDEX" => Some(3940),
+      "ERR_SYM_MAT_INVALID_COL_INDEX" => Some(3941),
+      "ERR_SYM_MAT_NOT_LOWER_TRINGULAR" => Some(3942),
+      "ERR_SYM_MAT_INVALID_VALUE" => Some(3943),
+      "ERR_SYM_MAT_DUPLICATE" => Some(3944),
+      "ERR_INVALID_SYM_MAT_DIM" => Some(3950),
+      "ERR_API_INTERNAL" => Some(3999),
+      "ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT" => Some(4000),
+      "ERR_INVALID_FILE_FORMAT_FOR_CFIX" => Some(4001),
+      "ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS" => Some(4002),
+      "ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS" => Some(4003),
+      "ERR_INVALID_FILE_FORMAT_FOR_CONES" => Some(4005),
+      "ERR_INVALID_FILE_FORMAT_FOR_QUADRATIC_TERMS" => Some(4006),
+      "ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR" => Some(4010),
+      "ERR_INVALID_FILE_FORMAT_FOR_DISJUNCTIVE_CONSTRAINTS" => Some(4011),
+      "ERR_INVALID_FILE_FORMAT_FOR_AFFINE_CONIC_CONSTRAINTS" => Some(4012),
+      "ERR_DUPLICATE_CONSTRAINT_NAMES" => Some(4500),
+      "ERR_DUPLICATE_VARIABLE_NAMES" => Some(4501),
+      "ERR_DUPLICATE_BARVARIABLE_NAMES" => Some(4502),
+      "ERR_DUPLICATE_CONE_NAMES" => Some(4503),
+      "ERR_DUPLICATE_DOMAIN_NAMES" => Some(4504),
+      "ERR_DUPLICATE_DJC_NAMES" => Some(4505),
+      "ERR_NON_UNIQUE_ARRAY" => Some(5000),
+      "ERR_ARGUMENT_IS_TOO_SMALL" => Some(5004),
+      "ERR_ARGUMENT_IS_TOO_LARGE" => Some(5005),
+      "ERR_MIO_INTERNAL" => Some(5010),
+      "ERR_INVALID_PROBLEM_TYPE" => Some(6000),
+      "ERR_UNHANDLED_SOLUTION_STATUS" => Some(6010),
+      "ERR_UPPER_TRIANGLE" => Some(6020),
+      "ERR_LAU_SINGULAR_MATRIX" => Some(7000),
+      "ERR_LAU_NOT_POSITIVE_DEFINITE" => Some(7001),
+      "ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX" => Some(7002),
+      "ERR_LAU_UNKNOWN" => Some(7005),
+      "ERR_LAU_ARG_M" => Some(7010),
+      "ERR_LAU_ARG_N" => Some(7011),
+      "ERR_LAU_ARG_K" => Some(7012),
+      "ERR_LAU_ARG_TRANSA" => Some(7015),
+      "ERR_LAU_ARG_TRANSB" => Some(7016),
+      "ERR_LAU_ARG_UPLO" => Some(7017),
+      "ERR_LAU_ARG_TRANS" => Some(7018),
+      "ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX" => Some(7019),
+      "ERR_CBF_PARSE" => Some(7100),
+      "ERR_CBF_OBJ_SENSE" => Some(7101),
+      "ERR_CBF_NO_VARIABLES" => Some(7102),
+      "ERR_CBF_TOO_MANY_CONSTRAINTS" => Some(7103),
+      "ERR_CBF_TOO_MANY_VARIABLES" => Some(7104),
+      "ERR_CBF_NO_VERSION_SPECIFIED" => Some(7105),
+      "ERR_CBF_SYNTAX" => Some(7106),
+      "ERR_CBF_DUPLICATE_OBJ" => Some(7107),
+      "ERR_CBF_DUPLICATE_CON" => Some(7108),
+      "ERR_CBF_DUPLICATE_VAR" => Some(7110),
+      "ERR_CBF_DUPLICATE_INT" => Some(7111),
+      "ERR_CBF_INVALID_VAR_TYPE" => Some(7112),
+      "ERR_CBF_INVALID_CON_TYPE" => Some(7113),
+      "ERR_CBF_INVALID_DOMAIN_DIMENSION" => Some(7114),
+      "ERR_CBF_DUPLICATE_OBJACOORD" => Some(7115),
+      "ERR_CBF_DUPLICATE_BCOORD" => Some(7116),
+      "ERR_CBF_DUPLICATE_ACOORD" => Some(7117),
+      "ERR_CBF_TOO_FEW_VARIABLES" => Some(7118),
+      "ERR_CBF_TOO_FEW_CONSTRAINTS" => Some(7119),
+      "ERR_CBF_TOO_FEW_INTS" => Some(7120),
+      "ERR_CBF_TOO_MANY_INTS" => Some(7121),
+      "ERR_CBF_INVALID_INT_INDEX" => Some(7122),
+      "ERR_CBF_UNSUPPORTED" => Some(7123),
+      "ERR_CBF_DUPLICATE_PSDVAR" => Some(7124),
+      "ERR_CBF_INVALID_PSDVAR_DIMENSION" => Some(7125),
+      "ERR_CBF_TOO_FEW_PSDVAR" => Some(7126),
+      "ERR_CBF_INVALID_EXP_DIMENSION" => Some(7127),
+      "ERR_CBF_DUPLICATE_POW_CONES" => Some(7130),
+      "ERR_CBF_DUPLICATE_POW_STAR_CONES" => Some(7131),
+      "ERR_CBF_INVALID_POWER" => Some(7132),
+      "ERR_CBF_POWER_CONE_IS_TOO_LONG" => Some(7133),
+      "ERR_CBF_INVALID_POWER_CONE_INDEX" => Some(7134),
+      "ERR_CBF_INVALID_POWER_STAR_CONE_INDEX" => Some(7135),
+      "ERR_CBF_UNHANDLED_POWER_CONE_TYPE" => Some(7136),
+      "ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE" => Some(7137),
+      "ERR_CBF_POWER_CONE_MISMATCH" => Some(7138),
+      "ERR_CBF_POWER_STAR_CONE_MISMATCH" => Some(7139),
+      "ERR_CBF_INVALID_NUMBER_OF_CONES" => Some(7140),
+      "ERR_CBF_INVALID_DIMENSION_OF_CONES" => Some(7141),
+      "ERR_CBF_INVALID_NUM_OBJACOORD" => Some(7150),
+      "ERR_CBF_INVALID_NUM_OBJFCOORD" => Some(7151),
+      "ERR_CBF_INVALID_NUM_ACOORD" => Some(7152),
+      "ERR_CBF_INVALID_NUM_BCOORD" => Some(7153),
+      "ERR_CBF_INVALID_NUM_FCOORD" => Some(7155),
+      "ERR_CBF_INVALID_NUM_HCOORD" => Some(7156),
+      "ERR_CBF_INVALID_NUM_DCOORD" => Some(7157),
+      "ERR_CBF_EXPECTED_A_KEYWORD" => Some(7158),
+      "ERR_CBF_INVALID_NUM_PSDCON" => Some(7200),
+      "ERR_CBF_DUPLICATE_PSDCON" => Some(7201),
+      "ERR_CBF_INVALID_DIMENSION_OF_PSDCON" => Some(7202),
+      "ERR_CBF_INVALID_PSDCON_INDEX" => Some(7203),
+      "ERR_CBF_INVALID_PSDCON_VARIABLE_INDEX" => Some(7204),
+      "ERR_CBF_INVALID_PSDCON_BLOCK_INDEX" => Some(7205),
+      "ERR_CBF_INVALID_INDEX" => Some(7206),
+      "ERR_CBF_UNSUPPORTED_CHANGE" => Some(7210),
+      "ERR_MIO_INVALID_ROOT_OPTIMIZER" => Some(7700),
+      "ERR_MIO_INVALID_NODE_OPTIMIZER" => Some(7701),
+      "ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE" => Some(7750),
+      "ERR_TOCONIC_CONSTR_Q_NOT_PSD" => Some(7800),
+      "ERR_TOCONIC_CONSTRAINT_FX" => Some(7801),
+      "ERR_TOCONIC_CONSTRAINT_RA" => Some(7802),
+      "ERR_TOCONIC_CONSTR_NOT_CONIC" => Some(7803),
+      "ERR_TOCONIC_OBJECTIVE_NOT_PSD" => Some(7804),
+      "ERR_GETDUAL_NOT_AVAILABLE" => Some(7820),
+      "ERR_FIXING_NOT_POSSIBLE" => Some(7821),
+      "ERR_SERVER_CONNECT" => Some(8000),
+      "ERR_SERVER_PROTOCOL" => Some(8001),
+      "ERR_SERVER_STATUS" => Some(8002),
+      "ERR_SERVER_TOKEN" => Some(8003),
+      "ERR_SERVER_ADDRESS" => Some(8004),
+      "ERR_SERVER_CERTIFICATE" => Some(8005),
+      "ERR_SERVER_TLS_CLIENT" => Some(8006),
+      "ERR_TLS_FAIL" => Some(8007),
+      "ERR_TLS_CONFIGURATION" => Some(8008),
+      "ERR_SERVER_TLS_HANDSHAKE" => Some(8009),
+      "ERR_SERVER_ACCESS_TOKEN" => Some(8020),
+      "ERR_SERVER_PROBLEM_SIZE" => Some(8021),
+      "ERR_SERVER_HARD_TIMEOUT" => Some(8022),
+      "ERR_SERVER_VERSION_MISMATCH" => Some(8023),
+      "ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX" => Some(20050),
+      "ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST" => Some(20060),
+      "ERR_DUPLICATE_FIJ" => Some(20100),
+      "ERR_INVALID_FIJ" => Some(20101),
+      "ERR_HUGE_FIJ" => Some(20102),
+      "ERR_INVALID_G" => Some(20103),
+      "ERR_INVALID_B" => Some(20150),
+      "ERR_DOMAIN_INVALID_INDEX" => Some(20400),
+      "ERR_DOMAIN_DIMENSION" => Some(20401),
+      "ERR_DOMAIN_DIMENSION_PSD" => Some(20402),
+      "ERR_NOT_POWER_DOMAIN" => Some(20403),
+      "ERR_DOMAIN_POWER_INVALID_ALPHA" => Some(20404),
+      "ERR_DOMAIN_POWER_NEGATIVE_ALPHA" => Some(20405),
+      "ERR_DOMAIN_POWER_NLEFT" => Some(20406),
+      "ERR_AFE_INVALID_INDEX" => Some(20500),
+      "ERR_ACC_INVALID_INDEX" => Some(20600),
+      "ERR_ACC_INVALID_ENTRY_INDEX" => Some(20601),
+      "ERR_ACC_AFE_DOMAIN_MISMATCH" => Some(20602),
+      "ERR_DJC_INVALID_INDEX" => Some(20700),
+      "ERR_DJC_UNSUPPORTED_DOMAIN_TYPE" => Some(20701),
+      "ERR_DJC_AFE_DOMAIN_MISMATCH" => Some(20702),
+      "ERR_DJC_INVALID_TERM_SIZE" => Some(20703),
+      "ERR_DJC_DOMAIN_TERMSIZE_MISMATCH" => Some(20704),
+      "ERR_DJC_TOTAL_NUM_TERMS_MISMATCH" => Some(20705),
+      "ERR_UNDEF_SOLUTION" => Some(22000),
+      "ERR_NO_DOTY" => Some(22010),
+      "ERR_SIM_PRECISION_BOOSTING_IS_UNVAILABLE" => Some(30000),
+      "ERR_PRECISION_UNVAILABLE" => Some(30001),
+      "TRM_MAX_ITERATIONS" => Some(100000),
+      "TRM_MAX_TIME" => Some(100001),
+      "TRM_OBJECTIVE_RANGE" => Some(100002),
+      "TRM_STALL" => Some(100006),
+      "TRM_USER_CALLBACK" => Some(100007),
+      "TRM_MIO_NUM_RELAXS" => Some(100008),
+      "TRM_MIO_NUM_BRANCHES" => Some(100009),
+      "TRM_NUM_MAX_NUM_INT_SOLUTIONS" => Some(100015),
+      "TRM_MAX_NUM_SETBACKS" => Some(100020),
+      "TRM_NUMERICAL_PROBLEM" => Some(100025),
+      "TRM_ILL_CONDITIONED_BASIS" => Some(100026),
+      "TRM_LOST_RACE" => Some(100027),
+      "TRM_MAX_TICKS" => Some(100028),
+      "TRM_INTERNAL" => Some(100030),
+      "TRM_INTERNAL_STOP" => Some(100031),
+      "TRM_SERVER_MAX_TIME" => Some(100032),
+      "TRM_SERVER_MAX_MEMORY" => Some(100033),
+      _ => None
+    }
+  }
 } // impl Rescode
 
 /// Response code type
@@ -4297,6 +7663,26 @@ impl Rescodetype {
   pub const ERR : i32 = 3;
   /// The response code does not belong to any class.
   pub const UNK : i32 = 4;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("OK"),
+      1 => Some("WRN"),
+      2 => Some("TRM"),
+      3 => Some("ERR"),
+      4 => Some("UNK"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "OK" => Some(0),
+      "WRN" => Some(1),
+      "TRM" => Some(2),
+      "ERR" => Some(3),
+      "UNK" => Some(4),
+      _ => None
+    }
+  }
 } // impl Rescodetype
 
 /// Scaling type
@@ -4307,6 +7693,20 @@ impl Scalingtype {
   pub const FREE : i32 = 0;
   /// No scaling is performed.
   pub const NONE : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("NONE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "NONE" => Some(1),
+      _ => None
+    }
+  }
 } // impl Scalingtype
 
 /// Scaling method
@@ -4317,6 +7717,20 @@ impl Scalingmethod {
   pub const POW2 : i32 = 0;
   /// The optimizer chooses the scaling heuristic.
   pub const FREE : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("POW2"),
+      1 => Some("FREE"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "POW2" => Some(0),
+      "FREE" => Some(1),
+      _ => None
+    }
+  }
 } // impl Scalingmethod
 
 /// Sensitivity types
@@ -4325,6 +7739,18 @@ pub struct Sensitivitytype;
 impl Sensitivitytype {
   /// Basis sensitivity analysis is performed.
   pub const BASIS : i32 = 0;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("BASIS"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "BASIS" => Some(0),
+      _ => None
+    }
+  }
 } // impl Sensitivitytype
 
 /// Simplex selection strategy
@@ -4343,6 +7769,28 @@ impl Simseltype {
   pub const SE : i32 = 4;
   /// The optimizer uses a partial selection approach.
   pub const PARTIAL : i32 = 5;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("FULL"),
+      2 => Some("ASE"),
+      3 => Some("DEVEX"),
+      4 => Some("SE"),
+      5 => Some("PARTIAL"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "FULL" => Some(1),
+      "ASE" => Some(2),
+      "DEVEX" => Some(3),
+      "SE" => Some(4),
+      "PARTIAL" => Some(5),
+      _ => None
+    }
+  }
 } // impl Simseltype
 
 /// Solution items
@@ -4365,6 +7813,32 @@ impl Solitem {
   pub const SUX : i32 = 6;
   /// Lagrange multipliers corresponding to the conic constraints on the variables.
   pub const SNX : i32 = 7;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("XC"),
+      1 => Some("XX"),
+      2 => Some("Y"),
+      3 => Some("SLC"),
+      4 => Some("SUC"),
+      5 => Some("SLX"),
+      6 => Some("SUX"),
+      7 => Some("SNX"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "XC" => Some(0),
+      "XX" => Some(1),
+      "Y" => Some(2),
+      "SLC" => Some(3),
+      "SUC" => Some(4),
+      "SLX" => Some(5),
+      "SUX" => Some(6),
+      "SNX" => Some(7),
+      _ => None
+    }
+  }
 } // impl Solitem
 
 /// Solution status keys
@@ -4391,6 +7865,36 @@ impl Solsta {
   pub const DUAL_ILLPOSED_CER : i32 = 8;
   /// The primal solution is integer optimal.
   pub const INTEGER_OPTIMAL : i32 = 9;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("UNKNOWN"),
+      1 => Some("OPTIMAL"),
+      2 => Some("PRIM_FEAS"),
+      3 => Some("DUAL_FEAS"),
+      4 => Some("PRIM_AND_DUAL_FEAS"),
+      5 => Some("PRIM_INFEAS_CER"),
+      6 => Some("DUAL_INFEAS_CER"),
+      7 => Some("PRIM_ILLPOSED_CER"),
+      8 => Some("DUAL_ILLPOSED_CER"),
+      9 => Some("INTEGER_OPTIMAL"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "UNKNOWN" => Some(0),
+      "OPTIMAL" => Some(1),
+      "PRIM_FEAS" => Some(2),
+      "DUAL_FEAS" => Some(3),
+      "PRIM_AND_DUAL_FEAS" => Some(4),
+      "PRIM_INFEAS_CER" => Some(5),
+      "DUAL_INFEAS_CER" => Some(6),
+      "PRIM_ILLPOSED_CER" => Some(7),
+      "DUAL_ILLPOSED_CER" => Some(8),
+      "INTEGER_OPTIMAL" => Some(9),
+      _ => None
+    }
+  }
 } // impl Solsta
 
 /// Solution types
@@ -4403,6 +7907,22 @@ impl Soltype {
   pub const BAS : i32 = 1;
   /// The integer solution.
   pub const ITG : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("ITR"),
+      1 => Some("BAS"),
+      2 => Some("ITG"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "ITR" => Some(0),
+      "BAS" => Some(1),
+      "ITG" => Some(2),
+      _ => None
+    }
+  }
 } // impl Soltype
 
 /// Solve primal or dual form
@@ -4415,6 +7935,22 @@ impl Solveform {
   pub const PRIMAL : i32 = 1;
   /// The optimizer should solve the dual problem.
   pub const DUAL : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("PRIMAL"),
+      2 => Some("DUAL"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "PRIMAL" => Some(1),
+      "DUAL" => Some(2),
+      _ => None
+    }
+  }
 } // impl Solveform
 
 /// String parameters
@@ -4469,6 +8005,64 @@ impl Sparam {
   pub const STAT_KEY : i32 = 22;
   /// Name used when writing the statistics file.
   pub const STAT_NAME : i32 = 23;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("BAS_SOL_FILE_NAME"),
+      1 => Some("DATA_FILE_NAME"),
+      2 => Some("DEBUG_FILE_NAME"),
+      3 => Some("INT_SOL_FILE_NAME"),
+      4 => Some("ITR_SOL_FILE_NAME"),
+      5 => Some("MIO_DEBUG_STRING"),
+      6 => Some("PARAM_COMMENT_SIGN"),
+      7 => Some("PARAM_READ_FILE_NAME"),
+      8 => Some("PARAM_WRITE_FILE_NAME"),
+      9 => Some("READ_MPS_BOU_NAME"),
+      10 => Some("READ_MPS_OBJ_NAME"),
+      11 => Some("READ_MPS_RAN_NAME"),
+      12 => Some("READ_MPS_RHS_NAME"),
+      13 => Some("REMOTE_OPTSERVER_HOST"),
+      14 => Some("REMOTE_TLS_CERT"),
+      15 => Some("REMOTE_TLS_CERT_PATH"),
+      16 => Some("SENSITIVITY_FILE_NAME"),
+      17 => Some("SENSITIVITY_RES_FILE_NAME"),
+      18 => Some("SOL_FILTER_XC_LOW"),
+      19 => Some("SOL_FILTER_XC_UPR"),
+      20 => Some("SOL_FILTER_XX_LOW"),
+      21 => Some("SOL_FILTER_XX_UPR"),
+      22 => Some("STAT_KEY"),
+      23 => Some("STAT_NAME"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "BAS_SOL_FILE_NAME" => Some(0),
+      "DATA_FILE_NAME" => Some(1),
+      "DEBUG_FILE_NAME" => Some(2),
+      "INT_SOL_FILE_NAME" => Some(3),
+      "ITR_SOL_FILE_NAME" => Some(4),
+      "MIO_DEBUG_STRING" => Some(5),
+      "PARAM_COMMENT_SIGN" => Some(6),
+      "PARAM_READ_FILE_NAME" => Some(7),
+      "PARAM_WRITE_FILE_NAME" => Some(8),
+      "READ_MPS_BOU_NAME" => Some(9),
+      "READ_MPS_OBJ_NAME" => Some(10),
+      "READ_MPS_RAN_NAME" => Some(11),
+      "READ_MPS_RHS_NAME" => Some(12),
+      "REMOTE_OPTSERVER_HOST" => Some(13),
+      "REMOTE_TLS_CERT" => Some(14),
+      "REMOTE_TLS_CERT_PATH" => Some(15),
+      "SENSITIVITY_FILE_NAME" => Some(16),
+      "SENSITIVITY_RES_FILE_NAME" => Some(17),
+      "SOL_FILTER_XC_LOW" => Some(18),
+      "SOL_FILTER_XC_UPR" => Some(19),
+      "SOL_FILTER_XX_LOW" => Some(20),
+      "SOL_FILTER_XX_UPR" => Some(21),
+      "STAT_KEY" => Some(22),
+      "STAT_NAME" => Some(23),
+      _ => None
+    }
+  }
 } // impl Sparam
 
 /// Status keys
@@ -4489,6 +8083,30 @@ impl Stakey {
   pub const FIX : i32 = 5;
   /// The constraint or variable is infeasible in the bounds.
   pub const INF : i32 = 6;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("UNK"),
+      1 => Some("BAS"),
+      2 => Some("SUPBAS"),
+      3 => Some("LOW"),
+      4 => Some("UPR"),
+      5 => Some("FIX"),
+      6 => Some("INF"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "UNK" => Some(0),
+      "BAS" => Some(1),
+      "SUPBAS" => Some(2),
+      "LOW" => Some(3),
+      "UPR" => Some(4),
+      "FIX" => Some(5),
+      "INF" => Some(6),
+      _ => None
+    }
+  }
 } // impl Stakey
 
 /// Starting point types
@@ -4501,6 +8119,22 @@ impl Startpointtype {
   pub const GUESS : i32 = 1;
   /// The optimizer constructs a starting point by assigning a constant value to all primal and dual variables. This starting point is normally robust.
   pub const CONSTANT : i32 = 2;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("FREE"),
+      1 => Some("GUESS"),
+      2 => Some("CONSTANT"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "FREE" => Some(0),
+      "GUESS" => Some(1),
+      "CONSTANT" => Some(2),
+      _ => None
+    }
+  }
 } // impl Startpointtype
 
 /// Stream types
@@ -4515,6 +8149,24 @@ impl Streamtype {
   pub const ERR : i32 = 2;
   /// Warning stream. Warning messages are written to this stream.
   pub const WRN : i32 = 3;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("LOG"),
+      1 => Some("MSG"),
+      2 => Some("ERR"),
+      3 => Some("WRN"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LOG" => Some(0),
+      "MSG" => Some(1),
+      "ERR" => Some(2),
+      "WRN" => Some(3),
+      _ => None
+    }
+  }
 } // impl Streamtype
 
 /// Integer values
@@ -4525,6 +8177,20 @@ impl Value {
   pub const LICENSE_BUFFER_LENGTH : i32 = 21;
   /// Maximum string length allowed in MOSEK.
   pub const MAX_STR_LEN : i32 = 1024;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      21 => Some("LICENSE_BUFFER_LENGTH"),
+      1024 => Some("MAX_STR_LEN"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "LICENSE_BUFFER_LENGTH" => Some(21),
+      "MAX_STR_LEN" => Some(1024),
+      _ => None
+    }
+  }
 } // impl Value
 
 /// Variable types
@@ -4535,6 +8201,20 @@ impl Variabletype {
   pub const TYPE_CONT : i32 = 0;
   /// Is an integer variable.
   pub const TYPE_INT : i32 = 1;
+  pub fn to_str(value : i32) -> Option<&'static str> {
+    match value {
+      0 => Some("TYPE_CONT"),
+      1 => Some("TYPE_INT"),
+      _ => None
+    }
+  }
+  pub fn from_str(name : &str) -> Option<i32> {
+    match name {
+      "TYPE_CONT" => Some(0),
+      "TYPE_INT" => Some(1),
+      _ => None
+    }
+  }
 } // impl Variabletype
 
 #[allow(unused_parens)]
@@ -4655,7 +8335,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `feature_` Feature to check in to the license system.
-    ///
+    ///   
     ///   See [Feature]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
@@ -4669,7 +8349,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `feature_` Feature to check out from the license system.
-    ///
+    ///   
     ///   See [Feature]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
@@ -4806,10 +8486,10 @@ impl Env {
     /// # Arguments
     ///
     /// - `transa_` Indicates whether the matrix A must be transposed.
-    ///
+    ///   
     ///   See [Transpose]
     /// - `transb_` Indicates whether the matrix B must be transposed.
-    ///
+    ///   
     ///   See [Transpose]
     /// - `m_` Indicates the number of rows of matrix C.
     /// - `n_` Indicates the number of columns of matrix C.
@@ -4840,7 +8520,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `transa_` Indicates whether the matrix A must be transposed.
-    ///
+    ///   
     ///   See [Transpose]
     /// - `m_` Specifies the number of rows of the matrix A.
     /// - `n_` Specifies the number of columns of the matrix A.
@@ -4882,7 +8562,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
@@ -4902,10 +8582,10 @@ impl Env {
     /// - `maxtime_` Time limit for the function.
     /// - `numthreads_` Number of threads to be employed.
     /// - `trmcode_` The termination code for each task.
-    ///
+    ///   
     ///   See [Rescode]
     /// - `rcode_` The response code for each task.
-    ///
+    ///   
     ///   See [Rescode]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
@@ -4927,7 +8607,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part of the matrix is stored.
-    ///
+    ///   
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric matrix.
     /// - `a_` A symmetric matrix stored in column-major order.
@@ -5006,7 +8686,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `transposed_` Controls whether the solve is with L or the transposed L.
-    ///
+    ///   
     ///   See [Transpose]
     /// - `lnzc_` lnzc\[j\] is the number of nonzeros in column j.
     /// - `lptrc_` lptrc\[j\] is a pointer to the first row index and value in column j.
@@ -5042,7 +8722,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-    ///
+    ///   
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric input matrix.
     /// - `a_` Input matrix A.
@@ -5065,7 +8745,7 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-    ///
+    ///   
     ///   See [Uplo]
     /// - `n_` Dimension of the symmetric input matrix.
     /// - `a_` Input matrix A.
@@ -5088,10 +8768,10 @@ impl Env {
     /// # Arguments
     ///
     /// - `uplo_` Indicates whether the upper or lower triangular part of C is used.
-    ///
+    ///   
     ///   See [Uplo]
     /// - `trans_` Indicates whether the matrix A must be transposed.
-    ///
+    ///   
     ///   See [Transpose]
     /// - `n_` Specifies the order of C.
     /// - `k_` Indicates the number of rows or columns of A, and its rank.
@@ -5145,9 +8825,9 @@ unsafe extern "C" fn callback_proxy(
         }
         if let Some(ref mut cb) = task.valuecb {
             stop = (*cb)(caller,
-                                 & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
-                                 & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
-                                 & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize)) || stop;
+                         & std::slice::from_raw_parts(douinf, Dinfitem::END as usize),
+                         & std::slice::from_raw_parts(intinf, Iinfitem::END as usize),
+                         & std::slice::from_raw_parts(lintinf, Liinfitem::END as usize)) || stop;
         }
         if caller == Callbackcode::NEW_INT_MIO && task.intsolcb.is_some() {
             if let Ok(numvar) = task.task.get_num_var() {
@@ -5313,10 +8993,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `nametype_` The type of names e.g. valid in MPS or LP files.
-    ///
+    ///   
     ///   See [Nametype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzenames>
@@ -5326,7 +9006,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzeproblem>
@@ -5336,10 +9016,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzesolution>
@@ -5406,7 +9086,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -5418,7 +9098,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -5431,7 +9111,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Numbers of member variables in the cones.
@@ -5681,10 +9361,10 @@ impl TaskCB {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///
+    ///   
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///
+    ///   
     ///   See [Rescode]
     ///
     /// # Returns
@@ -5714,10 +9394,10 @@ impl TaskCB {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///
+    ///   
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///
+    ///   
     ///   See [Rescode]
     ///
     /// # Returns
@@ -5785,7 +9465,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.deletesolution>
@@ -5855,7 +9535,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `activity_` The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -5867,7 +9547,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `activity_` The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -6010,7 +9690,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -6022,7 +9702,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `doty_` The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -6526,7 +10206,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th dual variable of barx.
@@ -6538,7 +10218,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -6589,7 +10269,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -6601,7 +10281,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -6653,7 +10333,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -6667,7 +10347,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -6680,7 +10360,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -6694,7 +10374,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -6982,7 +10662,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichdinf_` Specifies a double information item.
-    ///
+    ///   
     ///   See [Dinfitem]
     ///
     /// # Returns
@@ -6996,7 +10676,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// # Returns
@@ -7010,7 +10690,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7024,7 +10704,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `nrmy_` The norm of the y vector.
     /// - `nrmslc_` The norm of the slc vector.
@@ -7041,7 +10721,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7053,7 +10733,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barx variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7065,7 +10745,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7077,7 +10757,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7089,7 +10769,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7101,7 +10781,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `infname_` Name of the information item.
     ///
@@ -7116,7 +10796,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `infmax_` The maximum index (plus 1) requested.
     ///
@@ -7127,7 +10807,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `whichinf_` An information item.
     ///
@@ -7142,7 +10822,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichiinf_` Specifies an integer information item.
-    ///
+    ///   
     ///   See [Iinfitem]
     ///
     /// # Returns
@@ -7156,7 +10836,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// # Returns
@@ -7182,7 +10862,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichliinf_` Specifies a long information item.
-    ///
+    ///   
     ///   See [Liinfitem]
     ///
     /// # Returns
@@ -7196,7 +10876,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// # Returns
@@ -7446,7 +11126,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -7520,7 +11200,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -7534,7 +11214,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -7568,7 +11248,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7582,7 +11262,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `nrmxc_` The norm of the xc vector.
     /// - `nrmxx_` The norm of the xx vector.
@@ -7603,7 +11283,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7617,7 +11297,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7629,7 +11309,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barX variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7641,7 +11321,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7653,7 +11333,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7665,7 +11345,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `djcidxlist_` An array of indexes of disjunctive constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -7677,7 +11357,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -7728,7 +11408,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` The index of the first variable in the sequence.
     /// - `last_` The index of the last variable in the sequence plus 1.
@@ -7741,10 +11421,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskc>
@@ -7754,12 +11434,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskcslice>
@@ -7769,10 +11449,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskn>
@@ -7782,10 +11462,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskx>
@@ -7795,12 +11475,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskxslice>
@@ -7810,7 +11490,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -7821,7 +11501,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7834,7 +11514,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -7845,7 +11525,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7858,7 +11538,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
@@ -7869,7 +11549,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -7882,7 +11562,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -7896,22 +11576,22 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///
+    ///   
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///
+    ///   
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -7929,7 +11609,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -7950,7 +11630,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -7974,22 +11654,22 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///
+    ///   
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///
+    ///   
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -8008,10 +11688,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `solitem_` Which part of the solution is required.
-    ///
+    ///   
     ///   See [Solitem]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8035,7 +11715,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     /// - `len_` The length of the parameter value.
     ///
@@ -8050,7 +11730,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// # Returns
@@ -8064,7 +11744,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -8075,7 +11755,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8088,7 +11768,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -8099,7 +11779,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8128,7 +11808,7 @@ impl TaskCB {
     /// - `dim_` Returns the dimension of the requested matrix.
     /// - `nz_` Returns the number of non-zeros in the requested matrix.
     /// - `mattype_` Returns the type of the requested matrix.
-    ///
+    ///   
     ///   See [Symmattype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymmatinfo>
@@ -8155,7 +11835,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the variable for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -8169,7 +11849,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -8231,7 +11911,7 @@ impl TaskCB {
     ///
     /// - `subj_` A list of variable indexes.
     /// - `vartype_` Returns the variables types corresponding the variable indexes requested.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartypelist>
@@ -8241,7 +11921,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -8252,7 +11932,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8265,7 +11945,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -8276,7 +11956,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8289,7 +11969,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -8300,7 +11980,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -8313,10 +11993,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.infeasibilityreport>
@@ -8342,12 +12022,12 @@ impl TaskCB {
     /// - `asub_` Coefficient subscripts.
     /// - `aval_` Coefficient values.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -8360,7 +12040,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isdouparname>
@@ -8371,7 +12051,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isintparname>
@@ -8382,7 +12062,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isstrparname>
@@ -8392,7 +12072,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
@@ -8404,10 +12084,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.onesolutionsummary>
@@ -8430,7 +12110,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizersummary>
@@ -8460,11 +12140,11 @@ impl TaskCB {
     ///
     /// - `subi_` Indexes of constraints to analyze.
     /// - `marki_` Mark which constraint bounds to analyze.
-    ///
+    ///   
     ///   See [Mark]
     /// - `subj_` Indexes of variables to analyze.
     /// - `markj_` Mark which variable bounds to analyze.
-    ///
+    ///   
     ///   See [Mark]
     /// - `leftpricei_` Left shadow price for constraints.
     /// - `rightpricei_` Right shadow price for constraints.
@@ -8516,7 +12196,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -8846,7 +12526,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th variable of barx.
@@ -8867,7 +12547,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -8906,7 +12586,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint.
     /// - `bkc_` New bound key.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound.
     /// - `buc_` New upper bound.
@@ -8919,7 +12599,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -8932,7 +12612,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` New bound key for all constraints in the list.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the list.
     /// - `buc_` New upper bound for all constraints in the list.
@@ -8946,7 +12626,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -8960,7 +12640,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` New bound key for all constraints in the slice.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the slice.
     /// - `buc_` New upper bound for all constraints in the slice.
@@ -8973,7 +12653,7 @@ impl TaskCB {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -9004,10 +12684,10 @@ impl TaskCB {
     ///
     /// - `i_` Index of the constraint.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sk_` Status key of the constraint.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `x_` Primal solution value of the constraint.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -9074,7 +12754,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9085,7 +12765,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9096,7 +12776,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9238,7 +12918,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `sense_` The objective sense of the task
-    ///
+    ///   
     ///   See [Objsense]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjsense>
@@ -9307,10 +12987,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskc>
@@ -9320,12 +13000,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskcslice>
@@ -9335,10 +13015,10 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskx>
@@ -9348,12 +13028,12 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskxslice>
@@ -9363,7 +13043,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -9374,7 +13054,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9387,7 +13067,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -9398,7 +13078,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9411,7 +13091,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -9422,7 +13102,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9435,16 +13115,16 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -9462,16 +13142,16 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -9491,7 +13171,7 @@ impl TaskCB {
     ///
     /// - `i_` Index of the dual variable.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Solution value of the dual variable.
     ///
@@ -9502,7 +13182,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -9513,7 +13193,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -9524,7 +13204,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9537,7 +13217,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -9548,7 +13228,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9570,7 +13250,7 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `bkx_` New bound key.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound.
     /// - `bux_` New upper bound.
@@ -9583,7 +13263,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -9596,7 +13276,7 @@ impl TaskCB {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` New bound key for all variables in the list.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the list.
     /// - `bux_` New upper bound for all variables in the list.
@@ -9610,7 +13290,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -9624,7 +13304,7 @@ impl TaskCB {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` New bound key for all variables in the slice.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the slice.
     /// - `bux_` New upper bound for all variables in the slice.
@@ -9646,10 +13326,10 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sk_` Status key of the variable.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `x_` Primal solution value of the variable.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -9664,7 +13344,7 @@ impl TaskCB {
     ///
     /// - `j_` Index of the variable.
     /// - `vartype_` The new variable type.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartype>
@@ -9675,7 +13355,7 @@ impl TaskCB {
     ///
     /// - `subj_` A list of variable indexes for which the variable type should be changed.
     /// - `vartype_` A list of variable types.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
@@ -9685,7 +13365,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -9696,7 +13376,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9709,7 +13389,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -9720,7 +13400,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9733,7 +13413,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -9744,7 +13424,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -9758,7 +13438,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbsolution>
@@ -9769,7 +13449,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbupdate>
@@ -9788,10 +13468,10 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `format_` File data format.
-    ///
+    ///   
     ///   See [Dataformat]
     /// - `compress_` File compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataformat>
@@ -9849,7 +13529,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -9868,7 +13548,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsummary>
@@ -9918,7 +13598,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetdouparam>
@@ -9928,7 +13608,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetintparam>
@@ -9942,7 +13622,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetstrparam>
@@ -9964,7 +13644,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sensitivityreport>
@@ -9974,7 +13654,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -9988,7 +13668,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutionsummary>
@@ -10014,7 +13694,7 @@ impl TaskCB {
     ///
     /// - `str_` String corresponding to the cone type code.
     /// - `conetype_` The cone type corresponding to str.
-    ///
+    ///   
     ///   See [Conetype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtoconetype>
@@ -10025,7 +13705,7 @@ impl TaskCB {
     ///
     /// - `str_` A status key abbreviation string.
     /// - `sk_` Status key corresponding to the string.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtosk>
@@ -10043,7 +13723,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.unlinkfuncfromtaskstream>
@@ -10053,7 +13733,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.updatesolutioninfo>
@@ -10064,7 +13744,7 @@ impl TaskCB {
     ///
     /// - `parname_` Parameter name.
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -10076,7 +13756,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writeb>
@@ -10087,7 +13767,7 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writebsolution>
@@ -10121,7 +13801,7 @@ impl TaskCB {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -10165,11 +13845,22 @@ impl TaskCB {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetasksolverresult_file>
     pub fn write_task_solver_result_file(&self,filename_ : &str,compress_ : i32) -> Result<(),String> { self.data.task.write_task_solver_result_file(filename_,compress_) }
+    /// Write termination file.
+    ///
+    /// # Arguments
+    ///
+    /// - `filename_` A valid file name.
+    /// - `termination_` 
+    ///   
+    ///   See [Rescode]
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetermination>
+    pub fn write_termination(&mut self,filename_ : &str,termination_ : i32) -> Result<(),String> { self.data.task.write_termination(filename_,termination_) }
 
 }
 
@@ -10524,10 +14215,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `nametype_` The type of names e.g. valid in MPS or LP files.
-    ///
+    ///   
     ///   See [Nametype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzenames>
@@ -10541,7 +14232,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzeproblem>
@@ -10555,10 +14246,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.analyzesolution>
@@ -10673,7 +14364,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -10690,7 +14381,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -10707,7 +14398,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Numbers of member variables in the cones.
@@ -11104,10 +14795,10 @@ impl Task {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///
+    ///   
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///
+    ///   
     ///   See [Rescode]
     ///
     /// # Returns
@@ -11152,10 +14843,10 @@ impl Task {
     /// - `accesstoken_` Access token.
     /// - `token_` The task token.
     /// - `resp_` Is the response code from the remote solver.
-    ///
+    ///   
     ///   See [Rescode]
     /// - `trm_` Is either OK or a termination response code.
-    ///
+    ///   
     ///   See [Rescode]
     ///
     /// # Returns
@@ -11259,7 +14950,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.deletesolution>
@@ -11377,7 +15068,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `activity_` The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -11398,7 +15089,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `activity_` The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -11685,7 +15376,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -11706,7 +15397,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `doty_` The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
     ///
@@ -12680,7 +16371,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th dual variable of barx.
@@ -12701,7 +16392,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -12778,7 +16469,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -12799,7 +16490,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` Index of the first semidefinite variable in the slice.
     /// - `last_` Index of the last semidefinite variable in the slice plus one.
@@ -12885,7 +16576,7 @@ impl Task {
     ///
     /// - `i_` Index of the constraint for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -12903,7 +16594,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -12929,7 +16620,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -12954,7 +16645,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `nummem_` Number of member variables in the cone.
@@ -13427,7 +17118,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichdinf_` Specifies a double information item.
-    ///
+    ///   
     ///   See [Dinfitem]
     ///
     /// # Returns
@@ -13446,7 +17137,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// # Returns
@@ -13465,7 +17156,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -13484,7 +17175,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `nrmy_` The norm of the y vector.
     /// - `nrmslc_` The norm of the slc vector.
@@ -13505,7 +17196,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13525,7 +17216,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barx variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -13545,7 +17236,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13565,7 +17256,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -13585,7 +17276,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -13605,7 +17296,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `infname_` Name of the information item.
     ///
@@ -13626,7 +17317,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `infmax_` The maximum index (plus 1) requested.
     ///
@@ -13644,7 +17335,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `inftype_` Type of the information item.
-    ///
+    ///   
     ///   See [Inftype]
     /// - `whichinf_` An information item.
     ///
@@ -13664,7 +17355,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichiinf_` Specifies an integer information item.
-    ///
+    ///   
     ///   See [Iinfitem]
     ///
     /// # Returns
@@ -13683,7 +17374,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// # Returns
@@ -13719,7 +17410,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichliinf_` Specifies a long information item.
-    ///
+    ///   
     ///   See [Liinfitem]
     ///
     /// # Returns
@@ -13738,7 +17429,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// # Returns
@@ -14129,7 +17820,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -14246,7 +17937,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     ///
     /// # Returns
@@ -14265,7 +17956,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -14318,7 +18009,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14337,7 +18028,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `nrmxc_` The norm of the xc vector.
     /// - `nrmxx_` The norm of the xx vector.
@@ -14367,7 +18058,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14386,7 +18077,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidxlist_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14406,7 +18097,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of barX variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -14426,7 +18117,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14446,7 +18137,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of conic constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14466,7 +18157,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `djcidxlist_` An array of indexes of disjunctive constraints.
     /// - `viol_` List of violations corresponding to sub.
@@ -14486,7 +18177,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sub_` An array of indexes of x variables.
     /// - `viol_` List of violations corresponding to sub.
@@ -14589,7 +18280,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` The index of the first variable in the sequence.
     /// - `last_` The index of the last variable in the sequence plus 1.
@@ -14609,10 +18300,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskc>
@@ -14631,12 +18322,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskcslice>
@@ -14653,10 +18344,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskn>
@@ -14675,10 +18366,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskx>
@@ -14697,12 +18388,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getskxslice>
@@ -14719,7 +18410,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -14739,7 +18430,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14759,7 +18450,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -14779,7 +18470,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14799,7 +18490,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `snx_` Dual variables corresponding to the conic constraints on the variables.
     ///
@@ -14819,7 +18510,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -14839,7 +18530,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -14858,22 +18549,22 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///
+    ///   
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///
+    ///   
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -14950,7 +18641,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -14975,7 +18666,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `pobj_` The primal objective value.
     /// - `pviolcon_` Maximal primal bound violation for a xc variable.
@@ -15003,22 +18694,22 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `problemsta_` Problem status.
-    ///
+    ///   
     ///   See [Prosta]
     /// - `solutionsta_` Solution status.
-    ///
+    ///   
     ///   See [Solsta]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -15101,10 +18792,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `solitem_` Which part of the solution is required.
-    ///
+    ///   
     ///   See [Solitem]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15153,7 +18844,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     /// - `len_` The length of the parameter value.
     ///
@@ -15176,7 +18867,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// # Returns
@@ -15195,7 +18886,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -15215,7 +18906,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15235,7 +18926,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -15255,7 +18946,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15297,7 +18988,7 @@ impl Task {
     /// - `dim_` Returns the dimension of the requested matrix.
     /// - `nz_` Returns the number of non-zeros in the requested matrix.
     /// - `mattype_` Returns the type of the requested matrix.
-    ///
+    ///   
     ///   See [Symmattype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getsymmatinfo>
@@ -15341,7 +19032,7 @@ impl Task {
     ///
     /// - `i_` Index of the variable for which the bound information should be obtained.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -15359,7 +19050,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bk_` Bound keys.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `bl_` Values for lower bounds.
     /// - `bu_` Values for upper bounds.
@@ -15458,7 +19149,7 @@ impl Task {
     ///
     /// - `subj_` A list of variable indexes.
     /// - `vartype_` Returns the variables types corresponding the variable indexes requested.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getvartypelist>
@@ -15476,7 +19167,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -15496,7 +19187,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15516,7 +19207,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -15536,7 +19227,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15556,7 +19247,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -15576,7 +19267,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -15596,10 +19287,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.infeasibilityreport>
@@ -15638,12 +19329,12 @@ impl Task {
     /// - `asub_` Coefficient subscripts.
     /// - `aval_` Coefficient values.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -15653,11 +19344,11 @@ impl Task {
     pub fn input_data(&mut self,maxnumcon_ : i32,maxnumvar_ : i32,c_ : &[f64],cfix_ : f64,aptrb_ : &[i64],aptre_ : &[i64],asub_ : &[i32],aval_ : &[f64],bkc_ : &[i32],blc_ : &[f64],buc_ : &[f64],bkx_ : &[i32],blx_ : &[f64],bux_ : &[f64]) -> Result<(),String> {
       let numcon_ : i32 = std::cmp::min(std::cmp::min(buc_.len(),blc_.len()),bkc_.len()) as i32;
       let numvar_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(std::cmp::min(c_.len(),bux_.len()),blx_.len()),bkx_.len()),aptrb_.len()),aptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); }
-      if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); }
-      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); }
+      if asub_.len() != aval_.len() { return Err("input_data: Mismatching asub/aval lengths".to_string()); } 
+      if aptrb_.len() != aptre_.len() { return Err("input_data: Mismatching aptrb/aptre lengths".to_string()); } 
+      if ! aptrb_.iter().zip(aptre_.iter()).all(|(a,b)| *a <= *b) { return Err("input_data: Invalid aptrb/aptre construction".to_string()); } 
       if let Some(v) = aptrb_.iter().min() { if *v < 0 { return Err("input_data: Invalid aptrb construction".to_string()); } }
-      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } }
+      if let Some(v) = aptre_.iter().max() { if *v as usize > asub_.len() { return Err("input_data: Invalid aptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_inputdata64(self.ptr,maxnumcon_,maxnumvar_,numcon_,numvar_,if c_.len() == 0 { std::ptr::null() } else { c_.as_ptr() },cfix_,aptrb_.as_ptr(),aptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr(),bkc_.as_ptr(),blc_.as_ptr(),buc_.as_ptr(),bkx_.as_ptr(),blx_.as_ptr(),bux_.as_ptr()) },"input_data")?;
       return Result::Ok(());
     } // inputdata64
@@ -15667,7 +19358,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isdouparname>
@@ -15683,7 +19374,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isintparname>
@@ -15699,7 +19390,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `param_` Returns the parameter corresponding to the name, if one exists.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.isstrparname>
@@ -15714,7 +19405,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `filename_` A valid file name.
     /// - `append_` If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
@@ -15731,10 +19422,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.onesolutionsummary>
@@ -15768,7 +19459,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizersummary>
@@ -15831,11 +19522,11 @@ impl Task {
     ///
     /// - `subi_` Indexes of constraints to analyze.
     /// - `marki_` Mark which constraint bounds to analyze.
-    ///
+    ///   
     ///   See [Mark]
     /// - `subj_` Indexes of variables to analyze.
     /// - `markj_` Mark which variable bounds to analyze.
-    ///
+    ///   
     ///   See [Mark]
     /// - `leftpricei_` Left shadow price for constraints.
     /// - `rightpricei_` Right shadow price for constraints.
@@ -15938,7 +19629,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `accidx_` The index of the affine conic constraint.
     /// - `doty_` The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
@@ -16017,11 +19708,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_a_col_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); }
-      if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); }
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); }
+      if asub_.len() != aval_.len() { return Err("put_a_col_list: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_list: Invalid ptrb/ptre construction".to_string()); } 
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_list: Invalid ptre construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putacollist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_list")?;
       return Result::Ok(());
     } // putacollist64
@@ -16039,11 +19730,11 @@ impl Task {
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putacolslice64>
     #[allow(unused_parens)]
     pub fn put_a_col_slice(&mut self,first_ : i32,last_ : i32,ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
-      if asub_.len() != aval_.len() { return Err("put_a_col_slice: Mismatching asub/aval lengths".to_string()); }
-      if ptrb_.len() != ptre_.len() { return Err("put_a_col_slice: Mismatching ptrb/ptre lengths".to_string()); }
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_slice: Invalid ptrb/ptre construction".to_string()); }
+      if asub_.len() != aval_.len() { return Err("put_a_col_slice: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_col_slice: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_col_slice: Invalid ptrb/ptre construction".to_string()); } 
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_col_slice: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_slice: Invalid ptre construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_col_slice: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putacolslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_col_slice")?;
       return Result::Ok(());
     } // putacolslice64
@@ -16207,7 +19898,7 @@ impl Task {
     pub fn put_afe_f_row_list(&mut self,afeidx_ : &[i64],numnzrow_ : &[i32],ptrrow_ : &[i64],varidx_ : &[i32],val_ : &[f64]) -> Result<(),String> {
       let numafeidx_ : i64 = std::cmp::min(std::cmp::min(afeidx_.len(),numnzrow_.len()),ptrrow_.len()) as i64;
       let lenidxval_ : i64 = std::cmp::min(varidx_.len(),val_.len()) as i64;
-      if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); }
+      if varidx_.len() != val_.len() { return Err("put_afe_f_row_list: Mismatching varidx/val lengths".to_string()); } 
       if let Some(v) = numnzrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid numnzrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().min() { if *v < 0 { return Err("put_afe_f_row_list: Invalid ptrrow value".to_string()); } }
       if let Some(v) = ptrrow_.iter().zip(numnzrow_.iter()).map(|(a,b)| *a as usize + *b as usize).max() { if v > varidx_.len() { return Err("put_afe_f_row_list: Invalid ptrrow/numnzrow construction".to_string()); } }
@@ -16316,11 +20007,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_a_row_list(&mut self,sub_ : &[i32],ptrb_ : &[i64],ptre_ : &[i64],asub_ : &[i32],aval_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(sub_.len(),ptrb_.len()),ptre_.len()) as i32;
-      if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); }
-      if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); }
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); }
+      if asub_.len() != aval_.len() { return Err("put_a_row_list: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_list: Invalid ptrb/ptre construction".to_string()); } 
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_list: Invalid ptre construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putarowlist64(self.ptr,num_,sub_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_list")?;
       return Result::Ok(());
     } // putarowlist64
@@ -16344,11 +20035,11 @@ impl Task {
       if ptre_.len() != ((last_-first_)).try_into().unwrap() {
         return Result::Err("put_a_row_slice: Argument 'ptre' has the wrong length, expected (last_-first_)".to_string());
       }
-      if asub_.len() != aval_.len() { return Err("put_a_row_slice: Mismatching asub/aval lengths".to_string()); }
-      if ptrb_.len() != ptre_.len() { return Err("put_a_row_slice: Mismatching ptrb/ptre lengths".to_string()); }
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_slice: Invalid ptrb/ptre construction".to_string()); }
+      if asub_.len() != aval_.len() { return Err("put_a_row_slice: Mismatching asub/aval lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_a_row_slice: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_a_row_slice: Invalid ptrb/ptre construction".to_string()); } 
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_a_row_slice: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_slice: Invalid ptre construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > asub_.len() { return Err("put_a_row_slice: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putarowslice64(self.ptr,first_,last_,ptrb_.as_ptr(),ptre_.as_ptr(),asub_.as_ptr(),aval_.as_ptr()) },"put_a_row_slice")?;
       return Result::Ok(());
     } // putarowslice64
@@ -16427,11 +20118,11 @@ impl Task {
     #[allow(unused_parens)]
     pub fn put_bara_ij_list(&mut self,subi_ : &[i32],subj_ : &[i32],alphaptrb_ : &[i64],alphaptre_ : &[i64],matidx_ : &[i64],weights_ : &[f64]) -> Result<(),String> {
       let num_ : i32 = std::cmp::min(std::cmp::min(std::cmp::min(subi_.len(),subj_.len()),alphaptrb_.len()),alphaptre_.len()) as i32;
-      if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); }
-      if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); }
-      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); }
+      if matidx_.len() != weights_.len() { return Err("put_bara_ij_list: Mismatching matidx/weights lengths".to_string()); } 
+      if alphaptrb_.len() != alphaptre_.len() { return Err("put_bara_ij_list: Mismatching alphaptrb/alphaptre lengths".to_string()); } 
+      if ! alphaptrb_.iter().zip(alphaptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_ij_list: Invalid alphaptrb/alphaptre construction".to_string()); } 
       if let Some(v) = alphaptrb_.iter().min() { if *v < 0 { return Err("put_bara_ij_list: Invalid alphaptrb construction".to_string()); } }
-      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("put_bara_ij_list: Invalid alphaptre construction".to_string()); } }
+      if let Some(v) = alphaptre_.iter().max() { if *v as usize > matidx_.len() { return Err("put_bara_ij_list: Invalid alphaptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putbaraijlist(self.ptr,num_,subi_.as_ptr(),subj_.as_ptr(),alphaptrb_.as_ptr(),alphaptre_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_ij_list")?;
       return Result::Ok(());
     } // putbaraijlist
@@ -16464,11 +20155,11 @@ impl Task {
       if weights_.len() != (__tmp_2).try_into().unwrap() {
         return Result::Err("put_bara_row_list: Argument 'weights' has the wrong length, expected __tmp_2".to_string());
       }
-      if subj_.len() != nummat_.len() { return Err("put_bara_row_list: Mismatching subj/nummat lengths".to_string()); }
-      if ptrb_.len() != ptre_.len() { return Err("put_bara_row_list: Mismatching ptrb/ptre lengths".to_string()); }
-      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_row_list: Invalid ptrb/ptre construction".to_string()); }
+      if subj_.len() != nummat_.len() { return Err("put_bara_row_list: Mismatching subj/nummat lengths".to_string()); } 
+      if ptrb_.len() != ptre_.len() { return Err("put_bara_row_list: Mismatching ptrb/ptre lengths".to_string()); } 
+      if ! ptrb_.iter().zip(ptre_.iter()).all(|(a,b)| *a <= *b) { return Err("put_bara_row_list: Invalid ptrb/ptre construction".to_string()); } 
       if let Some(v) = ptrb_.iter().min() { if *v < 0 { return Err("put_bara_row_list: Invalid ptrb construction".to_string()); } }
-      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("put_bara_row_list: Invalid ptre construction".to_string()); } }
+      if let Some(v) = ptre_.iter().max() { if *v as usize > subj_.len() { return Err("put_bara_row_list: Invalid ptre construction".to_string()); } } 
       self.handle_res(unsafe { MSK_putbararowlist(self.ptr,num_,subi_.as_ptr(),ptrb_.as_ptr(),ptre_.as_ptr(),subj_.as_ptr(),nummat_.as_ptr(),matidx_.as_ptr(),weights_.as_ptr()) },"put_bara_row_list")?;
       return Result::Ok(());
     } // putbararowlist
@@ -16520,7 +20211,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barsj_` Value of the j'th variable of barx.
@@ -16555,7 +20246,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `j_` Index of the semidefinite variable.
     /// - `barxj_` Value of the j'th variable of barx.
@@ -16616,7 +20307,7 @@ impl Task {
     ///
     /// - `i_` Index of the constraint.
     /// - `bkc_` New bound key.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound.
     /// - `buc_` New upper bound.
@@ -16633,7 +20324,7 @@ impl Task {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -16651,7 +20342,7 @@ impl Task {
     ///
     /// - `sub_` List of constraint indexes.
     /// - `bkc_` New bound key for all constraints in the list.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the list.
     /// - `buc_` New upper bound for all constraints in the list.
@@ -16670,7 +20361,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` Bound keys for the constraints.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` Lower bounds for the constraints.
     /// - `buc_` Upper bounds for the constraints.
@@ -16697,7 +20388,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkc_` New bound key for all constraints in the slice.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blc_` New lower bound for all constraints in the slice.
     /// - `buc_` New upper bound for all constraints in the slice.
@@ -16714,7 +20405,7 @@ impl Task {
     ///
     /// - `k_` Index of the cone.
     /// - `ct_` Specifies the type of the cone.
-    ///
+    ///   
     ///   See [Conetype]
     /// - `conepar_` For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     /// - `submem_` Variable subscripts of the members in the cone.
@@ -16760,10 +20451,10 @@ impl Task {
     ///
     /// - `i_` Index of the constraint.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sk_` Status key of the constraint.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `x_` Primal solution value of the constraint.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -16874,7 +20565,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -16889,7 +20580,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -16904,7 +20595,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -17119,7 +20810,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `sense_` The objective sense of the task
-    ///
+    ///   
     ///   See [Objsense]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putobjsense>
@@ -17224,10 +20915,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskc>
@@ -17246,12 +20937,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskcslice>
@@ -17268,10 +20959,10 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskx>
@@ -17290,12 +20981,12 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putskxslice>
@@ -17312,7 +21003,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slc_` Dual variables corresponding to the lower bounds on the constraints.
     ///
@@ -17332,7 +21023,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17352,7 +21043,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `slx_` Dual variables corresponding to the lower bounds on the variables.
     ///
@@ -17372,7 +21063,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17392,7 +21083,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -17412,7 +21103,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17432,16 +21123,16 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -17463,16 +21154,16 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `skc_` Status keys for the constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skx_` Status keys for the variables.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `skn_` Status keys for the conic constraints.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `xc_` Primal constraint solution.
     /// - `xx_` Primal variable solution.
@@ -17496,7 +21187,7 @@ impl Task {
     ///
     /// - `i_` Index of the dual variable.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Solution value of the dual variable.
     ///
@@ -17511,7 +21202,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     /// - `parvalue_` Parameter value.
     ///
@@ -17527,7 +21218,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `suc_` Dual variables corresponding to the upper bounds on the constraints.
     ///
@@ -17547,7 +21238,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17567,7 +21258,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sux_` Dual variables corresponding to the upper bounds on the variables.
     ///
@@ -17587,7 +21278,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17621,7 +21312,7 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `bkx_` New bound key.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound.
     /// - `bux_` New upper bound.
@@ -17638,7 +21329,7 @@ impl Task {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -17656,7 +21347,7 @@ impl Task {
     ///
     /// - `sub_` List of variable indexes.
     /// - `bkx_` New bound key for all variables in the list.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the list.
     /// - `bux_` New upper bound for all variables in the list.
@@ -17675,7 +21366,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` Bound keys for the variables.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` Lower bounds for the variables.
     /// - `bux_` Upper bounds for the variables.
@@ -17702,7 +21393,7 @@ impl Task {
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
     /// - `bkx_` New bound key for all variables in the slice.
-    ///
+    ///   
     ///   See [Boundkey]
     /// - `blx_` New lower bound for all variables in the slice.
     /// - `bux_` New upper bound for all variables in the slice.
@@ -17733,10 +21424,10 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `sk_` Status key of the variable.
-    ///
+    ///   
     ///   See [Stakey]
     /// - `x_` Primal solution value of the variable.
     /// - `sl_` Solution value of the dual variable associated with the lower bound.
@@ -17755,7 +21446,7 @@ impl Task {
     ///
     /// - `j_` Index of the variable.
     /// - `vartype_` The new variable type.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartype>
@@ -17770,7 +21461,7 @@ impl Task {
     ///
     /// - `subj_` A list of variable indexes for which the variable type should be changed.
     /// - `vartype_` A list of variable types.
-    ///
+    ///   
     ///   See [Variabletype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.putvartypelist>
@@ -17785,7 +21476,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xc_` Primal constraint solution.
     ///
@@ -17805,7 +21496,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17825,7 +21516,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `xx_` Primal variable solution.
     ///
@@ -17845,7 +21536,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17865,7 +21556,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `y_` Vector of dual variables corresponding to the constraints.
     ///
@@ -17885,7 +21576,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `first_` First index in the sequence.
     /// - `last_` Last index plus 1 in the sequence.
@@ -17906,7 +21597,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbsolution>
@@ -17922,7 +21613,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readbupdate>
@@ -17951,10 +21642,10 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `format_` File data format.
-    ///
+    ///   
     ///   See [Dataformat]
     /// - `compress_` File compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readdataformat>
@@ -18047,7 +21738,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -18076,7 +21767,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.readsummary>
@@ -18155,7 +21846,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Dparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetdouparam>
@@ -18169,7 +21860,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Iparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetintparam>
@@ -18191,7 +21882,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `param_` Which parameter.
-    ///
+    ///   
     ///   See [Sparam]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.resetstrparam>
@@ -18221,7 +21912,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.sensitivityreport>
@@ -18235,7 +21926,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// # Returns
@@ -18254,7 +21945,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.solutionsummary>
@@ -18299,7 +21990,7 @@ impl Task {
     ///
     /// - `str_` String corresponding to the cone type code.
     /// - `conetype_` The cone type corresponding to str.
-    ///
+    ///   
     ///   See [Conetype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtoconetype>
@@ -18315,7 +22006,7 @@ impl Task {
     ///
     /// - `str_` A status key abbreviation string.
     /// - `sk_` Status key corresponding to the string.
-    ///
+    ///   
     ///   See [Stakey]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.strtosk>
@@ -18346,7 +22037,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichstream_` Index of the stream.
-    ///
+    ///   
     ///   See [Streamtype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.unlinkfuncfromtaskstream>
@@ -18360,7 +22051,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.updatesolutioninfo>
@@ -18375,7 +22066,7 @@ impl Task {
     ///
     /// - `parname_` Parameter name.
     /// - `partype_` Parameter type.
-    ///
+    ///   
     ///   See [Parametertype]
     /// - `param_` Which parameter.
     ///
@@ -18392,7 +22083,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writeb>
@@ -18408,7 +22099,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writebsolution>
@@ -18462,7 +22153,7 @@ impl Task {
     /// # Arguments
     ///
     /// - `whichsol_` Selects a solution.
-    ///
+    ///   
     ///   See [Soltype]
     /// - `filename_` A valid file name.
     ///
@@ -18531,7 +22222,7 @@ impl Task {
     ///
     /// - `filename_` A valid file name.
     /// - `compress_` Data compression type.
-    ///
+    ///   
     ///   See [Compresstype]
     ///
     /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetasksolverresult_file>
@@ -18541,6 +22232,22 @@ impl Task {
       self.handle_res(unsafe { MSK_writetasksolverresult_file(self.ptr,__tmp_1.as_ptr(),compress_) },"write_task_solver_result_file")?;
       return Result::Ok(());
     } // writetasksolverresult_file
+    /// Write termination file.
+    ///
+    /// # Arguments
+    ///
+    /// - `filename_` A valid file name.
+    /// - `termination_` 
+    ///   
+    ///   See [Rescode]
+    ///
+    /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.writetermination>
+    #[allow(unused_parens)]
+    pub fn write_termination(&mut self,filename_ : &str,termination_ : i32) -> Result<(),String> {
+      let __tmp_1 = CString::new(filename_).unwrap();
+      self.handle_res(unsafe { MSK_writetermination(self.ptr,__tmp_1.as_ptr(),termination_) },"write_termination")?;
+      return Result::Ok(());
+    } // writetermination
 
 }
 
@@ -18599,7 +22306,7 @@ pub fn check_in_all() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `feature_` Feature to check in to the license system.
-///
+///   
 ///   See [Feature]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkinlicense>
@@ -18613,7 +22320,7 @@ pub fn check_in_license(feature_ : i32) -> Result<(),String> {
 /// # Arguments
 ///
 /// - `feature_` Feature to check out from the license system.
-///
+///   
 ///   See [Feature]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.checkoutlicense>
@@ -18750,10 +22457,10 @@ pub fn expirylicenses(expiry_ : &mut i64) -> Result<(),String> {
 /// # Arguments
 ///
 /// - `transa_` Indicates whether the matrix A must be transposed.
-///
+///   
 ///   See [Transpose]
 /// - `transb_` Indicates whether the matrix B must be transposed.
-///
+///   
 ///   See [Transpose]
 /// - `m_` Indicates the number of rows of matrix C.
 /// - `n_` Indicates the number of columns of matrix C.
@@ -18784,7 +22491,7 @@ pub fn gemm(transa_ : i32,transb_ : i32,m_ : i32,n_ : i32,k_ : i32,alpha_ : f64,
 /// # Arguments
 ///
 /// - `transa_` Indicates whether the matrix A must be transposed.
-///
+///   
 ///   See [Transpose]
 /// - `m_` Specifies the number of rows of the matrix A.
 /// - `n_` Specifies the number of columns of the matrix A.
@@ -18841,7 +22548,7 @@ pub fn get_build_info() -> Result<(String,String),String> {
 /// # Arguments
 ///
 /// - `code_` A valid response code.
-///
+///   
 ///   See [Rescode]
 ///
 /// # Returns
@@ -18862,10 +22569,10 @@ pub fn get_code_desc(code_ : i32) -> Result<(String,String),String> {
 /// # Arguments
 ///
 /// - `r_` A response code indicating the result of function call.
-///
+///   
 ///   See [Rescode]
 /// - `rc_` The response class.
-///
+///   
 ///   See [Rescodetype]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.getresponseclass>
@@ -18935,7 +22642,7 @@ pub fn license_cleanup() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `whichstream_` Index of the stream.
-///
+///   
 ///   See [Streamtype]
 /// - `filename_` A valid file name.
 /// - `append_` If this argument is 0 the file will be overwritten, otherwise it will be appended to.
@@ -18955,10 +22662,10 @@ pub fn link_file_to_stream(whichstream_ : i32,filename_ : &str,append_ : i32) ->
 /// - `maxtime_` Time limit for the function.
 /// - `numthreads_` Number of threads to be employed.
 /// - `trmcode_` The termination code for each task.
-///
+///   
 ///   See [Rescode]
 /// - `rcode_` The response code for each task.
-///
+///   
 ///   See [Rescode]
 ///
 /// Full documentation: <https://docs.mosek.com/latest/capi/alphabetic-functionalities.html#mosek.env.optimizebatch>
@@ -18980,7 +22687,7 @@ pub fn optimize_batch(israce_ : bool,maxtime_ : f64,numthreads_ : i32,task_ : &[
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part of the matrix is stored.
-///
+///   
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric matrix.
 /// - `a_` A symmetric matrix stored in column-major order.
@@ -19067,7 +22774,7 @@ pub fn shutdown_global_threadpool() -> Result<(),String> {
 /// # Arguments
 ///
 /// - `transposed_` Controls whether the solve is with L or the transposed L.
-///
+///   
 ///   See [Transpose]
 /// - `lnzc_` lnzc\[j\] is the number of nonzeros in column j.
 /// - `lptrc_` lptrc\[j\] is a pointer to the first row index and value in column j.
@@ -19103,7 +22810,7 @@ pub fn sparse_triangular_solve_dense(transposed_ : i32,lnzc_ : &[i32],lptrc_ : &
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-///
+///   
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric input matrix.
 /// - `a_` Input matrix A.
@@ -19126,7 +22833,7 @@ pub fn syeig(uplo_ : i32,n_ : i32,a_ : &[f64],w_ : &mut[f64]) -> Result<(),Strin
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part is used.
-///
+///   
 ///   See [Uplo]
 /// - `n_` Dimension of the symmetric input matrix.
 /// - `a_` Input matrix A.
@@ -19167,10 +22874,10 @@ pub fn sym_nam_to_value(name_ : &str) -> Result<String,String> {
 /// # Arguments
 ///
 /// - `uplo_` Indicates whether the upper or lower triangular part of C is used.
-///
+///   
 ///   See [Uplo]
 /// - `trans_` Indicates whether the matrix A must be transposed.
-///
+///   
 ///   See [Transpose]
 /// - `n_` Specifies the order of C.
 /// - `k_` Indicates the number of rows or columns of A, and its rank.
@@ -19213,7 +22920,7 @@ pub fn initialize(paths : Option<&[&std::path::Path]>) -> Result<(),String> {
             unsafe { MSK_initializedynamicwithpaths(pathptr.len().min(i32::MAX as usize) as i32, pathptr.as_ptr()) }
         }
         else {
-            unsafe { MSK_initializedynamicwithdefaults() }
+            unsafe { MSK_initializedynamicwithpaths(0,std::ptr::null()) }
         };
     if 0 != r {
         if let Some(paths) = paths {
@@ -19225,6 +22932,5 @@ pub fn initialize(paths : Option<&[&std::path::Path]>) -> Result<(),String> {
     }
     else { Ok(()) }
 }
-
 #[cfg(not(feature = "dynamic"))]
 pub fn initialize(_paths : Option<&[&std::path::Path]>) -> Result<(),String> { Ok(()) }

@@ -21,7 +21,6 @@ const INF : f64 = 0.0;
 
 
 fn main() -> Result<(),String> {
-    mosek::initialize(None)?;
     // Create a task object
     let mut task = match Task::new() {
         Some(e) => e,
@@ -91,7 +90,7 @@ fn main() -> Result<(),String> {
     task.solution_summary(Streamtype::MSG)?;
 
     // Get status information about the solution
-    let _sta = task.get_sol_sta(Soltype::ITG)?;
+    let sta = task.get_sol_sta(Soltype::ITG)?;
 
     let mut xx = vec![0.0; numvar as usize];
     task.get_xx(Soltype::ITG,xx.as_mut_slice())?;
