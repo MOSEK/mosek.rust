@@ -39,7 +39,7 @@ fn main() -> Result<(),String> {
             Streamtype::LOG,
             &mut |msg| print!("{}",msg),
             |task| task.with_itg_sol_callback(
-                &mut |xx| { println!("Found a new solution = {:?}",xx); false },
+                &mut |pobj,xx| { println!("Found a new solution ({}) = {:?}",pobj,xx); false },
                 |task| {
                     /* Append 'numcon' empty constraints.
                     The constraints will initially have no bounds. */
@@ -61,7 +61,7 @@ fn main() -> Result<(),String> {
                                        &aval[ptrb[j as usize]..ptre[j as usize]])?;              /* Non-zero Values of column j. */
                     }
                     // Set the bounds on constraints.
-                    // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i] 
+                    // for i=1, ...,numcon : blc[i] <= constraint i <= buc[i]
                     for (((i,bk),bl),bu) in (0..numcon).zip(bkc.iter()).zip(blc.iter()).zip(buc.iter()) {
                         task.put_con_bound(i, *bk, *bl, *bu)?;
                     }

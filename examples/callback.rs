@@ -42,13 +42,13 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
             println!("  Elapsed time: {:6.2}({:.2})",opttime, stime);
             println!("  Primal obj.: {:-18.6e}  Dual obj.: {:-18.6e}",pobj, dobj);
         },
-        Callbackcode::END_INTPNT => 
+        Callbackcode::END_INTPNT =>
             println!("Interior-point optimizer finished."),
         Callbackcode::BEGIN_PRIMAL_SIMPLEX =>
             println!("Primal simplex optimizer started."),
         Callbackcode::UPDATE_PRIMAL_SIMPLEX => {
             let itrn  = iinf[Iinfitem::SIM_PRIMAL_ITER as usize];
-            let pobj  = dinf[Dinfitem::SIM_OBJ as usize];
+            let pobj  = dinf[Dinfitem::SIM_PRIMAL_OBJ as usize];
             let stime = dinf[Dinfitem::SIM_TIME as usize];
             opttime   = dinf[Dinfitem::OPTIMIZER_TIME as usize];
             println!("Iterations: {:-3}",itrn);
@@ -61,7 +61,7 @@ fn callback(caller : i32, dinf : &[f64], iinf : &[i32], _linf : &[i64]) -> bool 
             println!("Dual simplex optimizer started."),
         Callbackcode::UPDATE_DUAL_SIMPLEX => {
             let itrn  = iinf[Iinfitem::SIM_DUAL_ITER as usize];
-            let pobj  = dinf[Dinfitem::SIM_OBJ as usize];
+            let pobj  = dinf[Dinfitem::SIM_PRIMAL_OBJ as usize];
             let stime = dinf[Dinfitem::SIM_TIME as usize];
             opttime   = dinf[Dinfitem::OPTIMIZER_TIME as usize];
             println!("Iterations: {:-3}", itrn);

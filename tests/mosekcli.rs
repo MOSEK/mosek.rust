@@ -13,12 +13,12 @@ fn main() {
                     if caller == mosek::Callbackcode::NEW_INT_MIO {
                         println!("@@@@@@@@@@@@@@@@@ caller = {}",caller);
                     }
-                    false 
+                    false
                 },
                 |task| task.with_itg_sol_callback(
-                    & mut |xx| {
-                        println!("@@@@@@@@@@@@@@@@@ xx = {:?}",xx);
-                        false 
+                    & mut |pobj,xx| {
+                        println!("@@@@@@@@@@@@@@@@@ {}: xx = {:?}",pobj,xx);
+                        false
                     },
                     |task| {
                         task.read_data(args[1].as_str())?;
